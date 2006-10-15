@@ -1,0 +1,118 @@
+<html>
+<head>
+</head>
+
+<body>
+<font face="Arial,Helvetica,Times" size="3">
+<h2 align="center">DICTIONARY DEVELOPMENT:<br />SBEVSL - Structural Biology Extensible Visualization Scripting Language</h2>
+
+<P>
+
+We will define SBEVSL in terms of the SBEVSL dictionary, the CIF, mmCIF and CBF/imgCIF 
+dictionaries and in terms of UML, so that SBEVSL will be easily translated into almost any object-
+oriented language using terms commonly found in structural biology. We will provide translations into 
+Python, JavaScript, Java and C++, and back-translations from RasMol and PyMOL scripts. We will 
+introduce direct processing of SBEVSL by RasMol, Jmol and PyMOL, and external translators should 
+allow most other molecular graphics programs to be used with SBEVSL without modification until their 
+maintainers choose to adapt them.
+
+<P>
+The SBEVSL dictionary will serve as a master ontology for scripting in molecular 
+visualization.
+
+<P>
+
+As an example of what needs to be done, different graphics programs and platforms have different  
+conventions for the organization of the picture elements (pixels) from which modern graphical images
+are created.  The ARRAY_STRUCTURE category in the imgCIF dictionary provides the definitions
+needed to unambiguously specify the physical layout of image pixels according to all known pixel
+organizations.  To this we will add new categories of definitions to  specify logical windows, viewports
+and clipping in a manner consistent with X-windows, OpenGL, MS Windows and other commonly used
+molecular graphics conventions.  Just as the imgCIF dictionary includes definitions for time-sequenced
+frames of detector images, we will add the necessary definitions for creation of molecular graphics
+movies.
+
+<P>
+
+As an example of what needs to be done, different graphics programs and platforms have different
+conventions for the organization of the picture elements (pixels) from which modern graphical images
+are created.  The ARRAY_STRUCTURE category in the imgCIF dictionary provides the definitions
+needed to unambiguously specify the physical layout of image pixels according to all known pixel
+organizations.  To this we will add new categories of definitions to  specify logical windows, viewports
+and clipping in a manner consistent with X-windows, OpenGL, MS Windows and other commonly used   
+molecular graphics conventions.  Just as the imgCIF dictionary includes definitions for time-sequenced
+frames of detector images, we will add the necessary definitions for creation of molecular graphics
+movies.
+
+<P>
+
+Many of the necessary definitions involve presentation of algorithmic relationships among definitions,
+e.g. to specify symmetry transformations, perspective transformations, ray tracing, shadows, etc.
+Following the lead established in the dRel and StarDDL projects, we will include these algorithms in the
+SBEVSL dictionary as executable code, not just as comments.  This will allow the SBEVSL dictionary to
+be executable and will facilitate the coupling of user and developer-created extensions, both in scripts
+and in local dictionaries, with the definitions in the dictionary
+
+<P>
+
+In order to consolidate the approaches to molecular graphics scripting, we will adopt an approach 
+similar to that used to define UML, but with tools appropriate to the domain of structural biology.  The 
+PDB format description, the PDB's mmCIF exchange dictionary and the core CIF dictionary used for 
+small molecules will be important reference documents for the SBEVSL dictionary, as will the imgCIF 
+dictionary used, among other purposes, to specify the pixel-by-pixel layout of images.  
+<P>
+For a computer scientist, object-oriented programming is a very natural way to create and use software 
+managing graphic "objects".  For a structural biologist working with a molecular graphics program, an 
+atom or a residue or a sheet strand is just a static object.  For such a user, the object has various 
+attributes, such as coordinates, color, and mode of display (CPK, ball and stick, Lee-Richards surface, 
+etc.).  The user wants to be able to examine and change the attributes of the object, but he would be 
+rather upset and confused if the object had a mind of its own, if it were to take actions.  The computer 
+scientist, on the other hand, most definitely does want an object to have a mind of its own, to take 
+actions.  Indeed, for a computer scientist, the essence of object-oriented programming is to be able to 
+associate behaviors with objects, and, if s/he is a purist, s/he will not allow the user to change any of 
+the attributes of an object directly, but will insist that the user politely send the object a message and 
+ask it to use its behaviors (its "actions" or "methods") to change its attributes all by itself.  Bridging this 
+divergence of views is the most challenging problem that the SBEVSL project must address.  In order 
+to allow full extensibility of the scripting language as structural biologists explore new ways in which to 
+visualize and understand biological molecules, it must fully support object-oriented programming with 
+full message passing and complex hierarchical relationships among classes of objects.  In order to be 
+useful and acceptable to most structural biologists, it must allow them to work with the scripting 
+language without being aware of the complexities of objects.
+
+<P>
+
+The current scripting language in RasMol is very flat and procedural.  Most of the major objects a user 
+will need to manipulate are implicitly predefined and users are free to change their attributes directly.  
+For example, a user might write a script saying:
+
+<P>
+<pre>
+load pdb xxx.pdb
+spacefill
+color cpk
+select nitrogen
+color [60,60,255]
+select oxygen
+color [255,60,60]
+</pre>
+<P>
+
+in which a coordinate file in PDB format is loaded, rendered as a spacefilling CPK model, with the 
+colors of the nitrogen atoms adjusted from the usual sky blue (which is represented in RGB format as 
+[58,144,255]) to a somewhat stronger blue ([60,60,255]), and oxygen from bright red ([255,0,0]) to a 
+somewhat pastel red ([255,60,60]).  The closest RasMol comes to defining objects is by allowing the 
+user to give a name to some collection of objects with a "define" command.
+<P>
+The full list of tokens used in the RasMol scripting language are given as two tables in <a 
+href="dictionary_development/Words_RasMol_2_7_3_1.html">Words_RasMol_2_7_3_1.html</a>. 
+(You may download the lists as two tab-separated lists in <a
+href="dictionary_development/Words_RasMol_2_7_3_1.txt">Words_RasMol_2_7_3_1.txt</a>)  
+The first list is sorted in alpabetical order of the words used.  The second list if sorted
+in alphabetical order of the RasMol token names used.
+
+<P>
+
+<hr />
+Updated 14 October 2006, H. J. Bernstein
+</body>
+</html> 
