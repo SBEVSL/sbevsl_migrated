@@ -1,0 +1,112 @@
+<html>
+<head>
+<title>SBEVSL: Structural Biology Extensible Visualization Scripting Language
+</title>
+</head>
+<body>
+<font face="Arial,Helvetica,Times" size="3">
+<center>
+| <a href="http://blondie.dowling.edu/projects/sbevsl">SBEVSL Project Development Site</a>
+| <br />
+<h1 align="center">SBEVSL</h1>
+<h2 align="center">Structural Biology Extensible Visualization Scripting Language</h2>
+<P>
+Herbert J. Bernstein<br />
+<font size="-1">
+Dept. of Mathematics and Computer Science, Dowling College, Oakdale, NY 11769 USA<br /> 
+(yaya at dowling dot edu)
+</font>
+<P>
+Paul A. Craig<br />
+<font size="-1">
+Dept. of Chemistry, Rochester Institute of Technology, Rochester, NY 14623 USA<br />
+(pac8612 at rit dot edu)
+<P>
+Work supported in part by grant 1R15GM078077-01 from the National Institute of General
+Medical Sciences
+<P>
+Copyright &#169; 2006 Herbert J. Bernstein and Paul A. Craig, All Rights Reserved
+</font>
+</center>
+<hr>
+<center
+<b>YOU MAY REDISTRIBUTE THE SBEVSL PACKAGE UNDER THE TERMS OF THE <a href=gpl.txt>GPL</a>.
+<P>
+ ALTERNATIVELY YOU MAY REDISTRIBUTE THE SBEVSL API UNDER THE TERMS
+ OF THE <a href=lgpl.txt>LGPL<a/>.</b>
+</CENTER>
+<HR>
+<H3 ALIGN=CENTER>
+Before using this software, please read the <BR>
+<A HREF = "NOTICES.html"> <IMG SRC="images/noticeButton.jpg"
+ALT="NOTICE"></A><BR>
+for important disclaimers and the IUCr Policy
+ on the Use of the Crystallographic Information File (CIF) and other important
+information.
+</H3> 
+<P>
+<HR>
+<P>
+
+<b>RESEARCH PLAN:</b>  There are many excellent visualization packages in structural biology.  Unfortunately, no single 
+package meets the needs of the entire community and even an individual researcher may have to use 
+several different packages in the course of an experiment.  One package may be used during structure 
+solution to work with electron density maps and models, another package to interactively review 
+configurations to achieve an understanding of the interaction of structure and function and to select 
+views that will help to illustrate those points to others.  Yet other packages may be used for high quality 
+publication renderings, movies and instructional tutorials.  Despite many decades of effort at integrating 
+software for structural biology into comprehensive suites, the transition from program to program can 
+still be clumsy and time-consuming. This unnecessary loss of time is compounded when one structural 
+biologist communicates their findings or ideas to another structural biologist who uses different 
+visualization and modeling software tools.
+
+<P>
+
+The goal of the SBEVSL project is to combine the full power that is currently available in molecular 
+visualization with a level of ease of use that has not previously been achieved.  We will make tools 
+available to the broadest possible audience in such a way that users familiar with one program can 
+transport their scripts to another program without having to learn the subtleties of the command 
+language for the new program.
+<br />
+<a href="ResearchPlan_20Sep05.html">more...</a>
+<P>
+<b>DEVELOPMENT SITE:</b>  The SBEVSL development site is a gforge site at Dowling College.  At a later date 
+we will make a clone available on sourceforge.
+<br />
+<a href="http://blondie.dowling.edu/projects/sbevsl">more...</a>
+<P>
+<b>MEETINGS:</b>
+ On 9 Sep 2006, H. Bernstein, I. Awuah Asimah, G. Darakev, N. Darakev and J. Jemilawon from 
+ Dowling travelled to RIT to meet with P. Craig, B. Hanson and C. Westin to discuss work to be done 
+ in starting up the project. It was agreed to go ahead with the division of labor as proposed, with 
+ the RIT group starting by making a permissive plugin to accept scripts that might contain commands
+  unrecognizable for pymol, logging the missed commands and recovering to the next command. The RIT 
+  group would also provide a related capability to export either a log script or a current state 
+  script which would note the input script commands that were skipped. The initial pass would use 
+  any available object-oriented language, since going from such a language to UML is fairly easy. 
+  The initial task for the Dowling group is work on a new SBEVSL dictionary defining the terms used 
+  in molecular graphics building on the existing base of the mmCIF, imgCIF and symmetry CIf dictionaries.
+  <P>
+The target is for each group to provide something for evaluation to the other group within the next 2-3 months.
+<p>
+
+In terms of infrastructure, the RIT group was introduced to Dowling's gforge server and it was agreed 
+to set up a videoconfercing system. N. Darakev and P. Craig would work on the initial setup.
+<P>
+Both groups explained the work that they do and achieved a good working rapport. It is 
+clear that both sides bring different and complementary strengths to the project. The 
+project seems off to a good start. -- HJB
+<P>
+<center>
+<b><a href=images/RIT_Meeting_9Sep06_II.jpg><img src=images/RIT_Meeting_9Sep06_II_small.jpg></a><br />
+Meeting at RIT on 9 September 2006</b>
+</center>
+
+ 	 	 
+ 
+<P>
+<hr>
+Updated 10 Sep 2006, yaya at dowling dot edu
+
+</body>
+</html>
