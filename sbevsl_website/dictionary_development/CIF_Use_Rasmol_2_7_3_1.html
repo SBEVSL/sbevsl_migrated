@@ -1,0 +1,212 @@
+<html>
+<head>
+<title>
+Rasmol Use of core CIF and mmCIF Tokens
+</title>
+</head>
+<body>
+<h2 align="center">Rasmol Use of core CIF and mmCIF Tokens<br />
+H. J. Bernstein, 15 Oct 2006</h2>
+<P>
+This is a preliminary and iuncomplete draft of the use of core CIF and mmCIF
+token in RasMol 2.7.3.1 for input of data sets.
+<center>
+<table border=2>
+<tr><th>CIF tag</th><th>Child of which<br />RasMol Object</th><th width=100>RasMol<br />data structure</th><th>CIF tag priority</th><th align=left>xform RasMol to CIF</th>
+</tr><tr><td>_atom_site.auth_asym_id</td><td>Molecule->Chain</td><td>Chain.ident</td><td>2</td><td></td>
+</tr><tr><td>_atom_site.auth_seq_id</td><td>Molecule->Chain->Group</td><td>Group.seqnum,<br />Group.sseqnum</td><td>primary, 2</td><td></td>
+</tr><tr><td>_atom_site.b_iso_or_equiv</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.temp</td><td>primary</td><td>RAtom.temp/100.</td>
+</tr><tr><td>_atom_site.cartn_x</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.xorg,<br />RAtom.xtrl,<br />OrigCX</td><td>primary</td><td>RAtom.xorg/250.+RAtom.fxorg/250.+RAtom.xtrl/10000.+OrigCX/250.</td>
+</tr><tr><td>_atom_site.cartn_y</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.yorg,<br />RAtom.ytrl,<br />OrigCY</td><td>primary</td><td>RestoreY(RAtom.yorg/250.+RAtom.fyorg/250.+RAtom.ytrl/10000.+OrigCY/250.)</td>
+</tr><tr><td>_atom_site.cartn_z</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.zorg,<br />RAtom.ztrl,<br />OrigCZ</td><td>primary</td><td>-(RAtom.zorg/250.+RAtom.fzorg/250.+RAtom.ztrl/10000.+OrigCZ/250.)})[2]</td>
+</tr><tr><td>_atom_site.fract_x</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.xorg,<br />RAtom.xtrl,<br />OrigCX</td><td>primary</td><td>(Info.matf2o*<br />{RAtom.xorg/250.+RAtom.fxorg/250.+RAtom.xtrl/10000.+OrigCX/250.,<br />RestoreY(RAtom.yorg/250.+RAtom.fyorg/250.+RAtom.ytrl/10000.+OrigCY/250.),<br />-(RAtom.zorg/250.+RAtom.fzorg/250.+RAtom.ztrl/10000.+OrigCZ/250.)})[0]<br> + Info.vecf2o[0]</td>
+</tr><tr><td>_atom_site.fract_y</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.yorg,<br />RAtom.ytrl,<br />OrigCY</td><td>primary</td><td>(Info.matf2o*<br />{RAtom.xorg/250.+RAtom.fxorg/250.+RAtom.xtrl/10000.+OrigCX/250.,<br />RestoreY(RAtom.yorg/250.+RAtom.fyorg/250.+RAtom.ytrl/10000.+OrigCY/250.),<br />-(RAtom.zorg/250.+RAtom.fzorg/250.+RAtom.ztrl/10000.+OrigCZ/250.)})[1]<br> + Info.vecf2o[1]</td>
+</tr><tr><td>_atom_site.fract_z</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.zorg,<br />RAtom.ztrl,<br />OrigCZ</td><td>primary</td><td>(Info.matf2o*<br />{RAtom.xorg/250.+RAtom.fxorg/250.+RAtom.xtrl/10000.+OrigCX/250.,<br />RestoreY(RAtom.yorg/250.+RAtom.fyorg/250.+RAtom.ytrl/10000.+OrigCY/250.),<br />-(RAtom.zorg/250.+RAtom.fzorg/250.+RAtom.ztrl/10000.+OrigCZ/250.)})[2]<br> + Info.vecf2o[2]</td>
+</tr><tr><td>_atom_site.group_pdb</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.flag</td><td>primary</td><td>RAtom.flag?"HETATM":"ATOM"</td>
+</tr><tr><td>_atom_site.id</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.serno</td><td>primary</td><td></td>
+</tr><tr><td>_atom_site.label_alt_id</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.altl</td><td>primary</td><td></td>
+</tr><tr><td>_atom_site.label_asym_id</td><td>Molecule->Chain</td><td>Chain.ident</td><td>primary</td><td></td>
+</tr><tr><td>_atom_site.label_atom_id</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.refno</td><td>primary</td><td>ElemDesc[RAtom.refno]</td>
+</tr><tr><td>_atom_site.label_comp_id</td><td>Molecule->Chain->Group</td><td>Group.refno</td><td>primary</td><td>Residue[Group.refno]</td>
+</tr><tr><td>_atom_site.label_model_id</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.model</td><td>primary</td><td></td>
+</tr><tr><td>_atom_site.label_seq_id</td><td>Molecule->Chain->Group</td><td>Group.sseqnum</td><td>primary</td><td></td>
+</tr><tr><td>_atom_site.pdb2cif_label_model_id</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.model</td><td>2</td><td></td>
+</tr><tr><td>_atom_site.type_symbol</td><td>Molecule->Chain->Group->RAtom</td><td>Ratom.elemno,<br />RAtom.refno</td><td>primary</td><td>Element[Ratom.elemno].symbol</td>
+</tr><tr><td>_atom_site.u_iso_or_equiv</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.temp</td><td>3</td><td>RAtom.temp/(100.*8.*PI*PI)</td>
+</tr><tr><td>_atom_site_b_iso_or_equiv</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.temp</td><td>2</td><td>RAtom.temp/100.</td>
+</tr><tr><td>_atom_site_cartn_x</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.xorg,<br />RAtom.xtrl,<br />OrigCX</td><td>2</td><td>RAtom.xorg/250.+RAtom.fxorg/250.+RAtom.xtrl/10000.+OrigCX/250.</td>
+</tr><tr><td>_atom_site_cartn_y</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.yorg,<br />RAtom.ytrl,<br />OrigCY</td><td>2</td><td>RestoreY(RAtom.yorg/250.+RAtom.fyorg/250.+RAtom.ytrl/10000.+OrigCY/250.)</td>
+</tr><tr><td>_atom_site_cartn_z</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.zorg,<br />RAtom.ztrl,<br />OrigCZ</td><td>2</td><td>-(RAtom.zorg/250.+RAtom.fzorg/250.+RAtom.ztrl/10000.+OrigCZ/250.)})[2]</td>
+</tr><tr><td>_atom_site_disorder_group</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.altl</td><td>2</td><td></td>
+</tr><tr><td>_atom_site_fract_x</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.xorg,<br />RAtom.xtrl,<br />OrigCX</td><td>2</td><td>(Info.matf2o*<br />{RAtom.xorg/250.+RAtom.fxorg/250.+RAtom.xtrl/10000.+OrigCX/250.,<br />RestoreY(RAtom.yorg/250.+RAtom.fyorg/250.+RAtom.ytrl/10000.+OrigCY/250.),<br />-(RAtom.zorg/250.+RAtom.fzorg/250.+RAtom.ztrl/10000.+OrigCZ/250.)})[0]<br> + Info.vecf2o[0]</td>
+</tr><tr><td>_atom_site_fract_y</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.yorg,<br />RAtom.ytrl,<br />OrigCY</td><td>2</td><td>(Info.matf2o*<br />{RAtom.xorg/250.+RAtom.fxorg/250.+RAtom.xtrl/10000.+OrigCX/250.,<br />RestoreY(RAtom.yorg/250.+RAtom.fyorg/250.+RAtom.ytrl/10000.+OrigCY/250.),<br />-(RAtom.zorg/250.+RAtom.fzorg/250.+RAtom.ztrl/10000.+OrigCZ/250.)})[1]<br> + Info.vecf2o[1]</td>
+</tr><tr><td>_atom_site_fract_z</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.zorg,<br />RAtom.ztrl,<br />OrigCZ</td><td>2</td><td>(Info.matf2o*<br />{RAtom.xorg/250.+RAtom.fxorg/250.+RAtom.xtrl/10000.+OrigCX/250.,<br />RestoreY(RAtom.yorg/250.+RAtom.fyorg/250.+RAtom.ytrl/10000.+OrigCY/250.),<br />-(RAtom.zorg/250.+RAtom.fzorg/250.+RAtom.ztrl/10000.+OrigCZ/250.)})[2]<br> + Info.vecf2o[2]</td>
+</tr><tr><td>_atom_site_label</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.serno</td><td>2</td><td></td>
+</tr><tr><td>_atom_site_type_symbol</td><td>Molecule->Chain->Group->RAtom</td><td>Ratom.elemno, RAtom.refno</td><td>2</td><td>Element[Ratom.elemno].symbol</td>
+</tr><tr><td>_atom_site_u_iso_or_equiv</td><td>Molecule->Chain->Group->RAtom</td><td>RAtom.temp</td><td>4</td><td>RAtom.temp/(100.*8.*PI*PI)</td>
+</tr><tr><td>_atom_sites.cartn_transf_matrix[1][1]</td><td>Molecule -> Info</td><td>Info.mato2f[0][0]</td><td>primary</td><td></td>
+</tr><tr><td>_atom_sites.cartn_transf_matrix[1][2]</td><td>Molecule -> Info</td><td>Info.matf2o[0][1]</td><td>primary</td><td></td>
+</tr><tr><td>_atom_sites.cartn_transf_matrix[1][3]</td><td>Molecule -> Info</td><td>Info.matf2o[0][2]</td><td>primary</td><td></td>
+</tr><tr><td>_atom_sites.cartn_transf_matrix[2][1]</td><td>Molecule -> Info</td><td>Info.matf2o[1][0]</td><td>primary</td><td></td>
+</tr><tr><td>_atom_sites.cartn_transf_matrix[2][2]</td><td>Molecule -> Info</td><td>Info.matf2o[1][1]</td><td>primary</td><td></td>
+</tr><tr><td>_atom_sites.cartn_transf_matrix[2][3]</td><td>Molecule -> Info</td><td>Info.matf2o[1][2]</td><td>primary</td><td></td>
+</tr><tr><td>_atom_sites.cartn_transf_matrix[3][1]</td><td>Molecule -> Info</td><td>Info.matf2o[2][0]</td><td>primary</td><td></td>
+</tr><tr><td>_atom_sites.cartn_transf_matrix[3][2]</td><td>Molecule -> Info</td><td>Info.matf2o[2][1]</td><td>primary</td><td></td>
+</tr><tr><td>_atom_sites.cartn_transf_matrix[3][3]</td><td>Molecule -> Info</td><td>Info.matf2o[2][2]</td><td>primary</td><td></td>
+</tr><tr><td>_atom_sites.cartn_transf_vector[1]</td><td>Molecule -> Info</td><td>Info.vecf2o[0]</td><td>primary</td><td></td>
+</tr><tr><td>_atom_sites.cartn_transf_vector[2]</td><td>Molecule -> Info</td><td>Info.vecf2o[1]</td><td>primary</td><td></td>
+</tr><tr><td>_atom_sites.cartn_transf_vector[3]</td><td>Molecule -> Info</td><td>Info.vecf2o[2]</td><td>primary</td><td></td>
+</tr><tr><td>_atom_sites.fract_transf_matrix[1][1]</td><td>Molecule -> Info</td><td>Info.mato2f[0][0]</td><td>primary</td><td></td>
+</tr><tr><td>_atom_sites.fract_transf_matrix[1][2]</td><td>Molecule -> Info</td><td>Info.mato2f[0][1]</td><td>primary</td>
+</tr><tr><td>_atom_sites.fract_transf_matrix[1][3]</td><td>Molecule -> Info</td><td>Info.mato2f[0][2]</td><td>primary</td>
+</tr><tr><td>_atom_sites.fract_transf_matrix[2][1]</td><td>Molecule -> Info</td><td>Info.mato2f[1][0]</td><td>primary</td>
+</tr><tr><td>_atom_sites.fract_transf_matrix[2][2]</td><td>Molecule -> Info</td><td>Info.mato2f[1][1]</td><td>primary</td>
+</tr><tr><td>_atom_sites.fract_transf_matrix[2][3]</td><td>Molecule -> Info</td><td>Info.mato2f[1][2]</td><td>primary</td>
+</tr><tr><td>_atom_sites.fract_transf_matrix[3][1]</td><td>Molecule -> Info</td><td>Info.mato2f[2][0]</td><td>primary</td>
+</tr><tr><td>_atom_sites.fract_transf_matrix[3][2]</td><td>Molecule -> Info</td><td>Info.mato2f[2][1]</td><td>primary</td>
+</tr><tr><td>_atom_sites.fract_transf_matrix[3][3]</td><td>Molecule -> Info</td><td>Info.mato2f[2][2]</td><td>primary</td>
+</tr><tr><td>_atom_sites.fract_transf_vector[1]</td><td>Molecule -> Info</td><td>Info.veco2f[0]</td><td>primary</td>
+</tr><tr><td>_atom_sites.fract_transf_vector[2]</td><td>Molecule -> Info</td><td>Info.veco2f[1]</td><td>primary</td>
+</tr><tr><td>_atom_sites.fract_transf_vector[3]</td><td>Molecule -> Info</td><td>Info.veco2f[2]</td><td>primary</td>
+</tr><tr><td>_atom_sites_cartn_tran_matrix_11</td><td>Molecule -> Info</td><td>Info.matf2o[0][0]</td><td>2</td>
+</tr><tr><td>_atom_sites_cartn_tran_matrix_12</td><td>Molecule -> Info</td><td>Info.matf2o[0][1]</td><td>2</td>
+</tr><tr><td>_atom_sites_cartn_tran_matrix_13</td><td>Molecule -> Info</td><td>Info.matf2o[0][2]</td><td>2</td>
+</tr><tr><td>_atom_sites_cartn_tran_matrix_21</td><td>Molecule -> Info</td><td>Info.matf2o[1][0]</td><td>2</td>
+</tr><tr><td>_atom_sites_cartn_tran_matrix_22</td><td>Molecule -> Info</td><td>Info.matf2o[1][1]</td><td>2</td>
+</tr><tr><td>_atom_sites_cartn_tran_matrix_23</td><td>Molecule -> Info</td><td>Info.matf2o[1][2]</td><td>2</td>
+</tr><tr><td>_atom_sites_cartn_tran_matrix_31</td><td>Molecule -> Info</td><td>Info.matf2o[2][0]</td><td>2</td>
+</tr><tr><td>_atom_sites_cartn_tran_matrix_32</td><td>Molecule -> Info</td><td>Info.matf2o[2][1]</td><td>2</td>
+</tr><tr><td>_atom_sites_cartn_tran_matrix_33</td><td>Molecule -> Info</td><td>Info.matf2o[2][2]</td><td>2</td>
+</tr><tr><td>_atom_sites_cartn_tran_vector[1]</td><td>Molecule -> Info</td><td>Info.vecf2o[0]</td><td>2</td>
+</tr><tr><td>_atom_sites_cartn_tran_vector[2]</td><td>Molecule -> Info</td><td>Info.vecf2o[1]</td><td>2</td>
+</tr><tr><td>_atom_sites_cartn_tran_vector[3]</td><td>Molecule -> Info</td><td>Info.vecf2o[2]</td><td>2</td>
+</tr><tr><td>_atom_sites_fract_tran_matrix_11</td><td>Molecule -> Info</td><td>Info.mato2f[0][0]</td><td>2</td>
+</tr><tr><td>_atom_sites_fract_tran_matrix_12</td><td>Molecule -> Info</td><td>Info.mato2f[0][1]</td><td>2</td>
+</tr><tr><td>_atom_sites_fract_tran_matrix_13</td><td>Molecule -> Info</td><td>Info.mato2f[0][2]</td><td>2</td>
+</tr><tr><td>_atom_sites_fract_tran_matrix_21</td><td>Molecule -> Info</td><td>Info.mato2f[1][0]</td><td>2</td>
+</tr><tr><td>_atom_sites_fract_tran_matrix_22</td><td>Molecule -> Info</td><td>Info.mato2f[1][1]</td><td>2</td>
+</tr><tr><td>_atom_sites_fract_tran_matrix_23</td><td>Molecule -> Info</td><td>Info.mato2f[1][2]</td><td>2</td>
+</tr><tr><td>_atom_sites_fract_tran_matrix_31</td><td>Molecule -> Info</td><td>Info.mato2f[2][0]</td><td>2</td>
+</tr><tr><td>_atom_sites_fract_tran_matrix_32</td><td>Molecule -> Info</td><td>Info.mato2f[2][1]</td><td>2</td>
+</tr><tr><td>_atom_sites_fract_tran_matrix_33</td><td>Molecule -> Info</td><td>Info.mato2f[2][2]</td><td>2</td>
+</tr><tr><td>_atom_sites_fract_tran_vector[1]</td><td>Molecule -> Info</td><td>Info.veco2f[0]</td><td>2</td>
+</tr><tr><td>_atom_sites_fract_tran_vector[2]</td><td>Molecule -> Info</td><td>Info.veco2f[1]</td><td>2</td>
+</tr><tr><td>_atom_sites_fract_tran_vector[3]</td><td>Molecule -> Info</td><td>Info.veco2f[2]</td><td>2</td>
+</tr><tr><td>_audit_block_code</td><td>Molecule -> Info</td><td>Info.identcode</td><td>4</td>
+</tr><tr><td>_cell.length_a</td><td>Molecule -> Info</td><td>Info.cell[0] </td><td>primary</td>
+</tr><tr><td>_cell.length_alpha</td><td>Molecule -> Info</td><td>Info.cell[3] </td><td>primary</td>
+</tr><tr><td>_cell.length_b</td><td>Molecule -> Info</td><td>Info.cell[1] </td><td>primary</td>
+</tr><tr><td>_cell.length_beta</td><td>Molecule -> Info</td><td>Info.cell[4] </td><td>primary</td>
+</tr><tr><td>_cell.length_c</td><td>Molecule -> Info</td><td>Info.cell[2] </td><td>primary</td>
+</tr><tr><td>_cell.length_gamma</td><td>Molecule -> Info</td><td>Info.cell[5] </td><td>primary</td>
+</tr><tr><td>_cell_length_a</td><td>Molecule -> Info</td><td>Info.cell[0] </td><td>2</td>
+</tr><tr><td>_cell_length_alpha</td><td>Molecule -> Info</td><td>Info.cell[3] </td><td>2</td>
+</tr><tr><td>_cell_length_b</td><td>Molecule -> Info</td><td>Info.cell[1] </td><td>2</td>
+</tr><tr><td>_cell_length_beta</td><td>Molecule -> Info</td><td>Info.cell[4] </td><td>2</td>
+</tr><tr><td>_cell_length_c</td><td>Molecule -> Info</td><td>Info.cell[2] </td><td>2</td>
+</tr><tr><td>_cell_length_gamma</td><td>Molecule -> Info</td><td>Info.cell[5] </td><td>2</td>
+</tr><tr><td>_chemical_name_common</td><td>Molecule -> Info</td><td>Info.moleculename</td><td>2</td>
+</tr><tr><td>_chemical_name_mineral</td><td>Molecule -> Info</td><td>Info.moleculename</td><td>4</td>
+</tr><tr><td>_chemical_name_systematic</td><td>Molecule -> Info</td><td>Info.moleculename</td><td>3</td>
+</tr><tr><td>_database_2.database_code</td><td>Molecule -> Info</td><td>Info.identcode</td><td>primary</td>
+</tr><tr><td>_diffrn_radiation.probe</td><td>Molecule -> Info</td><td>Info.technique</td><td>2</td>
+</tr><tr><td>_diffrn_radiation_probe</td><td>Molecule -> Info</td><td>Info.technique</td><td>3</td>
+</tr><tr><td>_entry.id</td><td>Molecule -> Info</td><td>Info.identcode</td><td>2</td>
+</tr><tr><td>_exptl.method</td><td>Molecule -> Info</td><td>Info.technique</td><td>primary</td>
+</tr><tr><td>_geom_bond.atom_site_auth_asym_id_1</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td><td></td>
+</tr><tr><td>_geom_bond.atom_site_auth_asym_id_2</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td><td></td>
+</tr><tr><td>_geom_bond.atom_site_auth_atom_id_1</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td><td></td>
+</tr><tr><td>_geom_bond.atom_site_auth_atom_id_2</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td><td></td>
+</tr><tr><td>_geom_bond.atom_site_auth_comp_id_1</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td><td></td>
+</tr><tr><td>_geom_bond.atom_site_auth_comp_id_2</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td><td></td>
+</tr><tr><td>_geom_bond.atom_site_auth_seq_id_1</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td><td></td>
+</tr><tr><td>_geom_bond.atom_site_auth_seq_id_2</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td><td></td>
+</tr><tr><td>_geom_bond.atom_site_id_1</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_geom_bond.atom_site_id_2</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_geom_bond.atom_site_label_alt_id_1</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_geom_bond.atom_site_label_alt_id_2</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_geom_bond.atom_site_label_asym_id_1</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_geom_bond.atom_site_label_asym_id_2</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_geom_bond.atom_site_label_atom_id_1</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_geom_bond.atom_site_label_atom_id_2</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_geom_bond.atom_site_label_comp_id_1</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_geom_bond.atom_site_label_comp_id_2</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_geom_bond.atom_site_label_seq_id_1</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_geom_bond.atom_site_label_seq_id_2</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_geom_bond.dist</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_geom_bond.dist_esd</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_geom_bond.site_symmetry_1</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_geom_bond.site_symmetry_2</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_geom_bond_atom_site_label_1</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td><td></td>
+</tr><tr><td>_geom_bond_atom_site_label_2</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td><td></td>
+</tr><tr><td>_geom_bond_distance</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td><td></td>
+</tr><tr><td>_geom_bond_site_symmetry_1</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td><td></td>
+</tr><tr><td>_geom_bond_site_symmetry_2</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td><td></td>
+</tr><tr><td>_struct.title</td><td>Molecule -> Info</td><td>Info.moleculename</td><td>primary</td>
+</tr><tr><td>_struct_biol.details</td><td>Molecule -> Info</td><td>Info.classification</td><td>primary</td>
+</tr><tr><td>_struct_biol.id</td><td>Molecule -> Info</td><td>Info.identcode</td><td>3</td>
+</tr><tr><td>_struct_conf.beg_auth_asym_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td><td></td>
+</tr><tr><td>_struct_conf.beg_auth_comp_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td><td></td>
+</tr><tr><td>_struct_conf.beg_auth_seq_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td><td></td>
+</tr><tr><td>_struct_conf.beg_label_asym_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td><td></td>
+</tr><tr><td>_struct_conf.beg_label_comp_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td><td></td>
+</tr><tr><td>_struct_conf.beg_label_seq_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td><td></td>
+</tr><tr><td>_struct_conf.conf_type_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td><td></td>
+</tr><tr><td>_struct_conf.end_auth_asym_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td><td></td>
+</tr><tr><td>_struct_conf.end_auth_comp_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td>
+</tr><tr><td>_struct_conf.end_auth_seq_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td>
+</tr><tr><td>_struct_conf.end_label_asym_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td>
+</tr><tr><td>_struct_conf.end_label_comp_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td>
+</tr><tr><td>_struct_conf.end_label_seq_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td>
+</tr><tr><td>_struct_conf.id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td>
+</tr><tr><td>_struct_conn.conn_type_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.pdb2cif_ptnr1_atom_site_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.pdb2cif_ptnr1_label_model_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.pdb2cif_ptnr2_atom_site_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.pdb2cif_ptnr2_label_model_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr1_atom_site_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr1_auth_alt_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr1_auth_asym_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr1_auth_atom_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr1_auth_comp_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr1_auth_seq_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr1_label_alt_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr1_label_asym_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr1_label_atom_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr1_label_comp_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr1_label_model_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr1_label_seq_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr1_symmetry</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr2_atom_site_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr2_auth_alt_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr2_auth_asym_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr2_auth_atom_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr2_auth_comp_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr2_auth_seq_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr2_label_alt_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr2_label_asym_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr2_label_atom_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr2_label_comp_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr2_label_model_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr2_label_seq_id</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_conn.ptnr2_symmetry</td><td>Molecule->blist,<br />Molecule->hlist,<br />Molecule.slist</td><td>various in Bond or HBond</td>
+</tr><tr><td>_struct_sheet_range.beg_auth_asym_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td>
+</tr><tr><td>_struct_sheet_range.beg_auth_comp_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td>
+</tr><tr><td>_struct_sheet_range.beg_auth_seq_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td>
+</tr><tr><td>_struct_sheet_range.beg_label_asym_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td>
+</tr><tr><td>_struct_sheet_range.beg_label_comp_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td>
+</tr><tr><td>_struct_sheet_range.beg_label_seq_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td>
+</tr><tr><td>_struct_sheet_range.end_auth_asym_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td>
+</tr><tr><td>_struct_sheet_range.end_auth_comp_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td>
+</tr><tr><td>_struct_sheet_range.end_auth_seq_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td>
+</tr><tr><td>_struct_sheet_range.end_label_asym_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td>
+</tr><tr><td>_struct_sheet_range.end_label_comp_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td>
+</tr><tr><td>_struct_sheet_range.end_label_seq_id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td><td></td>
+</tr><tr><td>_struct_sheet_range.id</td><td>Molecule->Chain->Group</td><td>Chain.struct</td><td></td>
+</tr><tr><td>_symmetry.space_group_name_H-M</td><td>Molecule -> Info</td><td>Info.spacegroup</td><td>primary</td>
+</tr><tr><td>_symmetry_space_group_name_H-M</td><td>Molecule -> Info</td><td>Info.spacegroup</td><td>2</td>
+</tr>
+</table>
+</center>
+</body>
+</html>
