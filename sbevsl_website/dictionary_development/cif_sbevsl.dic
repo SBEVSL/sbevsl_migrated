@@ -1,0 +1,1283 @@
+##############################################################################
+#                                                                            #
+#                                SBEVSL                                      #
+#         Structural Biology Extensible Visualization Scripting Language     #
+#                             CIF Dictionary                                 #
+#                                                                            #
+#            Extending the Macromolecular CIF Dictionary (mmCIF)             #
+#                                  and                                       #
+#                        Image CIF Dictionary (imgCIF)                       #
+#                                                                            #
+#                              Version 0.0.1                                 #
+#                              of 2006-11-10                                 #
+#                                                                            #
+#               by Herbert J. Bernstein and and Paul A. Craig                #
+#                                                                            #
+#       Work funded in part by the NIGMS under grant 1R15GM078077-01         #
+#                                                                            #
+##############################################################################
+
+data_cif_sbevsl.dic
+
+    _dictionary.title           cif_sbevsl.dic
+    _dictionary.version         0.0.1
+    _dictionary.datablock_id    cif_sbevsl.dic
+
+##############################################################################
+#    CONTENTS
+#
+#        CATEGORY_GROUP_LIST
+#
+#
+#        ITEM_TYPE_LIST
+#        ITEM_UNITS_LIST
+#        DICTIONARY_HISTORY
+#
+##############################################################################
+
+##############################################################################
+#    IMPORTANT NOTES:
+#
+#    This dictionary is a work in progress.  We will be building a
+#    a full scripting language for molecular graphics on top of
+#    the existing mmCIF, imgCIF and symmetry dictionaries, while
+#    adding features to support object-oriented programming.
+#
+#    We need to do that last step cautiously.  We wish to maintain
+#    compatibility with UML, but also not to damage the solid
+#    relational database support inherent in CIF.  We also need
+#    to keep an eye on the development of starDDL which is adding
+#    methods support to CIF.
+#
+#    The two issues that are essential to this work, but for which
+#    we will have to experiment with representations are the
+#    handling of methods and the handling of inheritance.
+#
+#    We will adopt the view that each category is a class definition
+#    and that each row is an object of that catgory.  Thus a category
+#    will also be used as an object type.  A method will be a tag
+#    within a category, distinguished from other tags by the
+#    new DDL tage _item_type.function with the values 'variable'
+#    and 'method' (default 'variable').  The valid types for
+#    _item_type.code will now include all the categories as well
+#    as the various 'primitive' types.  The extension applies
+#    both to variables and to methods, but further thought needs
+#    to be given to the implicartions for normalization and the
+#    handling of recursion.
+#
+#    The formal arguments for a method will be defined by
+#    the new DDL category ITEM_PARAMETER.  In addition to
+#    use for methods, this will also be used to identify
+#    key values for selection of an object in the super clas
+#    for inheritance (see below) The tags in ITEM_PARAMETER
+#    would be
+#        _item_parameter.item_name         the name of the method or variable
+#        _item_parameter.parameter_type    the type of the formal argument
+#        _item_parameter.parameter_name    the name of the formal argument
+#        _item_parameter.parameter_ordinal the position of the formal
+#                                            argument in a call
+#
+#     Every parameter must be given a name, but it need not be given an
+#     ordinal.  Every parameter may be referred to by name or by ordinal
+#     the reference by name is of the usual CIF form name value.
+#
+#     The code of the method will be given in a text field that will
+#     be parsed according to an approximation to the java or python
+#     rules.  The exact syntax is to be discussed and experimented with.
+#
+#     Within a method, an argument may be referred to either by its
+#     name or by its ordinal (counting from 0) in an array with the
+#     name 'params', e.g. 'params[3]'.  If an argument is a category
+#     the tags within may be referenced with the usual dotted notation
+#     (not the C-style ->, but the java style .).  We'll flesh
+#     this out more as we use it.
+#
+#     Inheritance is a tricky issue.  We will start with simple, java
+#     style single inheritance.  With the defintiion of a category
+#     the new DDL category CATEGORY_EXTENDS with be user to specify
+#     a super-category by use of the tags
+#
+#         _category_extends.category_id     the name of the subcategory
+#         _category_extends.super_category_id
+#                                           the name of the category
+#                                           being extended
+#         _category_extends.parent_object_reference
+#                                           a reference within the
+#                                           sub category to an object
+#                                           of the super category from which
+#                                           the values for inherited tags
+#                                           should be drawn
+#     The tag identified by _category_extends.parent_object_reference
+#     will need a value unambiguously identifying the object of
+#     the super category.  If the super category has only one key column
+#     the value given should be the value for the key.  If the super
+#     category has a composite key (multiple key columns), the value
+#     should be a list of tag value pairs as a quoted string that
+#     unambiguously identify a particular row.
+#                                           
+#                                           
+#     The sub-category may then use all the tags defined for the
+#     super-category as part of the sub-category.  In the case where
+#     a tag is defined in both, the sub category will only see the
+#     sub-category defintion, as in java.  The existing parent-child
+#     relationships in DDL2 do not conform to this simple single 
+#     inheritance, and will still be used.
+#
+##############################################################################
+
+
+##############################################################################
+#
+#    The SBEVSL dictionary provides definitions to support visualization
+#    in structural biology
+#
+#    The model used for visualization consists of views of images of scenes
+#
+#    A scene is a composition of objects derived from transformed molecular
+#    components such as atoms, groups (residues) and chains, from
+#    map components, from labels and annotation, from scene-based light
+#    sources, etc.  
+#
+#    The original molecular components may have been presented in any appropriate
+#    coordinate frame.  To produce a scene object the molecular
+#    component is taken through the following possible transformations
+#    in the following order when appropriate
+#
+#       fractional-to-orthogonal coordinate transformations
+#               _atom_sites.Cartn_transf_matrix[1][1] ...
+#       orthogonal-to-orthogonal non-crystallographic symmetry transoformations
+#       orthogonal-to-orthogonal crystallographic symmetry transformations
+#       orthogonal-to-orthoganal axis-based repositionings (e.g. bond
+#         rotations)
+#       orthogonal-to-scene coordinate transformations.
+#       scene-to-scene transformations
+#       
+#
+#     The resulting scene is described in 3 dimensions, using a right-handed
+#     virtual laboratory coordinate system using units appropriate to
+#     subsequent viewing transformations.
+#
+#
+#     Composition operations for multiple scen objects are performed
+#     partially before transofrmation to a view (as in buried onject
+#     determination) and partially after transofrmation to a view
+#     (as in hidden line removal) 
+#    
+#
+#              
+#
+##############################################################################
+
+
+#########################
+## CATEGORY_GROUP_LIST ##
+#########################
+
+     loop_
+    _category_group_list.id
+    _category_group_list.parent_id
+    _category_group_list.description
+             'inclusive_group'   .
+;             Categories that belong to the dictionary extension.
+;
+
+
+
+##############
+## ATOM_OBJ ##
+##############
+
+save_atom_obj
+   _category.description
+;              Data items in the ATOM_OBJ category provide information
+               about the those scene objects derived from records in the
+               ATOM_SITE category
+;
+    _category.mandatory_code      no
+    _category_key.name          '_atom_obj.id'
+    loop_
+    _category_group.id           'inclusive_group'
+                                 'scene_obj_group'
+    loop_
+    _category_examples.detail
+    _category_examples.case
+
+save__atom_obj.atom_site_id
+    _item_description.description
+;              This data item is a pointer to _atom_site.id in the ATOM_SITE
+               category.
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_atom_obj.atom_site_id'    atom_obj        yes
+    _item_type.code              code
+
+    save_
+
+
+
+save__atom_obj.id
+    _item_description.description
+;              The value of _atom_obj.id must uniquely identify a record in the
+               ATOM_OBJ list.
+
+               Note that this item need not be a number; it can be any unique
+               identifier.
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_atom_obj.id'    atom_obj        yes
+    _item_type.code              code
+
+    save_
+    
+save__atom_obj.site_symmetry
+    _item_description.description
+;              The symmetry code of the crystallographic symmetry
+               operation, if any, applied to the atom site given
+               by _atom_obj.atom_site_id in generating this atom object.
+               
+               This operation is applied after both transformation to
+               othogonal coordinates and after application of
+               non-crystallographic symmetry.
+;
+    _item.name                  '_atom_obj.site_symmetry'
+    _item.category_id             _atom_obj
+    _item.mandatory_code          implicit
+    _item_default.value           1_555
+    _item_type.code               symop
+    loop_
+    _item_examples.case
+    _item_examples.detail         .      'no symmetry or translation to site'
+                                  4      '4th symmetry operation applied'
+                                  7_645  '7th symm. posn.; +a on x; -b on y'
+     save_
+
+
+save__atom_obj.site_ncs_oper_id
+    _item_description.description
+;              The operator id of the non-crystallographic symmetry
+               operation, if any, applied to the atom site given
+               by _atom_obj.atom_site_id in generating this atom object.
+               
+               This operation is applied after trsansformation to
+               othogonal coordinates and before applying
+               crystallographic symmetry.
+               
+               This item is a pointer to _struct_ncs_oper.id
+;
+    _item.name                  '_atom_obj.site_ncs_oper_id'
+    _item.category_id             _atom_obj
+    _item.mandatory_code          no
+    loop_
+    _item_linked.child_name
+    _item_linked.parent_name
+               '_atom_obj.site_ncs_oper_id'    '_struct_ncs_oper.id'
+    _item_type.code               code
+    loop_
+    _item_examples.case
+    _item_examples.detail         .      'no ncs operator applied'
+                                  ncsop1 'ncs operator ncsop1 applied'
+     save_
+
+save__atom_obj.site_object_xform_oper_id
+    _item_description.description
+;              The operator id of the object transform operation,
+               if any, applied to the atom site given
+               by _atom_obj.atom_site_id in generating this atom object.
+               
+               
+               
+               This item is a pointer to _scene_xform_oper.id
+;
+    _item.name                  '_atom_obj.site_object_xform_oper_id'
+    _item.category_id             _atom_obj
+    _item.mandatory_code          no
+    loop_
+    _item_linked.child_name
+    _item_linked.parent_name
+               '_atom_obj.site_object_xform_oper_id'    '_scene_xform_oper.id'
+    _item_type.code               code
+    loop_
+    _item_examples.case
+    _item_examples.detail         .      'no scene transform operator applied'
+                                  sxop1  'scene transform operator sxop1 applied'
+     save_
+
+    save_
+
+save__atom_obj.site_object_scene_oper_id
+    _item_description.description
+;              The operator id of the scene transform operation,
+               if any, applied to the atom site given
+               by _atom_obj.atom_site_id in generating this atom object.
+               
+               This item is a pointer to _scene_xform_oper.id
+;
+    _item.name                  '_atom_obj.site_object_xform_oper_id'
+    _item.category_id             _atom_obj
+    _item.mandatory_code          no
+    loop_
+    _item_linked.child_name
+    _item_linked.parent_name
+               '_atom_obj.site_object_xform_oper_id'    '_scene_xform_oper.id'
+    _item_type.code               code
+    loop_
+    _item_examples.case
+    _item_examples.detail         .      'no scene transform operator applied'
+                                  sxop2  'scene transform operator sxop1 applied'
+     save_
+
+    save_
+
+
+     
+#########################
+## ATOM_OBJ_ATTRIBUTES ##
+#########################
+
+save_atom_obj_attributes
+    _category.description
+;              Data items in the ATOM_OBJ_ATTRIBUTES category extend
+               the information in the ATOM_OBJ category with additional
+               information giving details about the attributes of a 
+               given atom site.  All the values associated with tags 
+               of the atom site are also attributes of the atom object.
+               
+               One atom object can have many attributes.
+
+;
+    _category.id                  chem_comp_properties
+    _category.mandatory_code      no
+    loop_
+    _category_key.name          '_atom_site_attributes.atom_side'
+                                '_atom_site_attributes.attribute'
+    loop_
+    _category_group.id           'inclusive_group'
+                                 'atom_group'
+    loop_
+    _category_extends.category_id
+    _category_extends.super_category_id
+    _category_extends.parent_object_reference
+                                 'atom_obj_attributes'
+                                 'atom_obj'
+                                 '_atom_obj_attributes.atom_obj'
+    save_
+    
+save__atom_obj_attributes.atom_obj
+    _item_description.description
+;              The tag to hold a reference to the paticular row
+               in the atom_obj category
+;
+    _item.name                  '_atom_obj_attributes.atom_site'
+    _item.category_id             atom_obj_attributes
+    _item.mandatory_code          yes
+    _item_type.code               atom_obj
+    _item_parameter.item_name     '_atom_obj_attributes.atom_site'
+    _item_parameter.parameter_type    code
+    _item_parameter.parameter_name    _atom_obj.id
+    _item_parameter.parameter_ordinal 0
+
+    save_
+
+save__atom_obj_attributes.attribute
+    _item_description.description
+;              An attribute of a particular atom object, such as 
+               being selected, an atom in a member of a disulfide bridge,
+               or in a polar residue, or bonded to other atoms.  
+               
+               All the specific parameters of the atom object are also
+               attributes
+             
+               The initial enumeration of attributes is from
+               the RasMol 2.7.3 manual
+               
+;
+    _item.name                  '_atom_obj_attributes.attribute'
+    _item.category_id             atom_obj_attributes
+    _item.mandatory_code          yes
+    _item_type.code               uline
+    loop_
+      _item_enumeration.value
+      _item_enumeration.detail
+      
+      'at' 
+;               The atom at this atom site is a member of one of the
+                complementary nucleotides adenosine and thymidine (A and T, 
+                respectively)
+;
+
+      'acidic'
+
+;               The atom at this atom site is a member of one of the
+                acidic amino acids, i.e. asp and glu, as contrasted with the
+                'neutral' and 'basic' amino acids
+;
+      'acyclic'
+
+;               The atom at this atom site is a member of one of the
+                acyclic amino acids, i.e. amino acids that do not contain
+                a cycle or ring
+;
+
+      'aliphatic'
+
+;               The atom at this atom site is a member of one of the
+                aliphatic amino acids, i.e. ala, gly, ile, leu and val. 
+;
+
+      'alpha'
+
+;               The atom at this atom site is an alpha carbon in a
+                protein molecule.
+;
+      'amino'
+
+;               The atom at this atom site is a member of one of the
+                amino acids, as opposed to components that are not amino acids, 
+                e.g. nucleic acids and heterogeneous (nonstandard) groups.
+;
+
+      'aromatic'
+
+;               The atom at this atom site is a member of one of the
+                amino acids containing aromatic rings, i.e. his, phe, trp and 
+                tyr. Because they contain aromatic rings all members of this 
+                set also have the property 'cyclic'. 
+;
+
+      'backbone'
+
+;               The atom at this atom site is a member of an amino acid
+                and is one of the four atoms of each amino acid that form 
+                the polypeptide N-C-C-O backbone of proteins,  or the
+                atom at this atom site is a member of a the sugar phosphate 
+                backbone of a nucleic acids.  Atoms in amino acids and
+                nucleic acids are either 'sidechain'. 
+;
+            
+      'basic'
+
+;               The atom at this atom site is a member of one of the
+                basic amino acids, i.e. arg, his and lys, as contrasted with
+                the 'acidic' and 'neutral' amino acids. 
+;
+
+      'bonded'
+      
+;               The atom at this atom site is bonded to at least one
+                other atom.
+;
+
+      'buried' 
+      
+;               The atom at this atom site is a member of one of the
+                amino acids that tend (prefer) to be buried inside protein, 
+                away from contact with solvent molecules. This property refers         
+                to the intrinsic properties of the amino acids not to
+                the actual solvent accessibility for the current protein.
+;
+
+       'cg' 
+
+;               The atom at this atom site is a member of one of the
+                complementary nucleotides cytidine and guanosine (C and G, 
+                respectively)
+;
+
+       'charged'
+        
+;               The atom at this atom site is a member of one of the
+                charged amino acids, i.e. 'acidic' or 'basic'.
+;
+
+       'cyclic'
+
+;               The atom at this atom site is one of the the heterogeneous 
+                amino acids containing a cycle or rings.
+;
+ 
+       'cystine'
+
+;               The atom at this atom site is a member of one of the
+                cysteine residues that form part of a disulphide bridge,
+                i.e. half cystines.   This is not the same as 'cys', which
+                includes cycteines that are not part of a disulphide bridge.
+;
+
+        'helix'
+         
+;               The atom at this atom site is part of a protein alpha 
+                helix.
+;
+
+
+        'hetero'
+
+;               The atom at this atom site is one of the heterogeneous 
+                atoms in the molecule. 
+;
+
+        'hydrogen'
+
+
+;               The atom at this atom site is one of the hydrogen, 
+                deuterium and tritium atoms of the current molecule. 
+;
+
+       'hydrophobic'
+
+;               The atom at this atom site is one of the heterogeneous 
+                the hydrophobic amino acids. These are the amino acids 
+                Ala, Leu, Val, Ile, Pro, Phe, Met and Trp. All amino 
+                acids are classified as either 'hydrophobic' or 'polar'. 
+                This set is equivalent to the RasMol atom expressions "ala, 
+                leu, val, ile, pro, phe, met, trp" and "amino and not polar".
+;
+
+        'ion'
+
+;               The atom at this atom site is one of the heterogeneous 
+                heterogeneous phosphate or sulphate ions. in the 
+                current molecule data file. All 'solvent' atoms are 
+                classified as either 'water' or 'ions'.
+;
+
+        'large'
+
+;               The atom at this atom site is a member of an amino acid
+                classified as 'large'.  Amino acids are classified as 
+               'small', 'medium' or 'large'.
+
+        'ligand'
+
+;               The atom at this atom site is a member of heterogeneous 
+                cofactor or ligand.
+;
+
+        'medium'
+
+;               The atom at this atom site is a member of an amino acid
+                classified as 'medium'.  All amino acids are classified as 
+                'small', 'medium' or 'large'. 
+;
+        'neutral'
+
+;               The atom at this atom site is a member of one of the
+                neutral amino acids. All amino acids are classified as 
+                'acidic', 'basic' or 'neutral'. 
+;
+
+        'nucleic'
+
+;               The atom at this atom site is a member of one of the
+                nucleic acids, i.e. one of the four nucleotide 
+                bases adenosine, cytidine, guanosine and thymidine 
+                (A, C, G and T, respectively). 
+;
+
+         'polar'
+
+;               The atom at this atom site is a member of one of the
+                the polar amino acids. All amino acids are classified as 
+                either 'hydrophobic' or 'polar'.
+;
+
+         'protein'
+         
+;               The atom at this atom site is a member of a
+                proteins, i.e. member of one of the 'amino' acids or
+                of one of the common post-translation modifications.
+;
+
+         'purine'
+
+;               The atom at this atom site is a member of a 
+                purine nucleotide. The purine nucleotides are the 
+                bases adenosine and guanosine (A and G, respectively). 
+                All nucleotides are either 'purines' or 'pyrimidines'. 
+;
+
+         'pyrimidine'
+
+;               The atom at this atom site is a member of a 
+                pyrimidine nucleotide. The pyrimidine nucleotides
+                are the bases cytidine and thymidine (C and T, 
+                respectively). 
+;
+
+         'selected'
+
+;               The atom at this atom site is a member of a region
+                that has been selected.
+;
+
+  
+         'sheet'
+         
+;              The atom at this atom site is part of a protein beta sheet.
+;
+
+         'sidechain'
+
+;               The atom at this atom site is a member of a functional 
+                sidechain of an amino acids or a member of the base of 
+                a nucleotide. This atom is not part of the polypeptide 
+                N-C-C-O backbone of a protein nor part of the sugar 
+                phosphate backbone of nucleic acids. 
+;
+  
+          'small'
+
+;               The atom at this atom site is a member of an amino acid
+                classified as 'small'.  All amino acids are classified as 
+                'small', 'medium' or 'large'. 
+;
+
+          'solvent'
+
+;               The atom at this atom site is a member of a solvent molecule
+                or ion, i.e. the heterogeneous water molecules or phosphate or
+                sulphate ions. 
+;
+
+          'surface'
+
+;               The atom at this atom site is a member of one of the
+                amino acids that tend (prefer) to be on the surface of 
+                proteins, in contact with solvent molecules. 
+                This attribute refers to the amino acids preference and 
+                not the actual solvent accessibility for the current 
+                protein. 
+;
+          'turn'
+
+;               The atom at this atom site is an atoms that forms part of 
+                a protein turn. 
+                
+          'water'
+
+;            heterogeneous water molecules.  This includes both ligand
+             and solvent molecules.
+;
+
+
+##########################
+## CHEM_COMP_PROPERTIES ##
+##########################
+
+save_chem_comp_properties
+    _category.description
+;              Data items in the CHEM_COMP_PROPERTIES category give details 
+               about intrinsic properties of the chemical components.
+               A given chemical component may have many overlapping
+               properties.
+;
+    _category.id                  chem_comp_properties
+    _category.mandatory_code      no
+    loop_
+    _category_key.name          '_chem_comp_properties.id'
+                                '_chem_comp_properties.property'
+    loop_
+    _category_group.id           'inclusive_group'
+                                 'chem_comp_group'
+    loop_
+    _category_examples.detail
+    _category_examples.case
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;
+    Example 1 - Assignment of normal properties for the common amino
+                acids as given in the RasMol manual
+;
+;
+    loop_
+    _chem_comp_properties.property
+    _chem_comp_properties.id
+#                ala asn cys gln his leu met pro thr tyr
+#                  arg asp glu gly ile lys phe ser trp val
+    acidic             asp
+    acidic                 glu
+#                ala asn cys gln his leu met pro thr tyr
+#                  arg asp glu gly ile lys phe ser trp val
+    acyclic      ala
+    acyclic        arg
+    acyclic          asn
+    acyclic            asp
+    acyclic              cys
+    acyclic                glu
+    acyclic                  gln
+    acyclic                    gly
+    acyclic                        ile
+    acyclic                          leu
+    acyclic                            lys
+    acyclic                              met
+    acyclic                                    ser
+    acyclic                                      thr
+    acyclic                                            val
+#                ala asn cys gln his leu met pro thr tyr
+#                  arg asp glu gly ile lys phe ser trp val
+    aliphatic    ala 
+    aliphatic                 gly
+    aliphatic                      ile
+    aliphatic                        leu
+    aliphatic                                          val
+#                ala asn cys gln his leu met pro thr tyr
+#                  arg asp glu gly ile lys phe ser trp val
+    aromatic                    his
+    aromatic                               phe
+    aromatic                                      trp
+    aromatic                                        tyr
+#                ala asn cys gln his leu met pro thr tyr
+#                  arg asp glu gly ile lys phe ser trp val
+    basic          arg
+    basic                       his
+    basic                              lys
+#                ala asn cys gln his leu met pro thr tyr
+#                  arg asp glu gly ile lys phe ser trp val
+    buried       ala
+    buried               cys
+    buried               cys       ile
+    buried                           leu
+    buried                               met
+    buried                               met phe trp val
+    buried                               met phe trp val
+    buried                               met phe trp val
+#                ala asn cys gln his leu met pro thr tyr
+#                  arg asp glu gly ile lys phe ser trp val
+    charged        arg
+    charged            asp
+    charged                glu
+    charged                      his
+    charged                            lys
+#                ala asn cys gln his leu met pro thr tyr
+#                  arg asp glu gly ile lys phe ser trp val
+    cyclic                       his
+    cyclic                                 phe
+    cyclic                                   pro
+    cyclic                                         trp
+    cyclic                                           tyr
+#                ala asn cys gln his leu met pro thr tyr
+#                  arg asp glu gly ile lys phe ser trp val
+    hydrophobic  ala
+    hydrophobic                gly
+    hydrophobic                    ile
+    hydrophobic                      leu
+    hydrophobic                          met
+    hydrophobic                              pro
+    hydrophobic                                    trp
+    hydrophobic                                      tyr
+    hydrophobic                                        val
+#                ala asn cys gln his leu met pro thr tyr
+#                  arg asp glu gly ile lys phe ser trp val
+    large          arg glu gln his ile leu lys mrt phe trp tyr
+#                ala asn cys gln his leu met pro thr tyr
+#                  arg asp glu gly ile lys phe ser trp val
+    medium    asn asp cyspro thr val
+#                ala asn cys gln his leu met pro thr tyr
+#                  arg asp glu gly ile lys phe ser trp val
+    negative  asp  glu
+#                ala asn cys gln his leu met pro thr tyr
+#                  arg asp glu gly ile lys phe ser trp val
+    neutral      ala asn cys gln gly his ile leu met phe pro ser thr trp tyr val
+#                ala asn cys gln his leu met pro thr tyr
+#                  arg asp glu gly ile lys phe ser trp val
+    polar          arg asn asp cys glu gln his lys ser thr trp tyr val
+#                ala asn cys gln his leu met pro thr tyr
+#                  arg asp glu gly ile lys phe ser trp val
+    positive       arg his lys
+#                ala asn cys gln his leu met pro thr tyr
+#                  arg asp glu gly ile lys phe ser trp val
+    small        ala
+    small                      gly
+    small                                      ser
+#                ala asn cys gln his leu met pro thr tyr
+#                  arg asp glu gly ile lys phe ser trp val
+    surface        arg
+    surface          asn
+    surface            asp
+    surface                glu
+    surface                  gln
+    surface                    gly
+    surface                      his
+    surface                            lys
+    surface                                  pro
+    surface                                    ser
+    surface                                      thr
+    surface                                          tyr
+#                ala asn cys gln his leu met pro thr tyr
+#                  arg asp glu gly ile lys phe ser trp val
+     
+      
+;
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     save_
+
+save__chem_comp_properties.property
+    _item_description.description
+;              A property of a chemical component, such as being
+               polar or small or a member of the AT set
+               
+               The initial enumeration of properties is from
+               the RasMol 2.7.3 manual
+               
+               These properties are intrinsic propoerties
+               of the given shemical components as opposed 
+               to the extrinsic properties, such as
+               'selected' in the ENSEMBLE_COMP_PROPERTIES
+               category 
+;
+    _item.name                  '_chem_comp_properties.property'
+    _item.category_id             chem_comp_properties
+    _item.mandatory_code          yes
+    _item_type.code               uline
+    loop_
+      _item_enumeration.value
+      _item_enumeration.detail
+      
+      'at' 
+;               The atoms in this component are members of one of the
+                complementary nucleotides adenosine and thymidine (A and T, 
+                respectively)
+;
+
+      'acidic'
+
+;               The atoms in this component are members of one of the
+                acidic amino acids, i.e. asp and glu, as contrasted with the
+                'neutral' and 'basic' amino acids
+;
+      'acyclic'
+
+;               The atoms in this component are members of one of the
+                acyclic amino acids, i.e. amino acids that do not contain
+                a cycle or ring
+;
+
+      'aliphatic'
+
+;               The atoms in this component are members of one of the
+                aliphatic amino acids, i.e. ala, gly, ile, leu and val. 
+;
+
+      'amino'
+
+;               The atoms in this component are members of one of the
+                amino acids, as opposed to components that are not amino acids, 
+                e.g. nucleic acids and heterogeneous (nonstandard) groups.
+;
+
+      'aromatic'
+
+;               The atoms in this component are members of one of the
+                amino acids containing aromatic rings, i.e. his, phe, trp and 
+                tyr. Because they contain aromatic rings all members of this 
+                set also have the property 'cyclic'. 
+;
+
+            
+      'basic'
+
+;               The atoms in this component are members of one of the
+                basic amino acids, i.e. arg, his and lys, as contrasted with
+                the 'acidic' and 'neutral' amino acids. 
+;
+
+      'buried' 
+      
+;               The atoms in this component are members of one of the
+                amino acids that tend (prefer) to be buried inside protein, 
+                away from contact with solvent molecules. This property refers         
+                to the intrinsic properties of the amino acids not to
+                the actual solvent accessibility for the current protein.
+;
+
+       'cg' 
+
+;               The atoms in this component are members of one of the
+                complementary nucleotides cytidine and guanosine (C and G, 
+                respectively)
+;
+
+       'charged'
+        
+;               The atoms in this component are members of one of the
+                charged amino acids, i.e. 'acidic' or 'basic'.
+;
+
+       'cyclic'
+
+;               The atoms in this component are members of one of the 
+                heterogeneous  amino acids containing a cycle or rings.
+;
+ 
+       'cystine'
+
+;               The atoms in this component are members of one of the
+                cysteine residues that form part of a disulphide bridge,
+                i.e. half cystines.   This is not the same as 'cys', which
+                includes cycteines that are not part of a disulphide bridge.
+;
+
+
+       'hydrophobic'
+
+;               The atoms in this component are members of one of the 
+                the hydrophobic amino acids. These are the amino acids 
+                Ala, Leu, Val, Ile, Pro, Phe, Met and Trp. All amino 
+                acids are classified as either 'hydrophobic' or 'polar'. 
+                This set is equivalent to the RasMol atom expressions "ala, 
+                leu, val, ile, pro, phe, met, trp" and "amino and not polar".
+;
+
+
+        'large'
+
+;               The atoms in this component are members of an amino acid
+                classified as 'large'.  Amino acids are classified as 
+               'small', 'medium' or 'large'.
+
+
+        'medium'
+
+;               The atoms in this component are members of an amino acid
+                classified as 'medium'.  All amino acids are classified as 
+                'small', 'medium' or 'large'. 
+;
+        'neutral'
+
+;               The atoms in this component are members of one of the
+                neutral amino acids. All amino acids are classified as 
+                'acidic', 'basic' or 'neutral'. 
+;
+
+        'nucleic'
+
+;               The atoms in this component are members of one of the
+                nucleic acids, i.e. one of the four nucleotide 
+                bases adenosine, cytidine, guanosine and thymidine 
+                (A, C, G and T, respectively). 
+;
+
+         'polar'
+
+;               The atoms in this component are members of one of the
+                the polar amino acids. All amino acids are classified as 
+                either 'hydrophobic' or 'polar'.
+;
+
+         'protein'
+         
+;               The atoms in this component are members of a
+                protein, i.e. member of one of the 'amino' acids or
+                of one of the common post-translation modifications.
+;
+
+         'purine'
+
+;               The atoms in this component are members of a 
+                purine nucleotide. The purine nucleotides are the 
+                bases adenosine and guanosine (A and G, respectively). 
+                All nucleotides are either 'purines' or 'pyrimidines'. 
+;
+
+         'pyrimidine'
+
+;               The atoms in this component are members of a 
+                pyrimidine nucleotide. The pyrimidine nucleotides
+                are the bases cytidine and thymidine (C and T, 
+                respectively). 
+;
+
+  
+          'small'
+
+;               The atoms in this component are members of an amino acid
+                classified as 'small'.  All amino acids are classified as 
+                'small', 'medium' or 'large'. 
+;
+
+
+          'surface'
+
+;               The atoms in this component are members of one of the
+                amino acids that tend (prefer) to be on the surface of 
+                proteins, in contact with solvent molecules. 
+                This attribute refers to the amino acids preference and 
+                not the actual solvent accessibility for the current 
+                protein. 
+;
+
+      save_
+
+
+
+######################
+## SCENE_XFORM_OPER ##
+######################
+
+save_scene_xform_oper
+    _category.description
+;              Data items in the scene_xform_oper category describe the
+               scene transformation operations.  These operations scale
+               and transform from the coordinates used in atom_site records
+               to the coordinates used in describing objects in a scene
+               after application of NCS and crystallographic transforms,
+               but before the application of any viewing transforms.
+
+               Each operator is specified as a matrix and a subsequent
+               translation vector. Operators need not represent proper
+               rotations.
+;
+    _category.id                  scene_xform_oper
+    _category.mandatory_code      no
+    _category_key.name          '_scene_xform_oper.id'
+    loop_
+    _category_group.id           'inclusive_group'
+                                 'struct_group'
+    loop_
+    _category_examples.detail
+    _category_examples.case
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;
+    Example 1 - a transform from orthogonal Angstroms to RasMol units
+    with and inversion of the Z-axis and a centering shift down
+    2500 RasMol units in X and up 500 RasMol units in Z.
+;
+;
+    _scene_xform_oper.id              sxop1
+    _scene_xform_oper.matrix[1][1]    250.0
+    _scene_xform_oper.matrix[1][2]      0.0
+    _scene_xform_oper.matrix[1][3]      0.0
+    _scene_xform_oper.matrix[2][1]      0.0
+    _scene_xform_oper.matrix[2][2]    250.0
+    _scene_xform_oper.matrix[2][3]      0.0
+    _scene_xform_oper.matrix[3][1]      0.0
+    _scene_xform_oper.matrix[3][2]      0.0
+    _scene_xform_oper.matrix[3][3]   -250.0
+    _scene_xform_oper.vector[1]     -2500.0
+    _scene_xform_oper.vector[2]         0.0
+    _scene_xform_oper.vector[3]       500.0
+    _scene_xform_oper.details
+    ; Matrix and translation vector for pseudo-twofold operation.
+    ;
+;
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     save_
+
+save__scene_xform_oper.code
+    _item_description.description
+;              A code to indicate whether this operator describes a
+               relationship between coordinates all of which are given in the
+               data block (in which case the value of code is 'given'), or
+               whether the operator is used to generate new coordinates from
+               those that are given in the data block (in which case the value
+               of code is 'generate').
+;
+    _item.name                  '_scene_xform_oper.code'
+    _item.category_id             scene_xform_oper
+    _item.mandatory_code          no
+    _item_type.code               code
+    loop_
+    _item_enumeration.value
+    _item_enumeration.detail      given
+;                                 operator relates coordinates given in the
+                                  data block
+;
+                                  generate
+;                                 operator generates new coordinates from
+                                  those given in the data block
+;
+     save_
+
+save__scene_xform_oper.details
+    _item_description.description
+;              A description of special aspects of the noncrystallographic
+               symmetry operator.
+;
+    _item.name                  '_scene_xform_oper.details'
+    _item.category_id             scene_xform_oper
+    _item.mandatory_code          no
+    _item_type.code               text
+    _item_examples.case
+;                                 The operation is given as a precise threefold
+                                  rotation, despite the fact the best rms
+                                  fit between domain 1 and domain 2 yields a
+                                  rotation of 119.7 degrees and a translation
+                                  of 0.13 angstroms.
+;
+     save_
+
+save__scene_xform_oper.id
+    _item_description.description
+;              The value of _scene_xform_oper.id must uniquely identify a
+               record in the scene_xform_oper list.
+
+               Note that this item need not be a number; it can be any unique
+               identifier.
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_scene_xform_oper.id'             scene_xform_oper      yes
+               '_struct_ncs_ens_gen.oper_id'     struct_ncs_ens_gen   yes
+    loop_
+    _item_linked.child_name
+    _item_linked.parent_name
+               '_struct_ncs_ens_gen.oper_id'    '_scene_xform_oper.id'
+    _item_type.code               code
+     save_
+
+save__scene_xform_oper.matrix[1][1]
+    _item_description.description
+;              The [1][1] element of the 3x3 matrix component of a
+               noncrystallographic symmetry operation.
+;
+    _item.name                  '_scene_xform_oper.matrix[1][1]'
+    _item.category_id             scene_xform_oper
+    _item.mandatory_code          no
+    _item_sub_category.id         matrix
+    _item_type.code               float
+     save_
+
+save__scene_xform_oper.matrix[1][2]
+    _item_description.description
+;              The [1][2] element of the 3x3 matrix component of a
+               noncrystallographic symmetry operation.
+;
+    _item.name                  '_scene_xform_oper.matrix[1][2]'
+    _item.category_id             scene_xform_oper
+    _item.mandatory_code          no
+    _item_sub_category.id         matrix
+    _item_type.code               float
+     save_
+
+save__scene_xform_oper.matrix[1][3]
+    _item_description.description
+;              The [1][3] element of the 3x3 matrix component of a
+               noncrystallographic symmetry operation.
+;
+    _item.name                  '_scene_xform_oper.matrix[1][3]'
+    _item.category_id             scene_xform_oper
+    _item.mandatory_code          no
+    _item_sub_category.id         matrix
+    _item_type.code               float
+     save_
+
+save__scene_xform_oper.matrix[2][1]
+    _item_description.description
+;              The [2][1] element of the 3x3 matrix component of a
+               noncrystallographic symmetry operation.
+;
+    _item.name                  '_scene_xform_oper.matrix[2][1]'
+    _item.category_id             scene_xform_oper
+    _item.mandatory_code          no
+    _item_sub_category.id         matrix
+    _item_type.code               float
+     save_
+
+save__scene_xform_oper.matrix[2][2]
+    _item_description.description
+;              The [2][2] element of the 3x3 matrix component of a
+               noncrystallographic symmetry operation.
+;
+    _item.name                  '_scene_xform_oper.matrix[2][2]'
+    _item.category_id             scene_xform_oper
+    _item.mandatory_code          no
+    _item_sub_category.id         matrix
+    _item_type.code               float
+     save_
+
+save__scene_xform_oper.matrix[2][3]
+    _item_description.description
+;              The [2][3] element of the 3x3 matrix component of a
+               noncrystallographic symmetry operation.
+;
+    _item.name                  '_scene_xform_oper.matrix[2][3]'
+    _item.category_id             scene_xform_oper
+    _item.mandatory_code          no
+    _item_sub_category.id         matrix
+    _item_type.code               float
+     save_
+
+save__scene_xform_oper.matrix[3][1]
+    _item_description.description
+;              The [3][1] element of the 3x3 matrix component of a
+               noncrystallographic symmetry operation.
+;
+    _item.name                  '_scene_xform_oper.matrix[3][1]'
+    _item.category_id             scene_xform_oper
+    _item.mandatory_code          no
+    _item_sub_category.id         matrix
+    _item_type.code               float
+     save_
+
+save__scene_xform_oper.matrix[3][2]
+    _item_description.description
+;              The [3][2] element of the 3x3 matrix component of a
+               noncrystallographic symmetry operation.
+;
+    _item.name                  '_scene_xform_oper.matrix[3][2]'
+    _item.category_id             scene_xform_oper
+    _item.mandatory_code          no
+    _item_sub_category.id         matrix
+    _item_type.code               float
+     save_
+
+save__scene_xform_oper.matrix[3][3]
+    _item_description.description
+;              The [3][3] element of the 3x3 matrix component of a
+               noncrystallographic symmetry operation.
+;
+    _item.name                  '_scene_xform_oper.matrix[3][3]'
+    _item.category_id             scene_xform_oper
+    _item.mandatory_code          no
+    _item_sub_category.id         matrix
+    _item_type.code               float
+     save_
+
+save__scene_xform_oper.vector[1]
+    _item_description.description
+;              The [1] element of the three-element vector component of a
+               noncrystallographic symmetry operation.
+;
+    _item.name                  '_scene_xform_oper.vector[1]'
+    _item.category_id             scene_xform_oper
+    _item.mandatory_code          no
+    _item_default.value           0.0
+    _item_sub_category.id         vector
+    _item_type.code               float
+     save_
+
+save__scene_xform_oper.vector[2]
+    _item_description.description
+;              The [2] element of the three-element vector component of a
+               noncrystallographic symmetry operation.
+;
+    _item.name                  '_scene_xform_oper.vector[2]'
+    _item.category_id             scene_xform_oper
+    _item.mandatory_code          no
+    _item_default.value           0.0
+    _item_sub_category.id         vector
+    _item_type.code               float
+     save_
+
+save__scene_xform_oper.vector[3]
+    _item_description.description
+;              The [3] element of the three-element vector component of a
+               noncrystallographic symmetry operation.
+;
+    _item.name                  '_scene_xform_oper.vector[3]'
+    _item.category_id             scene_xform_oper
+    _item.mandatory_code          no
+    _item_default.value           0.0
+    _item_sub_category.id         vector
+    _item_type.code               float
+     save_
+
+
+#-eof-eof-eof-eof-eof-eof-eof-eof-eof-eof-eof-eof-eof-eof-eof-eof-eof-eof-eof
