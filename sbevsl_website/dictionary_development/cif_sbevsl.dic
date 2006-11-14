@@ -38,6 +38,79 @@ data_cif_sbevsl.dic
 ##############################################################################
 #    IMPORTANT NOTES:
 #
+#    The model we use in constructing this dictionary is of
+#    a scene containing objects.  For the moment, the list
+#    of objects is as follows.  A major point of having an
+#    extensible scripting language is that users will be
+#    able to add to this list:
+#
+#      object  -- anything in the scene
+#        an object may have many properties, depending
+#        on its role, but all objects will have the
+#        following properties:
+#           poise:  a combination of a location in
+#                   the scene and an orientation
+#           selected:  an indicator that the object
+#                   is to be processed by commands
+#                   sensitive to this indicator
+#           visible:  an indicator that the object
+#                   is to be seen by all observers
+#          
+#        observer_object -- an object in the scene that
+#            collects and processes information about
+#            objects in the scene.
+#
+#        manipulator_object -- an object in the scene
+#            that manipulates objects in the scene,
+#            e.g. by moving them or by selecting
+#            them
+#
+#        From the point of the view of the user,
+#        the major interactions with the scene
+#        are through outputs from observer objects
+#        and inputs to manipulator objects.
+#
+#        illumination_object -- an object in the scene that
+#            generates light that will reflect from or
+#            pass through objects in the scene.  An
+#            illumination object may be a point source,
+#            a diffuse source, or something in between
+#
+#        molecular_object -- an object in the scene derived
+#            from the properties of some portions of a
+#            molecule.  Think of the holographic projections
+#            in Star Trek.  A molecular object is not the
+#            molecule, but the user can work with it
+#            as if it were real.
+#
+#            atom_object -- a molecular object derived from
+#            the properties of individual atom sites in an 
+#            mmCIF entry (atom records in PDB entries)
+#
+#            atom_object_ensemble -- an ensemble of atom_objects
+#
+#            bond-object --a molecular object representing
+#            a pair of bonded atoms.  In the case of hydrogen
+#            bonds, a third atom object may be included.
+#            A bond object is an atom_object_ensemble
+#
+#            group_object -- a molecular object derived from
+#            the properties of individual chemical components
+#            in an mmCIF entry (residues and het groups in
+#            PDB entries).  A group object is an atom_object_
+#            ensemble.
+#
+#            group_object_ensemble -- an ensemble of group_objects
+#
+#            chain_object -- a molecular object derived from
+#            the properties of individual structural elements
+#            of the asymmetric unit (from the struct_asym
+#            category) in an mmCIF entry.  A chain object is
+#            a group_object_ensemble
+#
+#       complex_object -- an ensemble of molecular_objects 
+#
+#            
 #    This dictionary is a work in progress.  We will be building a
 #    a full scripting language for molecular graphics on top of
 #    the existing mmCIF, imgCIF and symmetry dictionaries, while
@@ -57,13 +130,20 @@ data_cif_sbevsl.dic
 #    and that each row is an object of that catgory.  Thus a category
 #    will also be used as an object type.  A method will be a tag
 #    within a category, distinguished from other tags by the
-#    new DDL tage _item_type.function with the values 'variable'
+#    new DDL tag _item_type.function with the values 'variable'
 #    and 'method' (default 'variable').  The valid types for
 #    _item_type.code will now include all the categories as well
 #    as the various 'primitive' types.  The extension applies
 #    both to variables and to methods, but further thought needs
 #    to be given to the implicartions for normalization and the
 #    handling of recursion.
+#
+#    Methods may be category methods or may be instance methods.
+#    A category method is associated with the category, rather
+#    than with any particular object.  
+#
+#    Category methods are distinguished from instance methods
+#    by the value of the new DDL tag _item_type.static
 #
 #    The formal arguments for a method will be defined by
 #    the new DDL category ITEM_PARAMETER.  In addition to
@@ -91,6 +171,9 @@ data_cif_sbevsl.dic
 #     the tags within may be referenced with the usual dotted notation
 #     (not the C-style ->, but the java style .).  We'll flesh
 #     this out more as we use it.
+#
+#     The code of a method is given as a text field value for
+#       _item_method.code
 #
 #     Inheritance is a tricky issue.  We will start with simple, java
 #     style single inheritance.  With the defintiion of a category
@@ -122,6 +205,12 @@ data_cif_sbevsl.dic
 #     sub-category defintion, as in java.  The existing parent-child
 #     relationships in DDL2 do not conform to this simple single 
 #     inheritance, and will still be used.
+#
+#     One final issue that needs to be addressed is polymorphism.  
+#     For the moment we handle this is the same way as a C union.  
+#     Tags that may overlay one another are identified by listing
+#     the overlaid tags as values for _item_related.related_name 
+#     with the value "overlaid" for _item_related.function_code
 #
 ##############################################################################
 
@@ -182,6 +271,535 @@ data_cif_sbevsl.dic
 ;
 
 
+###############
+## SCENE_OBJ ##
+###############
+
+save_scene_obj
+  _category.description
+;              Data items in the SCENE_OBJ category provide information
+               about objects in the scene.  Every object has a poise,
+               a selected property and a visible property.  Additional
+               properties may be defined in the various subclasses.
+               
+               If no poise is specified the object sits at the coordinates
+               in the scene at which is was gewnerated.
+               
+               If a poise is specified the object is subject to a final
+               rotation and translation.
+               
+               
+;
+
+    _category.mandatory_code      no
+    _category_key.name          '_scene_obj.id'
+    loop_
+    _category_group.id           'inclusive_group'
+                                 'scene_obj_group'
+    loop_
+    _category_examples.detail
+    _category_examples.case
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;
+    Example 1 - A scene with one observer, one light an two atoms 
+;
+;
+    loop_
+    _scene_obj.id
+    _scene_obj.poise
+    _scene_obj.selected
+    _scene_obj.visible
+    
+    observer1 poise1 no no
+    light1    poise2 no yes
+    atom1     .      yes yes
+    atom2     .      yes yes
+ ;
+    save_
+    
+ save__scene_obj.id
+    _item_description.description
+;              The value of _scene_obj.id uniquely identifies a
+               record in SCENE_OBJ list.  In order to handle the
+               various types of objects, the intermediate category
+               SCENE_OBJ_ID is used
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_scene_obj.id'    scene_obj        yes
+    _item_type.code              scene_obj_id
+
+    save_
+
+
+ save__scene_obj.poise
+    _item_description.description
+;              The value of _scene_obj.poise identifies a final
+               rotation and translation of the object identified
+               by _scene_obj.id before placement in the scene.
+               
+               If no poise is given the coordinates of the object
+               as generated are used.
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_scene_obj.poise'    scene_obj        no
+    _item_type.code              scene_xform_oper
+
+    save_
+
+ save__scene_obj.selected
+    _item_description.description
+;              The value of _scene_obj.selected identifies an
+               object that may be manipulated by commands that
+               do not explicitly specify the objects to which
+               they apply.
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_scene_obj.selected'    scene_obj        no
+    _item_type.code              ucode
+    _item_default.value          yes
+     loop_
+    _item_enumeration.value
+    _item_enumeration.detail     yes
+ 'the object is subject to the action of commands with no specified object'
+                                 no
+ 'the object is not subject to the action of commands with no specified object'
+                                
+     save_
+
+ save__scene_obj.visible
+    _item_description.description
+;              The value of _scene_obj.visible identifies an
+               object that is visible to observer objects and
+               manipulator objects and whether the object
+               intercepts rays from illumination objects.
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_scene_obj.visible'    scene_obj        no
+    _item_type.code              ucode
+    _item_default.value          yes
+     loop_
+    _item_enumeration.value
+    _item_enumeration.detail     yes
+                                'the object is visible to observers'
+                                 no
+                                'the object is not visible to observers'
+    save_
+
+
+##################
+## SCENE_OBJ_ID ##
+##################
+
+save_scene_obj_id
+  _category.description
+;              Data items in the SCENE_OBJ_ID category map _scene_obj.id
+               values to particular objects.  When new object types are
+               added to scenes, they need to be added to this category.           
+;
+
+    _category.mandatory_code      no
+    _category_key.name          '_scene_obj_id.id'
+    loop_
+    _category_group.id           'inclusive_group'
+                                 'scene_obj_group'
+    loop_
+    _category_examples.detail
+    _category_examples.case
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;
+    Example 1 - A scene with one observer, one light an two atoms
+                continues to the SCENE_OBJ_ID category
+;
+;
+    loop_
+    _scene_obj.id
+    _scene_obj.poise
+    _scene_obj.selected
+    _scene_obj.visible
+    
+    observer1 poise1 no no
+    light1    poise2 no yes
+    atom1     .      yes yes
+    atom2     .      yes yes
+    
+    loop_
+    _scene_obj_id.id
+    _scene_obj_id.observer_obj
+    _scene_obj_id.illumination_obj
+    _scene_obj_id.molecular_obj
+    observer1 observer1 . .
+    light1    . light1 .
+    atom1     . . atom1
+    atom2     . . atom2
+    
+ ;
+    save_
+
+ save__scene_obj_id.id
+    _item_description.description
+;              The value of _scene_obj_id.id uniquely identifies a
+               record in SCENE_OBJ_ID list.  The purpose of this
+               category is to transfer an id to actual objects.
+               
+               This identifier need not be a number and is usually
+               made identical to the id of the object that it is
+               mapping.
+                          
+               It is possible to map the same object to multiple
+               ids, but this is not recommended because the object
+               may inherit properties from the scene object.
+                              
+               Note that the MOLECULAR_OBJ performs a similar
+               mapping role.
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_scene_obj_id.id'    scene_obj_id        yes
+    _item_type.code              code
+    loop_
+    save_
+
+ save__scene_obj_id.observer_obj
+    _item_description.description
+;              The value of _scene_obj_id.observer_obj identifies
+               an observer object to be associated with 
+               _scene_obj_id.id
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_scene_obj_id.observer_obj'    scene_obj_id        yes
+    _item_type.code             observer_obj
+    _item_related.related_name 
+    _item_related.function_code
+               '_scene_obj_id.illumination_obj'  overlaid
+               '_scene_obj_id.manipulator_obj'   overlaid
+               '_scene_obj_id.molecular_obj'     overlaid
+    save_
+
+ save__scene_obj_id.illumination_obj
+    _item_description.description
+;              The value of _scene_obj_id.illumination_obj identifies
+               an illumination object to be associated with 
+               _scene_obj_id.id
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_scene_obj_id.illumination_obj'    scene_obj_id        yes
+    _item_type.code             illumination_obj
+    _item_related.related_name 
+    _item_related.function_code
+               '_scene_obj_id.observer_obj'      overlaid
+               '_scene_obj_id.manipulator_obj'   overlaid
+               '_scene_obj_id.molecular_obj'     overlaid
+
+    save_
+
+ save__scene_obj_id.manipulator_obj
+    _item_description.description
+;              The value of _scene_obj_id.manipulator_obj identifies
+               a manipulator object to be associated with 
+               _scene_obj_id.id
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_scene_obj_id.manipulator_obj'    scene_obj_id        yes
+    _item_type.code             manipulator_obj
+    _item_related.related_name 
+    _item_related.function_code
+               '_scene_obj_id.observer_obj'      overlaid
+               '_scene_obj_id.illumination_obj'  overlaid
+               '_scene_obj_id.molecular_obj'     overlaid
+
+    save_
+
+ save__scene_obj_id.molecular_obj
+    _item_description.description
+;              The value of _scene_obj_id.molecular_obj identifies
+               a molecular object to be associated with 
+               _scene_obj_id.id
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_scene_obj_id.molecular_obj'    scene_obj_id        yes
+    _item_type.code             molecular_obj
+    _item_related.related_name 
+    _item_related.function_code
+               '_scene_obj_id.observer_obj'      overlaid
+               '_scene_obj_id.illumination_obj'  overlaid
+               '_scene_obj_id.manipulator_obj'   overlaid
+
+    save_
+
+
+###################
+## MOLECULAR_OBJ ##
+###################
+
+save_molecular_obj
+  _category.description
+;              Data items in the MOLECULAR_OBJ category map 
+               _scene_obj_id.molecular_obj
+               values to particular molecular objects.  When 
+               new object types are added to the molecular object
+               types, they need to be added to this category.           
+;
+
+    _category.mandatory_code      no
+    _category_key.name          '_molecular_obj.id'
+    loop_
+    _category_group.id           'inclusive_group'
+                                 'scene_obj_group'
+    loop_
+    _category_examples.detail
+    _category_examples.case
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;
+    Example 1 - A scene with one observer, one light an two atoms
+                continues to the MOLECULAR category
+;
+;
+    loop_
+    _scene_obj.id
+    _scene_obj.poise
+    _scene_obj.selected
+    _scene_obj.visible
+    
+    observer1 poise1 no no
+    light1    poise2 no yes
+    atom1     .      yes yes
+    atom2     .      yes yes
+    
+    loop_
+    _scene_obj_id.id
+    _scene_obj_id.observer_obj
+    _scene_obj_id.illumination_obj
+    _scene_obj_id.molecular_obj
+    observer1 observer1 . .
+    light1    . light1 .
+    atom1     . . atom1
+    atom2     . . atom2
+    
+    loop_
+    _molecular_obj.id
+    _molecular_obj.atom_obj
+    _molecular_obj.atom_ensemble_obj
+    _molecular_obj.bond_obj
+    _molecular_obj.group_obj
+    _molecular_obj.group_ensemble_obj
+    _molecular_obj.chain_obj
+    _molecular_obj.chain_ensemble_obj
+    atom1 atom1 . . . . . .
+    atom1 atom1 . . . . . .
+
+ ;
+    save_
+
+ save__molecular_obj.id
+    _item_description.description
+;              The value of _molecular_obj.id uniquely identifies a
+               record in MOLECULAR_OBJ list.  The purpose of this
+               category is to transfer an id to actual objects.
+               
+               This identifier need not be a number and is usually
+               made identical to the id of the object that it is
+               mapping.
+               
+               It is possible to map the same object to multiple
+               ids, but this is not recommended because the object
+               may inherit properties from the scene object.
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_molecular_obj.id'    molecular_obj        yes
+    _item_type.code              code
+    loop_
+    save_
+
+ save__molecular_obj.atom_obj
+    _item_description.description
+;              The value of _molecular_obj.atom_obj identifies
+               an atom object to be associated with 
+               _molecular_obj.id
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_molecular_obj.atom_obj'    molecular_obj        yes
+    _item_type.code             atom_obj
+    _item_related.related_name 
+    _item_related.function_code
+               '_molecular_obj.atom_ensemble_obj  overlaid
+               '_molecular_obj.bond_obj           overlaid
+               '_molecular_obj.group_obj          overlaid
+               '_molecular_obj.group_ensemble_obj overlaid
+               '_molecular_obj.chain_obj          overlaid
+               '_molecular_obj.chain_ensemble_obj overlaid
+    save_
+
+ save__molecular_obj.atom_ensemble_obj
+    _item_description.description
+;              The value of _molecular_obj.atom_ensemble_obj identifies
+               an atom ensemble object to be associated with 
+               _molecular_obj.id
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_molecular_obj.atom_ensemble_obj'    molecular_obj        yes
+    _item_type.code             atom_ensemble_obj
+    _item_related.related_name 
+    _item_related.function_code
+               '_molecular_obj.atom_obj'          overlaid
+               '_molecular_obj.bond_obj           overlaid
+               '_molecular_obj.group_obj          overlaid
+               '_molecular_obj.group_ensemble_obj overlaid
+               '_molecular_obj.chain_obj          overlaid
+               '_molecular_obj.chain_ensemble_obj overlaid
+    save_
+
+ save__molecular_obj.bond_obj
+    _item_description.description
+;              The value of _molecular_obj.bond_obj identifies
+               a bond object to be associated with 
+               _molecular_obj.id
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_molecular_obj.bond_obj'    molecular_obj        yes
+    _item_type.code             bond_obj
+    _item_related.related_name 
+    _item_related.function_code
+               '_molecular_obj.atom_obj'          overlaid
+               '_molecular_obj.atom_ensemble_obj  overlaid
+               '_molecular_obj.group_obj          overlaid
+               '_molecular_obj.group_ensemble_obj overlaid
+               '_molecular_obj.chain_obj          overlaid
+               '_molecular_obj.chain_ensemble_obj overlaid
+
+    save_
+
+ save__molecular_obj.group_obj
+    _item_description.description
+;              The value of _molecular_obj.group_obj identifies
+               a group object to be associated with 
+               _molecular_obj.id
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_molecular_obj.group_obj'    molecular_obj        yes
+    _item_type.code             group_obj
+    _item_related.related_name 
+    _item_related.function_code
+               '_molecular_obj.atom_obj'          overlaid
+               '_molecular_obj.atom_ensemble_obj  overlaid
+               '_molecular_obj.bond_obj           overlaid
+               '_molecular_obj.group_ensemble_obj overlaid
+               '_molecular_obj.chain_obj          overlaid
+               '_molecular_obj.chain_ensemble_obj overlaid
+
+    save_
+
+ save__molecular_obj.group_ensemble_obj
+    _item_description.description
+;              The value of _molecular_obj.group_ensemble_obj identifies
+               a group object to be associated with 
+               _molecular_obj.id
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_molecular_obj.group_ensemble_obj'    molecular_obj        yes
+    _item_type.code             group_ensemble_obj
+    _item_related.related_name 
+    _item_related.function_code
+               '_molecular_obj.atom_obj'          overlaid
+               '_molecular_obj.atom_ensemble_obj  overlaid
+               '_molecular_obj.bond_obj           overlaid
+               '_molecular_obj.group_obj          overlaid
+               '_molecular_obj.chain_obj          overlaid
+               '_molecular_obj.chain_ensemble_obj overlaid
+
+    save_
+
+ save__molecular_obj.chain_obj
+    _item_description.description
+;              The value of _molecular_obj.chain_obj identifies
+               a chain object to be associated with 
+               _molecular_obj.id
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_molecular_obj.chain_obj'    molecular_obj        yes
+    _item_type.code             chain_obj
+    _item_related.related_name 
+    _item_related.function_code
+               '_molecular_obj.atom_obj'          overlaid
+               '_molecular_obj.atom_ensemble_obj  overlaid
+               '_molecular_obj.bond_obj           overlaid
+               '_molecular_obj.group_obj          overlaid
+               '_molecular_obj.group_ensemble_obj overlaid
+               '_molecular_obj.chain_ensemble_obj overlaid
+
+    save_
+
+
+ save__molecular_obj.chain_ensemble_obj
+    _item_description.description
+;              The value of _molecular_obj.chain_ensemble_objj identifies
+               a chain ensembler object to be associated with 
+               _molecular_obj.id
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_molecular_obj.chain_ensemble_obj'    molecular_obj        yes
+    _item_type.code             chain_ensemble_obj
+    _item_related.related_name 
+    _item_related.function_code
+               '_molecular_obj.atom_obj'          overlaid
+               '_molecular_obj.atom_ensemble_obj  overlaid
+               '_molecular_obj.bond_obj           overlaid
+               '_molecular_obj.group_obj          overlaid
+               '_molecular_obj.group_ensemble_obj overlaid
+               '_molecular_obj.chain_obj          overlaid
+
+    save_
+
+
 
 ##############
 ## ATOM_OBJ ##
@@ -198,6 +816,11 @@ save_atom_obj
     loop_
     _category_group.id           'inclusive_group'
                                  'scene_obj_group'
+   _category_extends.category_id               atom_obj
+   _category_extends.super_category_id         scene_obj
+   _category_extends.parent_object_reference
+                                '_atom_obj.scene_obj'
+
     loop_
     _category_examples.detail
     _category_examples.case
@@ -217,6 +840,41 @@ save__atom_obj.atom_site_id
     save_
 
 
+save__atom_obj.scene_obj
+    _item_description.description
+;              This data item is identifies a scene object from which
+               this atom object inherits poise, seleced and visible
+               properties. 
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_atom_obj.scene_obj'    atom_obj        yes
+    _item_type.code              scene_obj
+
+    save_
+
+save__atom_obj.color
+    _item_description.description
+;              The color associated with the atom object.
+               
+               The color of the atom object is not necessarily
+               the color of the atom object as viewed.  The
+               viewed color is a function of the atom_object color,
+               shading, specularity, light source colors, ambient 
+               fogging and transparent objects between the object
+               and the eye of the viewer. 
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_atom_obj.color'    atom_obj        no
+    _item_type.code              color
+
+    save_
+
 
 save__atom_obj.id
     _item_description.description
@@ -234,6 +892,180 @@ save__atom_obj.id
     _item_type.code              code
 
     save_
+
+save__atom_obj.label
+    _item_description.description
+;              The value of _atom_obj.label is a descriptive label
+               given as an object within the scene, as opposed to
+               labels applied in creating a view of the scene.
+               
+               Such labels are not very useful in display on a
+               screen, but are useful in cave views.
+               
+               The label is assumed to be an object 1 scene unit
+               high standing vertically and running left to right
+               parallel the x-axis as viewed down the z-axis,
+               with the lower left corner of the first character
+               at the origin, then transformed by the transform
+               given by _atom_obj.label_xform and finally translated
+               by the scene coordinates of the atom object.
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_atom_obj.label'    atom_obj        no
+    _item_type.code              text
+
+    save_
+
+save__atom_obj.label_xform
+    _item_description.description
+;              The value of _atom_obj.xfrom is a transform applied
+               to a label object in a scene before translation by
+               object coordinates.
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_atom_obj.label'    atom_obj        no
+    _item_type.code              scene_xform_oper
+
+    save_
+
+save__atom_obj.next_atom_obj
+    _item_description.description
+;              The value of _atom_obj.next_atom_obj is a reference to the
+               next atom object in a sequential list of atom objects.
+               
+               The value given should be the value of the _atom_obj.atom_site_id
+               that uniquely identifies the atom object that is next in
+               the list, or should be a period if no atom object follows
+               this one
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_atom_obj.next_atom_obj'    atom_obj        no
+    _item_type.code              atom_obj
+
+    save_
+
+save__atom_obj.radius
+    _item_description.description
+;              The radius of the atom object in the scene when
+               drawn as a sphere.  Usually this will be the
+               tranformed Van der Waals radius of the atom.
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_atom_obj.radius'    atom_obj        no
+    _item_type.code              float
+
+    save_
+
+
+save__atom_obj.scene_x
+    _item_description.description
+;              The x atom object scene coordinate after application of
+               all transformations.
+               
+               This is the result of the application of the transformation
+               to orthogonal coordinates from fractional coordinates
+               given by _atom_sites.Cartn_transf_matrix[][] and
+               _atom_sites.Cartn_transf_vector[] as
+               
+               
+               |x'|              |11 12 13| |x|               |1|
+               |y'|~Cartesian~ = |21 22 23| |y|~fractional~ + |2|
+               |z'|              |31 32 33| |z|               |3|
+
+               and the application of non crystallographic symmetry
+               as specified by _atom_obj.site_ncs_oper_id, followed by
+               the application of crystallographic symmetry as
+               specified by __atom_obj.site_symmetry, and then
+               by the operation specified by 
+               _atom_obj.site_object_xform_oper_id
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_atom_obj.scene_x'    atom_obj        no
+    _item_type.code              float
+    _item_sub_category.id        cartesian_coordinate
+
+    save_
+
+save__atom_obj.scene_y
+    _item_description.description
+;              The y atom object scene coordinate after application of
+               all transformations.
+               
+               This is the result of the application of the transformation
+               to orthogonal coordinates from fractional coordinates
+               given by _atom_sites.Cartn_transf_matrix[][] and
+               _atom_sites.Cartn_transf_vector[] as
+               
+               
+               |x'|              |11 12 13| |x|               |1|
+               |y'|~Cartesian~ = |21 22 23| |y|~fractional~ + |2|
+               |z'|              |31 32 33| |z|               |3|
+
+               and the application of non crystallographic symmetry
+               as specified by _atom_obj.site_ncs_oper_id, followed by
+               the application of crystallographic symmetry as
+               specified by __atom_obj.site_symmetry, and then
+               by the operation specified by 
+               _atom_obj.site_object_xform_oper_id
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_atom_obj.scene_y'    atom_obj        no
+    _item_type.code              float
+    _item_sub_category.id        cartesian_coordinate
+
+    save_
+
+save__atom_obj.scene_z
+    _item_description.description
+;              The z atom object scene coordinate after application of
+               all transformations.
+               
+               This is the result of the application of the transformation
+               to orthogonal coordinates from fractional coordinates
+               given by _atom_sites.Cartn_transf_matrix[][] and
+               _atom_sites.Cartn_transf_vector[] as
+               
+               
+               |x'|              |11 12 13| |x|               |1|
+               |y'|~Cartesian~ = |21 22 23| |y|~fractional~ + |2|
+               |z'|              |31 32 33| |z|               |3|
+
+               and the application of non crystallographic symmetry
+               as specified by _atom_obj.site_ncs_oper_id, followed by
+               the application of crystallographic symmetry as
+               specified by __atom_obj.site_symmetry, and then
+               by the operation specified by 
+               _atom_obj.site_object_xform_oper_id
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_atom_obj.scene_z'    atom_obj        no
+    _item_type.code              float
+    _item_sub_category.id        cartesian_coordinate
+
+    save_
+
+
     
 save__atom_obj.site_symmetry
     _item_description.description
@@ -260,48 +1092,38 @@ save__atom_obj.site_symmetry
 
 save__atom_obj.site_ncs_oper_id
     _item_description.description
-;              The operator id of the non-crystallographic symmetry
-               operation, if any, applied to the atom site given
+;              The non-crystallographic symmetry operation, if any, 
+               applied to the atom site given
                by _atom_obj.atom_site_id in generating this atom object.
                
                This operation is applied after trsansformation to
                othogonal coordinates and before applying
                crystallographic symmetry.
                
-               This item is a pointer to _struct_ncs_oper.id
+               This item is effectively a pointer to _struct_ncs_oper.id
 ;
     _item.name                  '_atom_obj.site_ncs_oper_id'
     _item.category_id             _atom_obj
     _item.mandatory_code          no
-    loop_
-    _item_linked.child_name
-    _item_linked.parent_name
-               '_atom_obj.site_ncs_oper_id'    '_struct_ncs_oper.id'
-    _item_type.code               code
+    _item_type.code               struct_ncs_oper
     loop_
     _item_examples.case
     _item_examples.detail         .      'no ncs operator applied'
                                   ncsop1 'ncs operator ncsop1 applied'
      save_
 
-save__atom_obj.site_object_xform_oper_id
+save__atom_obj.site_object_xform_oper
     _item_description.description
 ;              The operator id of the object transform operation,
                if any, applied to the atom site given
                by _atom_obj.atom_site_id in generating this atom object.
                
-               
-               
-               This item is a pointer to _scene_xform_oper.id
+               This item is effectively a pointer to _scene_xform_oper.id
 ;
     _item.name                  '_atom_obj.site_object_xform_oper_id'
     _item.category_id             _atom_obj
     _item.mandatory_code          no
-    loop_
-    _item_linked.child_name
-    _item_linked.parent_name
-               '_atom_obj.site_object_xform_oper_id'    '_scene_xform_oper.id'
-    _item_type.code               code
+    _item_type.code               scene_xform_oper
     loop_
     _item_examples.case
     _item_examples.detail         .      'no scene transform operator applied'
@@ -314,18 +1136,16 @@ save__atom_obj.site_object_scene_oper_id
     _item_description.description
 ;              The operator id of the scene transform operation,
                if any, applied to the atom site given
-               by _atom_obj.atom_site_id in generating this atom object.
+               by _atom_obj.atom_site_id in generating this atom object
+               after application of _atom_obj.site_object_xform_oper,
+               e.g. for a bond rotation.
                
-               This item is a pointer to _scene_xform_oper.id
+               This item is a effectively a pointer to _scene_xform_oper.id
 ;
     _item.name                  '_atom_obj.site_object_xform_oper_id'
     _item.category_id             _atom_obj
     _item.mandatory_code          no
-    loop_
-    _item_linked.child_name
-    _item_linked.parent_name
-               '_atom_obj.site_object_xform_oper_id'    '_scene_xform_oper.id'
-    _item_type.code               code
+    _item_type.code               scene_xform_oper
     loop_
     _item_examples.case
     _item_examples.detail         .      'no scene transform operator applied'
@@ -1013,6 +1833,163 @@ save__chem_comp_properties.property
 
       save_
 
+###########
+## COLOR ##
+###########
+
+save_color
+    _category.description
+;              Data items in the color category describe scene object 
+               colors.  These are the colors of the objects, not
+               necessarily the colors of the objects as viewed.  The
+               viewed color is a function of the object color,
+               shading, specularity, light source colors, ambient 
+               fogging and transparent objects between the object
+               and the eye of the viewer. 
+;
+    _category.id                  color
+    _category.mandatory_code      no
+    _category_key.name          '_color.id'
+    loop_
+    _category_group.id           'inclusive_group'
+    loop_
+    _category_examples.detail
+    _category_examples.case
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;
+    Example 1 - The definition of a simple 8 opaque color palette
+;
+;
+    loop_
+    _color.id
+    _color.red
+    _color.green
+    _color.blue
+    _color.alpha
+    black    0    0    0    1
+    blue     0    0    1    1
+    green    0    1    0    1
+    cyan     0    1    1    1
+    red      1    0    0    1
+    magenta  1    0    1    1
+    yellow   1    1    0    1
+    while    1    1    1    1
+;
+    save_
+    
+    
+ save__color.color
+ 
+    _item_type.code     color
+    _item_type.function method
+    _item_type.static   yes
+    
+    loop_
+    _item_parameter.item_name         the name of the method or variable
+    _item_parameter.parameter_type    the type of the formal argument
+    _item_parameter.parameter_name    the name of the formal argument
+    _item_parameter.parameter_ordinal the position of the formal argument in a call
+    
+    color  float red 1
+    color  float green 2
+    color  float blue 3
+    color  float alpha 4
+    
+    _item_method.code
+;
+    color newcolor = new color();
+    newcolor.red = red;
+    newcolor.green = green;
+    newcolor.blue = blue;
+    newcolor.alpha = alpha;
+    return newcolor;
+;
+    save_
+
+ save__color.id
+    _item_description.description
+;              A unique identifier for a color.
+               
+;
+    _item.name                  '_color.id'
+    _item.category_id             color
+    _item.mandatory_code          no
+    _item_type.code               code
+
+    save_
+
+
+ save__color.red
+    _item_description.description
+;              The red component of a color given in
+               the range of 0 through 1
+               
+               This is an additive color component
+;
+    _item.name                  '_color.red'
+    _item.category_id             color
+    _item.mandatory_code          no
+    _item_type.code               float
+    _item_range.minimum
+    _item_range.maximum           0.0   0.0
+                                  0.0   1.0
+                                  1.0   0.0
+
+    save_
+
+ save__color.green
+    _item_description.description
+;              The green component of a color given in
+               the range of 0 through 1
+               
+               This is an additive color component
+;
+    _item.name                  '_color.green'
+    _item.category_id             color
+    _item.mandatory_code          no
+    _item_type.code               float
+    _item_range.minimum
+    _item_range.maximum           0.0   0.0
+                                  0.0   1.0
+                                  1.0   0.0
+
+    save_
+
+ save__color.blue
+    _item_description.description
+;              The blue component of a color given in
+               the range of 0 through 1
+               
+               This is an additive color component
+;
+    _item.name                  '_color.blue'
+    _item.category_id             color
+    _item.mandatory_code          no
+    _item_type.code               float
+    _item_range.minimum
+    _item_range.maximum           0.0   0.0
+                                  0.0   1.0
+                                  1.0   0.0
+
+    save_
+
+
+ save__color.alpha
+    _item_description.description
+;              The transparency of a color in the range of 0 
+               through 1.  A value of 1 is opaque.  A value
+               of 1 is completely transparent.
+;
+    _item.name                  '_color.green'
+    _item.category_id             color
+    _item.mandatory_code          no
+    _item_type.code               float
+    _item_range.minimum
+    _item_range.maximum           0.0   0.0
+                                  0.0   1.0
+                                  1.0   0.0
+
+    save_
 
 
 ######################
