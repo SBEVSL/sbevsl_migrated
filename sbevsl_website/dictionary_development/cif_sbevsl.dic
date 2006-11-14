@@ -110,6 +110,11 @@ data_cif_sbevsl.dic
 #
 #       complex_object -- an ensemble of molecular_objects 
 #
+#
+#    Ensembles of objects will be handled as linked lists of
+#    objects.  In order to avoid issues of integrity of the
+#    database, the links will be object references, rather
+#    than list ordinals.
 #            
 #    This dictionary is a work in progress.  We will be building a
 #    a full scripting language for molecular graphics on top of
@@ -817,43 +822,34 @@ save_atom_obj
     _category_group.id           'inclusive_group'
                                  'scene_obj_group'
    _category_extends.category_id               atom_obj
-   _category_extends.super_category_id         scene_obj
+   _category_extends.super_category_id         atom_site
    _category_extends.parent_object_reference
-                                '_atom_obj.scene_obj'
+                                '_atom_obj.atom_site'
 
     loop_
     _category_examples.detail
     _category_examples.case
-
-save__atom_obj.atom_site_id
+;    Example to be provided
+;
+;
+;
+save__atom_obj.atom_site
     _item_description.description
-;              This data item is a pointer to _atom_site.id in the ATOM_SITE
-               category.
+;              This data item give the atom site that from which this
+               atom object inherits its propoerties.  Multiple
+               atom objects may inherit properties from the same
+               site, e.g. when crystallopgraphic symmetry is
+               applied.
 ;
     loop_
     _item.name
     _item.category_id
     _item.mandatory_code
-               '_atom_obj.atom_site_id'    atom_obj        yes
+               '_atom_obj.atom_site'    atom_obj        yes
     _item_type.code              code
 
     save_
 
-
-save__atom_obj.scene_obj
-    _item_description.description
-;              This data item is identifies a scene object from which
-               this atom object inherits poise, seleced and visible
-               properties. 
-;
-    loop_
-    _item.name
-    _item.category_id
-    _item.mandatory_code
-               '_atom_obj.scene_obj'    atom_obj        yes
-    _item_type.code              scene_obj
-
-    save_
 
 save__atom_obj.color
     _item_description.description
@@ -861,7 +857,7 @@ save__atom_obj.color
                
                The color of the atom object is not necessarily
                the color of the atom object as viewed.  The
-               viewed color is a function of the atom_object color,
+               viewed color is a function of the atom object color,
                shading, specularity, light source colors, ambient 
                fogging and transparent objects between the object
                and the eye of the viewer. 
@@ -1154,6 +1150,44 @@ save__atom_obj.site_object_scene_oper_id
 
     save_
 
+#######################
+## ATOM_OBJ_ENSEMBLE ##
+#######################
+
+save_atom_obj_ensemble
+   _category.description
+;              Data items in the ATOM_OBJ_ENSEMBLE category describe
+               ensembles of atom objects.
+;
+    _category.mandatory_code      no
+    loop_
+    _category_key.name          '_atom_obj_ensemble.id'
+    loop_
+    _category_group.id           'inclusive_group'
+                                 'scene_obj_group'
+   _category_extends.category_id               atom_obj_ensemble
+   _category_extends.super_category_id         atom_obj
+   _category_extends.parent_object_reference
+                                '_atom_obj_ensemble.atom_obj'
+
+    loop_
+    _category_examples.detail
+    _category_examples.case
+;   Example 1 -- A pair of atoms to compose a bond
+;
+;
+    loop_
+    _atom_obj_ensemble.ensemble_id
+    _atom_obj_ensemble.id
+    _atom_obj_ensemble.atom_obj
+    _atom_obj_ensemble.next_item
+    _atom_obj_ensemble.prev_item
+    _atom_obj_ensemble.head
+    bond1 b1a1 atom1 b1a2 .   b1a1
+    bond1 b1a2 atom2 .   b1a1 b1a1
+;
+
+#>>>> to be continued -- HJB, 14 Nov 06
 
      
 #########################
@@ -1428,12 +1462,6 @@ save__atom_obj_attributes.attribute
                 pyrimidine nucleotide. The pyrimidine nucleotides
                 are the bases cytidine and thymidine (C and T, 
                 respectively). 
-;
-
-         'selected'
-
-;               The atom at this atom site is a member of a region
-                that has been selected.
 ;
 
   
@@ -1879,21 +1907,25 @@ save_color
     
     
  save__color.color
- 
+     _item_description.description
+;              A static constructor (actually a factory method)
+               to return a color from rbga parameters.
+               
+;
     _item_type.code     color
     _item_type.function method
     _item_type.static   yes
     
     loop_
-    _item_parameter.item_name         the name of the method or variable
-    _item_parameter.parameter_type    the type of the formal argument
-    _item_parameter.parameter_name    the name of the formal argument
-    _item_parameter.parameter_ordinal the position of the formal argument in a call
+    _item_parameter.item_name         # the name of the method or variable
+    _item_parameter.parameter_type    # the type of the formal argument
+    _item_parameter.parameter_name    # the name of the formal argument
+    _item_parameter.parameter_ordinal # the position of the formal argument in a call
     
-    color  float red 1
-    color  float green 2
-    color  float blue 3
-    color  float alpha 4
+    '_color.color'  float red 1
+    '_color.color'  float green 2
+    '_color.color'  float blue 3
+    '_color.color'  float alpha 4
     
     _item_method.code
 ;
@@ -2039,41 +2071,16 @@ save_scene_xform_oper
     _scene_xform_oper.vector[2]         0.0
     _scene_xform_oper.vector[3]       500.0
     _scene_xform_oper.details
-    ; Matrix and translation vector for pseudo-twofold operation.
-    ;
+
 ;
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      save_
 
-save__scene_xform_oper.code
-    _item_description.description
-;              A code to indicate whether this operator describes a
-               relationship between coordinates all of which are given in the
-               data block (in which case the value of code is 'given'), or
-               whether the operator is used to generate new coordinates from
-               those that are given in the data block (in which case the value
-               of code is 'generate').
-;
-    _item.name                  '_scene_xform_oper.code'
-    _item.category_id             scene_xform_oper
-    _item.mandatory_code          no
-    _item_type.code               code
-    loop_
-    _item_enumeration.value
-    _item_enumeration.detail      given
-;                                 operator relates coordinates given in the
-                                  data block
-;
-                                  generate
-;                                 operator generates new coordinates from
-                                  those given in the data block
-;
-     save_
 
 save__scene_xform_oper.details
     _item_description.description
-;              A description of special aspects of the noncrystallographic
-               symmetry operator.
+;              A description of special aspects of the scene
+               transformation operator.
 ;
     _item.name                  '_scene_xform_oper.details'
     _item.category_id             scene_xform_oper
