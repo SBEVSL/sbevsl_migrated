@@ -8,8 +8,8 @@
 #                                  and                                       #
 #                        Image CIF Dictionary (imgCIF)                       #
 #                                                                            #
-#                              Version 0.0.1                                 #
-#                              of 2006-11-10                                 #
+#                              Version 0.0.2                                 #
+#                              of 2006-12-06                                 #
 #                                                                            #
 #               by Herbert J. Bernstein and and Paul A. Craig                #
 #                                                                            #
@@ -20,7 +20,7 @@
 data_cif_sbevsl.dic
 
     _dictionary.title           cif_sbevsl.dic
-    _dictionary.version         0.0.1
+    _dictionary.version         0.0.2
     _dictionary.datablock_id    cif_sbevsl.dic
 
 ##############################################################################
@@ -44,8 +44,19 @@ data_cif_sbevsl.dic
 #    extensible scripting language is that users will be
 #    able to add to this list:
 #
-#      object  -- anything in the scene
-#        an object may have many properties, depending
+#
+#      scene -- an ensemble of scene_objects
+#        The ordering of objects within the scene
+#        is arbitrary, but attributes of the objects
+#        may be used to create data structures, such
+#        as voxel maps, that create an ordering for
+#        purposes of processing.  For the remainder
+#        of this discussion, we will refer to
+#        scene objects simply as objects.
+#        
+#
+#      scene_object  -- anything in the scene
+#        An object may have many properties, depending
 #        on its role, but all objects will have the
 #        following properties:
 #           poise:  a combination of a location in
@@ -89,7 +100,7 @@ data_cif_sbevsl.dic
 #
 #            atom_object_ensemble -- an ensemble of atom_objects
 #
-#            bond-object --a molecular object representing
+#            bond_object --a molecular object representing
 #            a pair of bonded atoms.  In the case of hydrogen
 #            bonds, a third atom object may be included.
 #            A bond object is an atom_object_ensemble
@@ -276,6 +287,83 @@ data_cif_sbevsl.dic
 ;
 
 
+
+###########
+## SCENE ##
+###########
+
+save_scene
+  _category.description
+;              Data items in the SCENE category provide information
+               scenes.  A sceen has an identifier specified in the
+               SCENE category and zero or more scene objects in
+               the SCENE_OBJ category.
+               
+               There is a default scene id of 'default', which
+               is always a valid reference to the SCENE category.
+;
+
+    _category.mandatory_code      no
+    _category_key.name          '_scene.id'
+    loop_
+    _category_group.id           'inclusive_group'
+                                 'scene_group'
+    loop_
+    _category_examples.detail
+    _category_examples.case
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;
+    Example 1 - A list of two scenes, one showing insulin and
+    one showing crambin 
+;
+;
+    loop_
+    _scene.id
+    _scene.description
+    insulin
+    ; A scene showing insulin from the PDB entry 4INS
+      (Dodson, G.G.,  Dodson, E.J.,  Hodgkin, D.C.,  
+      Isaacs, N.W.,  Vijayan, M., 10 Jul 1989)
+    ;
+    crambin
+    ; A scene showing crambin from the PDB entry 1CRN
+      (Hendrickson, W.A.,  Teeter, M.M.,  30 April 1981)
+    ;
+    
+;
+    save_
+    
+ save__scene.id
+    _item_description.description
+;              The value of _scene.id uniquely identifies a
+               record in SCENE list.  
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_scene.id'       scene           yes
+    _item_type.code              code
+    _item_default.value          default
+
+    save_
+
+ save__scene.description
+    _item_description.description
+;              The value of _scene.desciption provides information
+               about the sturcture and purpose of the scene
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_scene.description'       scene           no
+    _item_type.code                       text
+
+    save_
+
+
+
 ###############
 ## SCENE_OBJ ##
 ###############
@@ -284,20 +372,26 @@ save_scene_obj
   _category.description
 ;              Data items in the SCENE_OBJ category provide information
                about objects in the scene.  Every object has a poise,
-               a selected property and a visible property.  Additional
-               properties may be defined in the various subclasses.
+               a selected property and a visible property.  Every object
+               has a reference to a particular object specified by
+               '_scene_obj.id'.  In order to allow particular objects
+               to be used as the basis for multiple scene objects,
+               the rows in the list are also distinguished by
+               a scene id given in _scene_obj.scene and by
+               an object instance id given in _scene_obj.instance.
                
                If no poise is specified the object sits at the coordinates
-               in the scene at which is was gewnerated.
+               in the scene at which is was generated.
                
                If a poise is specified the object is subject to a final
                rotation and translation.
-               
-               
 ;
 
     _category.mandatory_code      no
+    loop_
     _category_key.name          '_scene_obj.id'
+                                '_scene_obj.instance'
+                                '_scene_obj.scene'
     loop_
     _category_group.id           'inclusive_group'
                                  'scene_obj_group'
@@ -306,35 +400,87 @@ save_scene_obj
     _category_examples.case
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;
-    Example 1 - A scene with one observer, one light an two atoms 
+    Example 1 - A scene with one observer, one light and two atoms
+    each given in its original position and moved by a poise, using
+    the default scene.
 ;
 ;
     loop_
     _scene_obj.id
+    _scene_obj.instance
+    _scene_obj.scene
     _scene_obj.poise
     _scene_obj.selected
     _scene_obj.visible
     
-    observer1 poise1 no no
-    light1    poise2 no yes
-    atom1     .      yes yes
-    atom2     .      yes yes
+    observer1 .  . poise1 no no
+    light1    .  . poise2 no yes
+    atom1     1 .  .      yes yes
+    atom2     1 .  .      yes yes
+    atom1     1 .  poise3 yes yes
+    atom2     1 .  poise3 yes yes
  ;
     save_
     
  save__scene_obj.id
     _item_description.description
-;              The value of _scene_obj.id uniquely identifies a
+;              The value of '_scene_obj.id' along with the
+               value of '_scene_obj.instance' and the value
+               of '_scene_obj.scene' uniquely identifies a
                record in SCENE_OBJ list.  In order to handle the
                various types of objects, the intermediate category
-               SCENE_OBJ_ID is used
+               SCENE_OBJ_ID is used.
+               
+               The value of this data item is a reference to
+               the SCENE_OBJ_ID category.
 ;
     loop_
     _item.name
     _item.category_id
     _item.mandatory_code
                '_scene_obj.id'    scene_obj        yes
-    _item_type.code              scene_obj_id
+    _item_type.code               scene_obj_id
+
+    save_
+
+ save__scene_obj.instance
+    _item_description.description
+;              The value of '_scene_obj.instance' along with the
+               value of '_scene_obj.id' and the value
+               of '_scene_obj.scene' uniquely identifies a
+               record in SCENE_OBJ list.  
+               
+               There is a default instance with the value 'default'
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_scene_obj.instance'    scene_obj        implicit
+    _item_type.code               code
+    _item_value.default           'default'
+
+    save_
+
+
+ save__scene_obj.scene
+    _item_description.description
+;              The value of '_scene_obj.id' along with the
+               value of '_scene_obj.instance' and the value
+               of '_scene_obj.scene' uniquely identifies a
+               record in SCENE_OBJ list. 
+               
+               This data item is a reference to the SCENE
+               category.
+               
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_scene_obj.scene'    scene_obj        implicit
+    _item_type.code               code
+    _item_value.default           'default'
 
     save_
 
@@ -430,14 +576,18 @@ save_scene_obj_id
 ;
     loop_
     _scene_obj.id
+    _scene_obj.instance
+    _scene_obj.scene
     _scene_obj.poise
     _scene_obj.selected
     _scene_obj.visible
     
-    observer1 poise1 no no
-    light1    poise2 no yes
-    atom1     .      yes yes
-    atom2     .      yes yes
+    observer1 .  . poise1 no no
+    light1    .  . poise2 no yes
+    atom1     1 .  .      yes yes
+    atom2     1 .  .      yes yes
+    atom1     1 .  poise3 yes yes
+    atom2     1 .  poise3 yes yes
     
     loop_
     _scene_obj_id.id
@@ -581,20 +731,24 @@ save_molecular_obj
     _category_examples.case
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;
-    Example 1 - A scene with one observer, one light an two atoms
-                continues to the MOLECULAR category
+    Example 1 - A scene with one observer, one light and two atoms
+                in two poises continues to the MOLECULAR category
 ;
 ;
     loop_
     _scene_obj.id
+    _scene_obj.instance
+    _scene_obj.scene
     _scene_obj.poise
     _scene_obj.selected
     _scene_obj.visible
     
-    observer1 poise1 no no
-    light1    poise2 no yes
-    atom1     .      yes yes
-    atom2     .      yes yes
+    observer1 .  . poise1 no no
+    light1    .  . poise2 no yes
+    atom1     1 .  .      yes yes
+    atom2     1 .  .      yes yes
+    atom1     1 .  poise3 yes yes
+    atom2     1 .  poise3 yes yes
     
     loop_
     _scene_obj_id.id
@@ -783,8 +937,8 @@ save_molecular_obj
 
  save__molecular_obj.chain_ensemble_obj
     _item_description.description
-;              The value of _molecular_obj.chain_ensemble_objj identifies
-               a chain ensembler object to be associated with 
+;              The value of _molecular_obj.chain_ensemble_obj identifies
+               a chain ensemble object to be associated with 
                _molecular_obj.id
 ;
     loop_
@@ -801,6 +955,68 @@ save_molecular_obj
                '_molecular_obj.group_obj          overlaid
                '_molecular_obj.group_ensemble_obj overlaid
                '_molecular_obj.chain_obj          overlaid
+
+    save_
+
+#############################
+## MOLECULAR_OBJ_ENSEMBLES ##
+#############################
+
+save_molecular_obj_ensemble
+  _category.description
+;              Data items in the MOLECULAR_OBJ_ENSEMBLES category 
+               provide information about ensembles of molecular
+               objects.  A molecular object ensemble has an 
+               identifier and zero or more doubly linked items
+               in an atom ensemble or a group ensemble.
+;
+
+    _category.mandatory_code      no
+    _category_key.name          '_molecular_obj_ensembles.id'
+    loop_
+    _category_group.id           'inclusive_group'
+                                 'object_group'
+    loop_
+    _category_examples.detail
+    _category_examples.case
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+;
+    Example 1 - To be provided 
+;
+;
+    
+;
+    save_
+    
+ save__molecular_obj_ensembles.id
+    _item_description.description
+;              The value of _molecular_obj_ensemblse.id uniquely 
+               identifies a record in the MOLECULAR_OBJ_ENSEMBLES list.  
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_molecular_obj_ensembles.id'       
+               molecular_obj_ensembles           yes
+    _item_type.code              code
+    _item_default.value          default
+
+    save_
+
+ save__scene.description
+    _item_description.description
+;              The value of _molecular_obj_ensembles.desciption provides 
+               information about the structure and purpose of the
+               ensemble.
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_molecular_obj_ensembles.description'
+               molecular_obj_ensembles           no
+    _item_type.code                       text
 
     save_
 
@@ -833,10 +1049,11 @@ save_atom_obj
 ;
 ;
 ;
+
 save__atom_obj.atom_site
     _item_description.description
 ;              This data item give the atom site that from which this
-               atom object inherits its propoerties.  Multiple
+               atom object inherits its properties.  Multiple
                atom objects may inherit properties from the same
                site, e.g. when crystallopgraphic symmetry is
                applied.
@@ -930,24 +1147,6 @@ save__atom_obj.label_xform
 
     save_
 
-save__atom_obj.next_atom_obj
-    _item_description.description
-;              The value of _atom_obj.next_atom_obj is a reference to the
-               next atom object in a sequential list of atom objects.
-               
-               The value given should be the value of the _atom_obj.atom_site_id
-               that uniquely identifies the atom object that is next in
-               the list, or should be a period if no atom object follows
-               this one
-;
-    loop_
-    _item.name
-    _item.category_id
-    _item.mandatory_code
-               '_atom_obj.next_atom_obj'    atom_obj        no
-    _item_type.code              atom_obj
-
-    save_
 
 save__atom_obj.radius
     _item_description.description
@@ -1161,7 +1360,8 @@ save_atom_obj_ensemble
 ;
     _category.mandatory_code      no
     loop_
-    _category_key.name          '_atom_obj_ensemble.id'
+    _category_key.name           '_atom_obj_ensemble.ensemble_id'
+                                 '_atom_obj_ensemble.id'
     loop_
     _category_group.id           'inclusive_group'
                                  'scene_obj_group'
@@ -1182,12 +1382,112 @@ save_atom_obj_ensemble
     _atom_obj_ensemble.atom_obj
     _atom_obj_ensemble.next_item
     _atom_obj_ensemble.prev_item
-    _atom_obj_ensemble.head
+    _atom_obj_ensemble.first_item
     bond1 b1a1 atom1 b1a2 .   b1a1
     bond1 b1a2 atom2 .   b1a1 b1a1
 ;
 
-#>>>> to be continued -- HJB, 14 Nov 06
+save__atom_obj_ensemble.ensemble_id
+    _item_description.description
+;              The value of '_atom_obj_ensemble.ensemble_id' with the value of 
+               '_atom_obj_ensemble.id' must uniquely identify a record in the
+               ATOM_OBJ list.
+               
+               This data item is a reference to an entry in the
+               MOLECULAR_OBJ_ENSEMBLES list.
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_atom_obj_ensemble.ensemble_id'    atom_obj_ensemble        yes
+    _item_type.code              molecular_obj_ensembles
+
+    save_
+
+
+
+save__atom_obj_ensemble.id
+    _item_description.description
+;              The value of '_atom_obj_ensemble.id' with the value of 
+               '_atom_obj_ensemble.ensemble_id' must uniquely identify a record in the
+               ATOM_OBJ list.
+               
+               It is intended that the value of '_atom_obj_ensemble.id' identify
+               the particular object within the particular ensemble.
+
+               Note that this item need not be a number; it can be any unique
+               identifier.
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_atom_obj_ensemble.id'    atom_obj_ensemble        yes
+    _item_type.code              code
+
+    save_
+
+save__atom_obj_ensemble.first_item
+    _item_description.description
+;              The value of _atom_obj.first_item is a reference to the
+               first atom object in an ensemble of atom objects.
+               
+               The value given should be a reference to the first atom_obj,
+               i.e. the value of the _atom_obj.atom_site_id
+               that uniquely identifies the atom object that is first in
+               the ensemble.
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_atom_obj.next_item'    atom_obj        yes
+    _item_type.code              atom_obj
+
+    save_
+
+
+save__atom_obj_ensemble.next_item
+    _item_description.description
+;              The value of _atom_obj.next_item is a reference to the
+               next atom object in an ensemble of atom objects.
+               
+               The value given should be a reference to the next atom_obj,
+               i.e. the value of the '_atom_obj.atom_site_id'
+               that uniquely identifies the atom object that is next in
+               the ensemble, or should be a period if this is the last
+               atom object in the ensemble.
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_atom_obj.next_item'    atom_obj        no
+    _item_type.code              atom_obj
+
+    save_
+
+
+save__atom_obj_ensemble.prev_item
+    _item_description.description
+;              The value of _atom_obj.next_item is a reference to the
+               previous atom object in an ensemble of atom objects.
+               
+               The value given should be the value of the previous atom_obj,
+               i.e. the value of the _atom_obj.atom_site_id
+               that uniquely identifies the previous atom object in
+               the ensemble, or should be a period if this is the first
+               atom object in the ensemble.
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_atom_obj.prev_item'    atom_obj        no
+    _item_type.code              atom_obj
+
+    save_
 
      
 #########################
@@ -1514,6 +1814,86 @@ save__atom_obj_attributes.attribute
 ;
 
 
+##############
+## BOND_OBJ ##
+##############
+
+save_bond_obj
+   _category.description
+;              Data items in the BOND_OBJ category provide information
+               about the those molecular object ensembles of atom
+               objects that are bonds
+;
+    _category.mandatory_code      no
+    _category_key.name          '_bond_obj.ensemble'
+    loop_
+    _category_group.id           'inclusive_group'
+                                 'scene_obj_group'
+   _category_extends.category_id               bond_obj
+   _category_extends.super_category_id         molecular_obj_ensembles
+   _category_extends.parent_object_reference
+                                '_molecular_obj_ensembles.id'
+
+    loop_
+    _category_examples.detail
+    _category_examples.case
+;    Example to be provided
+;
+;
+;
+
+save__bond_obj.ensemble
+    _item_description.description
+;              This data item gives the molecular object ensemble from 
+               which this bond object inherits the list of atoms.  
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_bond_obj.atom_site'    bond_obj        yes
+    _item_type.code              molecular_obj_ensembles
+
+    save_
+
+save__bond_obj.color
+    _item_description.description
+;              The color associated with the bond object.
+               
+               The color of the bond object is not necessarily
+               the color of the bond object as viewed.  The
+               viewed color is a function of the bond object color,
+               shading, specularity, light source colors, ambient 
+               fogging and transparent objects between the object
+               and the eye of the viewer. 
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_bond_obj.color'    bond_obj        no
+    _item_type.code              color
+
+    save_
+
+
+save__bond_obj.radius
+    _item_description.description
+;              The radius of the bond object in the scene when
+               drawn as a cylinder.
+;
+    loop_
+    _item.name
+    _item.category_id
+    _item.mandatory_code
+               '_bond_obj.radius'    bond_obj        no
+    _item_type.code              float
+
+    save_
+
+
+
+
 ##########################
 ## CHEM_COMP_PROPERTIES ##
 ##########################
@@ -1672,7 +2052,7 @@ save__chem_comp_properties.property
                The initial enumeration of properties is from
                the RasMol 2.7.3 manual
                
-               These properties are intrinsic propoerties
+               These properties are intrinsic properties
                of the given shemical components as opposed 
                to the extrinsic properties, such as
                'selected' in the ENSEMBLE_COMP_PROPERTIES
