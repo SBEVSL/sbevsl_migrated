@@ -1,0 +1,20 @@
+[IMAGE MAP]
+MapCount=17
+[Settings]
+last_path=C:\Program Files\HelpBreeze HTML\projects
+prefix list=IDH_,
+html=
+images=
+css=C:\Program Files\HelpBreeze HTML\projects\htmlhelp.css
+t=Pymol_MadeEZ.hhc
+i=Pymol_MadeEZ.hhk
+preview=1
+web_dhtml=1
+web_indxpg=Pymol_MadeEZWebIndex.html
+web_tocpg=Pymol_MadeEZWebTOC.html
+web_mainpg=Pymol_MadeEZWebMain.html
+web_left=30
+web_pix=0
+web_maintitle=PyMOL MadeEZ
+web_toctitle=Contents
+web_idxtitle=Index

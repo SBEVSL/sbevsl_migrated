@@ -1,0 +1,95 @@
+<map name="wel.JPG">
+ <area shape="RECT" coords="67,86,110,109" href          ="The_Presets_Tab.htm">
+ <area shape="RECT" coords="111,86,158,109" href          ="The_Settings_Tab.htm">
+ <area shape="RECT" coords="159,87,220,109" href          ="The_Commands_Tab.htm">
+ <area shape="RECT" coords="221,87,274,108" href          ="The_Movie_Tab.htm">
+ <area shape="RECT" coords="272,86,339,108" href          ="The_Molecule_Information_Tab.htm">
+ <area shape="RECT" coords="339,86,395,109" href          ="The_Advanced_Tab.htm">
+ <area shape="RECT" coords="395,86,447,109" href          ="The_Save_Tab.htm">
+ </map></font></font>
+
+<map name="pre.JPG">
+ <area shape="RECT" coords="66,95,111,118"                   
+  href="The_Presets_Tab.htm">
+ <area shape="RECT" coords="112,95,158,118"      href             ="The_Settings_Tab.htm">
+ <area shape="RECT" coords="159,95,220,118"      href             ="The_Commands_Tab.htm">
+ <area shape="RECT" coords="222,95,274,118"                   
+  href="The_Movie_Tab.htm">
+ <area shape="RECT" coords="275,95,339,118"      href             ="The_Molecule_Information_Tab.htm">
+ <area shape="RECT" coords="340,95,396,118"                   
+  href="The_Advanced_Tab.htm">
+ <area shape="RECT" coords="397,95,447,118"      href             ="The_Save_Tab.htm">
+ <area shape="RECT" coords="59,170,162,253" href       ="Default_View.htm">
+ <area shape="RECT" coords="58,270,165,348" href       ="Ball_Stick_View.htm">
+ <area shape="RECT" coords="57,366,168,442" href       ="Aromatics_View.htm">
+ <area shape="RECT" coords="197,169,306,257" href       ="Color_By_Chain_View.htm">
+ <area shape="RECT" coords="340,364,448,442" href       ="DNA_RNA_View.htm">
+ <area shape="RECT" coords="342,168,450,256" href       ="Ligand_Binding_View.htm">
+ <area shape="RECT" coords="339,270,451,351" href       ="Polarity_View.htm">
+ <area shape="RECT" coords="195,365,312,443" href       ="Putty_View.htm">
+ <area shape="RECT" coords="197,272,311,350" href       ="Surface_View.htm">
+ </map>
+
+<map name="cmd.JPG">
+ <area shape="RECT" coords="66,95,111,118"             
+  href="The_Presets_Tab.htm">
+ <area shape="RECT" coords="112,95,158,118"    href         ="The_Settings_Tab.htm">
+ <area shape="RECT" coords="159,95,220,118"    href         ="The_Commands_Tab.htm">
+ <area shape="RECT" coords="222,95,274,118"             
+  href="The_Movie_Tab.htm">
+ <area shape="RECT" coords="275,95,339,118"    href         ="The_Molecule_Information_Tab.htm">
+ <area shape="RECT" coords="340,95,396,118"             
+  href="The_Advanced_Tab.htm">
+ <area shape="RECT" coords="397,95,447,118"    href         ="The_Save_Tab.htm">
+ <area shape="RECT" coords="40,210,191,244" href       ="Select_options.htm">
+ <area shape="RECT" coords="200,210,351,271" href       ="Show_options.htm">
+ <area shape="RECT" coords="353,215,471,244" href       ="Color_options.htm">
+ <area shape="RECT" coords="36,272,471,417" href       ="Manual_Commands.htm">
+ </map>
+
+<map name="movies.JPG">
+ <area shape="RECT" coords="66,95,111,118"   href       ="The_Presets_Tab.htm">
+ <area shape="RECT" coords="112,95,158,118"          
+  href="The_Settings_Tab.htm">
+ <area shape="RECT" coords="159,95,220,118"   href       ="The_Commands_Tab.htm">
+ <area shape="RECT" coords="222,95,274,118"   href       ="The_Movie_Tab.htm">
+ <area shape="RECT" coords="275,95,339,118"          
+  href="The_Molecule_Information_Tab.htm">
+ <area shape="RECT" coords="340,95,396,118"   href       ="The_Advanced_Tab.htm">
+ <area shape="RECT" coords="397,95,447,118"   href       ="The_Save_Tab.htm">
+ <area shape="RECT" coords="107,166,215,247" href       ="Ligand_Zoom.htm">
+ <area shape="RECT" coords="289,166,398,247" href       ="Build_Protein.htm">
+ <area shape="RECT" coords="107,249,215,328" href       ="Highlight_Chains.htm">
+ <area shape="RECT" coords="289,249,398,328" href       ="Rotate.htm">
+ </map>
+
+<map name="info.JPG">
+ <area shape="RECT" coords="66,93,111,117"  href     ="The_Presets_Tab.htm">
+ <area shape="RECT" coords="112,93,158,117"  href     ="The_Settings_Tab.htm">
+ <area shape="RECT" coords="159,93,220,117"       
+  href="The_Commands_Tab.htm">
+ <area shape="RECT" coords="222,93,274,117"  href     ="The_Movie_Tab.htm">
+ <area shape="RECT" coords="275,93,339,117"  href     ="The_Molecule_Information_Tab.htm">
+ <area shape="RECT" coords="340,93,396,117"       
+  href="The_Advanced_Tab.htm">
+ <area shape="RECT" coords="397,93,447,117"  href     ="The_Save_Tab.htm">
+ <area shape="RECT" coords="22,187,215,227" href       ="Protein_Classification.htm">
+ <area shape="RECT" coords="232,187,394,227" href       ="Hetero_Atoms.htm">
+ <area shape="RECT" coords="23,239,483,356" href       ="Primary_Citation.htm">
+ <area shape="RECT" coords="24,380,158,414" href       ="Chains.htm">
+ <area shape="RECT" coords="228,392,489,482" href       ="Sequence_Information.htm">
+ </map>
+
+<map name="adv.JPG">
+ <area shape="RECT" coords="66,93,111,118" href   ="The_Presets_Tab.htm">
+ <area shape="RECT" coords="112,93,158,118" href   ="The_Settings_Tab.htm">
+ <area shape="RECT" coords="159,93,220,118" href   ="The_Commands_Tab.htm">
+ <area shape="RECT" coords="222,93,274,118" href   ="The_Movie_Tab.htm">
+ <area shape="RECT" coords="275,93,339,118" href   ="The_Molecule_Information_Tab.htm">
+ <area shape="RECT" coords="340,93,396,118" href   ="The_Advanced_Tab.htm">
+ <area shape="RECT" coords="397,93,447,118" href   ="The_Save_Tab.htm">
+ <area shape="RECT" coords="94,133,412,269" href       ="Cartoon_Settings.htm">
+ <area shape="RECT" coords="95,272,412,360" href       ="Sphere_Settings.htm">
+ <area shape="RECT" coords="95,363,412,425" href       ="Stick_Settings.htm"> 
+ <area shape="RECT" coords="95,430,412,470" href       ="Surface_Settings.htm">
+ </map>
