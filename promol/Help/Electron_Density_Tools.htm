@@ -1,0 +1,218 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" CONTENT="Solutionsoft HelpBreeze HTML Help Edition">
+<TITLE>Electron Density Tools</TITLE>
+
+<LINK REL="stylesheet" TYPE="text/css" HREF=../../../../../../Documents and Settings/pac8612/My Documents/Projects/EZ-Viz/Help/htmlhelp.css> 
+<SCRIPT language=javascript SRC="master.js">
+</SCRIPT>
+
+</HEAD>
+
+<BODY>
+<H1><FONT face=Verdana size=5>Electron Density 
+Tools</FONT>  </H1>
+<P><FONT face=Verdana>This group contains numerous options 
+for viewing electron densities of proteins.&nbsp; The calculations performed are 
+derived from the PDB file parameters, and thusly these options can only be used 
+on PDB files, and not on any constructed peptides or molecules.</FONT>  </P>
+<P><FONT face=Verdana>The 
+<STRONG>Mesh</STRONG>, <STRONG>Dots</STRONG>, and <STRONG>Surface</STRONG>     buttons 
+all superimpose an electron density map calculated by PyMOL&nbsp;in the 
+respective representation over an entire PDB file.&nbsp;</FONT>  </P>
+<P><FONT face=Verdana>&nbsp;The 
+<STRONG>Mesh Select</STRONG>, <STRONG>Dots Select</STRONG>, and <STRONG>Surface 
+Select</STRONG>  
+       buttons only work if a user has 
+selected a portion of the protein or molecule in the PDB file.&nbsp; It is also 
+contingent upon the selection retaining the name "sele" on the PyMOL internal 
+GUI.&nbsp; If a user changes this name through manual commands on the PyMOL command line, 
+then they will also not work.&nbsp; Once a user has selected the portion they would like 
+to superimpose the electron density representation over they can press one of these 
+three buttons and it will superimpose the density over only the selected area.&nbsp; 
+Selecting a new area after this and pressing another selection will make the 
+map over the previous selection disappear, and will superimpose it over the new selection.&nbsp; 
+Thus if a user wants to superimpose&nbsp;a map&nbsp;over various selections spread out 
+through a protein it is suggested that they use the sequence viewer to 
+selectively choose the amino acids they are interested 
+in.</FONT>  </P>
+<P><FONT face=Verdana>The<STRONG> Roving 
+Mesh</STRONG> and <STRONG>Roving Surface</STRONG> buttons both superimpose a map 
+limited a small area of the protein.&nbsp; This map can be moved along the 
+protein to view only a small area at a time on the protein using the middle 
+mouse button.&nbsp; After clicking either of these buttons a user must hold down 
+the middle mouse button and move the mouse cursor across the protein to drag the 
+map along with it.&nbsp; To zoom or orient on a specific part of the protein the 
+user can double click the middle mouse button, and the screen will center on 
+this portion and superimpose the map over it.&nbsp; The breadth of the map that 
+is superimposed can be controlled with the<STRONG> Roving Detail 
+slider</STRONG>      
+             
+                  
+           
+               
+                
+              
+             
+              
+  .&nbsp; The larger the number put on the slider, the larger 
+the amount&nbsp;of protein that is superimposed with the map.&nbsp; After 
+changing the number on the Roving Detail slider, the user must click again on 
+either the Roving Mesh or Roving Surface button to enact the change.</FONT>  </P>
+<P><FONT face=Verdana>The <STRONG>Double 
+Resolution</STRONG>   button is used 
+to increase the definition of the map, resulting in either more mesh lines, and 
+a more distinct and full view of the map, or an increase in the amount of dots, 
+also resulting in a more distinct a full view of the map.&nbsp; This helps to 
+provide a more accurate and defined view of the map.&nbsp; Unfortunately 
+doubling the resolution once will take up four times as much memory, and only 
+high end computers can double the resolution more than once.&nbsp; Therefore it 
+is suggested that a user does not use the Double Resolution button more than 
+once, because it may lead to PyMOL crashing due to a lack of memory resources, 
+and thusly a loss of unsaved work.</FONT>  </P>
+<P><FONT face=Verdana>The<STRONG> 
+Contour Slider</STRONG>   controls the 
+volume taken up by the electron density map that has been created.&nbsp; Lower 
+numbers make it take up a small volume and lowers the map closer to the protein 
+backbone over which it is imposed.&nbsp; Higher numbers inflate it significantly 
+and results in a larger volume expanded further away from the protein 
+backbone.&nbsp; Once a number has been changed on the Contour slider the user 
+must click again on their representation of choice to effect the change.&nbsp; 
+Use of the Contour slider is suggested only for advanced use and individuals who 
+understand the effect of changing the contour level upon the accuracy of the 
+map.</FONT>  </P>
+<P><FONT face=Verdana><FONT size=5>External Electron 
+Density Mapping</FONT></FONT>  </P>
+<P><FONT face=Verdana size=5>For advanced users </FONT>  </P>
+<P><FONT face=Verdana>The 
+<STRONG>External Map</STRONG>   button brings up a 
+new window with many of the same options as on the normal Electron Density 
+Mapping group.&nbsp; The difference resides in the fact that this tool is used 
+for importing externally generated electron density maps derived from 
+experimental X-Ray crystallographic data.&nbsp; </FONT>  </P>
+<P><FONT face=Verdana>The entry field on 
+the bottom right side of the window, with a label "<STRONG>Input PDB 
+code</STRONG>" above it, is used to bring the user to a database of electron 
+density maps.&nbsp; Once a user has input a known PDB code into the entry field, 
+they must then press the <STRONG>Get Map</STRONG>       
+                 
+               
+              
+               
+             
+                 
+            
+             
+              
+             
+              
+           
+            
+               
+             
+             
+            
+            
+            
+                 
+               
+     button.&nbsp; This will take them directly to a 
+download page for a map corresponding with the PDB code they have entered.&nbsp;</FONT>  </P>
+<P><FONT face=Verdana>       
+                 
+               
+              
+               
+             
+                 
+            
+             
+              
+             
+              
+           
+            
+               
+             
+             
+            
+           Many 
+PDBs are supported by this database, but some are not, so it 
+is not guaranteed that they will have the PDB a user is looking for.&nbsp; Unfortunately there is 
+no way to prevent the website from loading if it is indeed not supported.&nbsp; The 
+user will find out immediately after pressing the "Generate Map" button the on 
+the webpage, and it will be returned that the map does not exist.&nbsp;</FONT>  </P>
+<P><FONT face=Verdana>       
+                 
+               
+              
+               
+             
+                 
+            
+             
+              
+             
+              
+           
+            
+               
+         There is a dropdown 
+selection menu on the webpage for "Map format", and the user must choose 
+either O (the default), or CCP4, as these are the only two 
+formats&nbsp;supported by PyMOL.&nbsp; Once the format has been selected click on the 
+"Generate Map" button.&nbsp; Once the map has been generated it will display 
+a link to the file that has been created.&nbsp; Right click on this file and select "Save 
+Target As".&nbsp; This will allow the user to download the file to a specified path.&nbsp; 
+After this it must be unzipped from its gunzip format.&nbsp; This will require 
+something like Winzip, or WinRAR, or another unzipping utility that supports gunzip files.&nbsp;</FONT>  </P>
+<P><FONT face=Verdana>After this the 
+file can be loaded by PyMOL.&nbsp; This can be&nbsp;accomplished either through 
+PyMOL itself, or the <STRONG>Load Map</STRONG> button.&nbsp; Since it is just a 
+map the user will not be able to see anything at first.&nbsp; To visualize the 
+downloaded map the user must input a name for the map in the <STRONG>Name Object 
+entry</STRONG>, any name will do.&nbsp; This allows for PyMOL to manipulate the 
+map.&nbsp; The user must also input the exact name of the file that they just 
+downloaded in the <STRONG>Map Filename entry</STRONG>       
+                 
+               
+              
+               
+             
+                 
+            
+             
+              
+             
+              
+           
+            
+               
+             
+   .&nbsp; If the user plans on opening a PDB file 
+to superimpose the downloaded map over it is also necessary to name 
+the map something other than the PDB file name.&nbsp; Example:&nbsp; Using the 
+PDB 1CHO and having downloaded the map 1CHO it is best to 
+name the map 1CHOmap.&nbsp; This means in the entry field for filename I would now put 1CHOmap.&nbsp; 
+This prevents PyMOL from getting confused over inconsistencies with file type and the commands it 
+is being given.&nbsp; It is also best to input a name for&nbsp;the map 
+in the Name Object entry that is different from the PDB file name.</FONT>  </P>
+<P><FONT face=Verdana>Once the map has been named and the 
+file name input it is now possible to visualize the map.&nbsp; The 
+<STRONG>Mesh</STRONG>,<STRONG> Dots</STRONG>, and <STRONG>Surface</STRONG> 
+buttons all do the same thing as previously explained.&nbsp; The <STRONG>Mesh 
+Select</STRONG>, <STRONG>Dots Select</STRONG>, and <STRONG>Surface 
+Select</STRONG> buttons can only be used if a PDB has also been loaded, and has 
+a portion selected.&nbsp; The same rules apply to this selection method as 
+mentioned previously.&nbsp; The <STRONG>Contour scale</STRONG> also operates by 
+the same mechanism as mentioned previously.</FONT>  </P>
+<P><FONT face=Verdana>There is also a <STRONG>Help 
+button</STRONG> on this interface which provides a quick reference for doing all 
+that has been explained, although it is not as detailed as what has just been 
+laid out.&nbsp; </FONT>  </P>
+<P><FONT face=Verdana size=4><A 
+href="Advanced_Toolbox_Tab.htm">Advanced Toolbox 
+Tab</A></FONT>  </P>
+</BODY>
+</HTML>
