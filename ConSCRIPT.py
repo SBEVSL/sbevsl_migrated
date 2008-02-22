@@ -1,3 +1,16 @@
+#-----ConSCRIPT-----#
+# Authors:
+# Brett Hanson
+# Scott Mottarella
+# Corey Wischmeyer
+# Dr. Paul A. Craig, Rochester Institute of Technology
+# Dr. Herbert J. Bernstein, Dowling College
+#
+# Work done in part with support from NIH and Nation Institute of General 
+
+# Medical Sciences (NIGMS) under Grant number 1R15GM078077-01.
+#----------#
+
 import Pmw
 import pymol
 from pymol import cmd
