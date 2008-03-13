@@ -1,16 +1,3 @@
-#-----ConSCRIPT-----#
-# Authors:
-# Brett Hanson
-# Scott Mottarella
-# Corey Wischmeyer
-# Dr. Paul A. Craig, Rochester Institute of Technology
-# Dr. Herbert J. Bernstein, Dowling College
-#
-# Work done in part with support from NIH and Nation Institute of General 
-
-# Medical Sciences (NIGMS) under Grant number 1R15GM078077-01.
-#----------#
-
 import Pmw
 import pymol
 from pymol import cmd
@@ -20,7 +7,7 @@ import tkSimpleDialog
 import tkMessageBox
 import string
 import os
-from tkFileDialog import askopenfilename, asksaveasfilename
+import tkFileDialog
 import re
 import urllib2
 import StringIO
@@ -48,7 +35,9 @@ class converter:
         # create the dialog box which contains the GUI
         parent = app.root
         self.dialog = Pmw.Dialog(parent, title = 'ConSCRIPT')
-            
+
+##        self.master.bind( "<KeyPress>", self.keyPressed )
+        
         # set the size of the 
         #self.dialog.geometry('550x550')
         interior = self.dialog.interior()
@@ -72,13 +61,9 @@ class converter:
         #Run the Boffo Function	
         openbtn = Button(interior, text = 'Open Script')
         openbtn.grid()
-        entry1 = Entry(interior)
-        entry2 = Entry(interior)\
 
         ##-----Select Function-----##
         def select( allparameters ):
-
-            print allparameters + '<--ALLPARAMETERES'
 
             selection = ''
             
@@ -153,18 +138,20 @@ class converter:
             try:
 
                 selection = 'false'
+                f = '('
 
                 ##if parentheses are used
-                if '(' in allparameters and not 'within(' in allparameters and not 'within (' in allparameters:
-                    for x in range(0, len(allparameters)):
-                        if allparameters[x:x+1]=='(':
-                            if not ( allparameters[x-6:x]=='within' or allparameters[x-7:x]=='within ' ):
-                                selection = selectpar( allparameters + ' ' )
-                                x = len(allparameters)
-
-                ##if select within is used
-                elif 'within(' in allparameters or 'within (' in allparameters:
-                    selection = selectwithin( allparameters )
+                if '(' in allparameters:
+                    indicies = [i for i in xrange(len(allparameters)) if allparameters.startswith(f, i)]
+                    for x in indicies:
+                            if allparameters[x-6:x]=='within' or allparameters[x-7:x]=='within ':
+                                    indicies.remove(x)
+                    if not indicies==[]:
+                        selection = selectpar( allparameters + ' ' )
+                        x = len( allparameters )
+                    else:
+                        selection = selectwithin( allparameters )
+                        x = len( allparameters )
                                 
                 ##if an or is used
                 elif ' or ' in allparameters:
@@ -182,10 +169,13 @@ class converter:
                         selection = 'not ' + select( allparameters[4:] )
                     elif '.' in allparameters:
                         found = allparameters.find('.')
-                        selection = select( allparameters[:found] ) + ' and name ' + allparameters[found+1:]
+                        selection = select( allparameters[:found] ) + ' and name ' + select( allparameters[found+1:] )
                     elif ':' in allparameters:
                         found = allparameters.find(':')
-                        selection = select( allparameters[:found] ) + ' and chain ' + allparameters[found+1:]
+                        if len( allparameters[:found] )>0:
+                            selection = select( allparameters[:found] ) + ' and chain ' + allparameters[found+1:]
+                        else:
+                            selection = ' chain ' + allparameters[found+1:]
                     elif allparameters=='all' or allparameters=='*' or allparameters=='':
                         selection = 'all'
                     elif predefinedlists.has_key( allparameters ):
@@ -251,27 +241,42 @@ class converter:
                     stack.append('(')
                     if allparameters[x+1:x+2]==' ':
                         allparameters[x+1:x+2].replace( ' ', '' )
-                        print allparameters + '<--NOSPACE'
                 elif allparameters[x:x+1]==')':
                     if stack==[]:
                         selection = 'false'
                     elif stack==['(']:
-                        selection = selection + ' or ' + select( allparameters[:first] ) + select( allparameters[temp+1:x] ) + select( allparameters[last+1:] )
+                        if len( selection )==0:
+                            selection = select( allparameters[:first] ) + select( allparameters[temp+1:x] ) + select( allparameters[last+1:] )
+                            if allparameters[x+1:x+2]==' ':
+                                temp = x+1
+                            else:
+                                temp = x
+                        else:
+                            selection = selection + ' or ' + select( allparameters[:first] ) + select( allparameters[temp+1:x] ) + select( allparameters[last+1:] )
+                            if allparameters[x+1:x+2]==' ':
+                                temp = x+1
+                            else:
+                                temp = x
                     else:
                         stack.pop()
                 elif allparameters[x:x+1]==',':
                     if stack==['(']:
                         if len( selection )==0:
                             selection = select( allparameters[:first] ) + select( allparameters[temp+1:x] ) + select( allparameters[last+1:] )
-                            temp = x
+                            if allparameters[x+1:x+2]==' ':
+                                temp = x+1
+                            else:
+                                temp = x
                         else:
                             selection = selection + ' or ' + select( allparameters[:first] ) + select( allparameters[temp+1:x] ) + select( allparameters[last+1:] )
-                            temp = x
+                            if allparameters[x+1:x+2]==' ':
+                                temp = x+1
+                            else:
+                                temp = x
                     else:
                         pass
                     if allparameters[x+1:x+2]==' ':
                         allparameters[x+1:x+2].replace( ' ', '' )
-                        print allparameters + '<--NOSPACE'
                 else:
                     pass
 
@@ -310,9 +315,10 @@ class converter:
         
         #Define the Boffo Function
         def Boffo(Event):
-            cmd.reset()
-            cmd.rotate( 'x', 180 )
-            import tkFileDialog
+
+            #Define a set list of colors
+            colorlist = ['','black','blue','brown','cyan','grey','green','magenta','hotpink','orange','pink','skyblue','violet','white','yellow']
+            
             #Open the script write a blank line 
             #(Fixes bug in readline funciton) and re open for reading
             Q = tkFileDialog.askopenfilename(initialdir=('./modules/pmg_tk/startup'))
@@ -320,11 +326,14 @@ class converter:
             f.write('\n')
             f.close()
             f = open(Q, 'r')
+            
             #Make a loop
             running = True
             while running:
+                
                 #Read each line and see if line contains these Variables
                 p = f.readline()[:-1]
+                
 
                 ##---------------Load---------------##
 
@@ -333,9 +342,9 @@ class converter:
 		
                 if loadCmd==firstword:
                     try:
-                        loadfile = p.split()[5:]
+                        loadfile = p[5:]
                         print loadfile + '<--LOADFILE'
-                        cmd.do('load '+loadfile)
+                        cmd.load( loadfile )
                     except:
                         print loadfile + '<--LOADFILE'
                         print 'EXCEPTION THROWN'
@@ -350,38 +359,41 @@ class converter:
                     s = ''
                     for i in p.split( ' ', 1 )[1]:
                         s = s + i + ' '
-                    cmd.do('save '+ s)
-                
+                    cmd.save( s )
+
+                ##---------LOWER-----------##
                 p = p.lower()
 
                 #-----------Background color------------#
                 
-                colorlist = ['','black','blue','brown','cyan','grey','green','magenta','hotpink','orange','pink','skyblue','violet','white','yellow','Yellow','Black','Blue','Brown','Cyan','Grey','Green','Magenta','HotPink','Orange','Pink','SkyBlue','Violet','White','Hotpink','Skyblue']
-                for x in colorlist:
-                    if p == 'background '+ x +'\n':
-                        cmd.bg_color(x)
-                        print p 
+                if p[:10] == 'background':
+                    colorx = p.split( ' ', 1 )[1].lower()
+                    try:
+                        cmd.bg_color(colorx)
+                    except:
+                        print 'No selection was made for bgcolor, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
+                    print p 
 
                 #----------------Select-----------------#
                         
-                if p[:6].lower()=='select':
+                if p[:6]=='select':
                     selected = select( p[7:].lower() )                            
                     print selected + '<--SELECTED'
                     try:
                         cmd.select( 'ScriptSelection', selected)
                     except:
-                        print 'No selection was made, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
+                        print 'No selection was made for select, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
                    
                 #----------------Restrict-----------------#
                         
-                if p[:8].lower()=='restrict':
+                if p[:8]=='restrict':
                     restricted = 'all and not (' + select( p[7:].lower() ) + ')'
                     print restricted + '<--RESTRICTED'
                     try:
                         cmd.select( 'RestrictionSelection', select( p[7:].lower() ) )
                         cmd.hide( 'everything', restricted )
                     except:
-                        print 'No selection was made, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
+                        print 'No selection was made for restrict, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
 
                 ##---------------Center---------------##
 
@@ -392,18 +404,17 @@ class converter:
                         cmd.select( 'CenterSelection', centerselection)
                         cmd.center( centerselection )
                     except:
-                        print 'No selection was made, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
+                        print 'No selection was made for center, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
                      
                 ##---------------Color---------------##
                             
-                colorlist = ['black','blue','brown','cyan','grey','green','magenta','hotpink','orange','pink','skyblue','violet','white','yellow','Yellow','Black','Blue','Brown','Cyan','Grey','Green','Magenta','HotPink','Orange','Pink','SkyBlue','Violet','White','Hotpink','Skyblue', 'red', 'Red']
-                for yy in colorlist:
-                    if 'color ' + yy in p:
-                        try:
-                            cmd.color(yy, selected)
-                        except:
-                            print 'No selection was made, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
-                        print yy
+                if p[:5]=='color':
+                    colory = p.split( ' ', 1)[1].lower()
+                    try:
+                        cmd.color(colory, selected)
+                    except:
+                        print 'No selection was made for color, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
+                    print colory
 
                 ##------------View Options----------------##
 
@@ -427,7 +438,7 @@ class converter:
                             print 'That function is not supported by PyMOL'
 
                 except:
-                    print 'No selection was made, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
+                    print 'No selection was made for view option, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
 
 
 
@@ -449,11 +460,10 @@ class converter:
                         print 'Zoom did not execute properly.  Please revise your zoom command'
 
                 ##---------------Rotate--------------##		
-		rotateCmd = 'ROTATE'
-                if rotateCmd==p[:6].upper():
-                    firstword = p.split()[0].upper()
+		rotateCmd = 'rotate'
+                if rotateCmd==p[:6]:
                     axis = p.split()[1]
-                    rotation = p.splt()[2]
+                    rotation = p.split()[2]
                     if axis == 'z':
                         rotation = '-' + rotation
                     try:
@@ -465,15 +475,14 @@ class converter:
 
                 ##---------------Zap---------------##
 
-                if 'zap' in p:
+                if p=='zap':
                     print 'reinitialize'
                     cmd.reinitialize()
 
                 ##---------------Stereo---------------##
-		stereoCmd = 'STEREO'
+		stereoCmd = 'stereo'
 
-                if stereoCmd==p[:6].upper():
-                    firstword = p.split()[0].upper()
+                if stereoCmd==p[:6]:
                     tmpstring = p.split()[1]
                     if 'on' in tmpstring:
                         cmd.stereo('on')
@@ -493,14 +502,14 @@ class converter:
                 if 'reset' in p:
                     print 'reset'
                     cmd.reset()
-
-
-
                     
                 ##-----------Pause/Wait---------------------##
 
-                if 'pause' in p:
-                    time.sleep(5)
+                if p[:5]=='pause':
+                    keystroke=False
+                    while not keystroke:
+                        if event.char==event.keysym:
+                            keystroke=True
 
                 ##---------------Quit/Exit---------------##
 		firstword = p.upper()
@@ -510,6 +519,7 @@ class converter:
 
                 if len(p) < 1:
                     running = False
+                    
             #Close the file
             f.close()
             #Reset the GUI
