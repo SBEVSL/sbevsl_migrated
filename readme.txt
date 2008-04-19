@@ -52,3 +52,19 @@ commands and performing its PyMOL equivalent, either as a single command or as a
 produce the same result. Future plans include expansion to additional molecular visualization programs and the
 preparation of a web site to provide script translation among the various programs. The project is funded in part by
 NIGMS grant #1R15GM078077.
+
+
+ChangeLog:
+
+19 April 2008 -- HJB
+
+Start of a restructuring to allow for nested scripts and handling of more commands:
+    Create global variables filestack and filelevel to track nested scripts
+    Add full copyright notice
+    Change from "Script Editor" to "SBEVSL Script Loader"
+    Allow "colour" as well as "color"
+    Change to a standard for p in f loop to read lines
+    Break up event handler into smaller routines:
+       handlecommand( p ) to process a single command line p
+       processSBEVSLscript( Q ) to process a script file Q
+       
