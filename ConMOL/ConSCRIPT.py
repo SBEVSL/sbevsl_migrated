@@ -13,12 +13,18 @@ import urllib2
 import StringIO
 import gzip
 import time
+import pmg_tk
+from pmg_tk import startup
 
 #Make sure it will work on Linux/Mac (with X11)/ and of course Windows
 try:
     PYMOL_PATH=os.environ['PYMOL_PATH']
 except KeyError:
     PYMOL_PATH='./'
+
+filestack = []
+filelevel = 0
+
 
 Pmw.initialise()
 
@@ -44,7 +50,7 @@ class converter:
             
         #TITLE BAR
         lab = Label(interior, 
-            text='ConSCRIPT', 
+            text='ConSCRIPT (C) Copyright 2007-2008\nS. Mottarella, C. Craig, H. Bernstein\nGPL, No Warranty', 
             background='#000066', foreground='white')
                         
         lab.pack(expand=0, fill='x', padx=4, pady=0)
@@ -52,8 +58,8 @@ class converter:
         notebook = Pmw.NoteBook(interior)
         notebook.pack(fill='both', expand=1, padx=10, pady=10)
 
-        page = notebook.add('Script Editor')
-        notebook.tab('Script Editor').focus_set()
+        page = notebook.add('SBEVSL Script Loader')
+        notebook.tab('SBEVSL Script Loader').focus_set()
         group = Pmw.Group(page, tag_text = 'Log Controls')
         group.grid(row=0, column=0, padx=0, pady=0)
         interior = group.interior()
@@ -313,27 +319,14 @@ class converter:
             return selection
 
         
-        #Define the Boffo Function
-        def Boffo(Event):
+        ## Handle a command line
+        def handlecommand( p ):
+
 
             #Define a set list of colors
             colorlist = ['','black','blue','brown','cyan','grey','green','magenta','hotpink','orange','pink','skyblue','violet','white','yellow']
             
-            #Open the script write a blank line 
-            #(Fixes bug in readline funciton) and re open for reading
-            Q = tkFileDialog.askopenfilename(initialdir=('./modules/pmg_tk/startup'))
-            f = open(Q, 'a')
-            f.write('\n')
-            f.close()
-            f = open(Q, 'r')
-            
-            #Make a loop
-            running = True
-            while running:
-                
-                #Read each line and see if line contains these Variables
-                p = f.readline()[:-1]
-                
+            p = p.rstrip()
 
                 ##---------------Load---------------##
 
@@ -408,7 +401,7 @@ class converter:
                      
                 ##---------------Color---------------##
                             
-                if p[:5]=='color':
+            if p[:5]=='color' or p[:6]=='colour':
                     colory = p.split( ' ', 1)[1].lower()
                     try:
                         cmd.color(colory, selected)
@@ -441,7 +434,6 @@ class converter:
                     print 'No selection was made for view option, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
 
 
-
                 ##---------------Zoom---------------##
 
                 if 'zoom' in p:
@@ -449,11 +441,11 @@ class converter:
                     entry1.insert(0, p)
                     entry1.delete(0, 4)
                     try:
-##                        zoomnum = 10
-##                        print selection + '<--ZOOM SELECTION'
-##                        print zoomnum + '<--ZOOMNUM'
-##                        cmd.do( 'zoom ' + selection + ', ' + zoomnum )
-##                        print 'ZOOM ' + zoomnum
+##                    zoomnum = 10
+##                    print selection + '<--ZOOM SELECTION'
+##                    print zoomnum + '<--ZOOMNUM'
+##                    cmd.do( 'zoom ' + selection + ', ' + zoomnum )
+##                    print 'ZOOM ' + zoomnum
                         zoomnum = 10
                         cmd.zoom( selected, zoomnum )
                     except:
@@ -517,15 +509,46 @@ class converter:
                 if firstword in ['QUIT', 'EXIT']:
                     cmd.quit()
 
-                if len(p) < 1:
-                    running = False
-                    
+            return
+
+
+
+
+        
+        ## Handler for processing a script from a file
+        def processSBEVSLscript( Q ):
+
+            
+            #Open the script 
+            f = open(Q, 'rU')
+            pmg_tk.startup.ConSCRIPT.filestack.append(f)
+            pmg_tk.startup.ConSCRIPT.filelevel = pmg_tk.startup.ConSCRIPT.filelevel+1
+            
+            #Make a loop
+            try:
+                for p in f:
+                    print p  ##DEBUG##
+                    handlecommand(p)
+            finally:
             #Close the file
             f.close()
+                pmg_tk.startup.ConSCRIPT.filelevel = pmg_tk.startup.ConSCRIPT.filelevel-1
+                return
+            
+        #Define the Boffo Function
+        def Boffo(Event):
+
+            Q = tkFileDialog.askopenfilename(initialdir=('./modules/pmg_tk/startup'))
+            pmg_tk.startup.ConSCRIPT.filelevel = 0
+            pmg_tk.startup.ConSCRIPT.filestack = []
+            processSBEVSLscript(Q)
             #Reset the GUI
             interior.mainloop()
+
+
         #Bind button the function
         openbtn.bind('<Button-1>', Boffo)
+                    
                     
 
  
