@@ -56,6 +56,12 @@ NIGMS grant #1R15GM078077.
 
 ChangeLog:
 
+23 April 2008 -- HJB
+
+Fixes to correct lost mod for restrict and to change to use of PyMOL 
+SBEVSLselection selection name instead of variable named selected
+to remember RasMol sticky selection between commands.
+
 19 April 2008 -- HJB
 
 Start of a restructuring to allow for nested scripts and handling of more commands:

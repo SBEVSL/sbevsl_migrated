@@ -323,15 +323,15 @@ class converter:
         def handlecommand( p ):
 
 
-            #Define a set list of colors
-            colorlist = ['','black','blue','brown','cyan','grey','green','magenta','hotpink','orange','pink','skyblue','violet','white','yellow']
+                #Define a set list of colors
+                colorlist = ['','black','blue','brown','cyan','grey','green','magenta','hotpink','orange','pink','skyblue','violet','white','yellow']
             
-            p = p.rstrip()
+                p = p.rstrip()
 
                 ##---------------Load---------------##
 
-		firstword = p.split( ' ', 1 )[0].upper()
-		loadCmd = 'LOAD'
+                firstword = p.split( ' ', 1 )[0].upper()
+                loadCmd = 'LOAD'
 		
                 if loadCmd==firstword:
                     try:
@@ -373,17 +373,17 @@ class converter:
                     selected = select( p[7:].lower() )                            
                     print selected + '<--SELECTED'
                     try:
-                        cmd.select( 'ScriptSelection', selected)
+                        cmd.select( 'SBEVSLSelection', selected)
                     except:
                         print 'No selection was made for select, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
                    
                 #----------------Restrict-----------------#
                         
                 if p[:8]=='restrict':
-                    restricted = 'all and not (' + select( p[7:].lower() ) + ')'
+                    restricted = 'all and not (' + select( p[9:].lower() ) + ')'
                     print restricted + '<--RESTRICTED'
                     try:
-                        cmd.select( 'RestrictionSelection', select( p[7:].lower() ) )
+                        cmd.select( 'SBEVSLSelection', select( p[9:].lower() ) )
                         cmd.hide( 'everything', restricted )
                     except:
                         print 'No selection was made for restrict, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
@@ -401,17 +401,17 @@ class converter:
                      
                 ##---------------Color---------------##
                             
-            if p[:5]=='color' or p[:6]=='colour':
+                if p[:5]=='color' or p[:6]=='colour':
                     colory = p.split( ' ', 1)[1].lower()
                     try:
-                        cmd.color(colory, selected)
+                        cmd.color(colory, 'SBEVSLselection')
                     except:
                         print 'No selection was made for color, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
                     print colory
 
                 ##------------View Options----------------##
 
-		selectDict = {'wireframe': 'lines', 'cartoon': 'cartoon', 'dots': 'dots', 'cpk': 'spheres', 'spacefill': 'spheres', 'trace': 'ribbon',
+                selectDict = {'wireframe': 'lines', 'cartoon': 'cartoon', 'dots': 'dots', 'cpk': 'spheres', 'spacefill': 'spheres', 'trace': 'ribbon',
                               'ribbon': 'ribbon'}		
 
                 firstword = p.split( ' ', 1 )[0].lower()
@@ -422,10 +422,10 @@ class converter:
                         q = p + ' '
                         command = q.split( ' ', 1 )[1][:-1].lower()
                         if command=='false' or command=='off':
-                            cmd.hide( selectDict[firstword], selected)
+                            cmd.hide( selectDict[firstword], 'SBEVSLselection')
                             print firstword + ' off complete'
                         elif command=='true' or command=='on' or command=='':
-                            cmd.show( selectDict[firstword], selected)
+                            cmd.show( selectDict[firstword], 'SBEVSLselection')
                             print firstword + ' on complete'
                         else:
                             print 'That function is not supported by PyMOL'
@@ -447,12 +447,12 @@ class converter:
 ##                    cmd.do( 'zoom ' + selection + ', ' + zoomnum )
 ##                    print 'ZOOM ' + zoomnum
                         zoomnum = 10
-                        cmd.zoom( selected, zoomnum )
+                        cmd.zoom( SBEVSLselected, zoomnum )
                     except:
                         print 'Zoom did not execute properly.  Please revise your zoom command'
 
                 ##---------------Rotate--------------##		
-		rotateCmd = 'rotate'
+                rotateCmd = 'rotate'
                 if rotateCmd==p[:6]:
                     axis = p.split()[1]
                     rotation = p.split()[2]
@@ -472,7 +472,7 @@ class converter:
                     cmd.reinitialize()
 
                 ##---------------Stereo---------------##
-		stereoCmd = 'stereo'
+                stereoCmd = 'stereo'
 
                 if stereoCmd==p[:6]:
                     tmpstring = p.split()[1]
@@ -504,12 +504,12 @@ class converter:
                             keystroke=True
 
                 ##---------------Quit/Exit---------------##
-		firstword = p.upper()
+                firstword = p.upper()
 
                 if firstword in ['QUIT', 'EXIT']:
                     cmd.quit()
 
-            return
+                return
 
 
 
@@ -530,8 +530,8 @@ class converter:
                     print p  ##DEBUG##
                     handlecommand(p)
             finally:
-            #Close the file
-            f.close()
+                #Close the file
+                f.close()
                 pmg_tk.startup.ConSCRIPT.filelevel = pmg_tk.startup.ConSCRIPT.filelevel-1
                 return
             
