@@ -56,6 +56,17 @@ NIGMS grant #1R15GM078077.
 
 ChangeLog:
 
+25 April 2008 -- SM (integrated by HJB)
+
+Integrated mods by SM against base level into CVS at the 23 April level:
+   Add user-defined groups via the "define" command
+   Process "echo", "hbonds", "ssbonds"
+   Change SBEVSLselected of prior mod to SelectionSBEVSL
+   Add handling of colors by RGB triplets to handling of colors by name
+   Accept empty lines and comment lines
+   Rotate any loaded image by 180 around x
+   
+
 23 April 2008 -- HJB
 
 Fixes to correct lost mod for restrict and to change to use of PyMOL 

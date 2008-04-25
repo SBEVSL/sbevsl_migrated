@@ -24,6 +24,7 @@ except KeyError:
 
 filestack = []
 filelevel = 0
+UserDefinedGroups = {}
 
 
 Pmw.initialise()
@@ -41,8 +42,6 @@ class converter:
         # create the dialog box which contains the GUI
         parent = app.root
         self.dialog = Pmw.Dialog(parent, title = 'ConSCRIPT')
-
-##        self.master.bind( "<KeyPress>", self.keyPressed )
         
         # set the size of the 
         #self.dialog.geometry('550x550')
@@ -129,7 +128,7 @@ class converter:
                                'protein': ' resn asp+glu+arg+lys+his+asn+thr+cys+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro ',
                                'purine': ' resn a+g ',
                                'pyrimidine': ' resn c+t ',
-                               'selected': selection,
+                               'selected': 'SelectionSBEVSL',
                                'sheet': ' ss s ',
                                'backbone': ' name o1p+o2p+o3p+p+c1*+c2*+c3*+c4*+c5*+o2*+o3*+o4*+o5*+c+o+n+ca ',
                                'sidechain': ' resn asp+glu+arg+lys+his+asn+thr+cys+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro+a+t+c+g and not name o1p+o2p+o3p+p+c1*+c2*+c3*+c4*+c5*+o2*+o3*+o4*+o5*+c+o+n+ca ',
@@ -186,6 +185,8 @@ class converter:
                         selection = 'all'
                     elif predefinedlists.has_key( allparameters ):
                         selection = predefinedlists[allparameters]
+                    elif UserDefinedGroups.has_key( allparameters ):
+                        selection = select( UserDefinedGroups[allparameters] )
                     elif periodictable.has_key( allparameters ):
                         selection = 'symbol ' + periodictable[allparameters]
                     elif allparameters in aminolist:
@@ -318,15 +319,64 @@ class converter:
 
             return selection
 
+        ## Handles RGB Triplet for colors
+        def RGBTriplet(triplet):
+
+            try:
+                cmd.set_color( triplet, triplet )
+
+            except:
+                print "RGB Triplet not valid."
+
+            return triplet
+
+        ## Defines HBonds for a structure
+        def HBonds():
+
+            try:
+                cmd.h_add('all')
+ 
+                cmd.select( 'don', '(elem n,o and (neighbor elem h) and SelectionSBEVSL)' )
+                cmd.select( 'acc', '(elem o or (elem n and not (neighbor elem h))) and SelectionSBEVSL' )
+                cmd.distance( 'HBA', '(acc)','(don)', '3.2' )
+                cmd.distance( 'HBD', '(don)','(acc)', '3.2' )
+                cmd.delete( 'don' )
+                cmd.delete( 'acc' )
+                cmd.hide( '(elem h)' )
+                 
+                cmd.hide( 'labels','HBA' )
+                cmd.hide( 'labels','HBD' )
+            except:
+                print 'Error occured with calculating HBonds.'
+
+        ## Defines SSBonds for a structure
+        def SSBonds():
+
+            try:
+                cmd.h_add('all')
+ 
+                cmd.select( 'SSCys', '(elem S and resn Cys) and SelectionSBEVSL' )
+                cmd.distance( 'SSCysteines', '(SSCys)','(SSCys)', '3.0' )
+                cmd.delete( 'SSCys' )
+                cmd.hide( '(elem h)' )
+                 
+                cmd.hide( 'labels','SSCysteines' )
+            except:
+                print 'Error occured with calculating SSBonds.'
         
         ## Handle a command line
         def handlecommand( p ):
 
+                if( p.replace( ' ', '' )=="\n" ):
+                    return
 
-                #Define a set list of colors
-                colorlist = ['','black','blue','brown','cyan','grey','green','magenta','hotpink','orange','pink','skyblue','violet','white','yellow']
+                if( p.replace( ' ', '' )[:1]=='#' ):
+                    print p
+                    return
             
                 p = p.rstrip()
+
+                print p
 
                 ##---------------Load---------------##
 
@@ -336,8 +386,9 @@ class converter:
                 if loadCmd==firstword:
                     try:
                         loadfile = p[5:]
-                        print loadfile + '<--LOADFILE'
                         cmd.load( loadfile )
+                        cmd.rotate( 'x', 180 )
+                        print loadfile + '<--LOADFILE'
                     except:
                         print loadfile + '<--LOADFILE'
                         print 'EXCEPTION THROWN'
@@ -361,8 +412,13 @@ class converter:
                 
                 if p[:10] == 'background':
                     colorx = p.split( ' ', 1 )[1].lower()
+                    colorx = colorx.replace( ' ', '' )
                     try:
-                        cmd.bg_color(colorx)
+                        if colorx[:1]=='[':
+                            colorx = RGBTriplet( colorx )
+                            cmd.color( colorx, 'SelectionSBEVSL' )
+                        else:
+                            cmd.bg_color(colorx)
                     except:
                         print 'No selection was made for bgcolor, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
                     print p 
@@ -373,17 +429,18 @@ class converter:
                     selected = select( p[7:].lower() )                            
                     print selected + '<--SELECTED'
                     try:
-                        cmd.select( 'SBEVSLSelection', selected)
+                        cmd.select( 'SelectionSBEVSL', selected)
                     except:
                         print 'No selection was made for select, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
                    
                 #----------------Restrict-----------------#
                         
                 if p[:8]=='restrict':
-                    restricted = 'all and not (' + select( p[9:].lower() ) + ')'
+                    selected = select( p[9:].lower() )
+                    restricted = 'all and not (' + selected + ')'
                     print restricted + '<--RESTRICTED'
                     try:
-                        cmd.select( 'SBEVSLSelection', select( p[9:].lower() ) )
+                        cmd.select( 'SelectionSBEVSL', selected )
                         cmd.hide( 'everything', restricted )
                     except:
                         print 'No selection was made for restrict, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
@@ -403,11 +460,16 @@ class converter:
                             
                 if p[:5]=='color' or p[:6]=='colour':
                     colory = p.split( ' ', 1)[1].lower()
+                    colory = colory.replace( ' ', '' )
                     try:
-                        cmd.color(colory, 'SBEVSLselection')
+                        if colory[:1]=='[':
+                            colory = RGBTriplet( colory )
+                            cmd.color( colory, 'SelectionSBEVSL' )
+                        else:
+                            cmd.color(colory, 'SelectionSBEVSL' )
                     except:
                         print 'No selection was made for color, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
-                    print colory
+                    print 'COLOR ' + colory
 
                 ##------------View Options----------------##
 
@@ -422,10 +484,10 @@ class converter:
                         q = p + ' '
                         command = q.split( ' ', 1 )[1][:-1].lower()
                         if command=='false' or command=='off':
-                            cmd.hide( selectDict[firstword], 'SBEVSLselection')
+                            cmd.hide( selectDict[firstword], 'SelectionSBEVSL')
                             print firstword + ' off complete'
                         elif command=='true' or command=='on' or command=='':
-                            cmd.show( selectDict[firstword], 'SBEVSLselection')
+                            cmd.show( selectDict[firstword], 'SelectionSBEVSL')
                             print firstword + ' on complete'
                         else:
                             print 'That function is not supported by PyMOL'
@@ -447,7 +509,7 @@ class converter:
 ##                    cmd.do( 'zoom ' + selection + ', ' + zoomnum )
 ##                    print 'ZOOM ' + zoomnum
                         zoomnum = 10
-                        cmd.zoom( SBEVSLselected, zoomnum )
+                        cmd.zoom( 'SelectionSBEVSL', zoomnum )
                     except:
                         print 'Zoom did not execute properly.  Please revise your zoom command'
 
@@ -462,8 +524,50 @@ class converter:
                         cmd.rotate( axis, rotation )
                     except:
                         print 'The parameters you have given for the rotate command have been entered improperly.  Please rewrite them as rotate (axis) (rotation in degrees)'
-                    
-                    
+
+                ##---------------HBonds---------------##
+
+                if p[:6]=='hbonds':
+                    try:
+                        command = p.split( ' ', 1 )[1].lower()
+                        print command
+                        if command=='false' or command=='off':
+                            HBonds()
+                            print 'HBonds off complete'
+                        elif command=='true' or command=='on' or command=='':
+                            print 'Starting HBonds on:'
+                            HBonds()
+                            print 'HBonds on complete'
+                        else:
+                            print 'That function is not supported by PyMOL'
+                    except:
+                        print 'HBonds did not execute properly.  Check spelling and implementation of this HBonds command.'        
+
+                ##---------------SSBonds---------------##
+
+                if p[:6]=='ssbonds':
+                    try:
+                        command = p.split( ' ', 1 )[1].lower()
+                        print command
+                        if command=='false' or command=='off':
+                            SSBonds()
+                            print 'SSBonds off complete'
+                        elif command=='true' or command=='on' or command=='':
+                            print 'Starting HBonds on:'
+                            SSBonds()
+                            print 'SSBonds on complete'
+                        else:
+                            print 'That function is not supported by PyMOL'
+                    except:
+                        print 'SSBonds did not execute properly.  Check spelling and implementation of this SSBonds command.'
+
+                ##---------------Backbone--------------##
+
+                if p[:8]=='backbone':
+                    try:
+                        cmd.show( 'ribbon', select('backbone') )
+                    except:
+                        print 'An error occured while trying to display the backbone.'
 
                 ##---------------Zap---------------##
 
@@ -494,6 +598,23 @@ class converter:
                 if 'reset' in p:
                     print 'reset'
                     cmd.reset()
+
+                ##---------------Echo---------------##
+
+                if p[:4]=='echo':
+                    returnval = p[5:]
+                    if returnval[:1]=='"':
+                        returnval = returnval[1:]
+                    if returnval[-1:]=='"':
+                        returnval = returnval[:-1]
+                    print returnval
+
+                ##---------------Define---------------##
+
+                if p[:6]=='define':
+                    defparams = p[7:].split( ' ', 1 )
+                    cmd.select( defparams[0], select(defparams[1]) )
+                    UserDefinedGroups[ defparams[0] ] =  defparams[1]
                     
                 ##-----------Pause/Wait---------------------##
 
@@ -527,7 +648,6 @@ class converter:
             #Make a loop
             try:
                 for p in f:
-                    print p  ##DEBUG##
                     handlecommand(p)
             finally:
                 #Close the file
