@@ -22,9 +22,839 @@ try:
 except KeyError:
     PYMOL_PATH='./'
 
+    
+## Global defintions
+
 filestack = []
 filelevel = 0
 UserDefinedGroups = {}
+
+### /* Lexeme Tokens */
+IdentTok =      256
+NumberTok =     257
+FloatTok =      258
+StringTok =     259
+
+### /* Command Tokens */
+AdviseTok =     260
+BackboneTok =   261
+CartoonTok =    262
+CentreTok =     263
+ClipboardTok =  264
+ColourTok =     265
+ColourModeTok = 609
+ConnectTok =    266
+DashTok =       267
+DefineTok =     268
+DelayTok =      269
+DepthTok =      270
+DisplayTok =    271
+EchoTok =       272
+ExitTok =       273
+GenerateTok =   274
+HelpTok =       275
+LabelTok =      276
+LoadTok =       277
+LoopTok =       278
+MapTok =        279
+MaskTok =       280
+MoleculeTok =   281
+MolSurfTok =    282 
+MonitorTok =    283
+MoveTok =       284
+NoToggleTok =   610
+PrintTok =      285
+QuitTok =       286
+RefreshTok =    287
+RenumTok =      288
+ResetTok =      289
+ResizeTok =     290
+RestoreTok =    291
+RestrictTok =   292
+RotateTok =     293
+SaveTok =       294
+ScriptTok =     295
+SelectTok =     296
+SetTok =        297
+ShowTok =       298
+SlabTok =       299
+SourceTok =     300
+SpacefillTok =  301
+StarTok =       302
+StructureTok =  303
+SurfaceTok =    304
+SymmetryTok =   305
+TitleTok =      306
+TraceTok =      307
+TranslateTok =  308
+ViewTok =       309
+WaitTok =       310
+WireframeTok =  311
+WriteTok =      312
+ZapTok =        313
+ZoomTok =       314
+
+### /* Predicate Tokens */
+
+AlphaTok =      320
+AminoTok =      321
+ATTok =         322
+BondedTok =     323
+CGTok =         324
+CystineTok =    325
+DNATok =        326
+HelixTok =      327
+HeteroTok =     328
+HydrogenTok =   329
+IonTok =        330
+LigandTok =     331
+MainChainTok =  332
+NucleicTok =    333
+ProteinTok =    334
+PurineTok =     335
+PyrimidineTok = 336
+RNATok =        337
+SelectedTok =   338
+SheetTok =      339
+SidechainTok =  340
+SolventTok =    341
+TurnTok =       342
+WaterTok =      343
+
+AcidicTok =     344
+AcyclicTok =    345
+AliphaticTok =  346
+AromaticTok =   347
+BasicTok =      348
+BuriedTok =     349
+ChargedTok =    350
+CisBondedTok =  351
+CyclicTok =     352
+HydrophobicTok =353
+LargeTok =      354
+MediumTok =     355
+NeutralTok =    356
+PolarTok =      357
+SmallTok =      358
+
+
+
+### /* Property Tokens */
+TemperatureTok =360
+RadiusTok =     361
+AtomNoTok =     362
+ElemNoTok =     363
+ModelTok =      364
+ResNoTok =      365
+AltlTok =       366
+
+### /* File Format Tokens */
+### /* Warning! Tokens are related to Format values */
+
+PDBTok =        370
+MacroModelTok = 371
+GaussianTok =   372
+AlchemyTok =    373
+NMRPDBTok =     374
+CharmmTok =     375
+BiosymTok =     376
+MOPACTok =      377
+SHELXTok =      378
+Mol2Tok =       379
+FDATTok =       380
+MMDBTok =       381
+MDLTok =        382
+XYZTok =        383
+CIFTok =        384
+CEXTok =        385
+
+### /* Raster Tokens */
+GIFTok =        390
+PPMTok =        391
+SUNTok =        392
+SUNRLETok =     393
+EPSFTok =       394
+PICTTok =       395
+IRISTok =       396
+BMPTok =        397
+MonoPSTok =     398
+JPEGTok =       399
+PNGTok =        400
+VectPSTok =     401
+KinemageTok =   402
+MolScriptTok =  403
+POVRayTok =     404
+POVRay2Tok =    404
+POVRay3Tok =    405
+VRMLTok =       406
+Raster3DTok =   407
+RamachanTok =   408  ### /* ok, this isn't a real image format ... */
+RamPrintTok =   409
+MirrorTok =     410
+
+### /* Feature Tokens */
+AtomTok =       421
+BondTok =       422
+DotsTok =       423
+HBondTok =      424
+RibbonTok =     425
+SSBondTok =     426
+Ribbon1Tok =    427
+Ribbon2Tok =    428
+UnBondTok =     429
+
+### /* Expression Tokens */
+TrueTok =       430
+FalseTok =      431
+AllTok =        432
+NoneTok =       433
+AndTok =        434
+OrTok =         435
+NotTok =        436
+WithinTok =     437
+XorTok =        438
+MeanTok =       439
+NextTok =       440
+NewTok =        441
+
+### /* Colour Tokens */
+### /* Warning! Tokens are related to colour values */
+
+BlackTok =      442
+BlueTok =       443
+BlueTintTok =   444
+BrownTok =      445
+CyanTok =       446
+GoldTok =       447
+GrayTok =       448
+GreenTok =      449
+GreenBlueTok =  450
+GreenTintTok =  451
+HotPinkTok =    452
+MagentaTok =    453
+OrangeTok =     454
+PinkTok =       455
+PinkTintTok =   456
+PurpleTok =     457
+RedTok =        458
+RedOrangeTok =  459
+SeaGreenTok =   460
+SkyBlueTok =    461
+VioletTok =     462
+WhiteTok =      463
+YellowTok =     464
+YellowTintTok = 465
+
+CPKTok =        466
+ShapelyTok =    467
+ResidueTok =    468
+UserTok =       469
+GroupTok =      470
+ChainTok =      471
+TypeTok =       472
+PotentialTok =  473
+ChargeTok =     474
+CpkNewTok =     475
+
+### /* Variable Tokens */
+AmbientTok =    480
+AxesTok =       481
+BackFadeTok =   482
+BackgroundTok = 483
+BondModeTok =   484
+BoundBoxTok =   485
+CisAngleTok =   486
+ContourTok =    487
+DepthCueTok =   488
+FontSizeTok =   489
+FontStrokeTok = 490
+HourGlassTok =  491
+LevelTok =      ContourTok
+MenusTok =      493
+MouseTok =      494
+PickingTok =    495
+ResolutionTok = 496
+ShadePowerTok = 497
+ShadowTok =     498
+SlabModeTok =   499
+SpacingTok =    500
+SpecularTok =   501
+SpecPowerTok =  502
+SpreadTok =     503
+StrandsTok =    504
+TransparentTok =505
+UnitCellTok =   506
+WidthTok =      SpreadTok
+
+### /* SlabMode Tokens */
+RejectTok =     510
+HalfTok =       511
+HollowTok =     512
+SolidTok =      513
+SectionTok =    514
+
+### /* MouseMode Tokens */
+RasMolTok =     520
+InsightTok =    521
+QuantaTok =     522
+SybylTok =      523
+
+### /* Information Tokens */
+InfoTok =       524
+SequenceTok =   525
+VersionTok =    526
+PhiPsiTok =     527
+
+### /* Display Mode Tokens */
+NormalTok =     528
+StereoTok =     529
+MonoTok =       530
+HardwareTok =   531
+
+### /* Axis Tokens */
+XTok =          532
+YTok =          533
+ZTok =          534
+
+### /* Picking Tokens */
+IdentifyTok =   535
+CoordTok =      536
+DistanceTok =   537
+AngleTok =      538
+TorsionTok =    539
+OriginTok =     540
+
+### /* Misc Tokens */
+InLineTok =     541
+VDWTok =        542
+HeaderTok =     543
+CIFDataTok =    544
+FSTok =         545
+PSTok =         EPSFTok
+
+### /* Clipboard Tokens */
+ImageTok =      546
+PositionTok =   547
+CopyTok =       548
+PasteTok =      549
+
+### /* Language Tokens */
+EnglishTok =    600
+FrenchTok =     601
+GermanTok =     602
+ItalianTok =    603
+SpanishTok =    604
+RussianTok =    605
+ChineseTok =    606
+JapaneseTok =   607
+BulgarianTok =  608
+
+
+def IsPredTok( x ):
+    if (((x)>=AlphaTok) and ((x)<=SmallTok)):
+        return True
+    else:
+        return False
+      
+def PredTokOrd( x ):
+     if  ((x)-AlphaTok):
+        return True
+     else:
+        return False
+        
+def PredTokChr( x ):
+     if ((x)+AlphaTok):
+         return True
+     else:
+         return False
+
+def IsPropTok( x ):
+    if  (((x)>=TemperatureTok) and ((x)<=AltlTok)):
+        return True
+    else:
+        return False
+
+def IsColourToken( x ):
+    if (((x)>=BlackTok) and ((x)<=YellowTintTok)):
+        return True
+    else:
+        return False
+
+def Token2Colour( x ):
+    return  ((x)-BlackTok)
+
+def IsImageToken( x ):
+    if (((((x)>=GIFTok) and ((x)<=RamPrintTok)) or ((x) == PhiPsiTok))):
+        return True
+    else:
+        return False
+
+def IsMoleculeToken( x ):  
+    if (((x)>=PDBTok) and ((x)<=CEXTok)):
+        return True
+    else:
+        return False
+
+VSLTok = {}
+
+VSLTok["ACIDIC"] = AcidicTok
+VSLTok["ACYCLIC"] = AcyclicTok 
+VSLTok["ALCHEMY"] = AlchemyTok
+VSLTok["ALIPHATIC"] = AliphaticTok
+VSLTok["ALL"] = AllTok 
+VSLTok["ALPHA"] = AlphaTok
+VSLTok["ALT"] = AltlTok
+VSLTok["AMBIENT"] = AmbientTok
+VSLTok["AMINO"] = AminoTok
+VSLTok["AND"] = AndTok
+VSLTok["ANGLE"] = AngleTok
+VSLTok["ANGLES"] = AngleTok
+VSLTok["AROMATIC"] = AromaticTok
+VSLTok["ASSE"] = AxesTok
+VSLTok["ASSI"] = AxesTok
+VSLTok["AT"] = ATTok
+VSLTok["ATOM"] = AtomTok
+VSLTok["ATOMNO"] = AtomNoTok
+VSLTok["ATOMNUMBER"] = AtomNoTok
+VSLTok["ATOMS"] = AtomTok
+VSLTok["AXES"] = AxesTok
+VSLTok["AXIS"] = AxesTok
+VSLTok["AVERAGE"] = MeanTok
+VSLTok["BACKBONE"] = BackboneTok
+VSLTok["BACKFADE"] = BackFadeTok
+VSLTok["BACKGROUND"] = BackgroundTok
+VSLTok["BASIC"] = BasicTok
+VSLTok["BIOSYM"] = BiosymTok
+VSLTok["BLACK"] = BlackTok
+VSLTok["BLUE"] = BlueTok
+VSLTok["BLUETINT"] = BlueTintTok
+VSLTok["BMP"] = BMPTok
+VSLTok["BOND"] = BondTok
+VSLTok["BONDED"] = BondedTok
+VSLTok["BONDMODE"] = BondModeTok
+VSLTok["BONDS"] = BondTok
+VSLTok["BOUNDBOX"] = BoundBoxTok
+VSLTok["BOUNDINGBOX"] = BoundBoxTok
+VSLTok["BROWN"] = BrownTok
+VSLTok["BURIED"] = BuriedTok
+VSLTok["CADENA"] = ChainTok
+VSLTok["CADENAS"] = ChainTok
+VSLTok["CARTOON"] = CartoonTok
+VSLTok["CARTOONS"] = CartoonTok
+VSLTok["CATENA"] = ChainTok
+VSLTok["CATENE"] = ChainTok
+VSLTok["CENTER"] = CentreTok
+VSLTok["CENTRE"] = CentreTok
+VSLTok["CEX"] = CEXTok
+VSLTok["CG"] = CGTok
+VSLTok["CHAIN"] = ChainTok
+VSLTok["CHAINS"] = ChainTok
+VSLTok["CHARGE"] = ChargeTok
+VSLTok["CHARGED"] = ChargedTok
+VSLTok["CHARGES"] = ChargeTok
+VSLTok["CHARMM"] = CharmmTok
+VSLTok["CHINESE"] = ChineseTok
+VSLTok["CIF"] = CIFTok
+VSLTok["CISANGLE"] = CisAngleTok
+VSLTok["CISBONDED"] = CisBondedTok
+VSLTok["CLIPBOARD"] = ClipboardTok
+VSLTok["COLOR"] = ColourTok
+VSLTok["COLORMODE"] = ColourModeTok
+VSLTok["COLORS"] = ColourTok
+VSLTok["COLOUR"] = ColourTok
+VSLTok["COLOURMODE"] = ColourModeTok
+VSLTok["COLOURS"] = ColourTok
+VSLTok["CONNECT"] = ConnectTok
+VSLTok["CONTOUR"] = ContourTok
+VSLTok["COORDINATE"] = CoordTok
+VSLTok["COORDINATES"] = CoordTok
+VSLTok["COORD"] = CoordTok
+VSLTok["COORDS"] = CoordTok
+VSLTok["COPY"] = CopyTok
+VSLTok["CPK"] = CPKTok
+VSLTok["CPKNEW"] = CpkNewTok
+VSLTok["CYAN"] = CyanTok
+VSLTok["CYCLIC"] = CyclicTok
+VSLTok["CYSTINE"] = CystineTok
+VSLTok["DASH"] = DashTok
+VSLTok["DASHES"] = DashTok
+VSLTok["DATA_"] = CIFDataTok
+VSLTok["DEFINE"] = DefineTok
+VSLTok["DEPTH"] = DepthTok
+VSLTok["DEPTHCUE"] = DepthCueTok
+VSLTok["DIBUJO"] = CartoonTok
+VSLTok["DIBUJOS"] = CartoonTok
+VSLTok["DISPLAY"] = DisplayTok
+VSLTok["DISTANCE"] = DistanceTok
+VSLTok["DISTANCES"] = DistanceTok
+VSLTok["DNA"] = DNATok
+VSLTok["DOTS"] = DotsTok
+VSLTok["E"] = AndTok
+VSLTok["ECHO"] = EchoTok
+VSLTok["EJE"] = AxesTok
+VSLTok["EJES"] = AxesTok
+VSLTok["ELANCE"] = BondTok
+VSLTok["ELANCES"] = BondTok
+VSLTok["ELEMNO"] = ElemNoTok
+VSLTok["ELEMENTNUMBER"] = ElemNoTok
+VSLTok["ELICHE"] = HelixTok
+VSLTok["ENGLISH"] = EnglishTok
+VSLTok["EPSF"] = EPSFTok
+VSLTok["ELICHE"] = HelixTok
+VSLTok["ESQUELETO"] = BackboneTok
+VSLTok["ETIQUETA"] = LabelTok
+VSLTok["ETIQUETAS"] = LabelTok
+VSLTok["ETICHETTA"] = LabelTok
+VSLTok["ETICHETTE"] = LabelTok  
+VSLTok["EXIT"] = ExitTok
+VSLTok["FALSE"] = FalseTok
+VSLTok["FDAT"] = FDATTok
+VSLTok["FILODIFERRO"] = WireframeTok
+VSLTok["FILDIFERRO"] = WireframeTok
+VSLTok["FILI"] = StrandsTok  
+VSLTok["FONTSIZE"] = FontSizeTok
+VSLTok["FONTSTROKE"] = FontStrokeTok
+VSLTok["FRENCH"] = FrenchTok
+VSLTok["FS"] = FSTok
+VSLTok["GAUSSIAN"] = GaussianTok
+VSLTok["GENERATE"] = GenerateTok   
+VSLTok["GIF"] = GIFTok
+VSLTok["GIRO"] = TurnTok
+VSLTok["GIROS"] = TurnTok
+VSLTok["GOLD"] = GoldTok
+VSLTok["GRAY"] = GrayTok
+VSLTok["GREEN"] = GreenTok
+VSLTok["GREENBLUE"] = GreenBlueTok
+VSLTok["GREENTINT"] = GreenTintTok
+VSLTok["GREY"] = GrayTok
+VSLTok["GROUP"] = GroupTok
+VSLTok["GRUPO"] = GroupTok
+VSLTok["GRUPPO"] = GroupTok 
+VSLTok["HALF"] = HalfTok
+VSLTok["HARDWARE"] = HardwareTok
+VSLTok["HBOND"] = HBondTok
+VSLTok["HBONDS"] = HBondTok
+VSLTok["HEADER"] = HeaderTok
+VSLTok["HEBRAS"] = StrandsTok
+VSLTok["HELICES"] = HelixTok
+VSLTok["HELIX"] = HelixTok
+VSLTok["HELP"] = HelpTok
+VSLTok["HETERO"] = HeteroTok
+VSLTok["HOLLOW"] = HollowTok
+VSLTok["HOTPINK"] = HotPinkTok
+VSLTok["HOURGLASS"] = HourGlassTok
+VSLTok["HYDROGEN"] = HydrogenTok
+VSLTok["HYDROPHOBIC"] = HydrophobicTok
+VSLTok["IDENT"] = IdentifyTok
+VSLTok["IDENTIFY"] = IdentifyTok
+VSLTok["IMAGE"] = ImageTok
+VSLTok["INFO"] = InfoTok
+VSLTok["INFORMATION"] = InfoTok
+VSLTok["INLINE"] = InLineTok
+VSLTok["INSIGHT"] = InsightTok
+VSLTok["ION"] = IonTok
+VSLTok["IONS"] = IonTok
+VSLTok["IRIS"] = IRISTok
+VSLTok["ITALIAN"] = ItalianTok
+VSLTok["JAPANESE"] = JapaneseTok
+VSLTok["JPEG"] = JPEGTok
+VSLTok["KINEMAGE"] = KinemageTok
+VSLTok["LABEL"] = LabelTok
+VSLTok["LABELS"] = LabelTok
+VSLTok["LARGE"] = LargeTok
+VSLTok["LEVEL"] = LevelTok
+VSLTok["LIGAND"] = LigandTok
+VSLTok["LIGANDS"] = LigandTok
+VSLTok["LOAD"] = LoadTok
+VSLTok["MACROMODEL"] = MacroModelTok
+VSLTok["MAGENTA"] = MagentaTok
+VSLTok["MAINCHAIN"] = MainChainTok
+VSLTok["MAP"] = MapTok
+VSLTok["MASK"] = MaskTok
+VSLTok["MDL"] = MDLTok
+VSLTok["MEAN"] = MeanTok
+VSLTok["MEDIUM"] = MediumTok
+VSLTok["MENUS"] = MenusTok
+VSLTok["MESH"] = WireframeTok
+VSLTok["MIRROR"] = MirrorTok
+VSLTok["MMDB"] = MMDBTok
+VSLTok["MODEL"] = ModelTok
+VSLTok["MOL2"] = Mol2Tok
+VSLTok["MOLECULE"] = MoleculeTok
+VSLTok["MOLSCRIPT"] = MolScriptTok
+VSLTok["MOLSURF"] = MolSurfTok
+VSLTok["MONITOR"] = MonitorTok
+VSLTok["MONITORS"] = MonitorTok
+VSLTok["MONO"] = MonoTok
+VSLTok["MONOCHROME"] = MonoTok
+VSLTok["MONOPS"] = MonoPSTok
+VSLTok["MOPAC"] = MOPACTok
+VSLTok["MOSTRAR"] = DisplayTok
+VSLTok["MOUSE"] = MouseTok
+VSLTok["MOUSEMODE"] = MouseTok
+VSLTok["NASTRO"] = RibbonTok 
+VSLTok["NASTRI"] = RibbonTok 
+VSLTok["NEGATIVE"] = AcidicTok
+VSLTok["NEW"] = NewTok
+VSLTok["NEUTRAL"] = NeutralTok
+VSLTok["NEXT"] = NextTok
+VSLTok["NMRPDB"] = NMRPDBTok
+VSLTok["NONE"] = NoneTok
+VSLTok["NORMAL"] = NormalTok
+VSLTok["NOT"] = NotTok
+VSLTok["NOTOGGLE"] = NoToggleTok
+VSLTok["NUCLEIC"] = NucleicTok
+VSLTok["OFF"] = FalseTok
+VSLTok["ON"] = TrueTok
+VSLTok["OR"] = OrTok
+VSLTok["ORANGE"] = OrangeTok
+VSLTok["ORIGIN"] = OriginTok
+VSLTok["PASTE"] = PasteTok
+VSLTok["PAUSE"] = WaitTok
+VSLTok["PDB"] = PDBTok
+VSLTok["PHIPSI"] = PhiPsiTok
+VSLTok["PICK"] = PickingTok
+VSLTok["PICKING"] = PickingTok
+VSLTok["PICT"] = PICTTok
+VSLTok["PINK"] = PinkTok
+VSLTok["PINKTINT"] = PinkTintTok
+VSLTok["PNG"] = PNGTok
+VSLTok["POLAR"] = PolarTok
+VSLTok["POSITIVE"] = BasicTok
+VSLTok["POSITION"] = PositionTok
+VSLTok["POTENTIAL"] = PotentialTok
+VSLTok["POVRAY"] = POVRayTok
+VSLTok["POVRAY2"] = POVRay2Tok
+VSLTok["POVRAY3"] = POVRay3Tok
+VSLTok["PPM"] = PPMTok
+VSLTok["PRINT"] = PrintTok
+VSLTok["PROTEIN"] = ProteinTok
+VSLTok["PS"] = EPSFTok
+VSLTok["PURINE"] = PurineTok
+VSLTok["PURINES"] = PurineTok
+VSLTok["PURPLE"] = PurpleTok
+VSLTok["PYRIMIDINE"] = PyrimidineTok
+VSLTok["PYRIMIDINES"] = PyrimidineTok
+VSLTok["QUANTA"] = QuantaTok
+VSLTok["QUIT"] = QuitTok
+VSLTok["R3D"] = Raster3DTok
+VSLTok["RADIUS"] = RadiusTok
+VSLTok["RAMACHAN"] = RamachanTok
+VSLTok["RAMACHANDRANDATAFILE"] = RamachanTok
+VSLTok["RAMACHANDRANPRINTERPLOT"] = RamPrintTok
+VSLTok["RAMDATA"] = RamachanTok
+VSLTok["RAMPRINT"] = RamPrintTok
+VSLTok["RASMAC"] = RasMolTok
+VSLTok["RASMOL"] = RasMolTok
+VSLTok["RASTER3D"] = Raster3DTok
+VSLTok["RASWIN"] = RasMolTok
+VSLTok["RDF"] = RamachanTok
+VSLTok["RED"] = RedTok
+VSLTok["REDORANGE"] = RedOrangeTok
+VSLTok["REFRESH"] = RefreshTok
+VSLTok["REJECT"] = RejectTok
+VSLTok["RENUM"] = RenumTok
+VSLTok["RENUMBER"] = RenumTok
+VSLTok["RESET"] = ResetTok
+VSLTok["RESIDUE"] = ResidueTok
+VSLTok["RESIDUENUMBER"] = ResNoTok
+VSLTok["RESIZE"] = ResizeTok
+VSLTok["RESNO"] = ResNoTok
+VSLTok["RESOLUTION"] = ResolutionTok
+VSLTok["RESTRICT"] = RestrictTok
+VSLTok["RGB"] = IRISTok
+VSLTok["RIBBON"] = RibbonTok
+VSLTok["RIBBON1"] = Ribbon1Tok
+VSLTok["RIBBON2"] = Ribbon2Tok
+VSLTok["RIBBONS"] = RibbonTok
+VSLTok["RIBBONS1"] = Ribbon1Tok
+VSLTok["RIBBONS2"] = Ribbon2Tok
+VSLTok["RIEMPIMENTO"] = SpacefillTok
+VSLTok["RNA"] = RNATok
+VSLTok["ROT"] = RotateTok
+VSLTok["ROTATE"] = RotateTok
+VSLTok["ROTATION"] = RotateTok
+VSLTok["RPP"] = RamPrintTok
+VSLTok["SALIR"] = ExitTok
+VSLTok["SAVE"] = SaveTok
+VSLTok["SCHELETRO"] = BackboneTok
+VSLTok["SCRIPT"] = ScriptTok
+VSLTok["SECTION"] = SectionTok
+VSLTok["SEAGREEN"] = SeaGreenTok
+VSLTok["SELECT"] = SelectTok
+VSLTok["SELECTED"] = SelectedTok
+VSLTok["SELECTION"] = SelectedTok
+VSLTok["SEQUENCE"] = SequenceTok
+VSLTok["SET"] = SetTok
+VSLTok["SHADEPOWER"] = ShadePowerTok
+VSLTok["SHADOW"] = ShadowTok
+VSLTok["SHADOWS"] = ShadowTok
+VSLTok["SHAPELY"] = ShapelyTok
+VSLTok["SHEET"] = SheetTok
+VSLTok["SHEETS"] = SheetTok
+VSLTok["SHELX"] = SHELXTok
+VSLTok["SHOW"] = ShowTok
+VSLTok["SIDECHAIN"] = SidechainTok
+VSLTok["SKYBLUE"] = SkyBlueTok
+VSLTok["SLAB"] = SlabTok
+VSLTok["SLABMODE"] = SlabModeTok
+VSLTok["SMALL"] = SmallTok
+VSLTok["SOLID"] = SolidTok
+VSLTok["SOLVENT"] = SolventTok
+VSLTok["SOLVENTS"] = SolventTok
+VSLTok["SOURCE"] = SourceTok
+VSLTok["SPACEFILL"] = SpacefillTok
+VSLTok["SPACING"] = SpacingTok
+VSLTok["SPANISH"] = SpanishTok
+VSLTok["SPECPOWER"] = SpecPowerTok
+VSLTok["SPECULAR"] = SpecularTok
+VSLTok["SPREAD"] = SpreadTok
+VSLTok["SSBOND"] = SSBondTok
+VSLTok["SSBONDS"] = SSBondTok
+VSLTok["STAR"] = StarTok
+VSLTok["STARS"] = StarTok
+VSLTok["STEREO"] = StereoTok
+VSLTok["STRANDS"] = StrandsTok
+VSLTok["STRUCTURE"] = StructureTok
+VSLTok["SUN"] = SUNTok
+VSLTok["SUNRLE"] = SUNRLETok
+VSLTok["SURFACE"] = SurfaceTok
+VSLTok["SYBYL"] = SybylTok
+VSLTok["SYMMETRY"] = SymmetryTok
+VSLTok["TEMPERATURE"] = TemperatureTok
+VSLTok["TITLE"] = TitleTok
+VSLTok["TODO"] = AllTok
+VSLTok["TORSION"] = TorsionTok
+VSLTok["TORSIONS"] = TorsionTok
+VSLTok["TRACE"] = TraceTok
+VSLTok["TRANSLATE"] = TranslateTok
+VSLTok["TRANSLATION"] = TranslateTok
+VSLTok["TRANSPARENT"] = TransparentTok
+VSLTok["TRUE"] = TrueTok
+VSLTok["TURN"] = TurnTok
+VSLTok["TURNS"] = TurnTok
+VSLTok["TUTTO"] = AllTok 
+VSLTok["TYPE"] = TypeTok
+VSLTok["UNBOND"] = UnBondTok
+VSLTok["UNITCELL"] = UnitCellTok
+VSLTok["USER"] = UserTok
+VSLTok["VDW"] = VDWTok
+VSLTok["VECTPS"] = VectPSTok
+VSLTok["VIEW"] = ViewTok
+VSLTok["VIGNETTA"] = CartoonTok
+VSLTok["VIOLET"] = VioletTok
+VSLTok["VISUALIZZA"] = DisplayTok 
+VSLTok["VRML"] = VRMLTok
+VSLTok["WAIT"] = WaitTok
+VSLTok["WATER"] = WaterTok
+VSLTok["WATERS"] = WaterTok
+VSLTok["WHITE"] = WhiteTok
+VSLTok["WIDTH"] = WidthTok
+VSLTok["WIREFRAME"] = WireframeTok
+VSLTok["WITHIN"] = WithinTok
+VSLTok["WRITE"] = WriteTok
+VSLTok["X"] = XTok
+VSLTok["XYZ"] = XYZTok
+VSLTok["Y"] = YTok
+VSLTok["YELLOW"] = YellowTok
+VSLTok["YELLOWTINT"] = YellowTintTok
+VSLTok["Z"] = ZTok
+VSLTok["ZAP"] = ZapTok
+VSLTok["ZOOM"] = ZoomTok
+
+def LookUpKeyword( kw ):
+    if kw.upper() in VSLTok:
+      return VSLTok[ kw.upper() ]
+    else:
+      return IdentTok
+      
+##  Command Line Lexical Analysis  */
+
+def IsIdentChar( c ):
+    if c.isalnum() or c=='$' or c== '_' :
+      return True
+    else:
+      return False
+
+def VSLFetchToken( p, baseTokenPtr):
+    TokenPtr = baseTokenPtr
+    TokenStart = TokenPtr
+    CurToken = 0
+    TokenIdent = ""
+    TokenValue = 0
+    if TokenPtr >= len(p):
+        ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
+        return (TokenPtr, 0, TokenStart, TokenIdent, TokenValue)
+    while TokenPtr < len(p) :
+        ch =  p[TokenPtr]
+        if not ch.isspace() :
+            break
+        TokenPtr = TokenPtr+1
+    TokenStart = TokenPtr
+    ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
+    if TokenPtr < len(p) :
+        ch = p[TokenPtr]
+        ### debug: print 'Starting scan with ch ='+ch
+        if ch == '#' :
+            ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
+            return (TokenPtr, 0, TokenStart, TokenIdent, TokenValue)
+        TokenPtr = TokenPtr+1
+        if  ch.isalpha() :
+             ### debug: print ' First character is alpha'
+             TokenLength = 1
+             TokenIdentL = []
+             TokenIdentL.append(ch.upper())
+             while IsIdentChar(p[TokenPtr])==True and TokenLength < 32 :
+                 ch = p[TokenPtr]
+                 TokenPtr = TokenPtr+1
+                 TokenIdentL.append(ch.upper())
+                 TokenLength = TokenLength+1
+                 if TokenPtr >= len(p):
+                     break
+             if TokenLength==32 :
+                 ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
+                 return (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
+             else:
+                 TokenIdent = ''.join(TokenIdentL)
+                 CurToken = LookUpKeyword(TokenIdent)
+                 ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
+                 return (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
+        elif ch.isdigit() :
+            ### debug: print ' First character is digit '
+            TokenValue = ch.atoi()
+            while TokenPtr < len(p):
+                ch = p[TokenPtr]
+                if ch == '#' :
+                    break
+                TokenPtr = TokenPtr+1
+                if ch.isdigit() :
+                    TokenValue = 10*TokenValue + ch.atoi()
+            CurToken = NumberTok
+            ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
+            return (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
+        elif  (ch=='\'') or (ch=='\"') or (ch=='`') :
+            ### debug: print ' First character is quot '
+            TokenLength = 0
+            TokenIdentL = []
+            TokenIdentL.append(ch)
+            while  (TokenPtr < len(p)) and (TokenLength<128) and (p[TokenPtr]!=ch) :
+                TokenIdentL.append(p[TokenPtr])
+                TokenPtr = TokenPtr+1
+            if ch != p[TokenPtr] :
+                ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
+                return (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
+            else:
+                TokenPtr = TokenPtr+1
+                TokenIdent = ''.join(TokenIdentL)
+                CurToken = StringTok
+                ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
+                return (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
+        else :
+            CurToken = ch
+            ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
+            return (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
+    ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
+    return (TokenPtr, 0, TokenStart, TokenIdent, TokenValue)
 
 
 Pmw.initialise()
@@ -57,9 +887,9 @@ class converter:
         notebook = Pmw.NoteBook(interior)
         notebook.pack(fill='both', expand=1, padx=10, pady=10)
 
-        page = notebook.add('SBEVSL Script Loader')
-        notebook.tab('SBEVSL Script Loader').focus_set()
-        group = Pmw.Group(page, tag_text = 'Log Controls')
+        page = notebook.add('VSL Script Loader')
+        notebook.tab('VSL Script Loader').focus_set()
+        group = Pmw.Group(page, tag_text = ' VSL ')
         group.grid(row=0, column=0, padx=0, pady=0)
         interior = group.interior()
                 
@@ -128,7 +958,7 @@ class converter:
                                'protein': ' resn asp+glu+arg+lys+his+asn+thr+cys+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro ',
                                'purine': ' resn a+g ',
                                'pyrimidine': ' resn c+t ',
-                               'selected': 'SelectionSBEVSL',
+                               'selected': 'VSLSelection',
                                'sheet': ' ss s ',
                                'backbone': ' name o1p+o2p+o3p+p+c1*+c2*+c3*+c4*+c5*+o2*+o3*+o4*+o5*+c+o+n+ca ',
                                'sidechain': ' resn asp+glu+arg+lys+his+asn+thr+cys+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro+a+t+c+g and not name o1p+o2p+o3p+p+c1*+c2*+c3*+c4*+c5*+o2*+o3*+o4*+o5*+c+o+n+ca ',
@@ -336,8 +1166,8 @@ class converter:
             try:
                 cmd.h_add('all')
  
-                cmd.select( 'don', '(elem n,o and (neighbor elem h) and SelectionSBEVSL)' )
-                cmd.select( 'acc', '(elem o or (elem n and not (neighbor elem h))) and SelectionSBEVSL' )
+                cmd.select( 'don', '(elem n,o and (neighbor elem h) and VSLSelection)' )
+                cmd.select( 'acc', '(elem o or (elem n and not (neighbor elem h))) and VSLSelection' )
                 cmd.distance( 'HBA', '(acc)','(don)', '3.2' )
                 cmd.distance( 'HBD', '(don)','(acc)', '3.2' )
                 cmd.delete( 'don' )
@@ -355,7 +1185,7 @@ class converter:
             try:
                 cmd.h_add('all')
  
-                cmd.select( 'SSCys', '(elem S and resn Cys) and SelectionSBEVSL' )
+                cmd.select( 'SSCys', '(elem S and resn Cys) and VSLSelection' )
                 cmd.distance( 'SSCysteines', '(SSCys)','(SSCys)', '3.0' )
                 cmd.delete( 'SSCys' )
                 cmd.hide( '(elem h)' )
@@ -374,25 +1204,52 @@ class converter:
                     print p
                     return
             
-                p = p.rstrip()
-
-                print p
+            TokenPtr = 0
+            TokenStart = 0
+            CurToken = 0
+            TokenIdent = ""
+            TokenValue = 0
+            selected = 'VSLselection'
+            
+            try:
+              (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
+            except:
+              print 'VSLFetchToken failed TokenPtr = ' + str(TokenPtr)
 
                 ##---------------Load---------------##
 
-                firstword = p.split( ' ', 1 )[0].upper()
-                loadCmd = 'LOAD'
-		
-                if loadCmd==firstword:
+            if CurToken == LoadTok:
+                try:
+                  (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
+                except:
+                  print 'VSLFetchToken failed TokenPtr = ' + str(TokenPtr)
+                if IsMoleculeToken(CurToken):
                     try:
-                        loadfile = p[5:]
-                        cmd.load( loadfile )
-                        cmd.rotate( 'x', 180 )
-                        print loadfile + '<--LOADFILE'
+                      (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
                     except:
-                        print loadfile + '<--LOADFILE'
+                      print 'VSLFetchToken failed TokenPtr = ' + str(TokenPtr)
+                if CurToken == 0:
+                    print p
+                    print 'Does not contain a valid filename'
+                elif CurToken == StringTok:
+                    try:
+                        print '\"'+TokenIdent+'\"' + '<--LOADFILE'
+                        cmd.load( '\"'+TokenIdent+'\"' )
+                        cmd.rotate( 'x', 180 )
+                        cmd.select('VSLselection','all')
+                    except:
+                        print '\"'+TokenIdent+'\"' + '<--LOADFILE'
+                        print 'EXCEPTION THROWN'                    
+                else:
+                    ts = p[TokenStart:len(p)]
+                    try:
+                        print ts + '<--LOADFILE'
+                        cmd.load( ts )
+                        cmd.rotate( 'x', 180 )
+                        cmd.select('VSLselection','all')
+                    except:
+                        print ts + '<--LOADFILE'
                         print 'EXCEPTION THROWN'
-
 
                 ##---------------Save---------------##
 
@@ -416,7 +1273,7 @@ class converter:
                     try:
                         if colorx[:1]=='[':
                             colorx = RGBTriplet( colorx )
-                            cmd.color( colorx, 'SelectionSBEVSL' )
+                        cmd.color( colorx, 'VSLSelection' )
                         else:
                             cmd.bg_color(colorx)
                     except:
@@ -429,7 +1286,7 @@ class converter:
                     selected = select( p[7:].lower() )                            
                     print selected + '<--SELECTED'
                     try:
-                        cmd.select( 'SelectionSBEVSL', selected)
+                    cmd.select( 'VSLSelection', selected)
                     except:
                         print 'No selection was made for select, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
                    
@@ -440,7 +1297,7 @@ class converter:
                     restricted = 'all and not (' + selected + ')'
                     print restricted + '<--RESTRICTED'
                     try:
-                        cmd.select( 'SelectionSBEVSL', selected )
+                    cmd.select( 'VSLSelection', selected )
                         cmd.hide( 'everything', restricted )
                     except:
                         print 'No selection was made for restrict, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
@@ -464,9 +1321,9 @@ class converter:
                     try:
                         if colory[:1]=='[':
                             colory = RGBTriplet( colory )
-                            cmd.color( colory, 'SelectionSBEVSL' )
+                        cmd.color( colory, 'VSLSelection' )
                         else:
-                            cmd.color(colory, 'SelectionSBEVSL' )
+                        cmd.color(colory, 'VSLSelection' )
                     except:
                         print 'No selection was made for color, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
                     print 'COLOR ' + colory
@@ -484,10 +1341,10 @@ class converter:
                         q = p + ' '
                         command = q.split( ' ', 1 )[1][:-1].lower()
                         if command=='false' or command=='off':
-                            cmd.hide( selectDict[firstword], 'SelectionSBEVSL')
+                        cmd.hide( selectDict[firstword], 'VSLSelection')
                             print firstword + ' off complete'
                         elif command=='true' or command=='on' or command=='':
-                            cmd.show( selectDict[firstword], 'SelectionSBEVSL')
+                        cmd.show( selectDict[firstword], 'VSLSelection')
                             print firstword + ' on complete'
                         else:
                             print 'That function is not supported by PyMOL'
@@ -509,7 +1366,7 @@ class converter:
 ##                    cmd.do( 'zoom ' + selection + ', ' + zoomnum )
 ##                    print 'ZOOM ' + zoomnum
                         zoomnum = 10
-                        cmd.zoom( 'SelectionSBEVSL', zoomnum )
+                    cmd.zoom( 'VSLSelection', zoomnum )
                     except:
                         print 'Zoom did not execute properly.  Please revise your zoom command'
 
@@ -637,7 +1494,7 @@ class converter:
 
         
         ## Handler for processing a script from a file
-        def processSBEVSLscript( Q ):
+        def processVSLscript( Q ):
 
             
             #Open the script 
@@ -648,7 +1505,7 @@ class converter:
             #Make a loop
             try:
                 for p in f:
-                    handlecommand(p)
+                    handlecommand(p.rstrip())
             finally:
                 #Close the file
                 f.close()
@@ -661,7 +1518,7 @@ class converter:
             Q = tkFileDialog.askopenfilename(initialdir=('./modules/pmg_tk/startup'))
             pmg_tk.startup.ConSCRIPT.filelevel = 0
             pmg_tk.startup.ConSCRIPT.filestack = []
-            processSBEVSLscript(Q)
+            processVSLscript(Q)
             #Reset the GUI
             interior.mainloop()
 
