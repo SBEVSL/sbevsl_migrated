@@ -862,7 +862,7 @@ Pmw.initialise()
 #Add it to the PyMOL menu Bar
 def __init__(self):
     self.menuBar.addmenuitem('Plugin', 'command',
-                             'Easy GUI',
+                             'VSL Script Loader',
                              label = 'ConSCRIPT',    
                              command = lambda s=self : converter(s))
 
@@ -883,7 +883,7 @@ class converter:
             background='#000066', foreground='white')
                         
         lab.pack(expand=0, fill='x', padx=4, pady=0)
-	#Makes pages possible
+	    #Makes pages possible
         notebook = Pmw.NoteBook(interior)
         notebook.pack(fill='both', expand=1, padx=10, pady=10)
 
@@ -1197,12 +1197,12 @@ class converter:
         ## Handle a command line
         def handlecommand( p ):
 
-                if( p.replace( ' ', '' )=="\n" ):
-                    return
+            if( p.replace( ' ', '' )=="\n" ):
+                return
 
-                if( p.replace( ' ', '' )[:1]=='#' ):
-                    print p
-                    return
+            if( p.replace( ' ', '' )[:1]=='#' ):
+                print p
+                return
             
             TokenPtr = 0
             TokenStart = 0
@@ -1216,7 +1216,7 @@ class converter:
             except:
               print 'VSLFetchToken failed TokenPtr = ' + str(TokenPtr)
 
-                ##---------------Load---------------##
+            ##---------------Load---------------##
 
             if CurToken == LoadTok:
                 try:
@@ -1249,251 +1249,251 @@ class converter:
                         cmd.select('VSLselection','all')
                     except:
                         print ts + '<--LOADFILE'
-                        print 'EXCEPTION THROWN'
+                        print 'EXCEPTION THROWN'                    
 
-                ##---------------Save---------------##
+            ##---------------Save---------------##
 
-                firstword = p.split( ' ', 1 )[0].upper()
-                saveCmd = ['WRITE', 'SAVE']
-                
-                if firstword in saveCmd:
-                    s = ''
-                    for i in p.split( ' ', 1 )[1]:
-                        s = s + i + ' '
-                    cmd.save( s )
+            firstword = p.split( ' ', 1 )[0].upper()
+            saveCmd = ['WRITE', 'SAVE']
+            
+            if firstword in saveCmd:
+                s = ''
+                for i in p.split( ' ', 1 )[1]:
+                    s = s + i + ' '
+                cmd.save( s )
 
-                ##---------LOWER-----------##
-                p = p.lower()
+            ##---------LOWER-----------##
+            p = p.lower()
 
-                #-----------Background color------------#
-                
-                if p[:10] == 'background':
-                    colorx = p.split( ' ', 1 )[1].lower()
-                    colorx = colorx.replace( ' ', '' )
-                    try:
-                        if colorx[:1]=='[':
-                            colorx = RGBTriplet( colorx )
+            #-----------Background color------------#
+            
+            if p[:10] == 'background':
+                colorx = p.split( ' ', 1 )[1].lower()
+                colorx = colorx.replace( ' ', '' )
+                try:
+                    if colorx[:1]=='[':
+                        colorx = RGBTriplet( colorx )
                         cmd.color( colorx, 'VSLSelection' )
-                        else:
-                            cmd.bg_color(colorx)
-                    except:
-                        print 'No selection was made for bgcolor, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
-                    print p 
+                    else:
+                        cmd.bg_color(colorx)
+                except:
+                    print 'No selection was made for bgcolor, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
+                print p 
 
-                #----------------Select-----------------#
-                        
-                if p[:6]=='select':
-                    selected = select( p[7:].lower() )                            
-                    print selected + '<--SELECTED'
-                    try:
+            #----------------Select-----------------#
+                    
+            if p[:6]=='select':
+                selected = select( p[7:].lower() )                            
+                print selected + '<--SELECTED'
+                try:
                     cmd.select( 'VSLSelection', selected)
-                    except:
-                        print 'No selection was made for select, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
-                   
-                #----------------Restrict-----------------#
-                        
-                if p[:8]=='restrict':
-                    selected = select( p[9:].lower() )
-                    restricted = 'all and not (' + selected + ')'
-                    print restricted + '<--RESTRICTED'
-                    try:
+                except:
+                    print 'No selection was made for select, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
+               
+            #----------------Restrict-----------------#
+                    
+            if p[:8]=='restrict':
+                selected = select( p[9:].lower() )
+                restricted = 'all and not (' + selected + ')'
+                print restricted + '<--RESTRICTED'
+                try:
                     cmd.select( 'VSLSelection', selected )
-                        cmd.hide( 'everything', restricted )
-                    except:
-                        print 'No selection was made for restrict, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
+                    cmd.hide( 'everything', restricted )
+                except:
+                    print 'No selection was made for restrict, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
 
-                ##---------------Center---------------##
+            ##---------------Center---------------##
 
-                if p[:6]=='center' or p[:6]=='centre':
-                    centerselected = select( p[7:].lower() )   
-                    print centerselection + '<--CENTER'
-                    try:
-                        cmd.select( 'CenterSelection', centerselection)
-                        cmd.center( centerselection )
-                    except:
-                        print 'No selection was made for center, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
-                     
-                ##---------------Color---------------##
-                            
-                if p[:5]=='color' or p[:6]=='colour':
-                    colory = p.split( ' ', 1)[1].lower()
-                    colory = colory.replace( ' ', '' )
-                    try:
-                        if colory[:1]=='[':
-                            colory = RGBTriplet( colory )
+            if p[:6]=='center' or p[:6]=='centre':
+                centerselected = select( p[7:].lower() )   
+                print centerselection + '<--CENTER'
+                try:
+                    cmd.select( 'CenterSelection', centerselection)
+                    cmd.center( centerselection )
+                except:
+                    print 'No selection was made for center, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
+                 
+            ##---------------Color---------------##
+                        
+            if p[:5]=='color' or p[:6]=='colour':
+                colory = p.split( ' ', 1)[1].lower()
+                colory = colory.replace( ' ', '' )
+                try:
+                    if colory[:1]=='[':
+                        colory = RGBTriplet( colory )
                         cmd.color( colory, 'VSLSelection' )
-                        else:
+                    else:
                         cmd.color(colory, 'VSLSelection' )
-                    except:
-                        print 'No selection was made for color, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
+                except:
+                    print 'No selection was made for color, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
                     print 'COLOR ' + colory
 
-                ##------------View Options----------------##
+            ##------------View Options----------------##
 
-                selectDict = {'wireframe': 'lines', 'cartoon': 'cartoon', 'dots': 'dots', 'cpk': 'spheres', 'spacefill': 'spheres', 'trace': 'ribbon',
-                              'ribbon': 'ribbon'}		
+            selectDict = {'wireframe': 'lines', 'cartoon': 'cartoon', 'dots': 'dots', 'cpk': 'spheres', 'spacefill': 'spheres', 'trace': 'ribbon',
+                          'ribbon': 'ribbon'}		
 
-                firstword = p.split( ' ', 1 )[0].lower()
+            firstword = p.split( ' ', 1 )[0].lower()
 
-                try:
+            try:
 
-                    if firstword in selectDict: #if the first word on the line is one of the supportable view options
-                        q = p + ' '
-                        command = q.split( ' ', 1 )[1][:-1].lower()
-                        if command=='false' or command=='off':
+                if firstword in selectDict: #if the first word on the line is one of the supportable view options
+                    q = p + ' '
+                    command = q.split( ' ', 1 )[1][:-1].lower()
+                    if command=='false' or command=='off':
                         cmd.hide( selectDict[firstword], 'VSLSelection')
-                            print firstword + ' off complete'
-                        elif command=='true' or command=='on' or command=='':
+                        print firstword + ' off complete'
+                    elif command=='true' or command=='on' or command=='':
                         cmd.show( selectDict[firstword], 'VSLSelection')
-                            print firstword + ' on complete'
-                        else:
-                            print 'That function is not supported by PyMOL'
+                        print firstword + ' on complete'
+                    else:
+                        print 'That function is not supported by PyMOL'
 
-                except:
-                    print 'No selection was made for view option, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
+            except:
+                print 'No selection was made for view option, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
 
 
-                ##---------------Zoom---------------##
+            ##---------------Zoom---------------##
 
-                if 'zoom' in p:
-                    entry1.delete(0, 100000 )
-                    entry1.insert(0, p)
-                    entry1.delete(0, 4)
-                    try:
+            if 'zoom' in p:
+                entry1.delete(0, 100000 )
+                entry1.insert(0, p)
+                entry1.delete(0, 4)
+                try:
 ##                    zoomnum = 10
 ##                    print selection + '<--ZOOM SELECTION'
 ##                    print zoomnum + '<--ZOOMNUM'
 ##                    cmd.do( 'zoom ' + selection + ', ' + zoomnum )
 ##                    print 'ZOOM ' + zoomnum
-                        zoomnum = 10
+                    zoomnum = 10
                     cmd.zoom( 'VSLSelection', zoomnum )
-                    except:
-                        print 'Zoom did not execute properly.  Please revise your zoom command'
+                except:
+                    print 'Zoom did not execute properly.  Please revise your zoom command'
 
-                ##---------------Rotate--------------##		
-                rotateCmd = 'rotate'
-                if rotateCmd==p[:6]:
-                    axis = p.split()[1]
-                    rotation = p.split()[2]
-                    if axis == 'z':
-                        rotation = '-' + rotation
-                    try:
-                        cmd.rotate( axis, rotation )
-                    except:
-                        print 'The parameters you have given for the rotate command have been entered improperly.  Please rewrite them as rotate (axis) (rotation in degrees)'
+            ##---------------Rotate--------------##		
+            rotateCmd = 'rotate'
+            if rotateCmd==p[:6]:
+                axis = p.split()[1]
+                rotation = p.split()[2]
+                if axis == 'z':
+                    rotation = '-' + rotation
+                try:
+                    cmd.rotate( axis, rotation )
+                except:
+                    print 'The parameters you have given for the rotate command have been entered improperly.  Please rewrite them as rotate (axis) (rotation in degrees)'
+                
+            ##---------------HBonds---------------##
 
-                ##---------------HBonds---------------##
-
-                if p[:6]=='hbonds':
-                    try:
-                        command = p.split( ' ', 1 )[1].lower()
-                        print command
-                        if command=='false' or command=='off':
-                            HBonds()
-                            print 'HBonds off complete'
-                        elif command=='true' or command=='on' or command=='':
-                            print 'Starting HBonds on:'
-                            HBonds()
-                            print 'HBonds on complete'
-                        else:
-                            print 'That function is not supported by PyMOL'
-                    except:
-                        print 'HBonds did not execute properly.  Check spelling and implementation of this HBonds command.'        
-
-                ##---------------SSBonds---------------##
-
-                if p[:6]=='ssbonds':
-                    try:
-                        command = p.split( ' ', 1 )[1].lower()
-                        print command
-                        if command=='false' or command=='off':
-                            SSBonds()
-                            print 'SSBonds off complete'
-                        elif command=='true' or command=='on' or command=='':
-                            print 'Starting HBonds on:'
-                            SSBonds()
-                            print 'SSBonds on complete'
-                        else:
-                            print 'That function is not supported by PyMOL'
-                    except:
-                        print 'SSBonds did not execute properly.  Check spelling and implementation of this SSBonds command.'
-
-                ##---------------Backbone--------------##
-
-                if p[:8]=='backbone':
-                    try:
-                        cmd.show( 'ribbon', select('backbone') )
-                    except:
-                        print 'An error occured while trying to display the backbone.'
-
-                ##---------------Zap---------------##
-
-                if p=='zap':
-                    print 'reinitialize'
-                    cmd.reinitialize()
-
-                ##---------------Stereo---------------##
-                stereoCmd = 'stereo'
-
-                if stereoCmd==p[:6]:
-                    tmpstring = p.split()[1]
-                    if 'on' in tmpstring:
-                        cmd.stereo('on')
-                    elif 'off' in tmpstring:
-                        cmd.stereo('off')
+            if p[:6]=='hbonds':
+                try:
+                    command = p.split( ' ', 1 )[1].lower()
+                    print command
+                    if command=='false' or command=='off':
+                        HBonds()
+                        print 'HBonds off complete'
+                    elif command=='true' or command=='on' or command=='':
+                        print 'Starting HBonds on:'
+                        HBonds()
+                        print 'HBonds on complete'
                     else:
-                        print 'That function is not supported by PyMOL.'
+                        print 'That function is not supported by PyMOL'
+                except:
+                    print 'HBonds did not execute properly.  Check spelling and implementation of this HBonds command.'        
 
-                ##---------------Refresh---------------##
+            ##---------------SSBonds---------------##
 
-                if 'refresh' in p:
-                    print 'refresh'
-                    cmd.refresh()
+            if p[:6]=='ssbonds':
+                try:
+                    command = p.split( ' ', 1 )[1].lower()
+                    print command
+                    if command=='false' or command=='off':
+                        SSBonds()
+                        print 'SSBonds off complete'
+                    elif command=='true' or command=='on' or command=='':
+                        print 'Starting HBonds on:'
+                        SSBonds()
+                        print 'SSBonds on complete'
+                    else:
+                        print 'That function is not supported by PyMOL'
+                except:
+                    print 'SSBonds did not execute properly.  Check spelling and implementation of this SSBonds command.'
 
-                ##---------------Reset---------------##
+            ##---------------Backbone--------------##
 
-                if 'reset' in p:
-                    print 'reset'
-                    cmd.reset()
+            if p[:8]=='backbone':
+                try:
+                    cmd.show( 'ribbon', select('backbone') )
+                except:    
+                    print 'An error occured while trying to display the backbone.'
 
-                ##---------------Echo---------------##
+            ##---------------Zap---------------##
 
-                if p[:4]=='echo':
-                    returnval = p[5:]
-                    if returnval[:1]=='"':
-                        returnval = returnval[1:]
-                    if returnval[-1:]=='"':
-                        returnval = returnval[:-1]
-                    print returnval
+            if p=='zap':
+                print 'reinitialize'
+                cmd.reinitialize()
 
-                ##---------------Define---------------##
+            ##---------------Stereo---------------##
+            stereoCmd = 'stereo'
 
-                if p[:6]=='define':
-                    defparams = p[7:].split( ' ', 1 )
-                    cmd.select( defparams[0], select(defparams[1]) )
-                    UserDefinedGroups[ defparams[0] ] =  defparams[1]
-                    
-                ##-----------Pause/Wait---------------------##
+            if stereoCmd==p[:6]:
+                tmpstring = p.split()[1]
+                if 'on' in tmpstring:
+                    cmd.stereo('on')
+                elif 'off' in tmpstring:
+                        cmd.stereo('off')
+                else:
+                    print 'That function is not supported by PyMOL.'
 
-                if p[:5]=='pause':
-                    keystroke=False
-                    while not keystroke:
-                        if event.char==event.keysym:
-                            keystroke=True
+            ##---------------Refresh---------------##
 
-                ##---------------Quit/Exit---------------##
-                firstword = p.upper()
+            if 'refresh' in p:
+                print 'refresh'
+                cmd.refresh()
 
-                if firstword in ['QUIT', 'EXIT']:
-                    cmd.quit()
+            ##---------------Reset---------------##
 
-                return
+            if 'reset' in p:
+                print 'reset'
+                cmd.reset()
+                
+            ##---------------Echo---------------##
+
+            if p[:4]=='echo':
+                returnval = p[5:]
+                if returnval[:1]=='"':
+                    returnval = returnval[1:]
+                if returnval[-1:]=='"':
+                    returnval = returnval[:-1]
+                print returnval
+
+            ##---------------Define---------------##
+
+            if p[:6]=='define':
+                defparams = p[7:].split( ' ', 1 )
+                cmd.select( defparams[0], select(defparams[1]) )
+                UserDefinedGroups[ defparams[0] ] =  defparams[1]
+                
+            ##-----------Pause/Wait---------------------##
+
+            if p[:5]=='pause':
+                keystroke=False
+                while not keystroke:
+                    if event.char==event.keysym:
+                        keystroke=True
+
+            ##---------------Quit/Exit---------------##
+            firstword = p.upper()
+
+            if firstword in ['QUIT', 'EXIT']:
+                cmd.quit()
+
+            return
 
 
 
 
-        
-        ## Handler for processing a script from a file
+    
+    ## Handler for processing a script from a file
         def processVSLscript( Q ):
 
             
