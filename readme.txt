@@ -56,6 +56,11 @@ NIGMS grant #1R15GM078077.
 
 ChangeLog:
 
+26 April 2008 -- HJB
+
+Add RasMol FetchToken as VSLFetchToken and rewrite Load command to use it
+   Change all uses of SelectionSBEVSL VSLSelection
+
 25 April 2008 -- SM (integrated by HJB)
 
 Integrated mods by SM against base level into CVS at the 23 April level:
