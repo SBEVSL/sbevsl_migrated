@@ -60,6 +60,17 @@ ChangeLog:
 
 Add RasMol FetchToken as VSLFetchToken and rewrite Load command to use it
    Change all uses of SelectionSBEVSL VSLSelection
+Add more of the RasMol infrastructure, including the command error
+messages, the color name table converted to 0-1. instead of 0-255.
+and the logic to parse RGB colors.
+Provide hooks for command line SBEVSL command processing on a second tab.
+The command line commands need to be enabled from the tab and then
+entered with a VSL prefix.
+In addition the code on VSLFetchToken has been changed to do individual
+characters as -ord(ch) to avoid a conflict with tokens when unicode
+characters are used in an identifier.
+
+Note:  The update for the RGB parse is not yet complete.  I
 
 25 April 2008 -- SM (integrated by HJB)
 

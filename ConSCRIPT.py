@@ -762,6 +762,86 @@ VSLTok["Z"] = ZTok
 VSLTok["ZAP"] = ZapTok
 VSLTok["ZOOM"] = ZoomTok
 
+
+ErrSyntax   =    0
+ErrBigNum   =    1
+ErrBadOpt   =    2
+ErrParam    =    3
+ErrFilNam   =    4
+ErrBadLoad  =    5
+ErrNotNum   =    6
+ErrNotSep   =    7
+ErrNotBrac  =    8
+ErrNoCol    =    9
+ErrColour   =   10
+ErrBadArg   =   11
+ErrBadExpr  =   12
+ErrParen    =   13
+ErrScript   =   14
+ErrFunc     =   15
+ErrSetName  =   16
+ErrBadSet   =   17
+ErrInScrpt  =   18
+ErrOutScrpt =   19
+ErrBadMolDB =   20
+ErrNoBond   =   21
+ErrBlocSel  =   22
+
+MsgStrs = {}
+
+MsgStrs[ErrSyntax]  = "Invalid command syntax!"
+MsgStrs[ErrBigNum]  = "Parameter value too large!"
+MsgStrs[ErrBadOpt]  = "Invalid parameter setting!"
+MsgStrs[ErrParam]  = "Invalid parameter name!"
+MsgStrs[ErrFilNam]  = "Filename string expected!"
+MsgStrs[ErrBadLoad]  = "Molecule database loaded!"
+MsgStrs[ErrNotNum]  = "Integer value expected!"
+MsgStrs[ErrNotSep]  = "Comma separator missing!"
+MsgStrs[ErrNotBrac]  = "Close bracket ']' expected!"
+MsgStrs[ErrNoCol]  = "No colour specified!"
+MsgStrs[ErrColour]  = "Unknown or incorrect colour!"
+MsgStrs[ErrBadArg]  = "Invalid command argument!"
+MsgStrs[ErrBadExpr]  = "Syntax error in expression!"
+MsgStrs[ErrParen]  = "Close parenthesis ')' expected!"
+MsgStrs[ErrScript]  = "Script command stack too deep!"
+MsgStrs[ErrFunc]  = "Open parenthesis '(' expected!"
+MsgStrs[ErrSetName]  = "Invalid or missing atom set name!"
+MsgStrs[ErrBadSet]  = "Not enough memory to define set!"
+MsgStrs[ErrInScrpt]  = "Command disabled in script file!"
+MsgStrs[ErrOutScrpt]  = "Command invalid (valid only within a script)!"
+MsgStrs[ErrBadMolDB]  = "Molecule database not loaded!"
+MsgStrs[ErrNoBond]  = "Bond for rotation not picked!"
+
+
+VSLColourTable = {}
+
+VSLColourTable[BlackTok] =      [   0/255.,   0/255.,   0/255. ]
+VSLColourTable[BlueTok] =       [   0/255.,   0/255., 255/255. ]
+VSLColourTable[BlueTintTok] =   [ 175/255., 214/255., 255/255. ]
+VSLColourTable[BrownTok] =      [ 175/255., 117/255.,  89/255. ]
+VSLColourTable[CyanTok] =       [   0/255., 255/255., 255/255. ]
+VSLColourTable[GoldTok] =       [ 255/255., 156/255.,   0/255. ]
+VSLColourTable[GrayTok] =       [ 125/255., 125/255., 125/255. ]
+VSLColourTable[GreenTok] =      [   0/255., 255/255.,   0/255. ]
+VSLColourTable[GreenBlueTok] =  [  46/255., 139/255.,  87/255. ]
+VSLColourTable[GreenTintTok] =  [ 152/255., 255/255., 179/255. ]
+VSLColourTable[HotPinkTok] =    [ 255/255.,   0/255., 101/255. ]
+VSLColourTable[MagentaTok] =    [ 255/255.,   0/255., 255/255. ]
+VSLColourTable[OrangeTok] =     [ 255/255., 165/255.,   0/255. ]
+VSLColourTable[PinkTok] =       [ 255/255., 101/255., 117/255. ]
+VSLColourTable[PinkTintTok] =   [ 255/255., 171/255., 187/255. ]
+VSLColourTable[PurpleTok] =     [ 160/255.,  32/255., 240/255. ]
+VSLColourTable[RedTok] =        [ 255/255.,   0/255.,   0/255. ]
+VSLColourTable[RedOrangeTok] =  [ 255/255.,  69/255.,   0/255. ]
+VSLColourTable[SeaGreenTok] =   [   0/255., 250/255., 109/255. ]
+VSLColourTable[SkyBlueTok] =    [  58/255., 144/255., 255/255. ]
+VSLColourTable[VioletTok] =     [ 238/255., 130/255., 238/255. ]
+VSLColourTable[WhiteTok] =      [ 255/255., 255/255., 255/255. ]
+VSLColourTable[YellowTok] =     [ 255/255., 255/255.,   0/255. ]
+VSLColourTable[YellowTintTok] = [ 246/255., 246/255., 117/255. ]
+
+
+
 def LookUpKeyword( kw ):
     if kw.upper() in VSLTok:
       return VSLTok[ kw.upper() ]
@@ -821,14 +901,16 @@ def VSLFetchToken( p, baseTokenPtr):
                  return (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
         elif ch.isdigit() :
             ### debug: print ' First character is digit '
-            TokenValue = ch.atoi()
+            TokenValue = int(ch)
             while TokenPtr < len(p):
                 ch = p[TokenPtr]
                 if ch == '#' :
                     break
                 TokenPtr = TokenPtr+1
                 if ch.isdigit() :
-                    TokenValue = 10*TokenValue + ch.atoi()
+                    TokenValue = 10*TokenValue + int(ch)
+                else:
+                    break
             CurToken = NumberTok
             ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
             return (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
@@ -850,11 +932,93 @@ def VSLFetchToken( p, baseTokenPtr):
                 ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
                 return (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
         else :
-            CurToken = ch
+            CurToken = -ord(ch)
             ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
             return (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
     ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
     return (TokenPtr, 0, TokenStart, TokenIdent, TokenValue)
+
+
+def VSLNextIf( tok, err, p, TokenPtr ) :
+
+    print 'VSLNextIf TokenPtr, p ' + str(TokenPtr) + ' ' +p
+    (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr) 
+    if CurToken != tok :
+       print MsgStrs[err]
+       return (True,  TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
+    else:
+       return (False, TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
+
+
+def VSLParseColour( p, baseTokenPtr, baseCurToken ):
+
+
+    TokenPtr = baseTokenPtr
+    CurToken = baseCurToken
+    print 'VSLParseColour TokenPtr, CurToken, p ' + str(TokenPtr) + ' ' +str(CurToken) + ' ' + p
+    
+    if IsColourToken(CurToken) == True :
+        rgb = VSLColourTable[CurToken]        
+        print ' rgb '+str(rgb)
+        return (True, rgb)
+
+    elif  CurToken == -ord('[') :
+        rgb = [0., 0., 0.]
+
+        (result,  TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLNextIf(NumberTok, ErrNotNum, p, TokenPtr)
+        if result==True :
+            return (False, rgb)
+        else:
+            if TokenValue > 255:
+                print MsgStrs[ErrBigNum]
+                return (False, rgb)
+            else:
+                RVal = TokenValue
+                
+        (result,  TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLNextIf(-ord(','), ErrNotSep, p, TokenPtr)
+        if result==True :
+            return (False, rgb)
+
+        (result,  TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLNextIf(NumberTok, ErrNotNum, p, TokenPtr)
+        if result==True :
+            return (False, rgb)
+        else:
+            if TokenValue > 255:
+                print MsgStrs[ErrBigNum]
+                return (False, rgb)
+            else:
+                GVal = TokenValue
+
+        (result,  TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLNextIf(-ord(','), ErrNotSep, p, TokenPtr)
+        if result==True :
+            return (False, rgb)
+
+        (result,  TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLNextIf(NumberTok, ErrNotNum, p, TokenPtr)
+        if result==True :
+            return (False, rgb)
+        else:
+            if TokenValue > 255:
+                print MsgStrs[ErrBigNum]
+                return (False, rgb)
+            else:
+                BVal = TokenValue
+
+        (result,  TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLNextIf(-ord(']'), ErrNotBrac, p, TokenPtr)
+        if result==True :
+            return (False, rgb)
+        else:
+            rgb = []
+            rgb.append(RVal/255.)
+            rgb.append(GVal/255.)
+            rgb.append(BVal/255.)
+            return (True, rgb)
+            
+    else:
+        return (False, [0., 0., 0.])
+        
+    ### Warning, need to hook to locally named colors
+    
+
 
 
 Pmw.initialise()
@@ -863,7 +1027,7 @@ Pmw.initialise()
 def __init__(self):
     self.menuBar.addmenuitem('Plugin', 'command',
                              'VSL Script Loader',
-                             label = 'ConSCRIPT',    
+                             label = 'ConSCRIPT_CVS',    
                              command = lambda s=self : converter(s))
 
 class converter:
@@ -889,13 +1053,24 @@ class converter:
 
         page = notebook.add('VSL Script Loader')
         notebook.tab('VSL Script Loader').focus_set()
-        group = Pmw.Group(page, tag_text = ' VSL ')
+        group = Pmw.Group(page, tag_text = ' SBEVSL ')
         group.grid(row=0, column=0, padx=0, pady=0)
         interior = group.interior()
                 
         #Run the Boffo Function	
         openbtn = Button(interior, text = 'Open Script')
         openbtn.grid()
+        
+        pagecmd = notebook.add('VSL Command Enable')
+        notebook.tab('VSL Command Enable').focus_set()
+        groupcmd = Pmw.Group(pagecmd, tag_text = ' SBEVSL ')
+        groupcmd.grid(row=0, column=0, padx=0, pady=0)
+        interiorcmd = groupcmd.interior()
+                
+        #Run the Boffocmd Function	
+        openbtncmd = Button(interiorcmd, text = 'Enable VSL')
+        openbtncmd.grid()
+
 
         ##-----Select Function-----##
         def select( allparameters ):
@@ -1150,15 +1325,15 @@ class converter:
             return selection
 
         ## Handles RGB Triplet for colors
-        def RGBTriplet(triplet):
+        def RGBTriplet(name, triplet):
 
             try:
-                cmd.set_color( triplet, triplet )
+                cmd.set_color( name, triplet )
 
             except:
                 print "RGB Triplet not valid."
 
-            return triplet
+            return name
 
         ## Defines HBonds for a structure
         def HBonds():
@@ -1202,7 +1377,7 @@ class converter:
 
             if( p.replace( ' ', '' )[:1]=='#' ):
                 print p
-                return
+                return 0
             
             TokenPtr = 0
             TokenStart = 0
@@ -1215,6 +1390,35 @@ class converter:
               (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
             except:
               print 'VSLFetchToken failed TokenPtr = ' + str(TokenPtr)
+
+            ##---------------Script---------------##
+
+            if CurToken == ScriptTok or CurToken == SourceTok:
+                try:
+                  (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
+                except:
+                  print 'VSLFetchToken failed TokenPtr = ' + str(TokenPtr)
+                if CurToken == 0:
+                    print p
+                    print 'Does not contain a valid filename'
+                elif CurToken == StringTok:
+                    try:
+                        print '\"'+TokenIdent+'\"' + '<--SCRIPTFILE'
+                        return processVSLscript( TokenIdent )
+                    except:
+                        print '\"'+TokenIdent+'\"' + '<--SCRIPTFILE'
+                        print 'EXCEPTION THROWN'                    
+                else:
+                    ts = p[TokenStart:len(p)]
+                    try:
+                        print ts + '<--SCRIPTFILE'
+                        return processVSLscript( ts )
+                    except:
+                        print ts + '<--SCRIPTFILE'
+                        print 'EXCEPTION THROWN'
+                return 0            
+
+
 
             ##---------------Load---------------##
 
@@ -1249,7 +1453,8 @@ class converter:
                         cmd.select('VSLselection','all')
                     except:
                         print ts + '<--LOADFILE'
-                        print 'EXCEPTION THROWN'                    
+                        print 'EXCEPTION THROWN'
+                return 0            
 
             ##---------------Save---------------##
 
@@ -1261,25 +1466,26 @@ class converter:
                 for i in p.split( ' ', 1 )[1]:
                     s = s + i + ' '
                 cmd.save( s )
+                return 0
 
             ##---------LOWER-----------##
             p = p.lower()
 
             #-----------Background color------------#
             
-            if p[:10] == 'background':
-                colorx = p.split( ' ', 1 )[1].lower()
-                colorx = colorx.replace( ' ', '' )
+            if CurToken == BackgroundTok:
                 try:
-                    if colorx[:1]=='[':
-                        colorx = RGBTriplet( colorx )
-                        cmd.color( colorx, 'VSLSelection' )
-                    else:
-                        cmd.bg_color(colorx)
+                  (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
                 except:
-                    print 'No selection was made for bgcolor, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
-                print p 
-
+                  print 'VSLFetchToken failed TokenPtr = ' + str(TokenPtr)
+                (result, rgb) = VSLParseColour( p, TokenPtr, CurToken )
+                if result == True:
+                    colorx = RGBTriplet( 'VSLColor', rgb)
+                    cmd.bg_color(colorx)
+                else:
+                    print MsgStrs[ErrSyntax]
+                return 0
+            
             #----------------Select-----------------#
                     
             if p[:6]=='select':
@@ -1289,6 +1495,7 @@ class converter:
                     cmd.select( 'VSLSelection', selected)
                 except:
                     print 'No selection was made for select, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
+                return 0
                
             #----------------Restrict-----------------#
                     
@@ -1301,6 +1508,7 @@ class converter:
                     cmd.hide( 'everything', restricted )
                 except:
                     print 'No selection was made for restrict, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
+                return 0
 
             ##---------------Center---------------##
 
@@ -1312,21 +1520,22 @@ class converter:
                     cmd.center( centerselection )
                 except:
                     print 'No selection was made for center, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
+                return 0
                  
             ##---------------Color---------------##
                         
-            if p[:5]=='color' or p[:6]=='colour':
-                colory = p.split( ' ', 1)[1].lower()
-                colory = colory.replace( ' ', '' )
+            if CurToken == ColourTok:
                 try:
-                    if colory[:1]=='[':
-                        colory = RGBTriplet( colory )
-                        cmd.color( colory, 'VSLSelection' )
-                    else:
-                        cmd.color(colory, 'VSLSelection' )
+                  (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
                 except:
-                    print 'No selection was made for color, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
-                    print 'COLOR ' + colory
+                  print 'VSLFetchToken failed TokenPtr = ' + str(TokenPtr)
+                (result, rgb) = VSLParseColour( p, TokenPtr, CurToken )
+                if result == True:
+                    colorx = RGBTriplet( 'VSLColor', rgb)
+                    cmd.color( colorx, 'VSLSelection' )
+                else:
+                    print MsgStrs[ErrSyntax]
+                return 0
 
             ##------------View Options----------------##
 
@@ -1351,7 +1560,7 @@ class converter:
 
             except:
                 print 'No selection was made for view option, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
-
+            return 0
 
             ##---------------Zoom---------------##
 
@@ -1369,6 +1578,7 @@ class converter:
                     cmd.zoom( 'VSLSelection', zoomnum )
                 except:
                     print 'Zoom did not execute properly.  Please revise your zoom command'
+                return 0
 
             ##---------------Rotate--------------##		
             rotateCmd = 'rotate'
@@ -1381,6 +1591,7 @@ class converter:
                     cmd.rotate( axis, rotation )
                 except:
                     print 'The parameters you have given for the rotate command have been entered improperly.  Please rewrite them as rotate (axis) (rotation in degrees)'
+                return 0
                 
             ##---------------HBonds---------------##
 
@@ -1399,6 +1610,7 @@ class converter:
                         print 'That function is not supported by PyMOL'
                 except:
                     print 'HBonds did not execute properly.  Check spelling and implementation of this HBonds command.'        
+                return 0
 
             ##---------------SSBonds---------------##
 
@@ -1417,6 +1629,7 @@ class converter:
                         print 'That function is not supported by PyMOL'
                 except:
                     print 'SSBonds did not execute properly.  Check spelling and implementation of this SSBonds command.'
+                return 0
 
             ##---------------Backbone--------------##
 
@@ -1425,12 +1638,14 @@ class converter:
                     cmd.show( 'ribbon', select('backbone') )
                 except:    
                     print 'An error occured while trying to display the backbone.'
+                return 0
 
             ##---------------Zap---------------##
 
             if p=='zap':
                 print 'reinitialize'
                 cmd.reinitialize()
+                return 0
 
             ##---------------Stereo---------------##
             stereoCmd = 'stereo'
@@ -1443,18 +1658,21 @@ class converter:
                         cmd.stereo('off')
                 else:
                     print 'That function is not supported by PyMOL.'
+                return 0
 
             ##---------------Refresh---------------##
 
             if 'refresh' in p:
                 print 'refresh'
                 cmd.refresh()
+                return 0
 
             ##---------------Reset---------------##
 
             if 'reset' in p:
                 print 'reset'
                 cmd.reset()
+                return 0
                 
             ##---------------Echo---------------##
 
@@ -1465,6 +1683,7 @@ class converter:
                 if returnval[-1:]=='"':
                     returnval = returnval[:-1]
                 print returnval
+                return 0
 
             ##---------------Define---------------##
 
@@ -1472,6 +1691,7 @@ class converter:
                 defparams = p[7:].split( ' ', 1 )
                 cmd.select( defparams[0], select(defparams[1]) )
                 UserDefinedGroups[ defparams[0] ] =  defparams[1]
+                return 0
                 
             ##-----------Pause/Wait---------------------##
 
@@ -1480,16 +1700,25 @@ class converter:
                 while not keystroke:
                     if event.char==event.keysym:
                         keystroke=True
+                return 0
 
             ##---------------Quit/Exit---------------##
-            firstword = p.upper()
 
-            if firstword in ['QUIT', 'EXIT']:
-                cmd.quit()
+            if CurToken == ExitTok or CurToken == QuitTok :
+                return CurToken
 
-            return
+            print p
+            print 'not implemented as a VSL command'
+            return 0
 
 
+    ## Handler for SBEVSL commands from the command line
+        def VSL( *args ):
+          p = ' '.join(args)
+          donext = handlecommand(p.rstrip())
+          if donext == QuitTok or donext == ExitTok:
+              cmd.quit()
+          return donext
 
 
     
@@ -1505,12 +1734,19 @@ class converter:
             #Make a loop
             try:
                 for p in f:
-                    handlecommand(p.rstrip())
+                    donext = handlecommand(p.rstrip())
+                    if donext == ExitTok or donext == QuitTok:
+                      f.close()
+                      pmg_tk.startup.ConSCRIPT.filelevel = pmg_tk.startup.ConSCRIPT.filelevel-1
+                      if donext == QuitTok:
+                        return QuitTok
+                      else:
+                        return 0  
             finally:
                 #Close the file
                 f.close()
                 pmg_tk.startup.ConSCRIPT.filelevel = pmg_tk.startup.ConSCRIPT.filelevel-1
-                return
+                return 0
             
         #Define the Boffo Function
         def Boffo(Event):
@@ -1518,13 +1754,28 @@ class converter:
             Q = tkFileDialog.askopenfilename(initialdir=('./modules/pmg_tk/startup'))
             pmg_tk.startup.ConSCRIPT.filelevel = 0
             pmg_tk.startup.ConSCRIPT.filestack = []
-            processVSLscript(Q)
+            donext = processVSLscript(Q)
+            if donext == QuitTok:
+                cmd.quit()
+            #Reset the GUI
+            interior.mainloop()
+
+        #Define the Boffocmd Function
+        def Boffocmd(Event):
+        
+            cmd.extend('VSL', VSL)
+            cmd.extend('vsl', VSL)
+            cmd.extend('SBEVSL', VSL)
+            cmd.extend('sbevsl', VSL)
+            interiorcmd.mainloop()
             #Reset the GUI
             interior.mainloop()
 
 
-        #Bind button the function
+
+        #Bind buttons to the functions
         openbtn.bind('<Button-1>', Boffo)
+        openbtncmd.bind('<Button-1>', Boffocmd)
                     
                     
 
