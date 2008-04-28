@@ -904,13 +904,10 @@ def VSLFetchToken( p, baseTokenPtr):
             TokenValue = int(ch)
             while TokenPtr < len(p):
                 ch = p[TokenPtr]
-                if ch == '#' :
+                if ch == '#' or not ch.isdigit():
                     break
                 TokenPtr = TokenPtr+1
-                if ch.isdigit() :
-                    TokenValue = 10*TokenValue + int(ch)
-                else:
-                    break
+                TokenValue = 10*TokenValue + int(ch)
             CurToken = NumberTok
             ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
             return (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
@@ -933,7 +930,7 @@ def VSLFetchToken( p, baseTokenPtr):
                 return (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
         else :
             CurToken = -ord(ch)
-            ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
+            ### debug:  print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
             return (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
     ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
     return (TokenPtr, 0, TokenStart, TokenIdent, TokenValue)
@@ -941,7 +938,7 @@ def VSLFetchToken( p, baseTokenPtr):
 
 def VSLNextIf( tok, err, p, TokenPtr ) :
 
-    print 'VSLNextIf TokenPtr, p ' + str(TokenPtr) + ' ' +p
+    ### debug: print 'VSLNextIf TokenPtr, p ' + str(TokenPtr) + ' ' +p
     (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr) 
     if CurToken != tok :
        print MsgStrs[err]
@@ -955,11 +952,11 @@ def VSLParseColour( p, baseTokenPtr, baseCurToken ):
 
     TokenPtr = baseTokenPtr
     CurToken = baseCurToken
-    print 'VSLParseColour TokenPtr, CurToken, p ' + str(TokenPtr) + ' ' +str(CurToken) + ' ' + p
+    ### debug: print 'VSLParseColour TokenPtr, CurToken, p ' + str(TokenPtr) + ' ' +str(CurToken) + ' ' + p
     
     if IsColourToken(CurToken) == True :
         rgb = VSLColourTable[CurToken]        
-        print ' rgb '+str(rgb)
+        ### debug: print ' rgb '+str(rgb)
         return (True, rgb)
 
     elif  CurToken == -ord('[') :
@@ -1133,7 +1130,7 @@ class converter:
                                'protein': ' resn asp+glu+arg+lys+his+asn+thr+cys+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro ',
                                'purine': ' resn a+g ',
                                'pyrimidine': ' resn c+t ',
-                               'selected': 'VSLSelection',
+                               'selected': ' VSLselection ',
                                'sheet': ' ss s ',
                                'backbone': ' name o1p+o2p+o3p+p+c1*+c2*+c3*+c4*+c5*+o2*+o3*+o4*+o5*+c+o+n+ca ',
                                'sidechain': ' resn asp+glu+arg+lys+his+asn+thr+cys+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro+a+t+c+g and not name o1p+o2p+o3p+p+c1*+c2*+c3*+c4*+c5*+o2*+o3*+o4*+o5*+c+o+n+ca ',
@@ -1341,8 +1338,8 @@ class converter:
             try:
                 cmd.h_add('all')
  
-                cmd.select( 'don', '(elem n,o and (neighbor elem h) and VSLSelection)' )
-                cmd.select( 'acc', '(elem o or (elem n and not (neighbor elem h))) and VSLSelection' )
+                cmd.select( 'don', '(elem n,o and (neighbor elem h) and VSLselection)' )
+                cmd.select( 'acc', '(elem o or (elem n and not (neighbor elem h))) and VSLselection' )
                 cmd.distance( 'HBA', '(acc)','(don)', '3.2' )
                 cmd.distance( 'HBD', '(don)','(acc)', '3.2' )
                 cmd.delete( 'don' )
@@ -1360,7 +1357,7 @@ class converter:
             try:
                 cmd.h_add('all')
  
-                cmd.select( 'SSCys', '(elem S and resn Cys) and VSLSelection' )
+                cmd.select( 'SSCys', '(elem S and resn Cys) and VSLselection' )
                 cmd.distance( 'SSCysteines', '(SSCys)','(SSCys)', '3.0' )
                 cmd.delete( 'SSCys' )
                 cmd.hide( '(elem h)' )
@@ -1373,7 +1370,7 @@ class converter:
         def handlecommand( p ):
 
             if( p.replace( ' ', '' )=="\n" ):
-                return
+                return 0
 
             if( p.replace( ' ', '' )[:1]=='#' ):
                 print p
@@ -1385,6 +1382,11 @@ class converter:
             TokenIdent = ""
             TokenValue = 0
             selected = 'VSLselection'
+            
+            try:
+                cmd.select('VSLselection','(VSLselection)')
+            except:
+                cmd.select('VSLselection','(all)')
             
             try:
               (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
@@ -1440,7 +1442,7 @@ class converter:
                         print '\"'+TokenIdent+'\"' + '<--LOADFILE'
                         cmd.load( '\"'+TokenIdent+'\"' )
                         cmd.rotate( 'x', 180 )
-                        cmd.select('VSLselection','all')
+                        cmd.select('VSLselection','(all)')
                     except:
                         print '\"'+TokenIdent+'\"' + '<--LOADFILE'
                         print 'EXCEPTION THROWN'                    
@@ -1450,7 +1452,7 @@ class converter:
                         print ts + '<--LOADFILE'
                         cmd.load( ts )
                         cmd.rotate( 'x', 180 )
-                        cmd.select('VSLselection','all')
+                        cmd.select('VSLselection','(all)')
                     except:
                         print ts + '<--LOADFILE'
                         print 'EXCEPTION THROWN'
@@ -1492,7 +1494,7 @@ class converter:
                 selected = select( p[7:].lower() )                            
                 print selected + '<--SELECTED'
                 try:
-                    cmd.select( 'VSLSelection', selected)
+                    cmd.select( 'VSLselection', selected)
                 except:
                     print 'No selection was made for select, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
                 return 0
@@ -1504,7 +1506,7 @@ class converter:
                 restricted = 'all and not (' + selected + ')'
                 print restricted + '<--RESTRICTED'
                 try:
-                    cmd.select( 'VSLSelection', selected )
+                    cmd.select( 'VSLselection', selected )
                     cmd.hide( 'everything', restricted )
                 except:
                     print 'No selection was made for restrict, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
@@ -1516,7 +1518,7 @@ class converter:
                 centerselected = select( p[7:].lower() )   
                 print centerselection + '<--CENTER'
                 try:
-                    cmd.select( 'CenterSelection', centerselection)
+                    cmd.select( 'VSLCenterSelection', centerselection)
                     cmd.center( centerselection )
                 except:
                     print 'No selection was made for center, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
@@ -1525,16 +1527,14 @@ class converter:
             ##---------------Color---------------##
                         
             if CurToken == ColourTok:
-                try:
-                  (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
-                except:
-                  print 'VSLFetchToken failed TokenPtr = ' + str(TokenPtr)
-                (result, rgb) = VSLParseColour( p, TokenPtr, CurToken )
-                if result == True:
-                    colorx = RGBTriplet( 'VSLColor', rgb)
-                    cmd.color( colorx, 'VSLSelection' )
-                else:
+                (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
+                (xresult, rgb) = VSLParseColour( p, TokenPtr, CurToken )
+                if xresult != True:
                     print MsgStrs[ErrSyntax]
+                    return 0
+                colorx = RGBTriplet( 'VSLColor', rgb)
+                cmd.select('(VSLselection)')
+                cmd.color( 'VSLColor', 'sele' )
                 return 0
 
             ##------------View Options----------------##
@@ -1550,17 +1550,17 @@ class converter:
                     q = p + ' '
                     command = q.split( ' ', 1 )[1][:-1].lower()
                     if command=='false' or command=='off':
-                        cmd.hide( selectDict[firstword], 'VSLSelection')
+                        cmd.hide( selectDict[firstword], 'VSLselection')
                         print firstword + ' off complete'
                     elif command=='true' or command=='on' or command=='':
-                        cmd.show( selectDict[firstword], 'VSLSelection')
+                        cmd.show( selectDict[firstword], 'VSLselection')
                         print firstword + ' on complete'
                     else:
                         print 'That function is not supported by PyMOL'
+                    return 0
 
             except:
                 print 'No selection was made for view option, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
-            return 0
 
             ##---------------Zoom---------------##
 
@@ -1575,7 +1575,7 @@ class converter:
 ##                    cmd.do( 'zoom ' + selection + ', ' + zoomnum )
 ##                    print 'ZOOM ' + zoomnum
                     zoomnum = 10
-                    cmd.zoom( 'VSLSelection', zoomnum )
+                    cmd.zoom( 'VSLselection', zoomnum )
                 except:
                     print 'Zoom did not execute properly.  Please revise your zoom command'
                 return 0
@@ -1701,11 +1701,12 @@ class converter:
                     if event.char==event.keysym:
                         keystroke=True
                 return 0
+                
+            ##-------Quit/Exit/blank/comment------------##
 
-            ##---------------Quit/Exit---------------##
-
-            if CurToken == ExitTok or CurToken == QuitTok :
+            if CurToken == ExitTok or CurToken == QuitTok or CurToken == 0 :
                 return CurToken
+
 
             print p
             print 'not implemented as a VSL command'
