@@ -70,7 +70,9 @@ In addition the code on VSLFetchToken has been changed to do individual
 characters as -ord(ch) to avoid a conflict with tokens when unicode
 characters are used in an identifier.
 
-Note:  The update for the RGB parse is not yet complete.  I
+Note:  The update for the RGB parse is not yet complete.  The major
+remaining problem seems to be that the color is not being applied
+just to the current selection, but to more of the molecule
 
 25 April 2008 -- SM (integrated by HJB)
 
