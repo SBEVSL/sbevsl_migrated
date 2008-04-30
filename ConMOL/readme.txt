@@ -56,6 +56,14 @@ NIGMS grant #1R15GM078077.
 
 ChangeLog:
 
+30 April 2008 -- HJB
+   Unable to resolve selection problem with RGB.  Temporarily
+reverted to trying to use PyMOL color name when possible in order
+to restore operation of current test cases.  Moved to holding
+current selection in a global VSLselection to help in debugging.
+Added a VSLVerbose flag to make it easier to turn on debugging
+messages. -- HJB 
+
 26 April 2008 -- HJB
 
 Add RasMol FetchToken as VSLFetchToken and rewrite Load command to use it

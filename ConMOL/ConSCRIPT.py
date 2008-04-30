@@ -28,6 +28,8 @@ except KeyError:
 filestack = []
 filelevel = 0
 UserDefinedGroups = {}
+VSLselection = "( all )"
+VSLVerbose = 0
 
 ### /* Lexeme Tokens */
 IdentTok =      256
@@ -1024,7 +1026,7 @@ Pmw.initialise()
 def __init__(self):
     self.menuBar.addmenuitem('Plugin', 'command',
                              'VSL Script Loader',
-                             label = 'ConSCRIPT_CVS',    
+                             label = 'ConSCRIPT',    
                              command = lambda s=self : converter(s))
 
 class converter:
@@ -1381,12 +1383,12 @@ class converter:
             CurToken = 0
             TokenIdent = ""
             TokenValue = 0
-            selected = 'VSLselection'
+            selected = VSLselection
             
-            try:
-                cmd.select('VSLselection','(VSLselection)')
-            except:
-                cmd.select('VSLselection','(all)')
+            cmd.select('VSLselection',VSLselection)
+            if VSLVerbose > 0:
+              print 'VSLselection: ' + VSLselection
+              print 'VSLcommand: ' + p
             
             try:
               (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
@@ -1442,7 +1444,10 @@ class converter:
                         print '\"'+TokenIdent+'\"' + '<--LOADFILE'
                         cmd.load( '\"'+TokenIdent+'\"' )
                         cmd.rotate( 'x', 180 )
-                        cmd.select('VSLselection','(all)')
+                        cmd.select('VSLselection','( all )')
+                        pmg_tk.startup.ConSCRIPT.VSLselection = '( all )'
+                        if VSLVerbose > 0:
+                          print 'VSLselection: ' + VSLselection
                     except:
                         print '\"'+TokenIdent+'\"' + '<--LOADFILE'
                         print 'EXCEPTION THROWN'                    
@@ -1452,7 +1457,10 @@ class converter:
                         print ts + '<--LOADFILE'
                         cmd.load( ts )
                         cmd.rotate( 'x', 180 )
-                        cmd.select('VSLselection','(all)')
+                        cmd.select('VSLselection','( all )')
+                        pmg_tk.startup.ConSCRIPT.VSLselection = '( all )'
+                        if VSLVerbose > 0:
+                          print 'VSLselection: ' + VSLselection
                     except:
                         print ts + '<--LOADFILE'
                         print 'EXCEPTION THROWN'
@@ -1495,6 +1503,9 @@ class converter:
                 print selected + '<--SELECTED'
                 try:
                     cmd.select( 'VSLselection', selected)
+                    pmg_tk.startup.ConSCRIPT.VSLselection = selected
+                    if VSLVerbose > 0:
+                      print 'VSLselection: ' + VSLselection
                 except:
                     print 'No selection was made for select, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
                 return 0
@@ -1504,9 +1515,12 @@ class converter:
             if p[:8]=='restrict':
                 selected = select( p[9:].lower() )
                 restricted = 'all and not (' + selected + ')'
-                print restricted + '<--RESTRICTED'
+                print selected + '<--RESTRICTED'
                 try:
                     cmd.select( 'VSLselection', selected )
+                    pmg_tk.startup.ConSCRIPT.VSLselection = selected
+                    if VSLVerbose > 0:
+                      print 'VSLselection: ' + VSLselection
                     cmd.hide( 'everything', restricted )
                 except:
                     print 'No selection was made for restrict, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
@@ -1528,13 +1542,23 @@ class converter:
                         
             if CurToken == ColourTok:
                 (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
+                if p[TokenStart] != '[':
+                    colory = p.split( ' ', 1)[1].lower()
+                    colory = colory.replace( ' ', '' )
+                    try:
+                        cmd.color( colory, '( '+ VSLselection +' )' )
+                        return 0
+                    except:
+                        print 'VSL color name '+colory+' not recognized'
                 (xresult, rgb) = VSLParseColour( p, TokenPtr, CurToken )
                 if xresult != True:
                     print MsgStrs[ErrSyntax]
                     return 0
                 colorx = RGBTriplet( 'VSLColor', rgb)
-                cmd.select('(VSLselection)')
-                cmd.color( 'VSLColor', 'sele' )
+                if VSLVerbose > 0:
+                    print 'VSLselection: ' + VSLselection
+                cmd.color( 'VSLColor', '( '+ VSLselection +' )' )
+
                 return 0
 
             ##------------View Options----------------##
@@ -1550,10 +1574,10 @@ class converter:
                     q = p + ' '
                     command = q.split( ' ', 1 )[1][:-1].lower()
                     if command=='false' or command=='off':
-                        cmd.hide( selectDict[firstword], 'VSLselection')
+                        cmd.hide( selectDict[firstword], VSLselection)
                         print firstword + ' off complete'
                     elif command=='true' or command=='on' or command=='':
-                        cmd.show( selectDict[firstword], 'VSLselection')
+                        cmd.show( selectDict[firstword], VSLselection)
                         print firstword + ' on complete'
                     else:
                         print 'That function is not supported by PyMOL'
@@ -1575,7 +1599,7 @@ class converter:
 ##                    cmd.do( 'zoom ' + selection + ', ' + zoomnum )
 ##                    print 'ZOOM ' + zoomnum
                     zoomnum = 10
-                    cmd.zoom( 'VSLselection', zoomnum )
+                    cmd.zoom( VSLselection, zoomnum )
                 except:
                     print 'Zoom did not execute properly.  Please revise your zoom command'
                 return 0
