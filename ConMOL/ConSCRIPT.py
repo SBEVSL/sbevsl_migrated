@@ -29,6 +29,7 @@ filestack = []
 filelevel = 0
 UserDefinedGroups = {}
 VSLselection = "( all )"
+VSLselectionsaved = "( all )"
 VSLVerbose = 0
 
 ### /* Lexeme Tokens */
@@ -842,6 +843,26 @@ VSLColourTable[WhiteTok] =      [ 255/255., 255/255., 255/255. ]
 VSLColourTable[YellowTok] =     [ 255/255., 255/255.,   0/255. ]
 VSLColourTable[YellowTintTok] = [ 246/255., 246/255., 117/255. ]
 
+VSLCPKTable = {}
+
+VSLCPKTable[0] =   "[ .7843, .7843, .7843 ]" #/*  0 Light Grey   */
+VSLCPKTable[1] =   "[ .5607, .5607, 1.    ]" #/*  1 Sky Blue     */
+VSLCPKTable[2] =   "[ .9411, 0.,    0.    ]" #/*  2 Red          */
+VSLCPKTable[3] =   "[ 1.,    .7843, .1960 ]" #/*  3 Yellow       */
+VSLCPKTable[4] =   "[ 1.,    1.,    1.    ]" #/*  4 White        */
+VSLCPKTable[5] =   "[ 1.,    .7529, .7960 ]" #/*  5 Pink         */
+VSLCPKTable[6] =   "[ .8549, .6470, .1254 ]" #/*  6 Golden Rod   */
+VSLCPKTable[7] =   "[ 0.,    0.,    1.    ]" #/*  7 Blue         */
+VSLCPKTable[8] =   "[ 1.,    .6470, 0.    ]" #/*  8 Orange       */
+VSLCPKTable[9] =   "[ .5019, .5019, .5647 ]" #/*  9 Dark Grey    */
+VSLCPKTable[10] =  "[ .6470, .1647, .1647 ]" #/* 10 Brown        */
+VSLCPKTable[11] =  "[ .6274, .1254, .9411 ]" #/* 11 Purple       */
+VSLCPKTable[12] =  "[ 1.,    .0784, .5764 ]" #/* 12 Deep Pink    */
+VSLCPKTable[13] =  "[ 0.,    1.,    0.    ]" #/* 13 Green        */
+VSLCPKTable[14] =  "[ .6980, .1333, .1333 ]" #/* 14 Fire Brick   */
+VSLCPKTable[15] =  "[ .1333, .5450, .1333 ]" #/* 15 Forest Green */
+
+
 
 
 def LookUpKeyword( kw ):
@@ -868,7 +889,7 @@ def VSLFetchToken( p, baseTokenPtr):
         ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
         return (TokenPtr, 0, TokenStart, TokenIdent, TokenValue)
     while TokenPtr < len(p) :
-        ch =  p[TokenPtr]
+        ch =  p[TokenPtr:TokenPtr+1]
         if not ch.isspace() :
             break
         TokenPtr = TokenPtr+1
@@ -1069,10 +1090,42 @@ class converter:
         #Run the Boffocmd Function	
         openbtncmd = Button(interiorcmd, text = 'Enable VSL')
         openbtncmd.grid()
+        
+        ##---Apply Color to Selection--##
+        def apply_color(rgbcolor,selection):
+            sc = rgbcolor
+            sc = sc.replace(' ','')
+            cmd.set_color("vslc_"+sc,rgbcolor)
+            cmd.color("vslc_"+sc,selection)
+            return
+        
+        ##-----Color CPK-----------##
+        def color_cpk( selection ):
+            global VSLCPKTable
+            colstr = ' and ( ' + selection + ')'
+            apply_color(VSLCPKTable[12],  selection)
+            apply_color(VSLCPKTable[4],  "(elem H)" + colstr)
+            apply_color(VSLCPKTable[14], "(elem He)" + colstr)
+            apply_color(VSLCPKTable[13], "(elem He)" + colstr)
+            apply_color(VSLCPKTable[0],  "(elem C)" + colstr)
+            apply_color(VSLCPKTable[1],  "(elem N)" + colstr)
+            apply_color(VSLCPKTable[2],  "(elem O)" + colstr)
+            apply_color(VSLCPKTable[6],  "(elem Au+F+Si)" + colstr)
+            apply_color(VSLCPKTable[7],  "(elem Na)" + colstr)
+            apply_color(VSLCPKTable[15], "(elem Mg)" + colstr)
+            apply_color(VSLCPKTable[9],  "(elem Ca+Mn+Al+Ti+Cr+Ag)" + colstr )
+            apply_color(VSLCPKTable[8],  "(elem P+Fe+Ba)" + colstr)
+            apply_color(VSLCPKTable[3],  "(elem S)" + colstr)
+            apply_color(VSLCPKTable[11], "(elem I)" + colstr)
+            apply_color(VSLCPKTable[10], "(elem Br+Zn+Cu+Ni)" + colstr)
+            return
+
 
 
         ##-----Select Function-----##
         def select( allparameters ):
+        
+            global UserDefinedGroups
 
             selection = ''
             
@@ -1370,6 +1423,10 @@ class converter:
         
         ## Handle a command line
         def handlecommand( p ):
+        
+            global VSLselection
+            global VSLselectionsaved
+            global VSLVerbose
 
             if( p.replace( ' ', '' )=="\n" ):
                 return 0
@@ -1383,17 +1440,51 @@ class converter:
             CurToken = 0
             TokenIdent = ""
             TokenValue = 0
-            selected = VSLselection
-            
-            cmd.select('VSLselection',VSLselection)
-            if VSLVerbose > 0:
-              print 'VSLselection: ' + VSLselection
-              print 'VSLcommand: ' + p
             
             try:
               (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
             except:
               print 'VSLFetchToken failed TokenPtr = ' + str(TokenPtr)
+              
+            # handle temporary selection
+            VSLselectionsaved = VSLselection
+            if CurToken == -ord('('):
+              stack = []
+              end = -1
+              for x in range( TokenStart + 1, len( p ) ):
+                if p[x:x+1] == '(':
+                  stack.append('(')
+                if p[x:x+1] == ')':
+                  if stack == []:
+                    end = x
+                    x = len(p)
+                  else:
+                    stack.pop()
+              if end != -1:
+                q = p[TokenStart:end+1]
+                q = q.lower() 
+                VSLselection = select(q)
+                if VSLVerbose > 0:
+                  print 'VSLselection: ' + VSLselection
+                if end < len(p)-1 and p[end+1:end+2] == '.':
+                  end = end+1
+                TokenPtr = 0
+                TokenStart = 0
+                CurToken = 0
+                TokenIdent = ""
+                TokenValue = 0
+                p = p[end+1:len(p)]
+                try:
+                  (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
+                except:
+                  print 'VSLFetchToken failed TokenPtr = ' + str(TokenPtr)
+
+            selected = VSLselection           
+            cmd.select('VSLselection',VSLselection)
+            if VSLVerbose > 0:
+              print 'VSLselection: ' + VSLselection
+              print 'VSLcommand: ' + p
+
 
             ##---------------Script---------------##
 
@@ -1445,7 +1536,12 @@ class converter:
                         cmd.load( '\"'+TokenIdent+'\"' )
                         cmd.rotate( 'x', 180 )
                         cmd.select('VSLselection','( all )')
-                        pmg_tk.startup.ConSCRIPT.VSLselection = '( all )'
+                        centerselection = 'all'
+                        cmd.select('VSLCenterSelection', centerselection)
+                        cmd.center( centerselection )
+                        clip_dist = 0
+                        VSLselection = '( all )'
+                        color_cpk( VSLselection )
                         if VSLVerbose > 0:
                           print 'VSLselection: ' + VSLselection
                     except:
@@ -1458,7 +1554,12 @@ class converter:
                         cmd.load( ts )
                         cmd.rotate( 'x', 180 )
                         cmd.select('VSLselection','( all )')
-                        pmg_tk.startup.ConSCRIPT.VSLselection = '( all )'
+                        centerselection = 'all'
+                        cmd.select('VSLCenterSelection', centerselection)
+                        cmd.center( centerselection )
+                        clip_dist = 0
+                        VSLselection = '( all )'
+                        color_cpk( VSLselection )
                         if VSLVerbose > 0:
                           print 'VSLselection: ' + VSLselection
                     except:
@@ -1476,6 +1577,17 @@ class converter:
                 for i in p.split( ' ', 1 )[1]:
                     s = s + i + ' '
                 cmd.save( s )
+                return 0
+
+            ##---------------Echo---------------##
+
+            if p[:4]=='echo':
+                returnval = p[5:]
+                if returnval[:1]=='"':
+                    returnval = returnval[1:]
+                if returnval[-1:]=='"':
+                    returnval = returnval[:-1]
+                print returnval
                 return 0
 
             ##---------LOWER-----------##
@@ -1529,7 +1641,7 @@ class converter:
             ##---------------Center---------------##
 
             if p[:6]=='center' or p[:6]=='centre':
-                centerselected = select( p[7:].lower() )   
+                centerselection = select( p[7:].lower() )   
                 print centerselection + '<--CENTER'
                 try:
                     cmd.select( 'VSLCenterSelection', centerselection)
@@ -1542,6 +1654,10 @@ class converter:
                         
             if CurToken == ColourTok:
                 (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
+                print str(CurToken)+' vs '+str(CPKTok)
+                if CurToken == CPKTok:
+                    color_cpk(VSLselection)
+                    return 0
                 if p[TokenStart] != '[':
                     colory = p.split( ' ', 1)[1].lower()
                     colory = colory.replace( ' ', '' )
@@ -1561,50 +1677,199 @@ class converter:
 
                 return 0
 
-            ##------------View Options----------------##
+            ##---------------Spacefill/CPK---------------##
 
-            selectDict = {'wireframe': 'lines', 'cartoon': 'cartoon', 'dots': 'dots', 'cpk': 'spheres', 'spacefill': 'spheres', 'trace': 'ribbon',
-                          'ribbon': 'ribbon'}		
-
-            firstword = p.split( ' ', 1 )[0].lower()
-
-            try:
-
-                if firstword in selectDict: #if the first word on the line is one of the supportable view options
-                    q = p + ' '
-                    command = q.split( ' ', 1 )[1][:-1].lower()
+            if p[:9]=='spacefill' or p[:3]=='cpk':
+                try:
+                    p = p + ' '
+                    command = p.split( ' ', 1 )[1].rstrip()
                     if command=='false' or command=='off':
-                        cmd.hide( selectDict[firstword], VSLselection)
-                        print firstword + ' off complete'
+                        cmd.hide( 'spheres', 'VSLselection' )
+                        print 'Spacefill off complete'
                     elif command=='true' or command=='on' or command=='':
-                        cmd.show( selectDict[firstword], VSLselection)
-                        print firstword + ' on complete'
-                    else:
-                        print 'That function is not supported by PyMOL'
-                    return 0
+                        cmd.show( 'spheres', 'VSLselection' )
+                        print 'Spacefill on complete'
+                    elif float(command)>=0 and float(command)<=1500:
+                        cmd.show( 'spheres', 'VSLselection' )
+                        if '.' in command:
+                            command = float(command)
+                        else:
+                            command = float(command)/250
+                        cmd.set( 'sphere_scale', command )
+                except:
+                    print 'An error occured with the spacefill/cpk command'
+                return 0
 
-            except:
-                print 'No selection was made for view option, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
+            ##---------------Cartoon---------------##
+
+            if p[:7]=='cartoon':
+                try:
+                    p = p + ' '
+                    command = p.split( ' ', 1 )[1].rstrip()
+                    if command=='false' or command=='off':
+                        cmd.hide( 'cartoon', 'VSLselection' )
+                        cmd.hide( 'ribbon', 'VSLselection' )
+                        print 'Cartoon off complete'
+                    elif command=='true' or command=='on' or command=='':
+                        cmd.cartoon( 'rectangle', 'VSLselection' )
+                        cmd.hide( 'ribbon', 'VSLselection' )
+                        cmd.show( 'cartoon', 'VSLselection' )
+                        print 'Cartoon on complete'
+                    elif float(command)>=0 and float(command)<=500:
+                        if '.' in command:
+                            command = float(command)
+                        else:
+                            command = float(command)/250
+                        cmd.cartoon( 'rectangle', 'VSLselection' )
+                        cmd.hide( 'ribbon', 'VSLselection' )
+                        cmd.show( 'cartoon', 'VSLselection' )
+                        cmd.set( 'cartoon_rect_length', command )
+                        print 'Cartoon on complete'
+                except:
+                    print 'An error occured with the cartoon command'
+                return 0
+
+            ##---------------Trace---------------##
+
+            if p[:5]=='trace':
+                try:
+                    p = p + ' '
+                    command = p.split( ' ', 1 )[1].rstrip()
+                    if command=='false' or command=='off':
+                        cmd.hide( 'cartoon', 'VSLselection' )
+                        cmd.hide( 'ribbon', 'VSLselection' )
+                        print 'Trace off complete'
+                    elif command=='true' or command=='on' or command=='':
+                        cmd.cartoon( 'tube', 'VSLselection' )
+                        cmd.hide( 'ribbon', 'VSLselection' )
+                        cmd.show( 'cartoon', 'VSLselection' )
+                        print 'Trace on complete'
+                    elif float(command)>=0 and float(command)<=500:
+                        if '.' in command:
+                            command = float(command) * 10
+                        else:
+                            command = ( float(command)/250 ) * 10
+                        cmd.cartoon( 'tube', 'VSLselection' )
+                        cmd.hide( 'ribbon', 'VSLselection' )
+                        cmd.show( 'cartoon', 'VSLselection' )
+                        cmd.set( 'cartoon_tube_radius', command )
+                        print 'Trace on complete'
+                except:
+                    print 'An error occured with the trace command'
+                return 0
+
+            ##---------------Ribbon---------------##
+
+            if p[:6]=='ribbon':
+                try:
+                    p = p + ' '
+                    command = p.split( ' ', 1 )[1].rstrip()
+                    if command=='false' or command=='off':
+                        cmd.hide( 'cartoon', 'VSLselection' )
+                        cmd.hide( 'ribbon', 'VSLselection' )
+                        print 'Ribbon off complete'
+                    elif command=='true' or command=='on' or command=='':
+                        cmd.hide( 'cartoon', 'VSLselection' )
+                        cmd.show( 'ribbon', 'VSLselection' )
+                        print 'Ribbon on complete'
+                    elif float(command)>=0 and float(command)<=500:
+                        if '.' in command:
+                            command = float(command)
+                        else:
+                            command = float(command)/250
+                        cmd.hide( 'cartoon', 'VSLselection' )
+                        cmd.show( 'ribbon', 'VSLselection' )
+                        cmd.set( 'ribbon_width', command )
+                        print 'Ribbon on complete'
+                except:
+                    print 'An error occured with the ribbon command'
+                return 0
+
+            ##---------------Wireframe---------------##
+
+            if p[:9]=='wireframe':
+                try:
+                    p = p + ' '
+                    command = p.split( ' ', 1 )[1].rstrip()
+                    if command=='false' or command=='off':
+                        cmd.hide( 'lines', 'VSLselection' )
+                        print 'Wireframe off complete'
+                    elif command=='true' or command=='on' or command=='':
+                        cmd.show( 'lines', 'VSLselection' )
+                        print 'Wireframe on complete'
+                    elif float(command)>=0 and float(command)<=1500:
+                        if '.' in command:
+                            command =  float(command)
+                        else:
+                            command =  float(command)/ 250  
+                        cmd.show( 'sticks', 'VSLselection' )
+                        cmd.set( 'stick_radius', command )
+                        print 'Wireframe on complete'
+                except:
+                    print 'An error occured with the wireframe command'
+                    return 0
+                return 0
+
+            ##---------------Dots---------------##
+
+            if p[:4]=='dots':
+                try:
+                    p = p + ' '
+                    command = p.split( ' ', 1 )[1].rstrip()
+                    if command=='false' or command=='off' or command=='0':
+                        cmd.hide( 'dots', 'VSLselection' )
+                        print 'Dots off complete'
+                    elif command=='true' or command=='on' or command=='':
+                        cmd.show( 'dots', 'VSLselection' )
+                        print 'Dots on complete'
+                    elif int(command)>0 and int(command)<=1000:
+                        command = int(command)
+                        cmd.show( 'dots', 'VSLselection' )
+                        if command in range(1, 5):
+                            cmd.set( 'dot_density', 0 )
+                        elif command in range(5, 20):
+                            cmd.set( 'dot_density', 1 )
+                        elif command in range(20, 140):
+                            cmd.set( 'dot_density', 2 )
+                        elif command in range(140, 625):
+                            cmd.set( 'dot_density', 3 )
+                        elif command in range(325, 1000):
+                            cmd.set( 'dot_density', 4 )
+                        print 'Dots on complete'
+                except:
+                    print 'An error occured with the dots command'
+                return 0
 
             ##---------------Zoom---------------##
 
-            if 'zoom' in p:
-                entry1.delete(0, 100000 )
-                entry1.insert(0, p)
-                entry1.delete(0, 4)
+            if p[:4]=='zoom':
                 try:
-##                    zoomnum = 10
-##                    print selection + '<--ZOOM SELECTION'
-##                    print zoomnum + '<--ZOOMNUM'
-##                    cmd.do( 'zoom ' + selection + ', ' + zoomnum )
-##                    print 'ZOOM ' + zoomnum
-                    zoomnum = 10
-                    cmd.zoom( VSLselection, zoomnum )
+                    p = p + ' '
+                    command = p.split( ' ', 1 )[1].rstrip()
+                    if command=='false' or command=='off' or command=='':
+                        cmd.zoom( 'VSLCenterSelection', 0 )
+                        print 'Zoom off complete'
+                    elif command=='true' or command=='on':
+                        cmd.zoom( 'VSLCenterSelection', -25 )
+                        print 'Zoom on complete'
+                    elif int(command) in range(0, 100):
+                        zoomnum = int(command)
+                        zoomnum = -( (zoomnum-100) )
+                        print 'Zoom ' + str(zoomnum)
+                        cmd.zoom( 'VSLCenterSelection', zoomnum )
+                    elif int(command) in range(100, 5000):
+                        zoomnum = int(command)
+                        zoomnum = -( (zoomnum-100)/20 )
+                        print 'Zoom ' + str(zoomnum)
+                        cmd.zoom( 'VSLCenterSelection', zoomnum )
+                    else:
+                        print 'That function is not supported by PyMOL.'
                 except:
                     print 'Zoom did not execute properly.  Please revise your zoom command'
                 return 0
 
             ##---------------Rotate--------------##		
+            
             rotateCmd = 'rotate'
             if rotateCmd==p[:6]:
                 axis = p.split()[1]
@@ -1615,6 +1880,26 @@ class converter:
                     cmd.rotate( axis, rotation )
                 except:
                     print 'The parameters you have given for the rotate command have been entered improperly.  Please rewrite them as rotate (axis) (rotation in degrees)'
+                return 0
+
+            ##---------------Translate---------------##
+
+            if p[:9]=='translate':
+                try:
+                    commandlist = p.split( ' ' )
+                    if commandlist[1]=='x':
+                        cmd.center( 'VSLCenterSelection' )
+                        cmd.translate( [int(commandlist[2]),0,0] )
+                    elif commandlist[1]=='y':
+                        cmd.center( 'VSLCenterSelection' )
+                        cmd.translate( '[0,-' + commandlist[2] + ',0]' )
+                    elif commandlist[1]=='z':
+                        cmd.center( 'VSLCenterSelection' )
+                        cmd.translate( '[0,0,-' + commandlist[2] + ']' )
+                    else:
+                        print 'That function is not supported by PyMOL at all'
+                except:
+                    print 'Translate did not execute properly.  Please revise your translate command'
                 return 0
                 
             ##---------------HBonds---------------##
@@ -1664,6 +1949,29 @@ class converter:
                     print 'An error occured while trying to display the backbone.'
                 return 0
 
+            ##---------------Monitor---------------##
+
+            if p[:7]=='monitor':
+                try:
+                    parameters = p.split( ' ' )
+                    if len(parameters) == 3:
+                        cmd.distance( 'monitor', 'id ' + parameters[1],  'id ' + parameters[2] )
+                    elif len(parameters) == 2:
+                        command = parameters[1]
+                        if command=='false' or command=='off':
+                            cmd.hide( 'labels' )
+                            cmd.hide( 'dashes' )
+                            print 'Monitor off complete'
+                        elif command=='true' or command=='on' or command=='':
+                            pass
+                        else:
+                            print 'That function is not supported by PyMOL'
+                    else:
+                        print 'That function is not supported by PyMOL'
+                except:
+                    print 'An error occured while trying to display the labels.'
+                return 0
+
             ##---------------Zap---------------##
 
             if p=='zap':
@@ -1672,9 +1980,8 @@ class converter:
                 return 0
 
             ##---------------Stereo---------------##
-            stereoCmd = 'stereo'
-
-            if stereoCmd==p[:6]:
+      
+            if p[:6]=='stereo':
                 tmpstring = p.split()[1]
                 if 'on' in tmpstring:
                     cmd.stereo('on')
@@ -1696,17 +2003,6 @@ class converter:
             if 'reset' in p:
                 print 'reset'
                 cmd.reset()
-                return 0
-                
-            ##---------------Echo---------------##
-
-            if p[:4]=='echo':
-                returnval = p[5:]
-                if returnval[:1]=='"':
-                    returnval = returnval[1:]
-                if returnval[-1:]=='"':
-                    returnval = returnval[:-1]
-                print returnval
                 return 0
 
             ##---------------Define---------------##
@@ -1750,11 +2046,13 @@ class converter:
     ## Handler for processing a script from a file
         def processVSLscript( Q ):
 
+            global filelevel
+            global filestack
             
             #Open the script 
             f = open(Q, 'rU')
-            pmg_tk.startup.ConSCRIPT.filestack.append(f)
-            pmg_tk.startup.ConSCRIPT.filelevel = pmg_tk.startup.ConSCRIPT.filelevel+1
+            filestack.append(f)
+            filelevel = filelevel+1
             
             #Make a loop
             try:
@@ -1762,7 +2060,7 @@ class converter:
                     donext = handlecommand(p.rstrip())
                     if donext == ExitTok or donext == QuitTok:
                       f.close()
-                      pmg_tk.startup.ConSCRIPT.filelevel = pmg_tk.startup.ConSCRIPT.filelevel-1
+                      filelevel = filelevel-1
                       if donext == QuitTok:
                         return QuitTok
                       else:
@@ -1770,15 +2068,18 @@ class converter:
             finally:
                 #Close the file
                 f.close()
-                pmg_tk.startup.ConSCRIPT.filelevel = pmg_tk.startup.ConSCRIPT.filelevel-1
+                filelevel = filelevel-1
                 return 0
             
         #Define the Boffo Function
         def Boffo(Event):
+        
+            global filelevel
+            global filestack
 
             Q = tkFileDialog.askopenfilename(initialdir=('./modules/pmg_tk/startup'))
-            pmg_tk.startup.ConSCRIPT.filelevel = 0
-            pmg_tk.startup.ConSCRIPT.filestack = []
+            filelevel = 0
+            filestack = []
             donext = processVSLscript(Q)
             if donext == QuitTok:
                 cmd.quit()
