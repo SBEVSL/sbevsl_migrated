@@ -423,8 +423,7 @@ class PGUI:
     global TRPGUM
     global TYRGUM
     global VALGUM
-    class script:
-       global script
+    global script
     
 
     
@@ -492,72 +491,72 @@ class PGUI:
 
     #---------------------Version 2-------------------------#
     
-    
-    def write_script(self, tag):
-        if tag == 'Off':
-            self.script ='0'
+    script = 0
+#     def write_script(self, tag):
+#         if tag == 'Off':
+#             script ='0'
            
-        if tag=='On': #write a scritp
-            try:
-                self.script = '1'
-                import tkFileDialog
-                self.Q = tkFileDialog.asksaveasfilename(defaultextension=".py", initialdir="./modules/pmg_tk/startup/Scripts")
-                cmd.do('log_open %s,a' %(self.Q))            
-                self.f=open(self.Q, 'w')
+#         if tag=='On': #write a script
+#             try:
+#                 script = '1'
+#                 import tkFileDialog
+#                 self.Q = tkFileDialog.asksaveasfilename(defaultextension=".py", initialdir="./modules/pmg_tk/startup/Scripts")
+#                 cmd.do('log_open %s,a' %(self.Q))            
+#                 self.f=open(self.Q, 'w')
               
-            except:
-               pass
+#             except:
+#                pass
 
-    def set_defaults(self):
-        cmd.hide('everything','all')
-        cmd.set('transparency','0.0','all')
-        cmd.set('cartoon_transparency','0.0','all')
-        cmd.set('transparency','0','all')
-        cmd.set('sphere_transparency','0.0','all')
-        cmd.set('stick_transparency','0.0','all')
-        cmd.set('sphere_scale','0.7','all')
-        cmd.cartoon('automatic', 'all')
-        cmd.set('stick_radius','0.2','all')
-        if self.script == '1':
-                self.f.write('''cmd.hide("everything","all") 
-cmd.set("transparency","0.0","all")
-cmd.set("cartoon_transparency","0.0","all")
-cmd.set("transparency","0","all")
-cmd.set("sphere_transparency","0.0","all")
-cmd.set("stick_transparency","0.0","all")
-cmd.set("sphere_scale","0.7","all")
-cmd.cartoon("automatic", "all")
-cmd.set("stick_radius","0.2","all")\n''')
-        self.delcrea()
-    cmd.extend('set_defaults',set_defaults)
+#     def set_defaults(self):
+#         cmd.hide('everything','all')
+#         cmd.set('transparency','0.0','all')
+#         cmd.set('cartoon_transparency','0.0','all')
+#         cmd.set('transparency','0','all')
+#         cmd.set('sphere_transparency','0.0','all')
+#         cmd.set('stick_transparency','0.0','all')
+#         cmd.set('sphere_scale','0.7','all')
+#         cmd.cartoon('automatic', 'all')
+#         cmd.set('stick_radius','0.2','all')
+#         if script == '1':
+#                 f.write('''cmd.hide("everything","all") 
+# cmd.set("transparency","0.0","all")
+# cmd.set("cartoon_transparency","0.0","all")
+# cmd.set("transparency","0","all")
+# cmd.set("sphere_transparency","0.0","all")
+# cmd.set("stick_transparency","0.0","all")
+# cmd.set("sphere_scale","0.7","all")
+# cmd.cartoon("automatic", "all")
+# cmd.set("stick_radius","0.2","all")\n''')
+#         delcrea()
+#     cmd.extend('set_defaults',set_defaults)
     
    # emphasize DNA
-    def show_dna_rna(self):
+    def show_dna_rna(*args):
         import tkMessageBox
         points = 0
-        self.delcrea()
+        delcrea()
         self.update(self.p)
         objects = cmd.get_names('all')
-        self.checkitforthese()
+        checkitforthese()
         try:
           cmd.set('cartoon_ring_mode' ,'1')
-          if self.script == '1':
-              self.f.write('''cmd.set('cartoon_ring_mode' ,'1')\n''')
+          if script == '1':
+              f.write('''cmd.set('cartoon_ring_mode' ,'1')\n''')
           if 'nucleic_acid' in objects:
-              self.set_defaults()
+              set_defaults()
               if 'protein' in objects:
                   cmd.show('cartoon','protein')
                   cmd.color('gray60','protein')
-                  if self.script == '1':
-                      self.f.write('''cmd.show('cartoon','protein')
+                  if script == '1':
+                      f.write('''cmd.show('cartoon','protein')
 cmd.color('gray60','protein')\n''')
               if 'ligands' in objects:
                   cmd.show('spheres','ligands')
                   cmd.set('sphere_transparency','0.4','ligands')
                   cmd.set('sphere_scale','0.4','ligands')
                   cmd.color('orange', 'ligands')
-                  if self.script == '1':
-                      self.f.write('''cmd.show('spheres','ligands')
+                  if script == '1':
+                      f.write('''cmd.show('spheres','ligands')
 cmd.set('sphere_transparency','0.4','ligands')
 cmd.set('sphere_scale','0.4','ligands')
 cmd.color('orange', 'ligands')\n''')
@@ -568,8 +567,8 @@ cmd.color('orange', 'ligands')\n''')
                   cmd.color('salmon','resn g')
                   cmd.color('palegreen','resn t')
                   cmd.color('paleyellow', 'resn u')
-                  if self.script == '1':
-                      self.f.write('''cmd.show('cartoon', 'nucleic_acid')
+                  if script == '1':
+                      f.write('''cmd.show('cartoon', 'nucleic_acid')
 cmd.color('lightblue','resn a')
 cmd.color('orange','resn c')
 cmd.color('salmon','resn g')
@@ -583,20 +582,20 @@ cmd.color('paleyellow', 'resn u')\n''')
                 tkMessageBox.showinfo("Error", "There is no DNA or RNA in this molecule.")
         except:              
           if 'nucleic_acid' in objects:
-              self.set_defaults()
+              set_defaults()
               if 'protein' in objects:
                   cmd.show('cartoon','protein')
                   cmd.color('gray60','protein')
-                  if self.script == '1':
-                      self.f.write('''cmd.show('cartoon','protein')
+                  if script == '1':
+                      f.write('''cmd.show('cartoon','protein')
 cmd.color('gray60','protein')\n''')
               if 'ligands' in objects:
                   cmd.show('spheres','ligands')
                   cmd.set('sphere_transparency','0.4','ligands')
                   cmd.set('sphere_scale','0.4','ligands')
                   cmd.color('orange', 'ligands')
-                  if self.script == '1':
-                      self.f.write('''cmd.show('spheres','ligands')
+                  if script == '1':
+                      f.write('''cmd.show('spheres','ligands')
 cmd.set('sphere_transparency','0.4','ligands')
 cmd.set('sphere_scale','0.4','ligands')
 cmd.color('orange', 'ligands')\n''')
@@ -607,8 +606,8 @@ cmd.color('orange', 'ligands')\n''')
                   cmd.color('salmon','resn g')
                   cmd.color('palegreen','resn t')
                   cmd.color('paleyellow', 'resn u')
-                  if self.script == '1':
-                      self.f.write('''cmd.show('cartoon', 'nucleic_acid')
+                  if script == '1':
+                      f.write('''cmd.show('cartoon', 'nucleic_acid')
 cmd.color('lightblue','resn a')
 cmd.color('orange','resn c')
 cmd.color('salmon','resn g')
@@ -620,15 +619,16 @@ cmd.color('paleyellow', 'resn u')\n''')
 
           else:
                 tkMessageBox.showinfo("Error", "There is no DNA or RNA in this molecule.")
-	    
+    cmd.extend('show_dna_rna',show_dna_rna)
+    
   
     # default view
     def std_view(self):
       try:
         self.update(self.p)
-        self.checkitforthese()
-        self.set_defaults()
-        self.delcrea()
+        checkitforthese()
+        set_defaults()
+        delcrea()
         self.populate()
         cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
         cmd.color("red", "ss h")
@@ -636,71 +636,71 @@ cmd.color('paleyellow', 'resn u')\n''')
         cmd.color("cyan", "ss l+\'\'")
         cmd.set('cartoon_ring_mode' ,'1')	
         cmd.show('spheres','het')
-        if self.script == '1':
-            self.f.write('''cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
+        if script == '1':
+            f.write('''cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
 cmd.color("red", "ss h")
 cmd.color("yellow", "ss s")
 cmd.color("cyan", "ss l+\'\'")
 cmd.set('cartoon_ring_mode' ,'1')	
 cmd.show('spheres','het')\n''')
-        self.cpkligands()
+        cpkligands()
         cmd.show('cartoon', 'resn a+t+g+c+u')
         cmd.color('limegreen','resn a+t+g+c+u')
-        if self.script == '1':
-            self.f.write('''cmd.show('cartoon', 'resn a+t+g+c+u')
+        if script == '1':
+            f.write('''cmd.show('cartoon', 'resn a+t+g+c+u')
 cmd.color('limegreen','resn a+t+g+c+u')\n''')
       except:
         self.update(self.p)
-        self.checkitforthese()
-        self.set_defaults()
-        self.delcrea()
+        checkitforthese()
+        set_defaults()
+        delcrea()
         self.populate()
         cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
         cmd.color("red", "ss h")
         cmd.color("yellow", "ss s")
         cmd.color("cyan", "ss l+\'\'")	
         cmd.show('spheres','het')
-        if self.script=='1':
-            self.f.write('''cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
+        if script=='1':
+            f.write('''cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
 cmd.color("red", "ss h")
 cmd.color("yellow", "ss s")
 cmd.color("cyan", "ss l+\'\'")	
 cmd.show('spheres','het')''')
-        self.cpkligands()
+        cpkligands()
         cmd.show('cartoon', 'resn a+t+g+c+u')
         cmd.color('limegreen','resn a+t+g+c+u')
-        if self.script =='1':
-            self.f.write('''cmd.show('cartoon', 'resn a+t+g+c+u')
+        if script =='1':
+            f.write('''cmd.show('cartoon', 'resn a+t+g+c+u')
 cmd.color('limegreen','resn a+t+g+c+u')\n''')
 
     # show hetero atoms    
     def show_hetero(self):
         try:
             import tkMessageBox
-            self.delcrea()
+            delcrea()
             cmd.remove('resn HOH')
-            if self.script=='1':
-                self.f.write('''cmd.remove('resn HOH')\n''')
+            if script=='1':
+                f.write('''cmd.remove('resn HOH')\n''')
                 self.update(self.p)
                 objects = cmd.get_names('all')
-                if self.script=='1':
-                    self.f.write('''objects = cmd.get_names('all')\n''')
-                self.checkitforthese()
+                if script=='1':
+                    f.write('''objects = cmd.get_names('all')\n''')
+                checkitforthese()
             if 'ligands' in objects:
-                self.set_defaults()
+                set_defaults()
             if 'protein' in objects:
                 cmd.show('cartoon', 'protein')
                 cmd.set('cartoon_transparency','0.7','protein')
-                if self.script=='1':
-                    self.f.write('''cmd.show('cartoon', 'protein')
+                if script=='1':
+                    f.write('''cmd.show('cartoon', 'protein')
 cmd.set('cartoon_transparency','0.7','protein')\n''')
             if 'nucleic_acid' in objects:
                 cmd.set('cartoon_ring_mode', '1')
                 cmd.show('cartoon','nucleic_acid')
                 cmd.set('cartoon_transparency','0.7','nucleic_acid')
                 cmd.color('cyan', 'nucleic_acid')
-                if self.script=='1':
-                    self.f.write('''cmd.set('cartoon_ring_mode', '1')
+                if script=='1':
+                    f.write('''cmd.set('cartoon_ring_mode', '1')
 cmd.show('cartoon','nucleic_acid')
 cmd.set('cartoon_transparency','0.7','nucleic_acid')
 cmd.color('cyan', 'nucleic_acid')\n''')
@@ -710,46 +710,46 @@ cmd.color('cyan', 'nucleic_acid')\n''')
                 cmd.set('stick_radius','0.3','ligands around 6')
                 cmd.color('orange','ligands')
                 cmd.select("interaction","ligands around 6'")
-                if self.script=='1':
-                    self.f.write('''cmd.show('spheres','ligands')
+                if script=='1':
+                    f.write('''cmd.show('spheres','ligands')
 cmd.set('sphere_transparency','0.1','ligands')
 cmd.show("sticks", "ligands around 6'")
 cmd.set('stick_radius','0.3','ligands around 6')
 cmd.color('orange','ligands')
 cmd.select("interaction","ligands around 6'")\n''')
-                self.cpkinteraction()
+                cpkinteraction()
                 cmd.set('stick_transparency', '0.1', 'interaction')
                 cmd.disable('interaction')
-                if self.script=='1':
-                    self.f.write('''cmd.set('stick_transparency', '0.1', 'interaction')
+                if script=='1':
+                    f.write('''cmd.set('stick_transparency', '0.1', 'interaction')
 cmd.disable('interaction')\n''')
             else:
                 tkMessageBox.showinfo("Error", "There are no hetero atoms in this molecule.")
         except:
             import tkMessageBox
-            self.delcrea()
+            delcrea()
             cmd.remove('resn HOH')
-            if self.script =='1':
-                self.f.write('''cmd.remove('resn HOH')\n''')
+            if script =='1':
+                f.write('''cmd.remove('resn HOH')\n''')
             self.update(self.p)
             objects = cmd.get_names('all')
-            if self.script=='1':
-                self.f.write('''objects = cmd.get_names('all')\n''')
-            self.checkitforthese()
+            if script=='1':
+                f.write('''objects = cmd.get_names('all')\n''')
+            checkitforthese()
 	if 'ligands' in objects:
-   	    self.set_defaults()
+   	    set_defaults()
 	    if 'protein' in objects:
 	        cmd.show('cartoon', 'protein')
 	        cmd.set('cartoon_transparency','0.7','protein')
-	        if self.script=='1':
-                                self.f.write('''cmd.show('cartoon', 'protein')
+	        if script=='1':
+                                f.write('''cmd.show('cartoon', 'protein')
 cmd.set('cartoon_transparency','0.7','protein')\n''')
 	    if 'nucleic_acid' in objects:
 	        cmd.show('cartoon','nucleic_acid')
 	        cmd.set('cartoon_transparency','0.7','nucleic_acid')
 	        cmd.color('cyan', 'nucleic_acid')
-	        if self.script=='1':
-                                self.f.write('''cmd.show('cartoon','nucleic_acid')
+	        if script=='1':
+                                f.write('''cmd.show('cartoon','nucleic_acid')
 cmd.set('cartoon_transparency','0.7','nucleic_acid')
 cmd.color('cyan', 'nucleic_acid')\n''')
 	    cmd.show('spheres','ligands')
@@ -758,18 +758,18 @@ cmd.color('cyan', 'nucleic_acid')\n''')
 	    cmd.set('stick_radius','0.3','ligands around 6')
 	    cmd.color('orange','ligands')
 	    cmd.select("interaction","ligands around 6'")
-	    if self.script=='1':
-                            self.f.write('''cmd.show('spheres','ligands')
+	    if script=='1':
+                            f.write('''cmd.show('spheres','ligands')
 cmd.set('sphere_transparency','0.1','ligands')
 cmd.show("sticks", "ligands around 6'")
 cmd.set('stick_radius','0.3','ligands around 6')
 cmd.color('orange','ligands')
 cmd.select("interaction","ligands around 6'")\n''')
-	    self.cpkinteraction()
+	    cpkinteraction()
 	    cmd.set('stick_transparency', '0.1', 'interaction')
 	    cmd.disable('interaction')
-	    if self.script=='1':
-                            self.f.write('''cmd.set('stick_transparency', '0.1', 'interaction')
+	    if script=='1':
+                            f.write('''cmd.set('stick_transparency', '0.1', 'interaction')
 cmd.disable('interaction')\n''')
 	else:
 	    tkMessageBox.showinfo("Error", "There are no hetero atoms in this molecule.")
@@ -778,96 +778,96 @@ cmd.disable('interaction')\n''')
     def ball_and_stick(self):
         self.update(self.p)
         objects = cmd.get_names('all')
-        if self.script=='1':
-            self.f.write('''objects = cmd.get_names('all')\n''')
-        self.checkitforthese()
-        self.set_defaults()
-        self.delcrea()
+        if script=='1':
+            f.write('''objects = cmd.get_names('all')\n''')
+        checkitforthese()
+        set_defaults()
+        delcrea()
         cmd.set("stick_radius","0.1","all")
         cmd.set("sphere_scale","0.3","all")
-        if self.script=='1':
-            self.f.write('''cmd.set("stick_radius","0.1","all")
+        if script=='1':
+            f.write('''cmd.set("stick_radius","0.1","all")
 cmd.set("sphere_scale","0.3","all")\n''')
         if 'protein' in objects:
             cmd.show('spheres','protein')
             cmd.show('sticks','protein')
-            if self.script=='1':
-                self.f.write('''cmd.show('spheres','protein')
+            if script=='1':
+                f.write('''cmd.show('spheres','protein')
 cmd.show('sticks','protein')\n''')
-            self.cpkprotein()
+            cpkprotein()
         if 'nucleic_acid' in objects:
             try:
                 cmd.set('cartoon_ring_mode', '1')
                 cmd.show('cartoon','resn a+g+c+t+u')
                 cmd.show('spheres','resn a+g+c+t+u')
                 cmd.show('sticks','resn a+g+c+t+u')
-                if self.script=='1':
-                    self.f.write('''cmd.set('cartoon_ring_mode', '1')
+                if script=='1':
+                    f.write('''cmd.set('cartoon_ring_mode', '1')
 cmd.show('cartoon','resn a+g+c+t+u')
 cmd.show('spheres','resn a+g+c+t+u')
 cmd.show('sticks','resn a+g+c+t+u')\n''')
-                self.cpknucleic()
+                cpknucleic()
             except:
                 cmd.show('cartoon','resn a+g+c+t+u')
-                if self.script=='1':
-                    self.f.write('''cmd.show('cartoon','resn a+g+c+t+u')\n''')
-                self.cpknucleic()
+                if script=='1':
+                    f.write('''cmd.show('cartoon','resn a+g+c+t+u')\n''')
+                cpknucleic()
         if 'ligands' in objects:
             cmd.show('spheres','ligands')
             cmd.color('orange', 'ligands')
-            if self.script=='1':
-                self.f.write('''cmd.show('spheres','ligands')
+            if script=='1':
+                f.write('''cmd.show('spheres','ligands')
 cmd.color('orange', 'ligands')\n''')
 	    
     # show the surface of the molecule
     def surface_view(self):
-        self.delcrea()
+        delcrea()
         self.update(self.p)
         objects = cmd.get_names('all')
-        if self.script=='1':
-                self.f.write('''objects = cmd.get_names('all')\n''')
-        self.checkitforthese()
-        self.set_defaults()
+        if script=='1':
+                f.write('''objects = cmd.get_names('all')\n''')
+        checkitforthese()
+        set_defaults()
         cmd.show('surface','all')
-        if self.script=='1':
-                self.f.write(''' cmd.show('surface','all')\n''')
-        self.cpkprotein()
+        if script=='1':
+                f.write(''' cmd.show('surface','all')\n''')
+        cpkprotein()
        
        	
     # show the polarities of the molecule
     def view_polarity(self):
-        self.delcrea()
+        delcrea()
         self.update(self.p)
-        self.checkitforthese()
-        self.set_defaults()
+        checkitforthese()
+        set_defaults()
         objects = cmd.get_names('all')
-        if self.script=='1':
-                self.f.write('''objects = cmd.get_names('all')\n''')
+        if script=='1':
+                f.write('''objects = cmd.get_names('all')\n''')
         if 'protein' in objects:
             cmd.show('surface', 'protein')
-            if self.script=='1':
-                self.f.write('''cmd.show('surface', 'protein')\n''')
+            if script=='1':
+                f.write('''cmd.show('surface', 'protein')\n''')
         cmd.color('red','resn ALA+ILE+LEU+MET+PHE+PRO+TRP+VAL')
         cmd.color('blue','resn THR+SER+ARG+ASN+ASP+GLN+GLU+HIS+LYS')
         cmd.show('spheres','het')
         cmd.color('green','het')
-        if self.script=='1':
-                self.f.write('''cmd.color('red','resn ALA+ILE+LEU+MET+PHE+PRO+TRP+VAL')
+        if script=='1':
+                f.write('''cmd.color('red','resn ALA+ILE+LEU+MET+PHE+PRO+TRP+VAL')
 cmd.color('blue','resn THR+SER+ARG+ASN+ASP+GLN+GLU+HIS+LYS')
 cmd.show('spheres','het')
 cmd.color('green','het')\n''')
         try:
           cmd.set('cartoon_ring_mode' ,'1')
-          if self.script=='1':
-              self.f.write(''' cmd.set('cartoon_ring_mode' ,'1')\n''')
+          if script=='1':
+              f.write(''' cmd.set('cartoon_ring_mode' ,'1')\n''')
         except:
           cmd.color('green','het')
-          if self.script=='1':
-              self.f.write('''cmd.color('green','het')\n''')
+          if script=='1':
+              f.write('''cmd.color('green','het')\n''')
         cmd.show('cartoon','resn a+g+c+t+u')
-        if self.script=='1':
-            self.f.write('''cmd.show('cartoon','resn a+g+c+t+u')\n''')
-        self.cpknucleic()
+        if script=='1':
+            f.write('''cmd.show('cartoon','resn a+g+c+t+u')\n''')
+        cpknucleic()
         import tkMessageBox
         tkMessageBox.showinfo('Info', 'Red = Hydrophobic\nBlue = Hydrophilic')
         
@@ -875,9 +875,9 @@ cmd.color('green','het')\n''')
     def show_putty(self):
       try:
         self.update(self.p)
-        self.checkitforthese()
-        self.set_defaults()
-        self.delcrea()
+        checkitforthese()
+        set_defaults()
+        delcrea()
         cmd.hide('all')
         cmd.show('spheres', 'het')
         cmd.color('orange', 'het')
@@ -887,8 +887,8 @@ cmd.color('green','het')\n''')
         cmd.color("cyan", "ss l+\'\'")
         cmd.cartoon('putty','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
         cmd.show('sticks','resn t+g+c+a+u')
-        if self.script=='1':
-            self.f.write('''cmd.hide('all')
+        if script=='1':
+            f.write('''cmd.hide('all')
 cmd.show('spheres', 'het')
 cmd.color('orange', 'het')
 cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
@@ -897,7 +897,7 @@ cmd.color("yellow", "ss s")
 cmd.color("cyan", "ss l+\'\'")
 cmd.cartoon('putty','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
 cmd.show('sticks','resn t+g+c+a+u')\n''')
-        self.cpknucleic()
+        cpknucleic()
       except:
         import tkMessageBox
         tkMessageBox.showinfo('Error', 'Putty is not supported by this version of PyMol\nTry downloading the newest version to troubleshoot this problem')
@@ -905,9 +905,9 @@ cmd.show('sticks','resn t+g+c+a+u')\n''')
     # aromatics view
     def color_aromatics(self):
         self.update(self.p)
-        self.set_defaults()
-        self.checkitforthese()
-        self.delcrea()
+        set_defaults()
+        checkitforthese()
+        delcrea()
         cmd.hide('all')
         cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
         cmd.color('aquamarine','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
@@ -920,8 +920,8 @@ cmd.show('sticks','resn t+g+c+a+u')\n''')
         cmd.show('sticks','aromatics and (!name c+n+o)')
         cmd.set('stick_radius','0.4','all')
         cmd.delete('aromatics')
-        if self.script=='1':
-            self.f.write('''cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
+        if script=='1':
+            f.write('''cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
 cmd.color('aquamarine','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
 cmd.set('cartoon_transparency','0.6','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
 cmd.show('cartoon','resn t+u+g+c+a')
@@ -936,79 +936,20 @@ cmd.delete('aromatics')\n''')
 	
     # color the molecule by chain
     def color_by_chain(self):
-        self.set_defaults()
-        self.checkitforthese()
-        self.delcrea()
-        cmd.hide('all')
-        cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
-        cmd.show('sticks','resn a+g+c+t+u')
-        cmd.set('sphere_scale','0.4','resn u')   
-        cmd.color("blue","chain A")
-        cmd.color("orange","chain B" )
-        cmd.color("silver","chain C")
-        cmd.color("green","chain D")
-        cmd.color("yellow","chain E")
-        cmd.color("purple","chain F")
-        cmd.color("grey","chain G")
-        cmd.color("brown","chain H")
-        cmd.color("slate","chain I")
-        cmd.color("brightorange","chain J")
-        cmd.color("lightblue","chain K" )
-        cmd.color("lightorange","chain L" )
-        cmd.color("purple","chain M" )
-        cmd.color("pink","chain N" )
-        cmd.color("forest","chain O" )
-        cmd.color("firebrick","chain P" )
-        cmd.color("paleyellow","chain Q" )
-        cmd.color("purpleblue","chain R" )
-        cmd.color("deepteal","chain S" )
-        cmd.color("deepolive","chain T" )
-        cmd.color("pink","chain U" )
-        cmd.color("salmon","chain V" )
-        cmd.color("ruby","chain W" )
-        cmd.color("wheat","chain X" )
-        cmd.color("lightmagenta","chain Y")
-        cmd.color("aquamarine","chain Z")
-        if self.script=='1':
-            self.f.write('''cmd.hide('all')
-cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
-cmd.show('sticks','resn a+g+c+t+u')
-cmd.set('sphere_scale','0.4','resn u')   
-cmd.color("blue","chain A")
-cmd.color("orange","chain B" )
-cmd.color("silver","chain C")
-cmd.color("green","chain D")
-cmd.color("yellow","chain E")
-cmd.color("purple","chain F")
-cmd.color("grey","chain G")
-cmd.color("brown","chain H")
-cmd.color("slate","chain I")
-cmd.color("brightorange","chain J")
-cmd.color("lightblue","chain K" )
-cmd.color("lightorange","chain L" )
-cmd.color("purple","chain M" )
-cmd.color("pink","chain N" )
-cmd.color("forest","chain O" )
-cmd.color("firebrick","chain P" )
-cmd.color("paleyellow","chain Q" )
-cmd.color("purpleblue","chain R" )
-cmd.color("deepteal","chain S" )
-cmd.color("deepolive","chain T" )
-cmd.color("pink","chain U" )
-cmd.color("salmon","chain V" )
-cmd.color("ruby","chain W" )
-cmd.color("wheat","chain X" )
-cmd.color("lightmagenta","chain Y")
-cmd.color("aquamarine","chain Z")\n''')
+      color_by_chain()
 
 
         #------------Brett's and Charlie's Code------------
         #-------Show Charged-------------------
-    def show_charged(self):
-      self.delcrea()
-      self.set_defaults()
-      self.update(self.p)
-      self.checkitforthese()
+    def show_charged(*args):
+      delcrea()
+      set_defaults()
+      try:
+        self = args[0]
+        self.update(self.p)
+      except:
+        pass
+      checkitforthese()
       objects = cmd.get_names('all')
       cmd.hide('everything')
       cmd.show('cartoon','all')
@@ -1022,8 +963,8 @@ cmd.color("aquamarine","chain Z")\n''')
       cmd.color('red','neg')
       cmd.delete('neg')
       cmd.set('cartoon_smooth_loops','0')
-      if self.script=='1':
-          self.f.write('''objects = cmd.get_names('all')
+      if script=='1':
+          f.write('''objects = cmd.get_names('all')
 cmd.hide('everything')
 cmd.show('cartoon','all')
 cmd.color('gray','all')
@@ -1039,11 +980,12 @@ cmd.set('cartoon_smooth_loops','0')\n''')
       if 'protein' in objects:
           import tkMessageBox
           tkMessageBox.showinfo('Charge Info', 'Blue = Positively charged Amino Acids\nRed = Negatively charged Amino Acids')
+    cmd.extend('show_charged', show_charged)
       
    
-    def surf_toon(self):
-      self.delcrea()
-      self.color_by_chain()
+    def surf_toon(*args):
+      delcrea()
+      color_by_chain()
       cmd.hide('everything')
       cmd.show('cartoon','all')
       cmd.select('surface', 'all')
@@ -1051,42 +993,48 @@ cmd.set('cartoon_smooth_loops','0')\n''')
       cmd.do('set transparency, 0.5, surface')
       cmd.set('cartoon_smooth_loops','0')       
       cmd.delete('surface')
-      if self.script=='1':
-          self.f.write('''cmd.hide('everything')
+      if script=='1':
+          f.write('''cmd.hide('everything')
 cmd.show('cartoon','all')
 cmd.select('surface', 'all')
 cmd.do('show surface, all')
 cmd.do('set transparency, 0.5, surface')
 cmd.set('cartoon_smooth_loops','0')       
 cmd.delete('surface')\n''')
+    cmd.extend('surf_over_toon',surf_toon)
      
       
   
-    def surf_stick(self):
-      self.delcrea()
-      self.update(self.p)
-      self.checkitforthese()
+    def surf_stick(*args):
+      delcrea()
+      try:
+        self = args[0]
+        self.update(self.p)
+      except:
+        pass
+      checkitforthese()
       cmd.hide('everything')
       cmd.show('stick','all')
       cmd.select('surface', 'all')
       cmd.do('show surface, all')
       cmd.do('set transparency, 0.5, surface')              
       cmd.delete('surface')
-      if self.script=='1':
-          self.f.write('''  cmd.hide('everything')
+      if script=='1':
+          f.write('''  cmd.hide('everything')
 cmd.show('stick','all')
 cmd.select('surface', 'all')
 cmd.do('show surface, all')
 cmd.do('set transparency, 0.5, surface')              
 cmd.delete('surface')\n''')
-      self.cpkprotein()
-      self.cpknucleic()
-      self.cpkligands()
+      cpkprotein()
+      cpknucleic()
+      cpkligands()
+    cmd.extend('surf_over_stick',surf_stick)
 
       
           
-    def mesh_stick(self):
-        self.delcrea()
+    def mesh_stick(*args):
+        delcrea()
         cmd.hide('everything')
         cmd.do("show stick, all")
         cmd.do("color white, all")
@@ -1095,8 +1043,8 @@ cmd.delete('surface')\n''')
         cmd.do("show mesh, mesh1")
         cmd.color('tv_blue', 'mesh1')
         cmd.hide("stick", "mesh1")
-        if self.script=='1':
-            self.f.write('''cmd.hide('everything')
+        if script=='1':
+            f.write('''cmd.hide('everything')
 cmd.do("show stick, all")
 cmd.do("color white, all")
 cmd.do("create mesh1, all")
@@ -1104,102 +1052,157 @@ cmd.set('mesh_quality', '3')
 cmd.do("show mesh, mesh1")
 cmd.color('tv_blue', 'mesh1')
 cmd.hide("stick", "mesh1")\n''')
-  
-    def stick_toon(self):
-        self.delcrea()
+    cmd.extend('mesh_over_stick',mesh_stick)
+
+    def stick_toon(*args):
+        delcrea()
         cmd.hide('everything')
         cmd.show('lines')
         cmd.create('cartoon', 'all')
         cmd.show('cartoon', 'cartoon')
         cmd.color('salmon', 'cartoon')
         cmd.color('cyan', 'resn a+t+u+g+c')
-        if self.script=='1':
-            self.f.write('''cmd.hide('everything')
+        if script=='1':
+            f.write('''cmd.hide('everything')
 cmd.show('lines')
 cmd.create('cartoon', 'all')
 cmd.show('cartoon', 'cartoon')
 cmd.color('salmon', 'cartoon')
 cmd.color('cyan', 'resn a+t+u+g+c')\n''')
+    cmd.extend('stick_and_cartoon',stick_toon)
 
         
-    def dot_line(self):
-        self.delcrea()
+    def dot_line(*args):
+        delcrea()
         cmd.set('dot_density', '3')
         cmd.hide('everything')
         cmd.remove('resn HOH')
         cmd.hide('everything')
         cmd.show('lines')
         cmd.show('dots', 'all')
-        if self.script=='1':
-            self.f.write('''cmd.set('dot_density', '3')
+        if script=='1':
+            f.write('''cmd.set('dot_density', '3')
 cmd.hide('everything')
 cmd.remove('resn HOH')
 cmd.hide('everything')
 cmd.show('lines')
 cmd.show('dots', 'all')\n''')
+    cmd.extend('dot_line',dot_line)
         
-    def rovingstickers(self):
+    def rovingstickers(*args):
+      cmdRovStick = ' '
+
+      try:
+        self = args[0]
         self.update(self.p)
-        self.checkitforthese()
-        self.delcrea()
-        cmd.hide('everything')
-        cmd.remove("hydro")
-        cmd.set("roving_detail",1)
-        cmd.set("roving_origin",1)
-        cmd.set("stick_radius",0.3)
+      except:
+        try:
+          float(args[0])
+        except (ValueError, IndexError):
+          print "Usage: roving stick # (# is a value between 0 and 20)"
+        else:
+          cmdRovStick = args[0]
+
+      checkitforthese()
+      delcrea()
+      cmd.hide('everything')
+      cmd.remove("hydro")
+      cmd.set("roving_detail",1)
+      cmd.set("roving_origin",1)
+      cmd.set("stick_radius",0.3)
+
+      try:
         cmd.set("roving_sticks",self.rovingradius2.get())
-        cmd.set("roving_polar_contacts",8)
-        if self.script=='1':
-            self.f.write('''cmd.hide('everything')
+      except:
+        cmd.set("roving_sticks",cmdRovStick)
+
+      cmd.set("roving_polar_contacts",8)
+      if script=='1':
+        f.write('''cmd.hide('everything')
 cmd.remove("hydro")
 cmd.set("roving_detail",1)
 cmd.set("roving_origin",1)
 cmd.set("stick_radius",0.3)
 cmd.set("roving_sticks",self.rovingradius2.get())
 cmd.set("roving_polar_contacts",8)\n''')
-        self.cpkprotein()
-        self.cpknucleic()
-        self.cpkligands()
+      cpkprotein()
+      cpknucleic()
+      cpkligands()
+    cmd.extend('roving_stick',rovingstickers)
     
-    def rovinglines(self):
+    def rovinglines(*args):
+      cmdRovLine = ''
+
+      #This next construction looks strange, I know, but this way it executes
+      #the default settings if the user does not specifiy range!
+      #Don't Worry. I plan on fixing this.
+
+      try:
+        self = args[0]
         self.update(self.p)
-        self.checkitforthese()
-        self.delcrea()
-        cmd.hide('everything')
-        cmd.remove("hydro")
-        cmd.set("roving_detail",1)
-        cmd.set("roving_origin",1)
-        cmd.set("roving_sticks",0)
+      except:
+        try:
+          cmdRovLine = float(args[0])
+        except:
+          print 'Usage: roving lines # (# is value between 0 and 20)'
+        
+      checkitforthese()
+      delcrea()
+      cmd.hide('everything')
+      cmd.remove("hydro")
+      cmd.set("roving_detail",1)
+      cmd.set("roving_origin",1)
+      cmd.set("roving_sticks",0)
+      try:
         cmd.set('roving_lines', self.rovingradius2.get())
-        cmd.set("roving_polar_contacts",8)
-        if self.script=='1':
-            self.f.write('''cmd.hide('everything')
+      except:
+        cmd.set('roving_lines', cmdRovLine)
+      cmd.set("roving_polar_contacts",8)
+      if script=='1':
+        f.write('''cmd.hide('everything')
 cmd.remove("hydro")
 cmd.set("roving_detail",1)
 cmd.set("roving_origin",1)
 cmd.set("roving_sticks",0)
 cmd.set('roving_lines', self.rovingradius2.get())
 cmd.set("roving_polar_contacts",8)\n''')
-        self.cpkprotein()
-        self.cpknucleic()
-        self.cpkligands()
+      cpkprotein()
+      cpknucleic()
+      cpkligands()
+    cmd.extend('roving_line', rovinglines)
         
-    def rovingballstick(self):
+    def rovingballstick(*args):
+      cmdRovBall = ''
+
+      try:
+        self = args[0]
         self.update(self.p)
-        self.checkitforthese()
-        self.delcrea()
-        cmd.hide('everything')
-        cmd.remove("hydro")
-        cmd.set("roving_detail",1)
-        cmd.set("roving_origin",1)
+      except:
+        try:
+          cmdRovBall = float(args[0])
+        except:
+          print 'Usage: roving ballstick # (# is value between 0 and 20)'
+          
+      checkitforthese()
+      delcrea()
+      cmd.hide('everything')
+      cmd.remove("hydro")
+      cmd.set("roving_detail",1)
+      cmd.set("roving_origin",1)
+      try:
         cmd.set('roving_sticks', self.rovingradius2.get())
-        cmd.set("roving_polar_contacts",8)
+      except:
+        cmd.set('roving_sticks', cmdRovBall)
+      cmd.set("roving_polar_contacts",8)
+      try:
         cmd.set('roving_spheres', self.rovingradius2.get())
-        cmd.set('sphere_transparency', '0.2')
-        cmd.set("stick_radius","0.1","all")
-        cmd.set("sphere_scale","0.3","all")
-        if self.script=='1':
-            self.f.write('''cmd.hide('everything')
+      except:
+        cmd.set('roving_spheres', cmdRovBall)
+      cmd.set('sphere_transparency', '0.2')
+      cmd.set("stick_radius","0.1","all")
+      cmd.set("sphere_scale","0.3","all")
+      if script=='1':
+        f.write('''cmd.hide('everything')
 cmd.remove("hydro")
 cmd.set("roving_detail",1)
 cmd.set("roving_origin",1)
@@ -1209,23 +1212,38 @@ cmd.set('roving_spheres', self.rovingradius2.get())
 cmd.set('sphere_transparency', '0.2')
 cmd.set("stick_radius","0.1","all")
 cmd.set("sphere_scale","0.3","all")\n''')
-        self.cpkprotein()
-        self.cpknucleic()
-        self.cpkligands()
-        
-    def rovingspheres(self):
+      cpkprotein()
+      cpknucleic()
+      cpkligands()
+    cmd.extend('roving_ballstick',rovingballstick)
+    
+
+    def rovingspheres(*args):
+      cmdRovSphere = ''
+      
+      try:
+        self = args[0]
         self.update(self.p)
-        self.checkitforthese()
-        cmd.hide('everything')
-        cmd.remove("hydro")
-        cmd.set("roving_detail",1)
-        cmd.set("roving_origin",1)
+      except:
+        try:
+          cmdRovSphere = float(args[0])
+        except:
+          print 'Usage: rovingspheres # (# is value between 0 and 20)'
+
+      checkitforthese()
+      cmd.hide('everything')
+      cmd.remove("hydro")
+      cmd.set("roving_detail",1)
+      cmd.set("roving_origin",1)
+      try:
         cmd.set('roving_spheres', self.rovingradius2.get())
-        cmd.set("roving_polar_contacts",8)
-        cmd.set('sphere_transparency', '0.2')
-        cmd.set('sphere_scale', '0.8', 'all')
-        if self.script=='1':
-            self.f.write('''cmd.hide('everything')
+      except:
+        cmd.set('roving_spheres', cmdRovSphere)
+      cmd.set("roving_polar_contacts",8)
+      cmd.set('sphere_transparency', '0.2')
+      cmd.set('sphere_scale', '0.8', 'all')
+      if script=='1':
+          f.write('''cmd.hide('everything')
 cmd.remove("hydro")
 cmd.set("roving_detail",1)
 cmd.set("roving_origin",1)
@@ -1233,12 +1251,17 @@ cmd.set('roving_spheres', self.rovingradius2.get())
 cmd.set("roving_polar_contacts",8)
 cmd.set('sphere_transparency', '0.2')
 cmd.set('sphere_scale', '0.8', 'all')\n''')
-        self.cpkprotein()
-        self.cpknucleic()
-        self.cpkligands()
-        
-    def chain_contact(self):
-      self.delcrea()
+      cpkprotein()
+      cpknucleic()
+      cpkligands()
+    cmd.extend('roving_sphere',rovingspheres)
+
+    def chain_contact(*args):
+      try:
+        self = args[0]
+      except:
+        pass
+      delcrea()
       cmd.hide('everything')
       cmd.show('mesh', 'all')
       cmd.color('gray40', 'all')
@@ -1268,7 +1291,7 @@ cmd.set('sphere_scale', '0.8', 'all')\n''')
       cmd.select("Chain-X", "chain X")
       cmd.select("Chain-Y", "chain Y")
       cmd.select("Chain-Z", "chain Z")
-      self.checkforchain()
+      checkforchain()
       cmd.orient()
       objects = cmd.get_names('all')
       chainpulllist = []
@@ -1328,453 +1351,465 @@ cmd.set('sphere_scale', '0.8', 'all')\n''')
 
       if len(chainpulllist) >1:
         cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[1])
-        self.cpkduh()
+        cpkduh()
         cmd.delete('duh')    
         cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[0])
-        self.cpkduh()
+        cpkduh()
         cmd.delete('duh')
         if len(chainpulllist) >2:
           cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[1])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[2])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >3:
           cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[1])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[3])
           cmd.delete('duh')
         if len(chainpulllist) >4:
           cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[1])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[4])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >5:
           cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[1])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[5])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >6:
           cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[1])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[6])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >7:
           cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[1])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[7])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >8:
           cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[1])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[8])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >9:
           cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[1])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[9])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >10:
           cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[1])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[10])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
 
       if len(chainpulllist) >2:
         
         cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[2])
-        self.cpkduh()
+        cpkduh()
         cmd.delete('duh')    
         cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[0])
-        self.cpkduh()
+        cpkduh()
         cmd.delete('duh')
         if len(chainpulllist) >3:
           cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[3])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[2])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >4:
           cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[4])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[2])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >5:
           cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[2])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[5])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >6:
           cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[2])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[6])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >7:
           cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[2])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[7])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >8:
           cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[2])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[8])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >9:
           cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[2])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[9])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >10:
           cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[2])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[10])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
 
       if len(chainpulllist) >3:
         cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[3])
-        self.cpkduh()
+        cpkduh()
         cmd.delete('duh')    
         cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[0])
-        self.cpkduh()
+        cpkduh()
         cmd.delete('duh')
         if len(chainpulllist) >4:
           cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[3])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[4])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >5:
           cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[3])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[5])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >6:
           cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[3])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[6])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >7:
           cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[3])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[7])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >8:
           cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[3])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[8])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >9:
           cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[3])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[9])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >10:
           cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[3])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[10])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
 
       if len(chainpulllist) >4:
         cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[4])
-        self.cpkduh()
+        cpkduh()
         cmd.delete('duh')    
         cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[0])
-        self.cpkduh()
+        cpkduh()
         cmd.delete('duh')
         if len(chainpulllist) >5:
           cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[4])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[5])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >6:
           cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[4])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[6])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >7:
           cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[4])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[7])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >8:
           cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[4])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[8])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >9:
           cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[4])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[9])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >10:
           cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[4])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[10])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
 
       if len(chainpulllist) >5:
         cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[5])
-        self.cpkduh()
+        cpkduh()
         cmd.delete('duh')    
         cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[0])
-        self.cpkduh()
+        cpkduh()
         cmd.delete('duh')
         if len(chainpulllist) >6:
           cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[5])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[6])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >7:
           cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[5])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[7])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >8:
           cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[5])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[8])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >9:
           cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[5])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[9])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >10:
           cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[5])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[10])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
 
       if len(chainpulllist) >6:
         cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[6])
-        self.cpkduh()
+        cpkduh()
         cmd.delete('duh')    
         cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[0])
-        self.cpkduh()
+        cpkduh()
         cmd.delete('duh')
         if len(chainpulllist) >7:
           cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[6])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[7])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >8:
           cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[6])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[8])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >9:
           cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[6])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[9])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >10:
           cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[6])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')    
           cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[10])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
 
           
       if len(chainpulllist) >7:
         cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[7])
-        self.cpkduh()
+        cpkduh()
         cmd.delete('duh')    
         cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[0])
-        self.cpkduh()
+        cpkduh()
         cmd.delete('duh')
         if len(chainpulllist) >8:
           cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[7])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[8])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >9:
           cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[7])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[9])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >10:
           cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[7])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[10])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         
       if len(chainpulllist) >8:
         cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[8])
-        self.cpkduh()
+        cpkduh()
         cmd.delete('duh')    
         cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[0])
-        self.cpkduh()
+        cpkduh()
         cmd.delete('duh')
         if len(chainpulllist) >9:
           cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[8])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[9])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >10:
           cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[8])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[10])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
         
       if len(chainpulllist) >9:
         cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[9])
-        self.cpkduh()
+        cpkduh()
         cmd.delete('duh')    
         cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[0])
-        self.cpkduh()
+        cpkduh()
         cmd.delete('duh')
         if len(chainpulllist) >10:
           cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[9])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[10])
-          self.cpkduh()
+          cpkduh()
           cmd.delete('duh')
 
       if len(chainpulllist) >10:
         cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[10])
-        self.cpkduh()
+        cpkduh()
         cmd.delete('duh')    
         cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[0])
-        self.cpkduh()
+        cpkduh()
         cmd.delete('duh')
         
+    cmd.extend('chain_contact',chain_contact)
    
 
-    def show_cpk(self):
-      self.update(self.p)
+    def show_cpk(*args):
+      try:
+        self = args[0]
+        self.update(self.p)
+      except:
+        pass
       objects = cmd.get_names('all')
-      if self.script=='1':
-            self.f.write('''objects = cmd.get_names('all')\n''')
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
+      if script=='1':
+            f.write('''objects = cmd.get_names('all')\n''')
+      checkitforthese()
+      set_defaults()
+      delcrea()
       cmd.set("sphere_scale","0.7","all")
       cmd.show('spheres','all')
-      if self.script=='1':
-            self.f.write('''cmd.set("sphere_scale","0.7","all")
+      if script=='1':
+            f.write('''cmd.set("sphere_scale","0.7","all")
 cmd.show('spheres','all')\n''')
-      self.cpkprotein()#stopped here
-      self.cpkligands()
-      self.cpknucleic()
+      cpkprotein()#stopped here
+      cpkligands()
+      cpknucleic()
+    cmd.extend('show_cpk',show_cpk)
 
-    def spheresurf(self):
+    def spheresurf(*args):
+      try:
+        self = args[0]
         self.update(self.p)
-        self.checkitforthese()
-        self.set_defaults()
-        self.delcrea()
-        cmd.show('spheres', 'all')
-        cmd.create('surface', 'all')
-        cmd.show('surface', 'surface')
-        cmd.color('white', 'surface')
-        cmd.set('sphere_scale', '0.5', 'all')
-        cmd.set('transparency', '0.4')
-        if self.script=='1':
-            self.f.write('''cmd.show('spheres', 'all')
+      except:
+        pass
+
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      cmd.show('spheres', 'all')
+      cmd.create('surface', 'all')
+      cmd.show('surface', 'surface')
+      cmd.color('white', 'surface')
+      cmd.set('sphere_scale', '0.5', 'all')
+      cmd.set('transparency', '0.4')
+      if script=='1':
+        f.write('''cmd.show('spheres', 'all')
 cmd.create('surface', 'all')
 cmd.show('surface', 'surface')
 cmd.color('white', 'surface')
 cmd.set('sphere_scale', '0.5', 'all')
 cmd.set('transparency', '0.4')\n''')
-        self.cpkprotein()
-        self.cpknucleic()
-        self.cpkligands()
+      cpkprotein()
+      cpknucleic()
+      cpkligands()
+    cmd.extend('spheresurf',spheresurf)
       #-----------Electron Density Presets----------------#
       
     def mesh_ribbon(self):
         try:
            
               
-            self.delcrea()
+            delcrea()
            
             try:
                     cmd.hide('everything')
                     cmd.isomesh('map1','map', contour1.get())
-                    if self.script=='1':
-                        self.f.write('''cmd.hide('everything')
+                    if script=='1':
+                        f.write('''cmd.hide('everything')
 cmd.isomesh('map1','map', contour1.get())\n''')
                     
             except:
@@ -1785,8 +1820,8 @@ cmd.isomesh('map1','map', contour1.get())\n''')
                         cmd.set("suspend_updates",0,quiet=1)
                         cmd.refresh()
                         cmd.isomesh('map1','map', '1')
-                        if self.script=='1':
-                            self.f.write('''cmd.set("suspend_updates",1,quiet=1)
+                        if script=='1':
+                            f.write('''cmd.set("suspend_updates",1,quiet=1)
 cmd.remove("hydro")      
 cmd.map_new('map',"gaussian","0.75", 'all')
 cmd.set("suspend_updates",0,quiet=1)
@@ -1801,26 +1836,26 @@ cmd.isomesh('map1','map', '1')\n''')
             cmd.show('lines', 'all')
             cmd.color('red', 'all')
             cmd.color('purpleblue', 'map1')
-            if self.script=='1':
-                            self.f.write('''cmd.show('ribbon', 'all')
+            if script=='1':
+                            f.write('''cmd.show('ribbon', 'all')
 cmd.show('lines', 'all')
 cmd.color('red', 'all')
 cmd.color('purpleblue', 'map1')\n''')
             
         except:
             cmd.show('lines', 'all')
-            if self.script=='1':
-                self.f.write('''cmd.show('lines', 'all')''')
+            if script=='1':
+                f.write('''cmd.show('lines', 'all')''')
             import tkMessageBox
             tkMessageBox.showinfo('Alert', 'Protein must be present')
             
 
     def dot_sticks(self):
          try:  
-             self.delcrea()
+             delcrea()
              cmd.hide('everything')
-             if self.script=='1':
-                self.f.write('''cmd.hide('everything')\n''')
+             if script=='1':
+                f.write('''cmd.hide('everything')\n''')
              try:
                 cmd.set("suspend_updates",1,quiet=1)
                 cmd.remove("hydro")      
@@ -1830,8 +1865,8 @@ cmd.color('purpleblue', 'map1')\n''')
                 cmd.set("suspend_updates",0,quiet=1)
                 cmd.refresh()
                 cmd.isodot('map1','map', '1')
-                if self.script=='1':
-                    self.f.write('''cmd.set("suspend_updates",1,quiet=1)
+                if script=='1':
+                    f.write('''cmd.set("suspend_updates",1,quiet=1)
 cmd.remove("hydro")      
 cmd.enable('all')
 cmd.map_new('map',"gaussian","0.75", 'all')
@@ -1846,102 +1881,70 @@ cmd.isodot('map1','map', '1')\n''')
              cmd.show('sticks', 'all')
              cmd.color('blue', 'all')
              cmd.color('red', 'map1')
-             if self.script=='1':
-                    self.f.write('''cmd.show('sticks', 'all')
+             if script=='1':
+                    f.write('''cmd.show('sticks', 'all')
 cmd.color('blue', 'all')
 cmd.color('red', 'map1')\n''')
          except:
             cmd.show('lines', 'all')
-            if self.script=='1':
-                    self.f.write('''cmd.show('lines', 'all')\n''')
+            if script=='1':
+                    f.write('''cmd.show('lines', 'all')\n''')
             import tkMessageBox
             tkMessageBox.showinfo('Alert', 'Protein must be present')
-            
-    def surfinglines(self):
+
+    def surfinglines(*args):
+
         try:
             cmd.hide('everything')
-            if self.script=='1':
-                    self.f.write('''cmd.hide('everything')\n''')
+            if script=='1':
+                    f.write('''cmd.hide('everything')\n''')
+
             self.update(self.p)
-            self.checkitforthese()
-            self.delcrea()
+            checkitforthese()
+            delcrea()
             
             try:
                 cmd.remove("hydro")      
                 cmd.map_new('map',"gaussian","0.75", 'all')
                 cmd.isosurface('map1','map','1')
                 cmd.show('lines', 'all')
-                self.cpkprotein()
-                self.cpkligands()
-                self.cpknucleic()
+                cpkprotein()
+                cpkligands()
+                cpknucleic()
                 cmd.color('white', 'elem c')
                 cmd.color('orange', "map1")
                 cmd.set('transparency', '0.4')
                 cmd.set('ambient', '0.45')
-                if self.script=='1':
-                    self.f.write('''cmd.remove("hydro")      
+                if script=='1':
+                    f.write('''cmd.remove("hydro")      
 cmd.map_new('map',"gaussian","0.75", 'all')
 cmd.isosurface('map1','map','1')
 cmd.show('lines', 'all')
-self.cpkprotein()
-self.cpkligands()
-self.cpknucleic()
+cpkprotein()
+cpkligands()
+cpknucleic()
 cmd.color('white', 'elem c')
 cmd.color('orange', "map1")
 cmd.set('transparency', '0.4')
 cmd.set('ambient', '0.45')\n''')
             except:
                 cmd.show('lines', 'all')
-                if self.script=='1':
-                    self.f.write('''cmd.show('lines', 'all')\n''')
+                if script=='1':
+                    f.write('''cmd.show('lines', 'all')\n''')
                 import tkMessageBox
                 tkMessageBox.showinfo("Error", 'No PDB is present')
         except:
             cmd.show('lines', 'all')
-            if self.script=='1':
-                    self.f.write('''cmd.show('lines', 'all')\n''')
+            if script=='1':
+                    f.write('''cmd.show('lines', 'all')\n''')
             import tkMessageBox
             tkMessageBox.showinfo('Alert', 'Protein must be present')
+    cmd.extend('surfinglines',surfinglines)
 
 #------------------Motif stuff---------------------
     def deletemotif(self):
-     
-        cmd.delete('p-loop')
-        cmd.delete('serineprotease')
-        cmd.delete('lactamase')
-        cmd.delete('superoxide')
-        cmd.delete('metalloprotease')
-        cmd.delete('tyrophos')
-        cmd.delete('carbonicanhydrase')
-        cmd.delete('paplike')
-        cmd.delete('Zinc_finger')
-        cmd.delete('Aminotransferase')
-        cmd.delete('fucoseisomerase')
-        cmd.delete('Ligase')
-        cmd.delete('o-glycosyl')
-        cmd.delete('glu_amidotransferase')
-        cmd.delete('Peroxidase')
-        cmd.delete('carboncarbon')
-        cmd.delete('Tkinase')
-        cmd.delete('TrioseIsomerase')
-        cmd.delete('alcoholdehyd')
-        cmd.delete('Cis-trans')
-        cmd.delete('aldoreductase')
-        cmd.delete('NAD-reductase')
-        cmd.delete('NAD-reductase2')
-        cmd.delete('chondroitinase')
-        cmd.delete('Hyaluronate_Lyase')
-        cmd.delete('deacetylase')
-        cmd.delete('p-loop')
-        cmd.delete('adenylatekinase')
-        cmd.delete('SRC-Kinase')
-        cmd.delete('Cyclin_Kinase')
-        cmd.delete('Serotonin_transferase')
-        cmd.delete('actase')
-        cmd.delete('Exonuclease3')
-        cmd.delete('Citrate_Synth')
-        cmd.delete('hhal')
-        cmd.delete('betaine_dehydrogenase')
+      deletemotif()
+
         
 #----------Motif definitions consisting of measuring atom to atom between different
         #  amino acid residues and allowing them to be altered by a slider
@@ -1949,10 +1952,10 @@ cmd.set('ambient', '0.45')\n''')
     def serineprotease(self):
       self.update(self.p)#updates list of molecular groups
       objects = cmd.get_names('all')#gets names of objects
-      self.checkitforthese()#sees if objects are in objects
-      self.set_defaults()#sets defaults
-      self.delcrea()#deletes created objects
-      self.deletemotif()#deletes previous motif
+      checkitforthese()#sees if objects are in objects
+      set_defaults()#sets defaults
+      delcrea()#deletes created objects
+      deletemotif()#deletes previous motif
       cmd.select('asp1', 'resn asp within %s of resn his' %(self.range.get()*3)) #selects aspartate within 3 of histidine
       cmd.select('asp2', 'resn asp within %s of resn ser'%(self.range.get()*7))
       cmd.select('asp', 'byres asp1 and byres asp2') 
@@ -1968,10 +1971,10 @@ cmd.set('ambient', '0.45')\n''')
       cmd.set('cartoon_transparency', '0.5', 'all')
       cmd.show('sticks', 'serineprotease')
       cmd.set('stick_radius','0.5')
-      self.cpkserineprotease()#colors in cpk
+      cpkserineprotease()#colors in cpk
       cmd.orient('serineprotease')
       cmd.deselect()#deselects
-      cmd.delete('asp')#delets selections
+      cmd.delete('asp')#deletes selections
       cmd.delete('his')
       cmd.delete('ser')
       cmd.delete('asp1')
@@ -1984,10 +1987,10 @@ cmd.set('ambient', '0.45')\n''')
 
     def Blactamase(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('lys1', 'name nz and resn lys within %s of (name oh and resn tyr)' %(self.range.get()*5))
       cmd.select('lys2', 'name nz and resn lys within %s of (name cz and resn tyr)' %(self.range.get()*5.5))
       cmd.select('lys3', 'name nz and resn lys within %s of (name ce1 and resn tyr)' %(self.range.get()*6.5))
@@ -2049,7 +2052,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.set('cartoon_transparency', '0.8', 'all')
       cmd.show('sticks', 'lactamase')
       cmd.set('stick_radius','0.5')
-      self.cpkBlactamase()
+      cpkBlactamase()
       cmd.orient('lactamase')
       cmd.deselect
       cmd.delete('lys1')
@@ -2112,10 +2115,10 @@ cmd.set('ambient', '0.45')\n''')
 
     def superoxide(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('his1', 'byres resn his within %s of elem cu'%(self.range.get()*4))
       cmd.select('arg1', 'byres resn arg within %s of elem cu'%(self.range.get()*6))
       cmd.select('stuff', 'his1 and (byres elem zn around %s)'%(self.range.get()*4))
@@ -2133,7 +2136,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.show('spheres', 'elem cu')
       cmd.show('spheres', 'elem zn')
       cmd.set('cartoon_transparency', '0.7', 'all')
-      self.cpkreductase()
+      cpkreductase()
       cmd.deselect()
       cmd.orient('superoxide')
       cmd.delete('his1')
@@ -2147,10 +2150,10 @@ cmd.set('ambient', '0.45')\n''')
     def metalloprotease(self):
       self.update(self.p)
       objects = cmd.get_names('all')
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.hide('everything')
       cmd.select('zn', 'elem zn')
       cmd.show('sphere', 'zn')
@@ -2158,7 +2161,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.show('cartoon', 'all')
       cmd.set('cartoon_transparency', '0.5', 'all')
       cmd.show('sticks', 'metalloprotease')
-      self.cpkmetalloprotease()
+      cpkmetalloprotease()
       cmd.delete('zn')
       cmd.orient('metalloprotease')
       cmd.deselect()
@@ -2166,10 +2169,10 @@ cmd.set('ambient', '0.45')\n''')
     def tyrophos(self):
       self.update(self.p)
       objects = cmd.get_names('all')
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.hide('everything')
       cmd.select('arg1', 'name nh1 and resn arg within %s of (name od1 and resn asp)'%(self.range.get()*7))
       cmd.select('arg2', 'name nh2 and resn arg within %s of (name od2 and resn asp)'%(self.range.get()*7))
@@ -2242,7 +2245,7 @@ cmd.set('ambient', '0.45')\n''')
         cmd.set('cartoon_transparency', '0.5', 'all')
         cmd.show('sticks', 'tyrophos')
         cmd.hide('cartoon', 'tyrophos')
-        self.cpktyrophos()
+        cpktyrophos()
         cmd.delete('arg')
         cmd.delete('arg1')
         cmd.delete('arg2')
@@ -2290,7 +2293,7 @@ cmd.set('ambient', '0.45')\n''')
         cmd.set('cartoon_transparency', '0.5', 'all')
         cmd.show('sticks', 'tyrophos')
         cmd.hide('cartoon', 'tyrophos')
-        self.cpktyrophos()
+        cpktyrophos()
         cmd.delete('arg')
         cmd.delete('arg1')
         cmd.delete('arg2')
@@ -2337,10 +2340,10 @@ cmd.set('ambient', '0.45')\n''')
     def carbanhyd(self):
       self.update(self.p)
       objects = cmd.get_names('all')
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.hide('everything')
       cmd.select('zn', 'elem zn')
       cmd.select('his', 'resn his within %s of zn'%(self.range.get()*5))
@@ -2349,7 +2352,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.set('cartoon_transparency', '0.5', 'all')
       cmd.show('sticks', 'carbonicanhydrase')
       cmd.show('spheres', 'zn')
-      self.cpkcarbanhyd()
+      cpkcarbanhyd()
       cmd.delete('zn')
       cmd.delete('his')
       cmd.orient('carbonicanhydrase')
@@ -2358,10 +2361,10 @@ cmd.set('ambient', '0.45')\n''')
     def paplike(self):
       self.update(self.p)
       objects = cmd.get_names('all')
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.hide('everything')
       cmd.select('gln1', 'name ne2 and resn gln within %s of (name ne2 and resn his)'%(self.range.get()*7))
       cmd.select('gln2', 'name cd and resn gln within %s of (name ce1 and resn his)'%(self.range.get()*6.7))
@@ -2384,7 +2387,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.show('cartoon', 'all')
       cmd.set('cartoon_transparency', '0.5', 'all')
       cmd.show('sticks', 'paplike')
-      self.cpkpaplike()
+      cpkpaplike()
       cmd.delete('his1')
       cmd.delete('his2')
       cmd.delete('his3')
@@ -2411,10 +2414,10 @@ cmd.set('ambient', '0.45')\n''')
 
     def zincfinger(self):
           self.update(self.p)
-          self.checkitforthese()
-          self.set_defaults()
-          self.delcrea()
-          self.deletemotif()
+          checkitforthese()
+          set_defaults()
+          delcrea()
+          deletemotif()
           cmd.select('zn1', 'elem zn')        
           xm = cmd.index('zn1')
           nm  = len(xm)
@@ -2433,7 +2436,7 @@ cmd.set('ambient', '0.45')\n''')
               cmd.show('sticks', 'Zinc_finger')
               cmd.show('spheres', 'elem zn')
               cmd.color('grey40', 'elem zn')
-              self.cpkzincfinger()
+              cpkzincfinger()
               cmd.delete('zn1')
               cmd.delete('his')
               cmd.delete('cys')
@@ -2447,10 +2450,10 @@ cmd.set('ambient', '0.45')\n''')
           
     def aminotransferase(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('asp1', 'name od1 and resn asp within %s of (name cb and resn his)'%(self.range.get()*5))
       cmd.select('asp2', 'name od1 and resn asp within %s of (name cg and resn his)'%(self.range.get()*6))
       cmd.select('asp3', 'name od1 and resn asp within %s of (name nd1 and resn his)'%(self.range.get()*7))
@@ -2480,7 +2483,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.show('cartoon', 'all')
       cmd.color('white', 'all')
       cmd.show('sticks', 'Aminotransferase')
-      self.cpkaminotransferase()
+      cpkaminotransferase()
       cmd.orient('Aminotransferase')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.deselect()
@@ -2514,10 +2517,10 @@ cmd.set('ambient', '0.45')\n''')
 
     def fisomerase(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('his', 'elem mn around %s(elem mn)'%(self.range.get()*5))
       cmd.select('fucoseisomerase', 'byres resn asp and his(byres resn glu and his(elem mn))')
       cmd.show('cartoon', 'all')
@@ -2525,17 +2528,17 @@ cmd.set('ambient', '0.45')\n''')
       cmd.show('sticks', 'fucoseisomerase')
       cmd.show('spheres', 'elem mn')
       cmd.orient('fucoseisomerase')
-      self.cpkfucoseisomerase()
+      cpkfucoisomerase()
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.deselect()
       cmd.delete('his')
 
     def glutamine_amidotransferase(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('his1', 'name ND1 within %s of name OE2'%(self.range.get()*3))
       cmd.select('his2', 'name NE2 within %s of name SG'%(self.range.get()*3.5))
       cmd.select('his', 'byres his1 and byres his2')
@@ -2550,7 +2553,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.color('white', 'all')
       cmd.show('sticks', 'glu_amidotransferase')
       cmd.orient('glu_amidotransferase')
-      self.cpkglu_amidotransferase()
+      cpkglu_amidotransferase()
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.deselect()
       cmd.delete('his')
@@ -2565,10 +2568,10 @@ cmd.set('ambient', '0.45')\n''')
 
     def dnaligase(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('amp1', 'resn amp')
       cmd.select('atp1', 'resn atp')
 ########
@@ -2596,7 +2599,7 @@ cmd.set('ambient', '0.45')\n''')
           cmd.color('white', 'all')
           cmd.set('cartoon_transparency', '0.6', 'all')
           cmd.show('sticks', 'Ligase')
-          self.cpkdnaligase()
+          cpkdnaligase()
           cmd.deselect()
       elif 'atp1' in objects:
           cmd.select('ratp1', 'byres resn atp around %s'%(self.range.get()*7.4))
@@ -2612,7 +2615,7 @@ cmd.set('ambient', '0.45')\n''')
           cmd.color('white', 'all')
           cmd.set('cartoon_transparency', '0.6', 'all')
           cmd.show('sticks', 'Ligase')
-          self.cpkdnaligase()
+          cpkdnaligase()
           cmd.deselect()
     
       elif 'amp1' or 'atp1' not in objects:
@@ -2630,7 +2633,7 @@ cmd.set('ambient', '0.45')\n''')
           cmd.color('white', 'all')
           cmd.set('cartoon_transparency', '0.6', 'all')
           cmd.show('sticks', 'Ligase')
-          self.cpkdnaligase()
+          cpkdnaligase()
           cmd.deselect()
       cmd.orient('Ligase')
       cmd.delete('asp1')
@@ -2654,10 +2657,10 @@ cmd.set('ambient', '0.45')\n''')
 
     def thymidinekinase(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
 
      
       cmd.select('glu1', 'name OE1 and resn glu within %s of name NH2 and resn arg'%(self.range.get()*5))
@@ -2686,7 +2689,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.color('white', 'all')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'Tkinase')
-      self.cpkkinase()
+      cpkkinase()
       cmd.deselect()
       cmd.orient('Tkinase')
       cmd.delete('glu1')
@@ -2717,10 +2720,10 @@ cmd.set('ambient', '0.45')\n''')
 
     def oglycosyl(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      self.aset_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('asp1', 'name od1 and resn asp within %s of (name oe1 and resn glu)'%(self.range.get()*9.5))
       cmd.select('notasp', 'resn asp within %s of resn glu'%(4.5/self.range.get()))
       cmd.select('asp', 'asp1 and (byres not notasp)')
@@ -2741,15 +2744,15 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('asp1')
       cmd.delete('asp')
       cmd.orient('o-glycosyl')
-      self.cpkoglycosyl()
+      cpkoglycosyl()
       cmd.deselect()
 
     def carboncarbon(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('asp1', 'name od1 within %s of name nz'%(self.range.get()*3.5))
       cmd.select('asp2', 'resn asp within %s of name ne2'%(self.range.get()*6))
       cmd.select('asp', 'byres asp1 and byres asp2')
@@ -2770,7 +2773,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('lys1')
       cmd.delete('glu1')
       cmd.orient('carboncarbon')
-      self.cpkcarboncarbon()
+      cpkcarboncarbon()
       cmd.deselect()
       cmd.delete('asp1')
       cmd.delete('asp2')
@@ -2786,10 +2789,10 @@ cmd.set('ambient', '0.45')\n''')
       
     def peroxidase(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('asn1', 'name od1 within %s of name nd1'%(self.range.get()*8))
       cmd.select('asn2', 'name od1 within %s of name ne2'%(self.range.get()*6))
       cmd.select('asn3', 'name nd2 within %s of name nd1'%(self.range.get()*10))
@@ -2831,7 +2834,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.color('white', 'all')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'Peroxidase')
-      self.cpkperoxidase()
+      cpkperoxidase()
       cmd.orient('Peroxidase')
       cmd.deselect()
       cmd.delete('asn1')
@@ -2872,10 +2875,10 @@ cmd.set('ambient', '0.45')\n''')
       
     def trioseisomerase(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('lys1', 'name nz and resn lys within %s of (name od1 and resn asn)'%(self.range.get()*7.5))
       cmd.select('lys2', 'name nz and resn lys within %s of (name nd2 and resn asn)'%(self.range.get()*7.5))
       cmd.select('lys3', 'name nz and resn lys within %s of (name cg and resn asn)'%(self.range.get()*7.5))
@@ -2994,7 +2997,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.color('white', 'all')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'TrioseIsomerase')
-      self.cpktriose()
+      cpktriose()
       cmd.orient('TrioseIsomerase')
       cmd.deselect()
       cmd.delete('asn1')
@@ -3114,10 +3117,10 @@ cmd.set('ambient', '0.45')\n''')
               
     def alcoholdehyd(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('tyr1', 'name cd1 and resn tyr within %s of (name nd2 and resn asn)'%(self.range.get()*5))
       cmd.select('tyr2', 'name oh and resn tyr within %s of (name od1 and resn asn)'%(self.range.get()*8))
       cmd.select('tyr3', 'name oh and resn tyr within %s of (name nz and resn lys)'%(self.range.get()*6))
@@ -3159,7 +3162,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.color('white', 'all')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'alcoholdehyd')
-      self.cpkalcoholdehyd()
+      cpkalcoholdehyd()
       cmd.orient('alcoholdehyd')
       cmd.deselect()
       cmd.delete('tyr')
@@ -3199,10 +3202,10 @@ cmd.set('ambient', '0.45')\n''')
 
     def aldoreductase(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('lys1', 'name cd and resn lys within %s of (name cg and resn his)'%(self.range.get()*6))
       cmd.select('lys2', 'name ce and resn lys within %s of (name ne2 and resn his)'%(self.range.get()*8))
       cmd.select('lys3', 'name cd and resn lys within %s of (name nd1 and resn his)'%(self.range.get()*7))
@@ -3250,7 +3253,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'aldoreductase')
       cmd.orient('aldoreductase')
-      self.cpkaldoreductase()
+      cpkaldoreductase()
       cmd.deselect()
       cmd.delete('lys')
       cmd.delete('lys2')
@@ -3295,10 +3298,10 @@ cmd.set('ambient', '0.45')\n''')
 
     def cistransisomerase(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('tyr1', 'name oh and resn tyr within %s of (name od2 and resn asp)'%(self.range.get()*9))
       cmd.select('tyr2', 'name oh and resn tyr within %s of (name od1 and resn asp)'%(self.range.get()*11))
       cmd.select('tyr3', 'name oh and resn tyr within %s of (name cg and resn asp)'%(self.range.get()*9.8))
@@ -3350,7 +3353,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.color('white', 'all')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'Cis-trans')
-      self.cpkcistrans()
+      cpkcistrans()
       cmd.deselect()
       cmd.orient('Cis-trans')
       cmd.delete('tyr1')
@@ -3402,10 +3405,10 @@ cmd.set('ambient', '0.45')\n''')
       
     def nadhbinder(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('asp1', 'name od2 and resn asp within %s of (name sg and resn cys)'%(self.range.get()*5))
       cmd.select('asp2', 'name od2 and resn asp within %s of (name cb and resn cys)'%(self.range.get()*5.5))
       cmd.select('asp3', 'name od1 and resn asp within %s of (name sg and resn cys)'%(self.range.get()*6.4))
@@ -3445,7 +3448,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.color('white', 'all')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'NAD-reductase')
-      self.cpknadreductase()
+      cpknadreductase()
       cmd.deselect()
       cmd.orient('NAD-reductase')
       cmd.delete('asp1')
@@ -3485,10 +3488,10 @@ cmd.set('ambient', '0.45')\n''')
 
     def nadhbinder2(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('glu1', 'name oe2 and resn glu within %s of (name sg and resn cys)'%(self.range.get()*6.5))
       cmd.select('glu2', 'name oe2 and resn glu within %s of (name cb and resn cys)'%(self.range.get()*5.5))
       cmd.select('glu3', 'name oe1 and resn glu within %s of (name sg and resn cys)'%(self.range.get()*6.5))
@@ -3528,7 +3531,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.color('white', 'all')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'NAD-reductase2')
-      self.cpknadreductase2()
+      cpknadreductase2()
       cmd.deselect()
       cmd.orient('NAD-reductase2')
       cmd.delete('glu1')
@@ -3567,10 +3570,10 @@ cmd.set('ambient', '0.45')\n''')
 
     def cephdeacetylase(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('his1', 'name nd1 and resn his within %s of (name od2 and resn asp)'%(self.range.get()*4.5))
       cmd.select('his2', 'name nd1 and resn his within %s of (name od1 and resn asp)'%(self.range.get()*5))
       cmd.select('his3', 'name nd1 and resn his within %s of (name cg and resn asp)'%(self.range.get()*5.5))
@@ -3611,7 +3614,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.color('white', 'all')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'deacetylase')
-      self.cpkdeacetylase()
+      cpkdeacetylase()
       cmd.deselect()
       cmd.orient('deacetylase')
       cmd.delete('his1')
@@ -3652,10 +3655,10 @@ cmd.set('ambient', '0.45')\n''')
 
     def chondrolyase(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('tyr1', 'name oh and resn tyr within %s of (name nh2 and resn arg)'%(self.range.get()*6))
       cmd.select('tyr2', 'name oh and resn tyr within %s  of (name nh1 and resn arg)'%(self.range.get()*5))
       cmd.select('tyr3', 'name oh and resn tyr within %s  of (name cz and resn arg)'%(self.range.get()*6))
@@ -3715,7 +3718,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'chondroitinase')
       cmd.deselect()
-      self.cpkchondro()
+      cpkchondro()
       cmd.orient('chondroitinase')
       cmd.delete('his1')
       cmd.delete('his2')
@@ -3778,10 +3781,10 @@ cmd.set('ambient', '0.45')\n''')
    
     def hyaluronlyase(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('tyr1', 'name oh and resn tyr within %s of (name nh2 and resn arg)'%(self.range.get()*6))
       cmd.select('tyr2', 'name oh and resn tyr within %s  of (name nh1 and resn arg)'%(self.range.get()*5))
       cmd.select('tyr3', 'name oh and resn tyr within %s  of (name cz and resn arg)'%(self.range.get()*6))
@@ -3842,7 +3845,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'Hyaluronate_Lyase')
       cmd.deselect()
-      self.cpkhyaluron()
+      cpkhyaluron()
       cmd.orient('Hyaluronate_Lyase')
       cmd.delete('his1')
       cmd.delete('his2')
@@ -3905,10 +3908,10 @@ cmd.set('ambient', '0.45')\n''')
       import tkMessageBox
       tkMessageBox.showinfo('Info', 'This motif is based on sequence not position')
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('gln', 'resi 231 and resn gln')
       cmd.select('arg', 'resi 167 and resn arg(resi 229 and resn arg)')
       cmd.select('thr', 'resi 55 and resn thr(resi 53 and resn thr)')
@@ -3921,7 +3924,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.color('white', 'all')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'actase')
-      self.cpkactase()
+      cpkactase()
       cmd.deselect()
       cmd.orient('actase')
       cmd.delete('arg')
@@ -3933,10 +3936,10 @@ cmd.set('ambient', '0.45')\n''')
 
     def ACTase2(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('gln', 'resi 231 and resn gln')
       cmd.select('arg', 'resi 167 and resn arg(resi 229 and resn arg)')
       cmd.select('thr', 'resi 55 and resn thr(resi 53 and resn thr)')
@@ -3949,7 +3952,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.color('white', 'all')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'actase')
-      self.cpkactase()
+      cpkactase()
       cmd.deselect()
       cmd.orient('actase')
       cmd.delete('arg')
@@ -3961,10 +3964,10 @@ cmd.set('ambient', '0.45')\n''')
       
     def exonucleaseiii(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('his1', 'name ne2 and resn his within %s of (name nd2 and resn asn)'%(self.range.get()*5.5))
       cmd.select('his2', 'name ne2 and resn his within %s of (name od1 and resn asn)'%(self.range.get()*6.5))
       cmd.select('his3', 'name ne2 and resn his within %s of (name cg and resn asn)'%(self.range.get()*5.5))
@@ -4005,7 +4008,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.color('white', 'all')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'Exonuclease3')
-      self.cpknuclease()
+      cpknuclease()
       cmd.orient('Exonuclease3')
       cmd.deselect()
       cmd.delete('his1')
@@ -4045,10 +4048,10 @@ cmd.set('ambient', '0.45')\n''')
 
     def cyclinkinase(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('glu1', 'name oe2 and resn glu within %s of (name nz and resn lys)'%(self.range.get()*6.5))
       cmd.select('glu2', 'name oe1 and resn glu within %s of (name nz and resn lys)'%(self.range.get()*7))
       cmd.select('glu3', 'name cd and resn glu within %s of (name nz and resn lys)'%(self.range.get()*7))
@@ -4091,7 +4094,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.color('white', 'all')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'Cyclin_Kinase')
-      self.cpkcyclinkinase()
+      cpkcyclinkinase()
       cmd.orient('Cyclin_Kinase')
       cmd.deselect()
       cmd.delete('glu1')
@@ -4133,10 +4136,10 @@ cmd.set('ambient', '0.45')\n''')
 
     def adenylatekinase(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       #p-loop first
       cmd.select('lys1', 'name nz and resn lys within %s of (name n and resn gly)'%(self.range.get()*7.5))
       cmd.select('lys2', 'name cg and resn lys within %s of (name c and resn gly)'%(self.range.get()*6))
@@ -4175,7 +4178,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.color('white', 'all')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'adenylatekinase')
-      self.cpkadenylatekinase()
+      cpkadenylatekinase()
       cmd.deselect()
       cmd.orient('adenylatekinase')
       cmd.delete('lys1')
@@ -4216,10 +4219,10 @@ cmd.set('ambient', '0.45')\n''')
       
     def citratesynth(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('his1', 'name ne2 and resn his within %s of (name og and resn ser)'%(self.range.get()*5))
       cmd.select('his2', 'name ne2 and resn his within %s of (name cb and resn ser)'%(self.range.get()*5.5))
       cmd.select('his3', 'name ce1 and resn his within %s of (name og and resn ser)'%(self.range.get()*5.5))
@@ -4257,7 +4260,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.color('white', 'all')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'Citrate_Synth')
-      self.cpkcitrate()
+      cpkcitrate()
       cmd.orient('Citrate_Synth')
       cmd.deselect()
       cmd.delete('his1')
@@ -4295,10 +4298,10 @@ cmd.set('ambient', '0.45')\n''')
       
     def tyrosinekinase(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('arg1', 'name nh1 and resn arg within %s of (name cb and resn ala)'%(self.range.get()*5))
       cmd.select('arg2', 'name nh2 and resn arg within %s of (name cb and resn ala)'%(self.range.get()*5.5))
       cmd.select('arg3', 'name cz and resn arg within %s of (name cb and resn ala)'%(self.range.get()*5.5))
@@ -4334,7 +4337,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.color('white', 'all')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'SRC-Kinase')
-      self.cpktyrokinase()
+      cpktyrokinase()
       cmd.orient('SRC-Kinase')
       cmd.deselect()
       cmd.delete('arg1')
@@ -4369,10 +4372,10 @@ cmd.set('ambient', '0.45')\n''')
 
     def hhal(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('glu1', 'name oe2 and resn glu within %s of (name sg and resn cys)'%(self.range.get()*10))
       cmd.select('glu2', 'name cd and resn glu within %s of (name cb and resn cys)'%(self.range.get()*10))
       cmd.select('glu3', 'name oe1 and resn glu within %s of (name ca and resn cys)'%(self.range.get()*10))
@@ -4419,7 +4422,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.color('white', 'all')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'hhal')
-      self.cpkhhal()
+      cpkhhal()
       cmd.deselect()
       cmd.orient('hhal')
       cmd.delete('arg1')
@@ -4465,10 +4468,10 @@ cmd.set('ambient', '0.45')\n''')
 
     def betainedehydrogenase(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('cys1', 'name sg and resn cys within %s of (name od1 and resn asn)'%(self.range.get()*8.5))
       cmd.select('cys2', 'name cb and resn cys within %s of (name cg and resn asn)'%(self.range.get()*8.5))
       cmd.select('cys3', 'name ca and resn cys within %s of (name nd2 and resn asn)'%(self.range.get()*7.5))
@@ -4492,7 +4495,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.color('white', 'all')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'betaine_dehydrogenase')
-      self.cpkbetaine()
+      cpkbetaine()
       cmd.deselect()
       cmd.delete('cys1')
       cmd.delete('cys2')
@@ -4516,10 +4519,10 @@ cmd.set('ambient', '0.45')\n''')
 
     def serotoninacetyl(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('his1', 'name ne2 and resn his within %s of (name og and resn ser)'%(self.range.get()*4.5))
       cmd.select('his2', 'name ne2 and resn his within %s of (name cb and resn ser)'%(self.range.get()*5.5))
       cmd.select('his3', 'name cd2 and resn his within %s of (name og and resn ser)'%(self.range.get()*5.5))
@@ -4572,7 +4575,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.color('white', 'all')
       cmd.set('cartoon_transparency', '0.6', 'all')
       cmd.show('sticks', 'Serotonin_transferase')
-      self.cpkseracetyl()
+      cpkseracetyl()
       cmd.deselect()
       cmd.delete('his1')
       cmd.delete('his2')
@@ -4635,7 +4638,7 @@ cmd.set('ambient', '0.45')\n''')
 
 
     def serineprotease2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('asp1', 'resn asp within %s of resn his' %(self.range.get()*3))
       cmd.select('asp2', 'resn asp within %s of resn ser'%(self.range.get()*7))
       cmd.select('asp', 'byres asp1 and byres asp2') 
@@ -4658,10 +4661,10 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('ser2')
     def cyclinkinase2(self):
       self.update(self.p)
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.select('glu1', 'name oe2 and resn glu within %s of (name nz and resn lys)'%(self.range.get()*6.5))
       cmd.select('glu2', 'name oe1 and resn glu within %s of (name nz and resn lys)'%(self.range.get()*7))
       cmd.select('glu3', 'name cd and resn glu within %s of (name nz and resn lys)'%(self.range.get()*7))
@@ -4738,7 +4741,7 @@ cmd.set('ambient', '0.45')\n''')
 
 
     def Blactamase2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('lys1', 'name nz and resn lys within %s of (name oh and resn tyr)' %(self.range.get()*5))
       cmd.select('lys2', 'name nz and resn lys within %s of (name cz and resn tyr)' %(self.range.get()*5.5))
       cmd.select('lys3', 'name nz and resn lys within %s of (name ce1 and resn tyr)' %(self.range.get()*6.5))
@@ -4855,7 +4858,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.deselect()
 
     def superoxide2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('his1', 'byres resn his within %s of elem cu'%(self.range.get()*4))
       cmd.select('arg1', 'byres resn arg within %s of elem cu'%(self.range.get()*6))
       cmd.select('stuff', 'his1 and (byres elem zn around %s)'%(self.range.get()*4))
@@ -4874,7 +4877,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('stuff4')
 
     def metalloprotease2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('zn', 'elem zn')
       cmd.select('metalloprotease', 'zn(byres zn around %s)'%(self.range.get()*5))
       cmd.delete('zn')
@@ -4883,10 +4886,10 @@ cmd.set('ambient', '0.45')\n''')
     def tyrophos2(self):
       self.update(self.p)
       objects = cmd.get_names('all')
-      self.checkitforthese()
-      self.set_defaults()
-      self.delcrea()
-      self.deletemotif()
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      deletemotif()
       cmd.hide('everything')
       cmd.select('arg1', 'name nh1 and resn arg within %s of (name od1 and resn asp)'%(self.range.get()*7))
       cmd.select('arg2', 'name nh2 and resn arg within %s of (name od2 and resn asp)'%(self.range.get()*7))
@@ -5042,7 +5045,7 @@ cmd.set('ambient', '0.45')\n''')
         cmd.deselect()
 
     def carbanhyd2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('zn', 'elem zn')
       cmd.select('his', 'resn his within %s of zn'%(self.range.get()*5))
       cmd.select('carbonicanhydrase', 'byres his or zn')
@@ -5051,7 +5054,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.deselect()
 
     def betainedehydrogenase2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('cys1', 'name sg and resn cys within %s of (name od1 and resn asn)'%(self.range.get()*8.5))
       cmd.select('cys2', 'name cb and resn cys within %s of (name cg and resn asn)'%(self.range.get()*8.5))
       cmd.select('cys3', 'name ca and resn cys within %s of (name nd2 and resn asn)'%(self.range.get()*7.5))
@@ -5092,7 +5095,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('glu')
 
     def paplike2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('gln1', 'name ne2 and resn gln within %s of (name ne2 and resn his)'%(self.range.get()*7))
       cmd.select('gln2', 'name cd and resn gln within %s of (name ce1 and resn his)'%(self.range.get()*6.7))
       cmd.select('gln3', 'name oe1 and resn gln within %s of (name nd1 and resn his)'%(self.range.get()*7))
@@ -5136,7 +5139,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.deselect()
 
     def zincfinger2(self):
-          self.deletemotif()
+          deletemotif()
           cmd.select('zn1', 'elem zn')        
           xm = cmd.index('zn1')
           nm  = len(xm)
@@ -5156,7 +5159,7 @@ cmd.set('ambient', '0.45')\n''')
               cmd.deselect()
           
     def aminotransferase2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('asp1', 'name od1 and resn asp within %s of (name cb and resn his)'%(self.range.get()*5))
       cmd.select('asp2', 'name od1 and resn asp within %s of (name cg and resn his)'%(self.range.get()*6))
       cmd.select('asp3', 'name od1 and resn asp within %s of (name nd1 and resn his)'%(self.range.get()*7))
@@ -5212,14 +5215,14 @@ cmd.set('ambient', '0.45')\n''')
 
 
     def fisomerase2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('his', 'elem mn around %s(elem mn)'%(self.range.get()*5))
       cmd.select('fucoseisomerase', 'byres resn asp and his(byres resn glu and his(elem mn))')
       cmd.deselect()
       cmd.delete('his')
 
     def glutamine_amidotransferase2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('his1', 'name ND1 within %s of name OE2'%(self.range.get()*3))
       cmd.select('his2', 'name NE2 within %s of name SG'%(self.range.get()*3.5))
       cmd.select('his', 'byres his1 and byres his2')
@@ -5242,7 +5245,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('cys2')
 
     def dnaligase2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('amp1', 'resn amp')
       cmd.select('atp1', 'resn atp')
       xp = cmd.index('amp1')
@@ -5307,7 +5310,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('amp1')
 
     def thymidinekinase2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('glu1', 'name OE1 and resn glu within %s of name NH2 and resn arg'%(self.range.get()*5))
       cmd.select('glu2', 'resn glu and name OE2 within %s of name NE and resn arg'%(self.range.get()*5))
       cmd.select('glu3', 'resn glu and name OE1 within %s of name NH1 and resn arg'%(self.range.get()*6))
@@ -5358,7 +5361,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('ttp1')
 
     def oglycosyl2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('tyr', 'name oh within %s of name oe1'%(self.range.get()*3.5))
       cmd.select('glu', 'resn glu within %s of tyr'%(self.range.get()*8))
       cmd.select('o-glycosyl', 'byres tyr or byres glu')
@@ -5367,7 +5370,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.deselect()
 
     def carboncarbon2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('asp1', 'name od1 within %s of name nz'%(self.range.get()*3.5))
       cmd.select('asp2', 'resn asp within %s of name ne2'%(self.range.get()*6))
       cmd.select('asp', 'byres asp1 and byres asp2')
@@ -5396,7 +5399,7 @@ cmd.set('ambient', '0.45')\n''')
       
       
     def peroxidase2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('asn1', 'name od1 within %s of name nd1'%(self.range.get()*8))
       cmd.select('asn2', 'name od1 within %s of name ne2'%(self.range.get()*6))
       cmd.select('asn3', 'name nd2 within %s of name nd1'%(self.range.get()*10))
@@ -5471,7 +5474,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('arg')
       
     def trioseisomerase2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('lys1', 'name nz and resn lys within %s of (name od1 and resn asn)'%(self.range.get()*7.5))
       cmd.select('lys2', 'name nz and resn lys within %s of (name nd2 and resn asn)'%(self.range.get()*7.5))
       cmd.select('lys3', 'name nz and resn lys within %s of (name cg and resn asn)'%(self.range.get()*7.5))
@@ -5702,7 +5705,7 @@ cmd.set('ambient', '0.45')\n''')
       
               
     def alcoholdehyd2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('tyr1', 'name cd1 and resn tyr within %s of (name nd2 and resn asn)'%(self.range.get()*5))
       cmd.select('tyr2', 'name oh and resn tyr within %s of (name od1 and resn asn)'%(self.range.get()*8))
       cmd.select('tyr3', 'name oh and resn tyr within %s of (name nz and resn lys)'%(self.range.get()*6))
@@ -5776,7 +5779,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('ser7')
 
     def aldoreductase2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('lys1', 'name cd and resn lys within %s of (name cg and resn his)'%(self.range.get()*6))
       cmd.select('lys2', 'name ce and resn lys within %s of (name ne2 and resn his)'%(self.range.get()*8))
       cmd.select('lys3', 'name cd and resn lys within %s of (name nd1 and resn his)'%(self.range.get()*7))
@@ -5861,7 +5864,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('asp')
 
     def cistransisomerase2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('tyr1', 'name oh and resn tyr within %s of (name od2 and resn asp)'%(self.range.get()*9))
       cmd.select('tyr2', 'name oh and resn tyr within %s of (name od1 and resn asp)'%(self.range.get()*11))
       cmd.select('tyr3', 'name oh and resn tyr within %s of (name cg and resn asp)'%(self.range.get()*9.8))
@@ -5958,7 +5961,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('ile')
       
     def nadhbinder22(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('asp1', 'name od2 and resn asp within %s of (name sg and resn cys)'%(self.range.get()*5))
       cmd.select('asp2', 'name od2 and resn asp within %s of (name cb and resn cys)'%(self.range.get()*5.5))
       cmd.select('asp3', 'name od1 and resn asp within %s of (name sg and resn cys)'%(self.range.get()*6.4))
@@ -6031,7 +6034,7 @@ cmd.set('ambient', '0.45')\n''')
    
 
     def nadhbinder222(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('glu1', 'name oe2 and resn glu within %s of (name sg and resn cys)'%(self.range.get()*6.5))
       cmd.select('glu2', 'name oe2 and resn glu within %s of (name cb and resn cys)'%(self.range.get()*5.5))
       cmd.select('glu3', 'name oe1 and resn glu within %s of (name sg and resn cys)'%(self.range.get()*6.5))
@@ -6103,7 +6106,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('ser')
 
     def cephdeacetylase2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('his1', 'name nd1 and resn his within %s of (name od2 and resn asp)'%(self.range.get()*4.5))
       cmd.select('his2', 'name nd1 and resn his within %s of (name od1 and resn asp)'%(self.range.get()*5))
       cmd.select('his3', 'name nd1 and resn his within %s of (name cg and resn asp)'%(self.range.get()*5.5))
@@ -6178,7 +6181,7 @@ cmd.set('ambient', '0.45')\n''')
     #hyaluronate/chondroitin lyase
 
     def chondrolyase2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('tyr1', 'name oh and resn tyr within %s of (name nh2 and resn arg)'%(self.range.get()*6))
       cmd.select('tyr2', 'name oh and resn tyr within %s  of (name nh1 and resn arg)'%(self.range.get()*5))
       cmd.select('tyr3', 'name oh and resn tyr within %s  of (name cz and resn arg)'%(self.range.get()*6))
@@ -6290,7 +6293,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('arg')
       
     def hyaluronlyase2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('tyr1', 'name oh and resn tyr within %s of (name nh2 and resn arg)'%(self.range.get()*6))
       cmd.select('tyr2', 'name oh and resn tyr within %s  of (name nh1 and resn arg)'%(self.range.get()*5))
       cmd.select('tyr3', 'name oh and resn tyr within %s  of (name cz and resn arg)'%(self.range.get()*6))
@@ -6402,7 +6405,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('arg')
 
     def ACTase2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('gln', 'resi 231 and resn gln')
       cmd.select('arg', 'resi 167 and resn arg(resi 229 and resn arg)')
       cmd.select('thr', 'resi 55 and resn thr(resi 53 and resn thr)')
@@ -6418,7 +6421,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('his')
       
     def exonucleaseiii2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('his1', 'name ne2 and resn his within %s of (name nd2 and resn asn)'%(self.range.get()*5.5))
       cmd.select('his2', 'name ne2 and resn his within %s of (name od1 and resn asn)'%(self.range.get()*6.5))
       cmd.select('his3', 'name ne2 and resn his within %s of (name cg and resn asn)'%(self.range.get()*5.5))
@@ -6492,7 +6495,7 @@ cmd.set('ambient', '0.45')\n''')
 
 
     def adenylatekinase2(self):
-      self.deletemotif()
+      deletemotif()
       #p-loop first
       cmd.select('lys1', 'name nz and resn lys within %s of (name n and resn gly)'%(self.range.get()*7.5))
       cmd.select('lys2', 'name cg and resn lys within %s of (name c and resn gly)'%(self.range.get()*6))
@@ -6564,7 +6567,7 @@ cmd.set('ambient', '0.45')\n''')
       
       
     def citratesynth2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('his1', 'name ne2 and resn his within %s of (name og and resn ser)'%(self.range.get()*5))
       cmd.select('his2', 'name ne2 and resn his within %s of (name cb and resn ser)'%(self.range.get()*5.5))
       cmd.select('his3', 'name ce1 and resn his within %s of (name og and resn ser)'%(self.range.get()*5.5))
@@ -6632,7 +6635,7 @@ cmd.set('ambient', '0.45')\n''')
 
       
     def tyrosinekinase2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('arg1', 'name nh1 and resn arg within %s of (name cb and resn ala)'%(self.range.get()*5))
       cmd.select('arg2', 'name nh2 and resn arg within %s of (name cb and resn ala)'%(self.range.get()*5.5))
       cmd.select('arg3', 'name cz and resn arg within %s of (name cb and resn ala)'%(self.range.get()*5.5))
@@ -6695,7 +6698,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('ala')
 
     def hhal2(self):
-      self.deletemotif()
+      deletemotif()
       cmd.select('glu1', 'name oe2 and resn glu within %s of (name sg and resn cys)'%(self.range.get()*10))
       cmd.select('glu2', 'name cd and resn glu within %s of (name cb and resn cys)'%(self.range.get()*10))
       cmd.select('glu3', 'name oe1 and resn glu within %s of (name ca and resn cys)'%(self.range.get()*10))
@@ -7045,7 +7048,7 @@ cmd.set('ambient', '0.45')\n''')
                     cmd.hide('cartoon', 'all')
                     cmd.color('white', '!Exonuclease3 and !Adjacent')
                                
-                self.cpksubstrate()
+                cpksubstrate()
                 cmd.orient('all')
             else:
                 if 'Peroxidase' in objects:
@@ -7188,7 +7191,7 @@ cmd.set('ambient', '0.45')\n''')
                     cmd.show('surface', 'all')
                     cmd.hide('cartoon', 'all')
                     cmd.color('white', '!betaine_dehydrogenase')
-                self.cpksubstrate()
+                cpksubstrate()
                 cmd.orient('all')
         except:
              import tkMessageBox
@@ -7250,7 +7253,7 @@ cmd.set('ambient', '0.45')\n''')
           if 'substrate' in objects:
               cmd.show('sticks', 'substrate')
               cmd.deselect()
-              self.cpksubstrate()
+              cpksubstrate()
          
         except:
           cmd.select('substrate', 'byres het within 7 of motif')
@@ -7262,7 +7265,7 @@ cmd.set('ambient', '0.45')\n''')
           if 'substrate' in objects:
               cmd.show('sticks', 'substrate')
               cmd.deselect()
-              self.cpksubstrate()
+              cpksubstrate()
       except:
         import tkMessageBox
         tkMessageBox.showinfo('Alert', "No substrate found")
@@ -8002,9 +8005,9 @@ cmd.set('ambient', '0.45')\n''')
       try:
           self.update(self.p)
           objects = cmd.get_names('all')
-          self.checkitforthese()
-          self.set_defaults()
-          self.delcrea()
+          checkitforthese()
+          set_defaults()
+          delcrea()
           cmd.delete('motif')
           cmd.hide('everything')
           mA = self.mA
@@ -8016,7 +8019,7 @@ cmd.set('ambient', '0.45')\n''')
           cmd.set('cartoon_transparency', '0.5', 'all')
           cmd.show('sticks', 'motif')
           cmd.set('stick_radius','0.5')
-          self.cpkmotif()
+          cpkmotif()
           cmd.orient('motif')
           cmd.deselect()
           cmd.delete('AA')
@@ -8029,9 +8032,9 @@ cmd.set('ambient', '0.45')\n''')
       try:
           self.update(self.p)
           objects = cmd.get_names('all')
-          self.checkitforthese()
-          self.set_defaults()
-          self.delcrea()
+          checkitforthese()
+          set_defaults()
+          delcrea()
           cmd.delete('motif')
           cmd.hide('everything')
           mA = self.mA
@@ -8045,7 +8048,7 @@ cmd.set('ambient', '0.45')\n''')
           cmd.set('cartoon_transparency', '0.5', 'all')
           cmd.show('sticks', 'motif')
           cmd.set('stick_radius','0.5')
-          self.cpkmotif()
+          cpkmotif()
           cmd.orient('motif')
           cmd.deselect()
           cmd.delete('AA')
@@ -8060,9 +8063,9 @@ cmd.set('ambient', '0.45')\n''')
       try:
           self.update(self.p)
           objects = cmd.get_names('all')
-          self.checkitforthese()
-          self.set_defaults()
-          self.delcrea()
+          checkitforthese()
+          set_defaults()
+          delcrea()
           cmd.delete('motif')
           cmd.hide('everything')
           mA = self.mA
@@ -8078,7 +8081,7 @@ cmd.set('ambient', '0.45')\n''')
           cmd.set('cartoon_transparency', '0.5', 'all')
           cmd.show('sticks', 'motif')
           cmd.set('stick_radius','0.5')
-          self.cpkmotif()
+          cpkmotif()
           cmd.orient('motif')
           cmd.deselect()
           cmd.delete('AA')
@@ -8093,9 +8096,9 @@ cmd.set('ambient', '0.45')\n''')
       try:
           self.update(self.p)
           objects = cmd.get_names('all')
-          self.checkitforthese()
-          self.set_defaults()
-          self.delcrea()
+          checkitforthese()
+          set_defaults()
+          delcrea()
           cmd.delete('motif')
           cmd.hide('everything')
           mAA = self.mAA
@@ -8107,7 +8110,7 @@ cmd.set('ambient', '0.45')\n''')
           cmd.set('cartoon_transparency', '0.5', 'all')
           cmd.show('sticks', 'motif')
           cmd.set('stick_radius','0.5')
-          self.cpkmotif()
+          cpkmotif()
           cmd.orient('motif')
           cmd.deselect()
           cmd.delete('AA')
@@ -8120,9 +8123,9 @@ cmd.set('ambient', '0.45')\n''')
       try:
           self.update(self.p)
           objects = cmd.get_names('all')
-          self.checkitforthese()
-          self.set_defaults()
-          self.delcrea()
+          checkitforthese()
+          set_defaults()
+          delcrea()
           cmd.delete('motif')
           cmd.hide('everything')
           mAA = self.mAA
@@ -8142,7 +8145,7 @@ cmd.set('ambient', '0.45')\n''')
           cmd.set('cartoon_transparency', '0.5', 'all')
           cmd.show('sticks', 'motif')
           cmd.set('stick_radius','0.5')
-          self.cpkmotif()
+          cpkmotif()
           cmd.orient('motif')
           cmd.deselect()
           cmd.delete('AA')
@@ -8157,9 +8160,9 @@ cmd.set('ambient', '0.45')\n''')
       try:
           self.update(self.p)
           objects = cmd.get_names('all')
-          self.checkitforthese()
-          self.set_defaults()
-          self.delcrea()
+          checkitforthese()
+          set_defaults()
+          delcrea()
           cmd.delete('motif')
           cmd.hide('everything')
           mAA = self.mAA
@@ -8187,7 +8190,7 @@ cmd.set('ambient', '0.45')\n''')
           cmd.set('cartoon_transparency', '0.5', 'all')
           cmd.show('sticks', 'motif')
           cmd.set('stick_radius','0.5')
-          self.cpkmotif()
+          cpkmotif()
           cmd.orient('motif')
           cmd.deselect()
           cmd.delete('AA')
@@ -8244,45 +8247,15 @@ cmd.set('ambient', '0.45')\n''')
     #--------------------------------------#	
     # Color the molecule
     def color_cpk(self, str ):
-	cmd.color("carbgray", "(elem C)" + str )
-	cmd.color("red", "elem O" + str )
-	cmd.color("white", "elem H" + str )
-	cmd.color("nitblue", "elem N" + str )
-	cmd.color("sulfyellow", "elem S" + str )
-	cmd.color("phosorange", "elem P+Fe+Ba" + str )
-	cmd.color("green", "elem Cl+B" + str )
-	cmd.color("brown", "elem Br+Zn+Cu+Ni" + str )
-	cmd.color("blue", "elem Na" + str )
-	cmd.color("forest", "elem Mg" + str )
-	cmd.color("darkgray", "elem Ca+Mn+Al+Ti+Cr+Ag" + str )
-	cmd.color("goldenrod", "elem Au+F+Si" + str)
-	cmd.color("ipurple", "elem I" + str)
-	cmd.color("firebrick", "elem Li" + str)
-	cmd.color("helpink", "elem He" + str)
-	if self.script=='1':
-                      self.f.write('''cmd.color("carbgray", "(elem C)" + str )
-cmd.color("red", "elem O" + str )
-cmd.color("white", "elem H" + str )
-cmd.color("nitblue", "elem N" + str )
-cmd.color("sulfyellow", "elem S" + str )
-cmd.color("phosorange", "elem P+Fe+Ba" + str )
-cmd.color("green", "elem Cl+B" + str )
-cmd.color("brown", "elem Br+Zn+Cu+Ni" + str )
-cmd.color("blue", "elem Na" + str )
-cmd.color("forest", "elem Mg" + str )
-cmd.color("darkgray", "elem Ca+Mn+Al+Ti+Cr+Ag" + str )
-cmd.color("goldenrod", "elem Au+F+Si" + str)
-cmd.color("ipurple", "elem I" + str)
-cmd.color("firebrick", "elem Li" + str)
-cmd.color("helpink", "elem He" + str)\n''')
+      color_cpk()
 
     # Attempt to simulate the default PyMOL colorings
     def color_default(self):
 	cmd.color("green", "elem C")
 	cmd.color("red", "elem O")
 	cmd.color("blue", "elem N")
-	if self.script=='1':
-                      self.f.write('''cmd.color("green", "elem C")
+	if script=='1':
+                      f.write('''cmd.color("green", "elem C")
 cmd.color("red", "elem O")
 cmd.color("blue", "elem N")\n''')
     
@@ -8293,13 +8266,13 @@ cmd.color("blue", "elem N")\n''')
 	cmd.hide("everything", "ligand")
 	cmd.show("spheres", "ligand")
 	cmd.delete("Bad")
-	if self.script=='1':
-                      self.f.write('''cmd.select("Bad", "resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR+ACD+ACE+ALB+ALI+ABU+ARO+ASX+BAS+BET+FOR+GLX+HET+HSE+HYP+HYL+ORN+PCA+SAR+TAU+TER+THY+UNK+a+g+c+t+u+HOH+MSE")
+	if script=='1':
+                      f.write('''cmd.select("Bad", "resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR+ACD+ACE+ALB+ALI+ABU+ARO+ASX+BAS+BET+FOR+GLX+HET+HSE+HYP+HYL+ORN+PCA+SAR+TAU+TER+THY+UNK+a+g+c+t+u+HOH+MSE")
 cmd.select("ligand","!Bad")
 cmd.hide("everything", "ligand")
 cmd.show("spheres", "ligand")
 cmd.delete("Bad")\n''')
-	self.cpkligands()
+	cpkligands()
 	cmd.deselect()
     
     # create additional colors
@@ -8336,12 +8309,12 @@ cmd.delete("Bad")\n''')
     		for item in list2:
     			self.rep2.invoke(item)
 		cmd.do('show everything')
-		if self.script=='1':
-                                         self.f.write('''cmd.do('show everything')\n''')
+		if script=='1':
+                                         f.write('''cmd.do('show everything')\n''')
     	else:
     		cmd.do('hide everything')
-    		if self.script=='1':
-                                         self.f.write('''cmd.do('show everything')\n''')
+    		if script=='1':
+                                         f.write('''cmd.do('show everything')\n''')
     		for item in list:
     			self.rep1.invoke(item)
     		for item in list2:
@@ -8353,55 +8326,55 @@ cmd.delete("Bad")\n''')
             sel = self.sel
             if tag == 'Lines':
                     cmd.show('lines',sel)
-                    if self.script=='1':
-                        self.f.write('cmd.show('"lines"',"'+sel+'")\n')
+                    if script=='1':
+                        f.write('cmd.show('"lines"',"'+sel+'")\n')
             elif tag == 'Sticks':
                     cmd.show('sticks', sel)
-                    if self.script=='1':
-                        self.f.write('cmd.show('"sticks"',"'+sel+'")\n')
+                    if script=='1':
+                        f.write('cmd.show('"sticks"',"'+sel+'")\n')
             elif tag == 'Ribbons':
                     cmd.show('ribbon', sel)
-                    if self.script=='1':
-                        self.f.write('cmd.show('"ribbon"',"'+sel+'")\n')
+                    if script=='1':
+                        f.write('cmd.show('"ribbon"',"'+sel+'")\n')
             elif tag == 'Cartoon':
                     cmd.show('cartoon', sel)
-                    if self.script=='1':
-                        self.f.write('cmd.show('"cartoon"',"'+sel+'")\n')
+                    if script=='1':
+                        f.write('cmd.show('"cartoon"',"'+sel+'")\n')
             elif tag == 'Dots':
                     cmd.show('dots', sel)
-                    if self.script=='1':
-                        self.f.write('cmd.show('"dots"',"'+sel+'")\n')
+                    if script=='1':
+                        f.write('cmd.show('"dots"',"'+sel+'")\n')
             elif tag == 'Spheres':
                     cmd.show('spheres', sel)
-                    if self.script=='1':
-                        self.f.write('cmd.show('"spheres"',"'+sel+'")\n')
+                    if script=='1':
+                        f.write('cmd.show('"spheres"',"'+sel+'")\n')
             elif tag == 'Mesh':
                     cmd.show('mesh', sel)
-                    if self.script=='1':
-                        self.f.write('cmd.show('"mesh"',"'+sel+'")\n')
+                    if script=='1':
+                        f.write('cmd.show('"mesh"',"'+sel+'")\n')
             elif tag == 'Surface':
                     cmd.show('surface', sel)
-                    if self.script=='1':
-                        self.f.write('cmd.show('"surface"',"'+sel+'")\n')
+                    if script=='1':
+                        f.write('cmd.show('"surface"',"'+sel+'")\n')
             elif tag == 'Water':
                     cmd.show('(resn HOH)')
                     cmd.show('spheres', '(resn HOH)')
-                    if self.script=='1':
-                        self.f.write('''cmd.show('(resn HOH)')
+                    if script=='1':
+                        f.write('''cmd.show('(resn HOH)')
 cmd.show('spheres', '(resn HOH)')\n''')
             elif tag=='Ball and Stick':
                     cmd.set('sphere_scale', '0.35', sel)
                     cmd.show('spheres',sel)
                     cmd.show('sticks',sel)
-                    if self.script=='1':
-                        self.f.write('''cmd.set('sphere_scale', '0.35', "'''+sel+'''")
+                    if script=='1':
+                        f.write('''cmd.set('sphere_scale', '0.35', "'''+sel+'''")
 cmd.show('spheres',"'''+sel+'''")
 cmd.show('sticks',"'''+sel+'''")\n''')
             elif tag=='Polar Contacts':
                     cmd.dist(sel+"_polar_conts",sel,sel,quiet=1,mode=2,label=0,reset=1)
                     cmd.enable(sel+"1CHO_polar_conts")
-                    if self.script=='1':
-                        self.f.write('''cmd.dist(sel+"_polar_conts","'''+sel+'''","'''+sel+'''",quiet=1,mode=2,label=0,reset=1)
+                    if script=='1':
+                        f.write('''cmd.dist(sel+"_polar_conts","'''+sel+'''","'''+sel+'''",quiet=1,mode=2,label=0,reset=1)
 cmd.enable('''+sel+'''"1CHO_polar_conts")\n''')
 
         
@@ -8417,55 +8390,55 @@ cmd.enable('''+sel+'''"1CHO_polar_conts")\n''')
             sel = self.sel
             if tag == 'Lines':
                     cmd.hide('lines',sel)
-                    if self.script=='1':
-                        self.f.write('''cmd.hide('lines',"'''+sel+'''")\n''')
+                    if script=='1':
+                        f.write('''cmd.hide('lines',"'''+sel+'''")\n''')
             elif tag == 'Sticks':
                     cmd.hide('sticks', sel)
-                    if self.script=='1':
-                        self.f.write('''cmd.hide('sticks',"'''+sel+'''")\n''')
+                    if script=='1':
+                        f.write('''cmd.hide('sticks',"'''+sel+'''")\n''')
             elif tag == 'Ribbons':
                     cmd.hide('ribbon', sel)
-                    if self.script=='1':
-                        self.f.write('''cmd.hide('ribbon',"'''+sel+'''")\n''')
+                    if script=='1':
+                        f.write('''cmd.hide('ribbon',"'''+sel+'''")\n''')
             elif tag == 'Cartoon':
                     cmd.hide('cartoon', sel)
-                    if self.script=='1':
-                        self.f.write('''cmd.hide('cartoon',"'''+sel+'''")\n''')
+                    if script=='1':
+                        f.write('''cmd.hide('cartoon',"'''+sel+'''")\n''')
             elif tag == 'Dots':
                     cmd.hide('dots', sel)
-                    if self.script=='1':
-                        self.f.write('''cmd.hide('dots',"'''+sel+'''")\n''')
+                    if script=='1':
+                        f.write('''cmd.hide('dots',"'''+sel+'''")\n''')
             elif tag == 'Spheres':
                     cmd.hide('spheres', sel)
-                    if self.script=='1':
-                        self.f.write('''cmd.hide('spheres',"'''+sel+'''")\n''')
+                    if script=='1':
+                        f.write('''cmd.hide('spheres',"'''+sel+'''")\n''')
             elif tag == 'Mesh':
                     cmd.hide('mesh', sel)
-                    if self.script=='1':
-                        self.f.write('''cmd.hide('mesh',"'''+sel+'''")\n''')
+                    if script=='1':
+                        f.write('''cmd.hide('mesh',"'''+sel+'''")\n''')
             elif tag == 'Surface':
                     cmd.hide('surface', sel)
-                    if self.script=='1':
-                        self.f.write('''cmd.hide('surface',"'''+sel+'''")\n''')
+                    if script=='1':
+                        f.write('''cmd.hide('surface',"'''+sel+'''")\n''')
             elif tag == 'Water':
                     cmd.hide('(resn HOH)')
-                    if self.script=='1':
-                        self.f.write('''cmd.hide('(resn HOH)')\n''')
+                    if script=='1':
+                        f.write('''cmd.hide('(resn HOH)')\n''')
             elif tag == 'Everything':
                     cmd.hide('everything', sel)
-                    if self.script=='1':
-                        self.f.write('''cmd.hide('everything',"'''+sel+'''")\n''')
+                    if script=='1':
+                        f.write('''cmd.hide('everything',"'''+sel+'''")\n''')
             elif tag=='Ball and Stick':
                     cmd.hide('spheres',sel)
                     cmd.hide('sticks',sel)
-                    if self.script=='1':
-                        self.f.write('''cmd.hide('spheres',"'''+sel+'''")\n''')
-                    if self.script=='1':
-                        self.f.write('''cmd.hide('sticks',"'''+sel+'''")\n''')
+                    if script=='1':
+                        f.write('''cmd.hide('spheres',"'''+sel+'''")\n''')
+                    if script=='1':
+                        f.write('''cmd.hide('sticks',"'''+sel+'''")\n''')
             elif tag =='Polar Contacts':
                     cmd.delete(sel+"_polar_conts")
-                    if self.script=='1':
-                        self.f.write(''' cmd.delete("'''+sel+'''_polar_conts")\n''')
+                    if script=='1':
+                        f.write(''' cmd.delete("'''+sel+'''_polar_conts")\n''')
             
         except:
             import tkMessageBox
@@ -8667,7 +8640,7 @@ cmd.enable('''+sel+'''"1CHO_polar_conts")\n''')
         elif tag=='Lines on Cartoon':
             self.stick_toon()
         elif tag=='Color by Chain':
-            self.color_by_chain()
+            color_by_chain()
 
     def preres(self, tag):
         if tag=='Aromatics':
@@ -8761,36 +8734,36 @@ cmd.enable('''+sel+'''"1CHO_polar_conts")\n''')
             sel=self.sel
             if tag=='Red':
                     cmd.color('red', sel)
-                    if self.script=='1':
-                        self.f.write('''cmd.color('red', '''+sel+'''")\n''')
+                    if script=='1':
+                        f.write('''cmd.color('red', '''+sel+'''")\n''')
             elif tag=='Green':
                     cmd.color('green', sel)
-                    if self.script=='1':
-                        self.f.write('''cmd.color('green', '''+sel+'''")\n''')
+                    if script=='1':
+                        f.write('''cmd.color('green', '''+sel+'''")\n''')
             elif tag=='Orange':
                     cmd.color('orange', sel)
-                    if self.script=='1':
-                        self.f.write('''cmd.color('orange', '''+sel+'''")\n''')
+                    if script=='1':
+                        f.write('''cmd.color('orange', '''+sel+'''")\n''')
             elif tag=='Yellow':
                     cmd.color('yellow', sel)
-                    if self.script=='1':
-                        self.f.write('''cmd.color('yellow', '''+sel+'''")\n''')
+                    if script=='1':
+                        f.write('''cmd.color('yellow', '''+sel+'''")\n''')
             elif tag=='Blue':
                     cmd.color('blue', sel)
-                    if self.script=='1':
-                        self.f.write('''cmd.color('blue', '''+sel+'''")\n''')
+                    if script=='1':
+                        f.write('''cmd.color('blue', '''+sel+'''")\n''')
             elif tag=='Violet':
                     cmd.color('violet', sel)
-                    if self.script=='1':
-                        self.f.write('''cmd.color('violet', '''+sel+'''")\n''')
+                    if script=='1':
+                        f.write('''cmd.color('violet', '''+sel+'''")\n''')
             elif tag=='CPK':
                     cmd.color("oxygen","(elem O and "+sel+")")
                     cmd.color("nitrogen","(elem N and "+sel+")")
                     cmd.color("sulfur","(elem S and "+sel+")")
                     cmd.color("hydrogen","(elem H and "+sel+")")
                     cmd.color("gray","(elem C and "+sel+")")
-                    if self.script=='1':
-                        self.f.write('''cmd.color("oxygen","(elem O and "'''+sel+'''")")
+                    if script=='1':
+                        f.write('''cmd.color("oxygen","(elem O and "'''+sel+'''")")
 cmd.color("nitrogen","(elem N and "'''+sel+'''")")
 cmd.color("sulfur","(elem S and "'''+sel+'''")")
 cmd.color("hydrogen","(elem H and "'''+sel+'''")")
@@ -8972,15 +8945,15 @@ cmd.color("gray","(elem C and "'''+sel+'''")")\n''')
     def stereo_switch(self, tag):
         if tag == 'Off':
             cmd.stereo('off')
-            if self.script=='1':
-                        self.f.write('''cmd.stereo('off')\n''')
+            if script=='1':
+                        f.write('''cmd.stereo('off')\n''')
         elif tag == 'Quad':
             cmd.stereo('off')
             cmd.stereo('cross')
             cmd.stereo('quadbuffer')
             cmd.stereo('on')
-            if self.script=='1':
-                        self.f.write('''cmd.stereo('off')
+            if script=='1':
+                        f.write('''cmd.stereo('off')
 cmd.stereo('cross')
 cmd.stereo('quadbuffer')
 cmd.stereo('on')\n''')
@@ -8988,16 +8961,16 @@ cmd.stereo('on')\n''')
             cmd.stereo('off')
             cmd.stereo('cross')
             cmd.stereo('on')
-            if self.script=='1':
-                        self.f.write('''cmd.stereo('off')
+            if script=='1':
+                        f.write('''cmd.stereo('off')
 cmd.stereo('cross')
 cmd.stereo('on')\n''')
         else:
             cmd.stereo('off')
             cmd.stereo('walleye')
             cmd.stereo('on')
-            if self.script=='1':
-                        self.f.write('''cmd.stereo('off')
+            if script=='1':
+                        f.write('''cmd.stereo('off')
 cmd.stereo('walleye')
 cmd.stereo('on')\n''')
         
@@ -9005,16 +8978,16 @@ cmd.stereo('on')\n''')
     def bgcolor_switch(self, tag):
         if tag == 'Black':
             cmd.do('bg_color black')
-            if self.script=='1':
-                        self.f.write('''cmd.do('bg_color black')\n''')
+            if script=='1':
+                        f.write('''cmd.do('bg_color black')\n''')
         elif tag == 'White':
             cmd.do('bg_color white')
-            if self.script=='1':
-                        self.f.write('''cmd.do('bg_color white')\n''')
+            if script=='1':
+                        f.write('''cmd.do('bg_color white')\n''')
         elif tag == 'Grey':
             cmd.do('bg_color grey')
-            if self.script=='1':
-                        self.f.write('''cmd.do('bg_color grey')\n''')
+            if script=='1':
+                        f.write('''cmd.do('bg_color grey')\n''')
         elif tag == 'Other':
         	color=tkColorChooser.askcolor(parent=self.int, title="Background Color Chooser")
         	colorArray =[]
@@ -9027,8 +9000,8 @@ cmd.stereo('on')\n''')
         			colorArray.append(val)
         		cmd.set_color('newcolor', colorArray)
         		cmd.do('bg_color newcolor')
-        		if self.script=='1':
-                                         self.f.write('''cmd.set_color('newcolor', '''+colorArray+'''')
+        		if script=='1':
+                                         f.write('''cmd.set_color('newcolor', '''+colorArray+'''')
 cmd.do('bg_color newcolor')\n''')
         else: 
        	    self.do_nothing()
@@ -9037,16 +9010,16 @@ cmd.do('bg_color newcolor')\n''')
     def cspace_switch(self, tag):
 	if tag == 'PyMOL':
 	    cmd.space('pymol')
-	    if self.script=='1':
-                            self.f.write('''cmd.space('pymol')\n''')
+	    if script=='1':
+                            f.write('''cmd.space('pymol')\n''')
 	elif tag == 'Publications':
 	    cmd.space('rgb')
-	    if self.script=='1':
-                            self.f.write('''cmd.space('rgb')\n''')
+	    if script=='1':
+                            f.write('''cmd.space('rgb')\n''')
 	else: 
 	    cmd.space('cmyk')
-	    if self.script=='1':
-                            self.f.write('''cmd.space('cmyk')\n''')
+	    if script=='1':
+                            f.write('''cmd.space('cmyk')\n''')
 	    
     # hide/show interface
     def hide_interface(self, tag):
@@ -9059,13 +9032,13 @@ cmd.do('bg_color newcolor')\n''')
         if tag == 'Show':
         	cmd.show('(resn HOH)')
         	cmd.show('spheres', '(resn HOH)')
-        	if self.script=='1':
-                            self.f.write('''cmd.show('(resn HOH)')
+        	if script=='1':
+                            f.write('''cmd.show('(resn HOH)')
 cmd.show('spheres', '(resn HOH)')\n''')
         else:
         	cmd.hide('(resn HOH)')
-        	if self.script=='1':
-                            self.f.write('''cmd.hide('(resn HOH)')\n''')
+        	if script=='1':
+                            f.write('''cmd.hide('(resn HOH)')\n''')
 
     #--------------------------------------#
     #				#
@@ -9099,21 +9072,22 @@ cmd.show('spheres', '(resn HOH)')\n''')
     #           MOVIE METHODS              #
     #                                      #
     #--------------------------------------#
-    def rotate_y(self):
+    def rotate_y(*args):
         cmd.mset()
         cmd.mset('1','180')
         cmd.util.mroll('1','180','1')
         cmd.mplay()
     cmd.extend('rotate_y',rotate_y)
 
+
     # Movie to show locations of each of the chains in the molecule
     #does not run on external pdbs - Brett
-    def highlight_chains(self):
-        self.delcrea()
+    def highlight_chains(*args):
+        delcrea()
 	cmd.mstop()
 	cmd.mclear()
 	cmd.mset()
-	self.set_defaults()
+	set_defaults()
 	
 	colors = ['blue','orange','silver','green','yellow',
        	        'purple','brightorange','lightblue','lightorange',
@@ -9151,6 +9125,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         cmd.color('red','all')
         #cmd.set('transparency','0.75','all')
         #cmd.set('cartoon_transparency','0.0','all')
+    cmd.extend('highlight_chains',highlight_chains)
     
     # flash the chains on and off, eventually changing the color
     # (utilized by the highlight_chains method)       
@@ -9167,7 +9142,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
     #does not run on external pdbs 
     def ligandZoom(self):
         try:
-            self.delcrea()
+            delcrea()
             import tkMessageBox
             cmd.mstop()
             cmd.mclear()
@@ -9178,7 +9153,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                 tkMessageBox.showinfo("Ligand Zoom", "Sorry this PDB file contains no ligands and cannot be made into a movie")
             else:
                 objects = cmd.get_names('all')
-                self.set_defaults()
+                set_defaults()
                 ids.sort()
                 numFrames = 600+(335*(len(ids)))
                 cmd.deselect()
@@ -9197,8 +9172,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
                 cmd.mview('store', '240')
                 cmd.mview('store', '270')
                 for i in range(len(ids)):
-                    self.color_cpk(' and (byres (ligands and '+ids[i]+')around 5)')
-                    self.color_cpk(' and ligands')
+                    color_cpk(' and (byres (ligands and '+ids[i]+')around 5)')
+                    color_cpk(' and ligands')
                     cmd.orient('(ligands and '+ids[i]+')around 7')
                     cmd.mview('store', str(q))
                     cmd.do('mdo '+str((q+1))+':set sphere_transparency, 0.1, ligands; set cartoon_transparency, 0.9, all;  show spheres, (ligands and '+ids[i]+'); show sticks, (ligands and '+ids[i]+');')
@@ -9245,15 +9220,15 @@ cmd.show('spheres', '(resn HOH)')\n''')
             tkMessageBox.showinfo('Error', 'You must open the PDB file through Pro-MOL')
      #fixed to work on externally loaded pdbs by Brett and Charlie
     def growProtein(self):
-        self.delcrea()
+        delcrea()
    	cmd.mstop()
 	cmd.mclear()
 	cmd.mset()
 	self.update(self.p)
     	objects = cmd.get_names('all')
-        self.checkitforthese()
+        checkitforthese()
     	if 'protein' in objects:
-            self.set_defaults()
+            set_defaults()
     	    cmd.bg_color('black')
     	    
     	    # create the objects to be used in this movie
@@ -9267,13 +9242,13 @@ cmd.show('spheres', '(resn HOH)')\n''')
     	    # to make them stand out from the protein
     	    if 'dna' in objects:
    	        cmd.show('sticks','dna')
-    	        self.cpknucleic()
+    	        cpknucleic()
    	    
     	    if 'rna' in objects:
  	        cmd.show('sticks','rna')
  	        cmd.show('spheres','rna')
     	        cmd.set('sphere_scale','0.4','rna')
-    	        self.color_cpk(' & rna')
+    	        color_cpk(' & rna')
     	     	        
     	    # coloring the protein and secondary structures
     	    cmd.color('white', 'protein')
@@ -9331,9 +9306,13 @@ cmd.show('spheres', '(resn HOH)')\n''')
 	 
     #--------Haven't you seeen my MOVIES!-----------
 	#surface over cartoon movie
-    def surface_cartoon(self):
-          self.delcrea()
-          self.update(self.p)
+    def surface_cartoon(*args):
+          delcrea()
+          try:
+            self = args[0]
+            self.update(self.p)
+          except:
+            pass
           cmd.mstop()
           cmd.mclear()
           cmd.mset()
@@ -9408,90 +9387,98 @@ cmd.show('spheres', '(resn HOH)')\n''')
           cmd.do('mdo 58: set transparency=0.85, surface;')
           cmd.do('mdo 59: set transparency=0.85, surface;')
           cmd.do('mdo 60: set transparency=0.8, surface;')
-
+    cmd.extend('surface_cartoon', surface_cartoon)
    
         #surface over stick movie
-    def surface_stick(self):
-          self.delcrea()
-          self.update(self.p)
-          cmd.mstop()
-          cmd.mclear()
-          cmd.mset('1','60')
-          cmd.hide('everything')
-          objects = cmd.get_names('all')
-          cmd.create('surface', 'all')                  
-          cmd.create('sticks', 'all') 
-          cmd.show('sticks', 'sticks')
-          self.color_cpk('& sticks')
-          cmd.show('surface', 'surface')
-          cmd.color('grey', 'surface')         
-          cmd.color('red', 'elem O')
-          cmd.color('blue', 'elem N')
-          cmd.do('mdo 1: set transparency=0.75, surface;')
-          cmd.do('mdo 2: set transparency=0.7, surface;')
-          cmd.do('mdo 3: set transparency=0.65, surface;')
-          cmd.do('mdo 4: set transparency=0.6, surface;')
-          cmd.do('mdo 5: set transparency=0.55, surface;')
-          cmd.do('mdo 6: set transparency=0.5, surface;')
-          cmd.do('mdo 7: set transparency=0.45, surface;')
-          cmd.do('mdo 8: set transparency=0.4, surface;')
-          cmd.do('mdo 9: set transparency=0.35, surface;')
-          cmd.do('mdo 10: set transparency=0.3, surface;')
-          cmd.do('mdo 11: set transparency=0.25, surface;')
-          cmd.do('mdo 12: set transparency=0.2, surface;')
-          cmd.do('mdo 13: set transparency=0.15, surface;')
-          cmd.do('mdo 14: set transparency=0.1, surface;')
-          cmd.do('mdo 15: set transparency=0.05, surface;')
-          cmd.do('mdo 16: set transparency=0, surface;')
-          cmd.do('mdo 17: set transparency=0, surface;')
-          cmd.do('mdo 19: set transparency=0, surface;')
-          cmd.do('mdo 20: set transparency=0, surface;')
-          cmd.do('mdo 21: set transparency=0, surface;')
-          cmd.do('mdo 22: set transparency=0, surface;')
-          cmd.do('mdo 23: set transparency=0, surface;')
-          cmd.do('mdo 24: set transparency=0, surface;')
-          cmd.do('mdo 25: set transparency=0, surface;')
-          cmd.do('mdo 26: set transparency=0, surface;')
-          cmd.do('mdo 27: set transparency=0, surface;')
-          cmd.do('mdo 28: set transparency=0, surface;')
-          cmd.do('mdo 29: set transparency=0.05, surface;')
-          cmd.do('mdo 30: set transparency=0.1, surface;')
-          cmd.do('mdo 31: set transparency=0.15, surface;')
-          cmd.do('mdo 32: set transparency=0.2, surface;')
-          cmd.do('mdo 33: set transparency=0.25, surface;')
-          cmd.do('mdo 34: set transparency=0.3, surface;')
-          cmd.do('mdo 35: set transparency=0.35, surface;')
-          cmd.do('mdo 36: set transparency=0.4, surface;')
-          cmd.do('mdo 37: set transparency=0.45, surface;')
-          cmd.do('mdo 38: set transparency=0.5, surface;')
-          cmd.do('mdo 39: set transparency=0.55, surface;')
-          cmd.do('mdo 40: set transparency=0.6, surface;')
-          cmd.do('mdo 41: set transparency=0.65, surface;')
-          cmd.do('mdo 42: set transparency=0.7, surface;')
-          cmd.do('mdo 43: set transparency=0.75, surface;')
-          cmd.do('mdo 44: set transparency=0.8, surface;')
-          cmd.do('mdo 45: set transparency=0.85, surface;')
-          cmd.do('mdo 46: set transparency=0.9, surface;')
-          cmd.do('mdo 47: set transparency=0.9, surface;')
-          cmd.do('mdo 48: set transparency=0.9, surface;')
-          cmd.do('mdo 49: set transparency=0.85, surface;')
-          cmd.do('mdo 50: set transparency=0.85, surface;')
-          cmd.do('mdo 51: set transparency=0.85, surface;')
-          cmd.do('mdo 52: set transparency=0.85, surface;')
-          cmd.do('mdo 53: set transparency=0.85, surface;')
-          cmd.do('mdo 54: set transparency=0.85, surface;')
-          cmd.do('mdo 55: set transparency=0.85, surface;')
-          cmd.do('mdo 56: set transparency=0.85, surface;')
-          cmd.do('mdo 57: set transparency=0.85, surface;')
-          cmd.do('mdo 58: set transparency=0.85, surface;')
-          cmd.do('mdo 59: set transparency=0.85, surface;')
-          cmd.do('mdo 60: set transparency=0.8, surface;')
+    def surface_stick(*args):
+      delcrea()
+      try:
+        self = args[0]
+        self.update(self.p)
+      except:
+        pass
+      cmd.mstop()
+      cmd.mclear()
+      cmd.mset('1','60')
+      cmd.hide('everything')
+      objects = cmd.get_names('all')
+      cmd.create('surface', 'all')                  
+      cmd.create('sticks', 'all') 
+      cmd.show('sticks', 'sticks')
+      color_cpk('& sticks')
+      cmd.show('surface', 'surface')
+      cmd.color('grey', 'surface')   
+      cmd.color('red', 'elem O')
+      cmd.color('blue', 'elem N')
+      cmd.do('mdo 1: set transparency=0.75, surface;')
+      cmd.do('mdo 2: set transparency=0.7, surface;')
+      cmd.do('mdo 3: set transparency=0.65, surface;')
+      cmd.do('mdo 4: set transparency=0.6, surface;')
+      cmd.do('mdo 5: set transparency=0.55, surface;')
+      cmd.do('mdo 6: set transparency=0.5, surface;')
+      cmd.do('mdo 7: set transparency=0.45, surface;')
+      cmd.do('mdo 8: set transparency=0.4, surface;')
+      cmd.do('mdo 9: set transparency=0.35, surface;')
+      cmd.do('mdo 10: set transparency=0.3, surface;')
+      cmd.do('mdo 11: set transparency=0.25, surface;')
+      cmd.do('mdo 12: set transparency=0.2, surface;')
+      cmd.do('mdo 13: set transparency=0.15, surface;')
+      cmd.do('mdo 14: set transparency=0.1, surface;')
+      cmd.do('mdo 15: set transparency=0.05, surface;')
+      cmd.do('mdo 16: set transparency=0, surface;')
+      cmd.do('mdo 17: set transparency=0, surface;')
+      cmd.do('mdo 19: set transparency=0, surface;')
+      cmd.do('mdo 20: set transparency=0, surface;')
+      cmd.do('mdo 21: set transparency=0, surface;')
+      cmd.do('mdo 22: set transparency=0, surface;')
+      cmd.do('mdo 23: set transparency=0, surface;')
+      cmd.do('mdo 24: set transparency=0, surface;')
+      cmd.do('mdo 25: set transparency=0, surface;')
+      cmd.do('mdo 26: set transparency=0, surface;')
+      cmd.do('mdo 27: set transparency=0, surface;')
+      cmd.do('mdo 28: set transparency=0, surface;')
+      cmd.do('mdo 29: set transparency=0.05, surface;')
+      cmd.do('mdo 30: set transparency=0.1, surface;')
+      cmd.do('mdo 31: set transparency=0.15, surface;')
+      cmd.do('mdo 32: set transparency=0.2, surface;')
+      cmd.do('mdo 33: set transparency=0.25, surface;')
+      cmd.do('mdo 34: set transparency=0.3, surface;')
+      cmd.do('mdo 35: set transparency=0.35, surface;')
+      cmd.do('mdo 36: set transparency=0.4, surface;')
+      cmd.do('mdo 37: set transparency=0.45, surface;')
+      cmd.do('mdo 38: set transparency=0.5, surface;')
+      cmd.do('mdo 39: set transparency=0.55, surface;')
+      cmd.do('mdo 40: set transparency=0.6, surface;')
+      cmd.do('mdo 41: set transparency=0.65, surface;')
+      cmd.do('mdo 42: set transparency=0.7, surface;')
+      cmd.do('mdo 43: set transparency=0.75, surface;')
+      cmd.do('mdo 44: set transparency=0.8, surface;')
+      cmd.do('mdo 45: set transparency=0.85, surface;')
+      cmd.do('mdo 46: set transparency=0.9, surface;')
+      cmd.do('mdo 47: set transparency=0.9, surface;')
+      cmd.do('mdo 48: set transparency=0.9, surface;')
+      cmd.do('mdo 49: set transparency=0.85, surface;')
+      cmd.do('mdo 50: set transparency=0.85, surface;')
+      cmd.do('mdo 51: set transparency=0.85, surface;')
+      cmd.do('mdo 52: set transparency=0.85, surface;')
+      cmd.do('mdo 53: set transparency=0.85, surface;')
+      cmd.do('mdo 54: set transparency=0.85, surface;')
+      cmd.do('mdo 55: set transparency=0.85, surface;')
+      cmd.do('mdo 56: set transparency=0.85, surface;')
+      cmd.do('mdo 57: set transparency=0.85, surface;')
+      cmd.do('mdo 58: set transparency=0.85, surface;')
+      cmd.do('mdo 59: set transparency=0.85, surface;')
+      cmd.do('mdo 60: set transparency=0.8, surface;')
+    cmd.extend('surface_stick',surface_stick)
    
 
         #movie that pulls ligands out of  and puts them back in
-    def Ligand_Pull(self):
-          self.delcrea()
-          self.update(self.p)
+    def Ligand_Pull(*args):
+          delcrea()
+          try:
+            self.update(self.p)
+          except:
+            pass
           cmd.mstop()
           cmd.mclear()
           cmd.mset('1','442')
@@ -9507,7 +9494,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
           cmd.set('stick_radius','0.3','ligand around 6')
 	  cmd.color('orange', 'ligand')
 	  cmd.select("interaction","ligand around 6'")
-	  self.cpkinteraction()
+	  cpkinteraction()
           cmd.delete('interaction')
           cmd.delete("Bad")
           cmd.show('cartoon', "resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR+ACD+ACE+ALB+ALI+ABU+ARO+ASX+BAS+BET+FOR+GLX+HET+HSE+HYP+HYL+ORN+PCA+SAR+TAU+TER+THY+UNK+a+g+c+t+u+HOH+MSE")
@@ -9601,12 +9588,17 @@ cmd.show('spheres', '(resn HOH)')\n''')
           cmd.do('mdo 262: translate [-2,0,0],ligand;')
           cmd.do('mdo 263: orient')
           cmd.util.mroll('264','442','1')
+    cmd.extend('ligand_pull',Ligand_Pull)
 
 
     #movie that pulls protein chains apart and shows interaction, then puts them together again
-    def chain_pull(self):
-          self.delcrea()
-          self.update(self.p)
+    def chain_pull(*args):
+          delcrea()
+          try:
+            self = args[0]
+            self.update(self.p)
+          except:
+            pass
           cmd.mstop()
           cmd.mclear()
           cmd.mset('1', '373')
@@ -9639,7 +9631,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
           cmd.select("Chain-X", "chain X")
           cmd.select("Chain-Y", "chain Y")
           cmd.select("Chain-Z", "chain Z")
-          self.checkforchain()
+          checkforchain()
           cmd.orient()
           objects = cmd.get_names('all')
           chainpulllist = []
@@ -9702,407 +9694,407 @@ cmd.show('spheres', '(resn HOH)')\n''')
             cmd.do('mdo 2: translate [0,0,0],'+chainpulllist[0]+';')
             cmd.do('mdo 3: translate [50,0,0],'+chainpulllist[1]+';')
             cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[1])
-            self.cpkduh()
+            cpkduh()
             cmd.delete('duh')    
             cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[0])
-            self.cpkduh()
+            cpkduh()
             cmd.delete('duh')
             if len(chainpulllist) >2:
               cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[1])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[2])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >3:
               cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[1])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[3])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >4:
               cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[1])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[4])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >5:
               cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[1])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[5])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >6:
               cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[1])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[6])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >7:
               cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[1])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[7])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >8:
               cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[1])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[8])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >9:
               cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[1])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[9])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >10:
               cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[1])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[10])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
   
           if len(chainpulllist) >2:
             cmd.do('mdo 4: translate [0,50,0],'+chainpulllist[2]+';')
             cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[2])
-            self.cpkduh()
+            cpkduh()
             cmd.delete('duh')    
             cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[0])
-            self.cpkduh()
+            cpkduh()
             cmd.delete('duh')
             if len(chainpulllist) >3:
               cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[3])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[2])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >4:
               cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[4])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[2])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >5:
               cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[2])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[5])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >6:
               cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[2])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[6])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >7:
               cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[2])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[7])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >8:
               cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[2])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[8])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >9:
               cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[2])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[9])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >10:
               cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[2])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[10])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
 
           if len(chainpulllist) >3:
             cmd.do('mdo 5: translate [0,0,50],'+chainpulllist[3]+';')
             cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[3])
-            self.cpkduh()
+            cpkduh()
             cmd.delete('duh')    
             cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[0])
-            self.cpkduh()
+            cpkduh()
             cmd.delete('duh')
             if len(chainpulllist) >4:
               cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[3])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[4])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >5:
               cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[3])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[5])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >6:
               cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[3])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[6])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >7:
               cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[3])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[7])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >8:
               cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[3])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[8])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >9:
               cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[3])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[9])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >10:
               cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[3])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[10])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
 
           if len(chainpulllist) >4:
             cmd.do('mdo 6: translate [-50,0,0],'+chainpulllist[4]+';')
             cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[4])
-            self.cpkduh()
+            cpkduh()
             cmd.delete('duh')    
             cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[0])
-            self.cpkduh()
+            cpkduh()
             cmd.delete('duh')
             if len(chainpulllist) >5:
               cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[4])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[5])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >6:
               cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[4])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[6])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >7:
               cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[4])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[7])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >8:
               cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[4])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[8])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >9:
               cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[4])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[9])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >10:
               cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[4])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[10])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
 
           if len(chainpulllist) >5:
             cmd.do('mdo 7: translate [0,-50,0],'+chainpulllist[5]+';')
             cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[5])
-            self.cpkduh()
+            cpkduh()
             cmd.delete('duh')    
             cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[0])
-            self.cpkduh()
+            cpkduh()
             cmd.delete('duh')
             if len(chainpulllist) >6:
               cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[5])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[6])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >7:
               cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[5])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[7])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >8:
               cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[5])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[8])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >9:
               cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[5])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[9])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >10:
               cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[5])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[10])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
 
           if len(chainpulllist) >6:
             cmd.do('mdo 8: translate [0,-50,0],'+chainpulllist[5]+';')
             cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[6])
-            self.cpkduh()
+            cpkduh()
             cmd.delete('duh')    
             cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[0])
-            self.cpkduh()
+            cpkduh()
             cmd.delete('duh')
             if len(chainpulllist) >7:
               cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[6])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[7])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >8:
               cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[6])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[8])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >9:
               cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[6])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[9])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >10:
               cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[6])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')    
               cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[10])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
 
               
           if len(chainpulllist) >7:
             cmd.do('mdo 9: translate [0,0,-50],'+chainpulllist[6]+';')
             cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[7])
-            self.cpkduh()
+            cpkduh()
             cmd.delete('duh')    
             cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[0])
-            self.cpkduh()
+            cpkduh()
             cmd.delete('duh')
             if len(chainpulllist) >8:
               cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[7])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[8])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >9:
               cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[7])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[9])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >10:
               cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[7])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[10])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             
           if len(chainpulllist) >8:
             cmd.do('mdo 10: translate [-50,0,50],'+chainpulllist[7]+';')
             cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[8])
-            self.cpkduh()
+            cpkduh()
             cmd.delete('duh')    
             cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[0])
-            self.cpkduh()
+            cpkduh()
             cmd.delete('duh')
             if len(chainpulllist) >9:
               cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[8])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[9])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >10:
               cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[8])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[10])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
             
           if len(chainpulllist) >9:
             cmd.do('mdo 11: translate [50,0,50],'+chainpulllist[8]+';')
             cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[9])
-            self.cpkduh()
+            cpkduh()
             cmd.delete('duh')    
             cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[0])
-            self.cpkduh()
+            cpkduh()
             cmd.delete('duh')
             if len(chainpulllist) >10:
               cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[9])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[10])
-              self.cpkduh()
+              cpkduh()
               cmd.delete('duh')
 
           if len(chainpulllist) >10:
             cmd.do('mdo 12: translate [50,0,-50],'+chainpulllist[10]+';')
             cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[10])
-            self.cpkduh()
+            cpkduh()
             cmd.delete('duh')    
             cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[0])
-            self.cpkduh()
+            cpkduh()
             cmd.delete('duh')
    
           cmd.do('mdo 13: zoom all')
@@ -10140,6 +10132,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
             cmd.do('mdo 193: translate [-50,0,50],'+chainpulllist[10]+';')
             cmd.do('mdo 194: zoom all')
           cmd.util.mroll('195','373','1')
+
+    cmd.extend('chain_pull',chain_pull)
 
     #movie controls
     def play(self):
@@ -10334,7 +10328,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
           filename = askopenfilename()
           entry123.insert(0, filename)
 		
-	def savefilename(event):
+	def savefilename(*args):
           filename = asksaveasfilename(filetypes=myFormats,
                                        title="Save Output As...")
           if (file == 0):
@@ -10415,37 +10409,57 @@ cmd.show('spheres', '(resn HOH)')\n''')
 
                 os.remove(filename) # Remove tmp file (leave the pdb)
 
-        def batchLoop(event):
+        def batchLoop(*args):
+          #f = ''
+          ranges = []
           string = ""
-          filename = savefilename(self)
-          try:
-            f=open(entry123.get())
-          except:
-            tkMessageBox.showerror('No input file',
-                                   'You did not choose an input file yet')
+          #filename = savefilename(self)
+          if (len(args) == 1):
+            try:
+              f=open(entry123.get())
+            except:
+              tkMessageBox.showerror('No input file',
+                                     'You did not choose an input file yet')
           else:
-          
-            for line in f.readlines():
+            try:
+              f=open('./temp', 'w')
+            except:
+              tkMessageBox.showerror('Woops!','Didn\'t work')
+            for each in args:
+              try:
+                float(each)
+                ranges.append(float(each))
+              except:
+                f.write(each + '\n')
+          f.close()
+
+          f=open('./temp')
+
+          for line in f.readlines():
+            if (len(args) == 1):
               ranges = sensEntry.get().split(',')
-              for each in ranges:
-                try:
-                  float(each)
-                except ValueError:
-                  tkMessageBox.showerror('Incorrect Formatting',
-                                         'Check the formatting of sensitivities')
-                  sensEntry.delete(0,END)
-                else:  
-                  self.range.set(each)
-                  line = line.strip()
-                  cmd.delete('all')
-                  myGetPdb(line)
-                  motifList = motifchecker(self)
-                  string += line
-                  string +='\t' + str(self.range.get()) + '\n'
-                  for i in motifList:
-                    string += '\t'*3 + str(i) + '\n'
-                  savefile(filename, string)
-        button123.bind('<Button-1>', batchLoop)
+            for each in ranges:
+              try:
+                float(each)
+              except ValueError:
+                tkMessageBox.showerror('Incorrect Formatting',
+                                       'Check the formatting of sensitivities')
+                #sensEntry.delete(0,END)
+              else:  
+                self.range.set(each)
+                line = line.strip()
+                cmd.delete('all')
+                myGetPdb(line)
+                motifList = motifchecker(self)
+                string += line
+                string +='\t' + str(self.range.get()) + '\n'
+                for i in motifList:
+                  string += '\t'*3 + str(i) + '\n'
+                print string
+                filename = savefilename(self)
+                savefile(filename, string)
+        cmd.extend('batchLoop',batchLoop)
+        #button123.bind('<Button-1>', batchLoop)
 	
     #-------------Version 2----------------#
 
@@ -10458,12 +10472,12 @@ cmd.show('spheres', '(resn HOH)')\n''')
         # Add "Settings" tab to notebook
         page = notebook.add('EZ-Viz')
 
-        #------Wirte Script Out-------------
+        #------Write Script Out-------------
         
-        self.scriptwrite = Pmw.OptionMenu(page,label_text = 'Script Writing:',labelpos = 'n',
+        scriptwrite = Pmw.OptionMenu(page,label_text = 'Script Writing:',labelpos = 'n',
                 items = ("Off", "On"),
-                menubutton_width = 11, command=self.write_script)
-        self.scriptwrite.grid(row=5,column=0,sticky=NW)
+                menubutton_width = 11, command=write_script)
+        scriptwrite.grid(row=5,column=0,sticky=NW)
 
         group = Pmw.Group(page, tag_text='Run Script')
         group.grid(row=5, column=0, padx=8, pady=0, sticky = N)
@@ -10493,8 +10507,9 @@ cmd.show('spheres', '(resn HOH)')\n''')
         #menus for presets
         
         surface = Pmw.OptionMenu(interior,label_text = 'Surfaces:',labelpos = 'n',
-                    items = ('','Surface','Surface on Cartoon','Surface on Sticks', 'Surface on Spheres', 'Mesh on Sticks', 'Dots on Lines'),
-                    menubutton_width = 10, command=self.presurf)
+                                 items = ('','Surface','Surface on Cartoon','Surface on Sticks',
+                                          'Surface on Spheres', 'Mesh on Sticks', 'Dots on Lines'),
+                                 menubutton_width = 10, command=self.presurf)
         surface.grid(row=0,column=0,sticky=NW)
         
         cartoon = Pmw.OptionMenu(interior,label_text = 'Cartoons:',labelpos = 'n',
@@ -10503,23 +10518,23 @@ cmd.show('spheres', '(resn HOH)')\n''')
         cartoon.grid(row=0,column=1,sticky=NW)
         
         residue = Pmw.OptionMenu(interior,label_text = 'By Residue:',labelpos = 'n',
-                    items = ('','Aromatics','Show Charged','Solubility'),
-                    menubutton_width = 10, command=self.preres)
+                                 items = ('','Aromatics','Show Charged','Solubility'),
+                                 menubutton_width = 10, command=self.preres)
         residue.grid(row=0,column=2,sticky=NW)
         
         roving = Pmw.OptionMenu(interior,label_text = 'Roving:',labelpos = 'n',
-                    items = ('','Roving Sticks','Roving Ball&Sticks','Roving Spheres', 'Roving Lines'),
-                    menubutton_width = 10, command=self.prerov)
+                                items = ('','Roving Sticks','Roving Ball&Sticks','Roving Spheres', 'Roving Lines'),
+                                menubutton_width = 10, command=self.prerov)
         roving.grid(row=1,column=2,sticky=NW)
         
         elecdensity = Pmw.OptionMenu(interior,label_text = 'Electron Density:',labelpos = 'n',
-                    items = ('','Mesh on Ribbon','Dots on Sticks','Surface on Lines'),
-                    menubutton_width = 10, command=self.preele)
+                                     items = ('','Mesh on Ribbon','Dots on Sticks','Surface on Lines'),
+                                     menubutton_width = 10, command=self.preele)
         elecdensity.grid(row=1,column=1,sticky=NW)
         
         misc = Pmw.OptionMenu(interior,label_text = 'Miscellaneous:',labelpos = 'n',
-                    items = ('','Hetero Atoms','Chain Contacts','DNA & RNA','CPK','Ball & Stick'),
-                    menubutton_width = 10, command=self.premisc)
+                              items = ('','Hetero Atoms','Chain Contacts','DNA & RNA','CPK','Ball & Stick'),
+                              menubutton_width = 10, command=self.premisc)
         misc.grid(row=1,column=0,sticky=NW)
 
         #roving slider
@@ -10594,7 +10609,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         group = Pmw.Group(page, tag_text = 'Automated Commands')
         group.grid(row=2, column=0, padx=0, pady=0)
         interior = group.interior()
-
+        
         def populater(event):
             objects = cmd.get_names('all')
             cmd.select('protein','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
@@ -10613,7 +10628,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
             cmd.disable('hydrophobic')
             cmd.disable('nucleic_acid')
             cmd.disable('protein')
-            self.checkitforthese()
+            checkitforthese()
             cmd.select("Chain-A", "chain A")
             cmd.select("Chain-B", "chain B")
             cmd.select("Chain-C", "chain C")
@@ -10640,7 +10655,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
             cmd.select("Chain-X", "chain X")
             cmd.select("Chain-Y", "chain Y")
             cmd.select("Chain-Z", "chain Z")
-            self.checkforchain()            
+            checkforchain()            
             items=[]
             objects = cmd.get_names('all')
             items.append('All')
@@ -10764,20 +10779,20 @@ cmd.show('spheres', '(resn HOH)')\n''')
         
         labels = ('PyMOL','Chime')
         self.commandChooser = self.radioAdd(interior,'w','vertical',self.set_cmd_type,'Command Type:',labels, 0, 
-    		      0, 1, 1, 'W')
+                                            0, 1, 1, 'W')
         
         self.output = Pmw.ScrolledText(interior,
-                usehullsize = 1,
-                hull_width = 250,
-                hull_height = 50,
-                text_wrap= WORD)
+                                       usehullsize = 1,
+                                       hull_width = 250,
+                                       hull_height = 50,
+                                       text_wrap= WORD)
         
         self.output.grid(row=0,column=1,padx=8,pady=2)
         self.output.setvalue('Command results will show in this box.\n\n')
         
         # PyMOL Command Prompt
         self.commandLine = Pmw.EntryField(interior, labelpos='w', label_text='Command Line:',
-                           value='Enter PyMOL Commands Here', entry_width=25, command=self.command_line)
+                                          value='Enter PyMOL Commands Here', entry_width=25, command=self.command_line)
         self.commandLine.grid(row=1, column=0, columnspan=2, pady=2)
 
         
@@ -10819,14 +10834,17 @@ cmd.show('spheres', '(resn HOH)')\n''')
         
         # Menu for motifs
         stereo = Pmw.OptionMenu(interior,label_text = 'Oxidoreductases:',labelpos = 'n',
-                    items = ('','Superoxide Dismutase','Peroxidase','Alcohol Dehydrogenase', 'Aldose Reductase','NAD Reductase', 'NAD Reductase2','Betaine aldehyde dehydrogenase'),
+                    items = ('','Superoxide Dismutase','Peroxidase','Alcohol Dehydrogenase',
+                             'Aldose Reductase','NAD Reductase', 'NAD Reductase2','Betaine aldehyde dehydrogenase'),
                     menubutton_width = 8, command=self.oxidoreductase)
         stereo.grid(row=0,column=0,sticky=NW)
 
         # Menu for motifs
         stereo = Pmw.OptionMenu(interior,label_text = 'Transferases:',labelpos = 'n',
-                    items = ('','Amino Transferase', 'Glutamine Amidotransferase','Thymidine Kinase', 'ACTase', 'Adenylate Kinase','SRC Family Kinase', 'Hhal Methyltransferase','Serotonin Acetyltransferase', 'Cyclin Dependent Kinase'),
-                    menubutton_width = 8, command=self.transferase)
+                                items = ('','Amino Transferase', 'Glutamine Amidotransferase',
+                                         'Thymidine Kinase', 'ACTase', 'Adenylate Kinase','SRC Family Kinase',
+                                         'Hhal Methyltransferase','Serotonin Acetyltransferase', 'Cyclin Dependent Kinase'),
+                                menubutton_width = 8, command=self.transferase)
         stereo.grid(row=0,column=1,sticky=NW)
         
        # Menu for motifs
@@ -10907,11 +10925,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                        
         showround = Button(frameadj, width = 12, text = 'Adjacent')
         showround.grid(row=1, column=0, padx=1, pady=1, sticky=NW)
-        
-        def getRange(self):
-        	x = self.range.get()
-        	return x
-        	
+                	
         def roundres(event):
             try:
                 cmd.hide('sticks', '!'+self.mot)
@@ -11672,7 +11686,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                        list.append('1-Serotonin Acetyltransferase')
 
                     cmd.delete('tyrophos')
-                    self.deletemotif()
+                    deletemotif()
                     cmd.orient('all')  
                     list.sort()
                     self.motifbox.setlist(list)
@@ -12386,7 +12400,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                 self.entry.focus_set()
                 
                 self.root.mainloop()
-
+            
             def populate(self):
                     objects = cmd.get_names('all')
                     cmd.select("Chain-A", "chain A")
@@ -13188,7 +13202,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                 # create interface
                 self.event = ''
                 self.update()
-
+        
             def updateProgress(self,value=None):
                 if value is None:
                     if self.bartype == 0:
@@ -13214,7 +13228,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     self.bar.coords('scale',0,0,2*value,10)
                 time.sleep(0.1)
                 self.update()
-
+            
             def cancel(self, event=None):
                 self.event = 'cancel'
                 if self.parent:
@@ -13246,7 +13260,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         button333.grid(row = 3, column = 0, padx = 10, sticky = 'N')
         randent = Entry(interior)
 
-        def randomized(event):
+        def randomized(*args):
                 cmd.delete('all')
                 q = random.randint(1, 41258)
                 p = linecache.getline('./modules/pmg_tk/startup/pdb_entry_type.txt', q)
@@ -13287,7 +13301,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
 
                     os.remove(filename) # Remove tmp file (leave the pdb)
 
-
+        cmd.extend('randomized',randomized)
         button333.bind('<Button-1>', randomized)
 
             
@@ -13930,7 +13944,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     ent4F.insert(0,'glniiii')
                 elif tag==' ':
                     ent5B.delete(0,10)
-
+            
             def checkforchain(event):
                 objects = cmd.get_names('all')
                 if 'Chain-A' in objects:
@@ -14068,7 +14082,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     n27 = len(x27)
                     if(n27 < 1):
                         cmd.delete("Chain-''")
-
+            
             def populate(event):
                 cmd.remove('resn HOH')
                 objects = cmd.get_names('all')
@@ -15524,8 +15538,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
         stupid.pack
         def finickystuff(event):#----Go to here
             cmd.set("ambient", self.asca.get())
-            if self.script=='1':
-                self.f.write(''' cmd.set("ambient", '''+str(self.asca.get())+''')\n''')
+            if script=='1':
+                f.write(''' cmd.set("ambient", '''+str(self.asca.get())+''')\n''')
         stupid.bind('<Button-1>', finickystuff)
         
 
@@ -15563,7 +15577,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         abstracter = Button(interior, width = 12, text = 'PDB Abstract')
         abstracter.grid(row=1, column=1, padx=1, pady=1, sticky=NW)
         abstracter.bind('<Button-1>', getabstract)
-        def gotorcsb(event):
+        def gotorcsb():
             import webbrowser
             webbrowser.open('http://www.rcsb.org/pdb/Welcome.do')
         rcsb = Button(interior, width = 5, text = 'RCSB')
@@ -15640,15 +15654,15 @@ cmd.show('spheres', '(resn HOH)')\n''')
         
         def turnorthon(event):
             cmd.set("orthoscopic", "on")
-            if self.script=='1':
-                self.f.write('''cmd.set("orthoscopic", "on")\n''')
+            if script=='1':
+                f.write('''cmd.set("orthoscopic", "on")\n''')
         orthoon.bind('<Button-1>', turnorthon)
         orthoff = Button(frameorthoff, text = 'Orthoscopic Off',width = 16)
         orthoff.grid(row=1, column=0, padx=2, pady=2, sticky=NW)
         def turnorthoff(event):
             cmd.set("orthoscopic", "off")
-            if self.script=='1':
-                self.f.write('''cmd.set("orthoscopic", "off")\n''')
+            if script=='1':
+                f.write('''cmd.set("orthoscopic", "off")\n''')
         orthoff.bind('<Button-1>', turnorthoff)
         framefieldview = Frame(interior)
         framefieldview.grid(row=3, column=0, padx=2, pady=2, sticky='N')
@@ -15664,8 +15678,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
         setfieldofview.set(20)
         def setfield(event):
             cmd.set("field_of_view", setfieldofview.get())
-            if self.script=='1':
-                self.f.write('''cmd.set("field_of_view", '''+setfieldofview.get()+''')\n''')
+            if script=='1':
+                f.write('''cmd.set("field_of_view", '''+setfieldofview.get()+''')\n''')
         getfield = Button(interior, text = 'Update',width = 16)
         getfield.grid(row=4, column=0, padx=2, pady=2, sticky=N)
         getfield.bind('<Button-1>', setfield)
@@ -15689,8 +15703,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
         orientbutt.grid(row=6, column=0, padx=2, pady=2, sticky='N')
         def orient(event):
             cmd.orient('all')
-            if self.script=='1':
-                self.f.write('''cmd.orient('all')\n''')
+            if script=='1':
+                f.write('''cmd.orient('all')\n''')
         orientbutt.bind('<Button-1>', orient)
 	
 
@@ -16351,7 +16365,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         sculbtn = Button(framesculbtn, text = 'Sculpting', width=16)
         sculbtn.grid(row=0, column=0, padx=1, pady=1, sticky=NW)
         #Defines Sculpting mode
-        def sculpt(event):
+        def sculpt(*args):
             cmd.hide('everything')
             cmd.set('sphere_transparency',0.60)
             cmd.set('sphere_color','white') 
@@ -16360,8 +16374,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
             cmd.show('sticks')
             cmd.show('spheres')
             cmd.zoom('all',4)
-            if self.script=='1':
-                self.f.write('''cmd.hide('everything')
+            if script=='1':
+                f.write('''cmd.hide('everything')
 cmd.set('sphere_transparency',0.60)
 cmd.set('sphere_color','white') 
 cmd.set('auto_sculpt',1)
@@ -16369,6 +16383,7 @@ cmd.mouse('three_button_editing')
 cmd.show('sticks')
 cmd.show('spheres')
 cmd.zoom('all',4)'''/n)
+        cmd.extend('sculpt',sculpt)
         sculbtn.bind('<Button-1>',sculpt)
 
       #-------------Measurment-------------------#
@@ -16445,7 +16460,7 @@ cmd.zoom('all',4)'''/n)
         
         #----------Selection function for individual amino acids----------
         #-----Experienced people just use Sequence viewer, which is recommended----
-        def selres(event):
+        def selres(*args):
           if x.get() == 'ala' :
               cmd.select('alanine', 'resn ala')
           if x.get() == 'asn' :
@@ -16522,9 +16537,10 @@ cmd.zoom('all',4)'''/n)
               cmd.select('glutamate', 'resn glu')
           if x.get() == 'q' :
               cmd.select('glutamine', 'resn gln')
-                
+
         x.bind('<Return>', selres)    
         selecta.bind('<Button-1>', selres)
+        cmd.extend('selres',selres)
 
 
         #----------Set up scales for controlling how much of protein is roved----------
@@ -16578,12 +16594,12 @@ cmd.zoom('all',4)'''/n)
     
     	
          #---isomesh function
-        def emesh(event):
-            self.delcrea()
+        def emesh(*args):
+            delcrea()
             try:
                 cmd.isomesh('map1','map', contour1.get())
-                if self.script=='1':
-                    self.f.write('''cmd.isomesh('map1','map', '''+contour1.get()+''')\n''')
+                if script=='1':
+                    f.write('''cmd.isomesh('map1','map', '''+contour1.get()+''')\n''')
             except:
                 try:
                     cmd.set("suspend_updates",1,quiet=1)
@@ -16594,8 +16610,8 @@ cmd.zoom('all',4)'''/n)
                     cmd.set("suspend_updates",0,quiet=1)
                     cmd.isomesh('map1','map', contour1.get())
                     cmd.refresh()
-                    if self.script=='1':
-                        self.f.write('''cmd.set("suspend_updates",1,quiet=1)
+                    if script=='1':
+                        f.write('''cmd.set("suspend_updates",1,quiet=1)
 cmd.remove("hydro")      
 cmd.enable('all')
 cmd.map_new('map',"gaussian","0.75", 'all')
@@ -16608,19 +16624,19 @@ cmd.isomesh('map1','map','''+str(contour1.get())+''')\n''')
                     tkMessageBox.showinfo("Error", 'No PDB is present')
                     interior.mainloop()
                 
-               
+        cmd.extend('emesh',emesh)
         imesh.bind('<Button-1>', emesh)
         idot = Button (framedots)
         idot.grid(row=1, column=0, padx=0, pady=2, sticky=W)
         idot.configure(text="Dots")
         idot.configure(width="10")
         #Isodot function
-        def edot(event):
-            self.delcrea()
+        def edot(*args):
+            delcrea()
             try:
                 cmd.isodot('map1','map', contour1.get())
-                if self.script=='1':
-                        self.f.write('''cmd.isodot('map1','map', '''+str(contour1.get())+''')\n''')
+                if script=='1':
+                        f.write('''cmd.isodot('map1','map', '''+str(contour1.get())+''')\n''')
             except:
                try:
                     cmd.set("suspend_updates",1,quiet=1)
@@ -16631,8 +16647,8 @@ cmd.isomesh('map1','map','''+str(contour1.get())+''')\n''')
                     cmd.set("suspend_updates",0,quiet=1)
                     cmd.refresh()
                     cmd.isodot('map1','map', contour1.get())
-                    if self.script=='1':
-                        self.f.write('''cmd.set("suspend_updates",1,quiet=1)
+                    if script=='1':
+                        f.write('''cmd.set("suspend_updates",1,quiet=1)
 cmd.remove("hydro")      
 cmd.enable('all')
 cmd.map_new('map',"gaussian","0.75", 'all')
@@ -16646,18 +16662,20 @@ cmd.isodot('map1','map', '''+str(contour1.get())+''')\n''')
                     tkMessageBox.showinfo("Error", 'No PDB is present')
                     interior.mainloop()
 
+        cmd.extend('edot',edot)
         idot.bind('<Button-1>', edot)
+
         isurf = Button(framesurf)
         isurf.grid(row=2, column=0, padx=0, pady=2, sticky=W)
         isurf.configure(text="Surface")
         isurf.configure(width="10")
         #Isosurface function
-        def esurf(event):
-            self.delcrea()
+        def esurf(*args):
+            delcrea()
             try:
                 cmd.isosurface('map1','map', contour1.get())
-                if self.script=='1':
-                        self.f.write('''cmd.isosurface('map1','map', '''+contour1.get()+''')\n''')
+                if script=='1':
+                        f.write('''cmd.isosurface('map1','map', '''+contour1.get()+''')\n''')
             except:
                 try:
                     cmd.set("suspend_updates",1,quiet=1)
@@ -16668,8 +16686,8 @@ cmd.isodot('map1','map', '''+str(contour1.get())+''')\n''')
                     cmd.set("suspend_updates",0,quiet=1)
                     cmd.refresh()
                     cmd.isosurface('map1','map', contour1.get())
-                    if self.script=='1':
-                        self.f.write('''cmd.set("suspend_updates",1,quiet=1)
+                    if script=='1':
+                        f.write('''cmd.set("suspend_updates",1,quiet=1)
 cmd.remove("hydro")      
 cmd.enable('all')
 cmd.map_new('map',"gaussian","0.75", 'all')
@@ -16682,68 +16700,69 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''')\n''')
                     import tkMessageBox
                     tkMessageBox.showinfo("Error", 'No PDB is present')
                     interior.mainloop()
-                
+        cmd.extend('esurf',esurf)
         isurf.bind('<Button-1>', esurf)
      
        
-    	
+    
         rden = Button (framerov)
         rden.grid(row=3, column=0, padx=0, pady=2, sticky=W)
         rden.configure(text="Roving Mesh")
         rden.configure(width="10")
         #roving isomesh function
         #From DeLano's code, need to cite
-        def roving_density(event):
-            self.delcrea()
-            try:                  
-                cmd.set("suspend_updates",1,quiet=1)
-                cmd.remove("hydro")
-                cmd.disable()
-                cmd.enable('all')
-                cmd.map_new('map',"gaussian","0.75", 'all')
-                cmd.set('roving_isomesh', rovingradius1.get())
-                cmd.set("roving_detail",1)
-                cmd.set("stick_radius",0.5)
-                cmd.set("roving_sticks",0)
-                cmd.set('roving_lines', rovingradius1.get())
-                cmd.set("roving_polar_contacts",0)
-                cmd.set("line_width","3")
-                cmd.set("roving_map1_name",'map')
-                cmd.isomesh("map1", "map", 9999.0, 'all')
-                cmd.set("suspend_updates",0,quiet=1)
-                cmd.refresh()
-                cmd.delete('rov_s1')
-                cmd.set('roving_isosurface',0)
-                if self.script=='1':
-                        self.f.write('''cmd.set("suspend_updates",1,quiet=1)
-cmd.remove("hydro")
-cmd.disable()
-cmd.enable('all')
-cmd.map_new('map',"gaussian","0.75", 'all')
-cmd.set('roving_isomesh', '''+str(rovingradius1.get())+''')
-cmd.set("roving_detail",1)
-cmd.set("stick_radius",0.5)
-cmd.set("roving_sticks",0)
-cmd.set('roving_lines', '''+str(rovingradius1.get())+''')
-cmd.set("roving_polar_contacts",0)
-cmd.set("line_width","3")
-cmd.set("roving_map1_name",'map')
-cmd.isomesh("map1", "map", 9999.0, 'all')
-cmd.set("suspend_updates",0,quiet=1)
-cmd.refresh()
-cmd.delete('rov_s1')
-cmd.set('roving_isosurface',0)\n''')
+        def roving_density(self):
+              
+          delcrea()
+          try:                  
+            cmd.set("suspend_updates",1,quiet=1)
+            cmd.remove("hydro")
+            cmd.disable()
+            cmd.enable('all')
+            cmd.map_new('map',"gaussian","0.75", 'all')
+            cmd.set('roving_isomesh', rovingradius1.get())
+            cmd.set("roving_detail",1)
+            cmd.set("stick_radius",0.5)
+            cmd.set("roving_sticks",0)
+            cmd.set('roving_lines', rovingradius1.get())
+            cmd.set("roving_polar_contacts",0)
+            cmd.set("line_width","3")
+            cmd.set("roving_map1_name",'map')
+            cmd.isomesh("map1", "map", 9999.0, 'all')
+            cmd.set("suspend_updates",0,quiet=1)
+            cmd.refresh()
+            cmd.delete('rov_s1')
+            cmd.set('roving_isosurface',0)
+            if script=='1':
+              f.write('''cmd.set("suspend_updates",1,quiet=1)
+ cmd.remove("hydro")
+ cmd.disable()
+ cmd.enable('all')
+ cmd.map_new('map',"gaussian","0.75", 'all')
+ cmd.set('roving_isomesh', '''+str(rovingradius1.get())+''')
+ cmd.set("roving_detail",1)
+ cmd.set("stick_radius",0.5)
+ cmd.set("roving_sticks",0)
+ cmd.set('roving_lines', '''+str(rovingradius1.get())+''')
+ cmd.set("roving_polar_contacts",0)
+ cmd.set("line_width","3")
+ cmd.set("roving_map1_name",'map')
+ cmd.isomesh("map1", "map", 9999.0, 'all')
+ cmd.set("suspend_updates",0,quiet=1)
+ cmd.refresh()
+ cmd.delete('rov_s1')
+ cmd.set('roving_isosurface',0)\n''')
 
-            except:
-                import tkFileDialog
-                import tkMessageBox
-                tkMessageBox.showinfo("Error", 'No PDB is present')
-                interior.mainloop()
-
+          except:
+            import tkFileDialog
+            import tkMessageBox
+            tkMessageBox.showinfo("Error", 'No PDB is present')
+            interior.mainloop()
+        #cmd.extend('roving_density',roving_density)
         rden.bind ('<Button-1>', roving_density)
         
-        def roving_surface(event):
-            self.delcrea()
+        def roving_surface(self):
+            delcrea()
             try:
                
                 cmd.remove("hydro")
@@ -16762,8 +16781,8 @@ cmd.set('roving_isosurface',0)\n''')
                 cmd.set('transparency', '0.15')
                 cmd.delete('rov_1')
                 cmd.delete('rov_m1')
-                if self.script=='1':
-                        self.f.write('''cmd.remove("hydro")
+                if script=='1':
+                        f.write('''cmd.remove("hydro")
 cmd.disable()
 cmd.enable('all')                
 cmd.map_new('map',"gaussian","0.75", 'all')
@@ -16799,12 +16818,13 @@ cmd.delete('rov_m1')\n''')
         imesh1.configure(text="Mesh Select")
         imesh1.configure(width="10")
         #isomesh on only selection
+
         def emesh1(event):
-            self.delcrea()
+            delcrea()
             try:
                 cmd.isomesh('map1','map', contour1.get(), 'sele')
-                if self.script=='1':
-                        self.f.write(''' cmd.isomesh('map1','map', '''+contour1.get()+''', 'sele')\n''')
+                if script=='1':
+                        f.write(''' cmd.isomesh('map1','map', '''+contour1.get()+''', 'sele')\n''')
             except:
                 try:
                     
@@ -16812,15 +16832,15 @@ cmd.delete('rov_m1')\n''')
                     cmd.enable('all')
                     cmd.map_new('map',"gaussian","0.75", 'all')
                     cmd.isomesh('map1','map', contour1.get(), 'sele')
-                    if self.script=='1':
-                        self.f.write('''cmd.remove("hydro")      
+                    if script=='1':
+                        f.write('''cmd.remove("hydro")      
 cmd.enable('all')
 cmd.map_new('map',"gaussian","0.75", 'all')
 cmd.isomesh('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
                     
                 except:
-                    if self.script=='1':
-                        self.f.write('''cmd.orient('all')\n''')
+                    if script=='1':
+                        f.write('''cmd.orient('all')\n''')
                     cmd.orient('all')
                     
                     import tkMessageBox
@@ -16835,11 +16855,11 @@ cmd.isomesh('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
         idot1.configure(width="10")
         #isodot on only selection
         def edot1(event):
-            self.delcrea()
+            delcrea()
             try: 
                 cmd.isodot('map1','map', contour1.get(), 'sele')
-                if self.script=='1':
-                        self.f.write('''cmd.isodot('map1','map', '''+contour1.get()+''', 'sele')\n''')
+                if script=='1':
+                        f.write('''cmd.isodot('map1','map', '''+contour1.get()+''', 'sele')\n''')
             except:
                 try: 
                     cmd.set("suspend_updates",1,quiet=1)
@@ -16851,8 +16871,8 @@ cmd.isomesh('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
                     cmd.refresh()
                     cmd.isodot('map1','map', contour1.get(), 'sele')
                     cmd.get_names('all')
-                    if self.script=='1':
-                        self.f.write('''cmd.set("suspend_updates",1,quiet=1)
+                    if script=='1':
+                        f.write('''cmd.set("suspend_updates",1,quiet=1)
 cmd.remove("hydro")      
 cmd.enable('all')
 cmd.map_new('map',"gaussian","0.75", 'all')
@@ -16863,8 +16883,8 @@ cmd.isodot('map1','map', '''+str(contour1.get())+''', 'sele')
 cmd.get_names('all')\n''')
                 except:
                     cmd.orient('all')
-                    if self.script=='1':
-                        self.f.write('''cmd.orient('all')\n''')
+                    if script=='1':
+                        f.write('''cmd.orient('all')\n''')
                     import tkFileDialog
                     import tkMessageBox
                     tkMessageBox.showinfo("Error", 'No PDB is present\nOr there is no selection ('"sele"')')
@@ -16877,11 +16897,11 @@ cmd.get_names('all')\n''')
         isurf1.configure(width="12")
         #isosurface on only selection
         def esurf1(event):
-            self.delcrea()
+            delcrea()
             try:
                 cmd.isosurface('map1','map', contour1.get(), 'sele')
-                if self.script=='1':
-                        self.f.write('''cmd.isosurface('map1','map','''+ contour1.get()+''', 'sele')\n''')
+                if script=='1':
+                        f.write('''cmd.isosurface('map1','map','''+ contour1.get()+''', 'sele')\n''')
             except:
                 try:
                     cmd.set("suspend_updates",1,quiet=1)
@@ -16892,8 +16912,8 @@ cmd.get_names('all')\n''')
                     cmd.set("suspend_updates",0,quiet=1)
                     cmd.refresh()
                     cmd.isosurface('map1','map', contour1.get(), 'sele')
-                    if self.script=='1':
-                        self.f.write('''cmd.set("suspend_updates",1,quiet=1)
+                    if script=='1':
+                        f.write('''cmd.set("suspend_updates",1,quiet=1)
 cmd.remove("hydro")      
 cmd.enable('all')
 cmd.map_new('map',"gaussian","0.75", 'all')
@@ -16903,8 +16923,8 @@ cmd.refresh()
 cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
                 except:
                     cmd.orient('all')
-                    if self.script=='1':
-                        self.f.write('''cmd.orient('all')\n''')
+                    if script=='1':
+                        f.write('''cmd.orient('all')\n''')
                     import tkFileDialog
                     import tkMessageBox
                     tkMessageBox.showinfo("Error", 'No PDB is present\nOr there is no selection ('"sele"')')
@@ -16926,8 +16946,8 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
         def doublemapres(event):
             try:
                 cmd.map_double('map', '1')
-                if self.script=='1':
-                    self.f.write('''cmd.map_double('map', '1')\n''')
+                if script=='1':
+                    f.write('''cmd.map_double('map', '1')\n''')
             except:
                 import tkFileDialog
                 import tkMessageBox
@@ -17036,7 +17056,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
             ehelp.bind('<Button-1>', elhelp)
              #---isomesh function
             def emesh(event):
-                self.delcrea()
+                delcrea()
                 try:
                     if len(nameit.get()) < 1:
                         import tkFileDialog
@@ -17066,7 +17086,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
             idot.configure(width="10")
             #Isodot function
             def edot(event):
-                self.delcrea()
+                delcrea()
                 try:
                      if len(nameit.get()) < 1:
                         import tkFileDialog
@@ -17093,7 +17113,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
             isurf.configure(width="10")
             #Isosurface function
             def esurf(event):
-                self.delcrea()
+                delcrea()
                 try:
                     if len(nameit.get()) < 1:
                         import tkFileDialog
@@ -17125,8 +17145,9 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
             imesh1.configure(text="Mesh Select")
             imesh1.configure(width="10")
             #isomesh on only selection
-            def emesh1(event):
-                self.delcrea()
+            
+            def emesh1(*args):
+                delcrea()
                 try:
                     if len(nameit.get()) < 1:
                         import tkFileDialog
@@ -17147,7 +17168,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
                     import tkMessageBox
                     tkMessageBox.showinfo("Error", 'No map is present\n Or there is no selection ("sele")')
                     interior.mainloop()
-
+            cmd.extend('emesh1',emesh1)
             imesh1.bind('<Button-1>', emesh1)
             idot1 = Button (framedotsel)
             idot1.grid(row=5, column=0, padx=0, pady=2, sticky=W)
@@ -17155,7 +17176,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
             idot1.configure(width="10")
             #isodot on only selection
             def edot1(event):
-                self.delcrea()
+                delcrea()
                 try:
                      if len(nameit.get()) < 1:
                         import tkFileDialog
@@ -17184,7 +17205,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
             isurf1.configure(width="12")
             #isosurface on only selection
             def esurf1(event):
-                self.delcrea()
+                delcrea()
                 try:
                     if len(nameit.get()) < 1:
                         import tkFileDialog
@@ -17219,7 +17240,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
             
             #doubles map resolution (permanent because Pymol has errors associated
             #with halving the map resolution)
-            def doublemapres(event):
+            def doublemapres(*args):
                 try:
                     cmd.map_double(pdbname.get(), '1')
                     
@@ -17229,6 +17250,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
                     tkMessageBox.showinfo("Error", 'No map is present')
                     interior.mainloop()
             doublemapbtn.bind('<Button-1>', doublemapres)
+            cmd.extend('doublemapres',doublemapres)
             # 99 red balloons, floating in a summer sky
             balloon1 = Pmw.Balloon(interior)
             balloon1.bind(framemesh, "Display entire map as a mesh.")
@@ -17802,8 +17824,8 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
             hetero=string.split(p.hetero, sep=', ')
             hetero=string.join(hetero, sep='+')
             cmd.create('ligands', '(resn '+string.strip(hetero)+')')
-            if self.script=='1':
-                self.f.write('''cmd.create('ligands', "(resn '''+string.strip(hetero)+''')")\n''')
+            if script=='1':
+                f.write('''cmd.create('ligands', "(resn '''+string.strip(hetero)+''')")\n''')
         cmd.select('protein', 'resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
         cmd.disable('protein')	
         cmd.select('nucleic_acid', 'resn a+g+c+t+u')
@@ -17811,8 +17833,8 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
         cmd.select('ligands', 'het')
         cmd.disable('ligands')
         cmd.remove('resn HOH')
-        if self.script=='1':
-            self.f.write('''cmd.select('protein', 'resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
+        if script=='1':
+            f.write('''cmd.select('protein', 'resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
 cmd.disable('protein')	
 cmd.select('nucleic_acid', 'resn a+g+c+t+u')
 cmd.disable('nucleic_acid')
@@ -17820,7 +17842,7 @@ cmd.select('ligands', 'het')
 cmd.disable('ligands')
 cmd.remove('resn HOH')\n''')
         self.populate()
-        self.checkitforthese()
+        checkitforthese()
         cmd.orient('all')
     #--------Delete empty selections--------------
     	#Adapted from Kristian Rothers' H-bond script
@@ -17829,666 +17851,14 @@ cmd.remove('resn HOH')\n''')
       webbrowser.open('./modules/pmg_tk/startup/Thanks.html')
 
     def checkitforthese(self):
-        objects = cmd.get_names('all')
-        if 'ligands' in objects:
-            xa = cmd.index('ligands')
-            na  = len(xa)
-            if(na < 1):
-                cmd.delete('ligands')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('ligands')\n''')
-        if 'nucleic_acid' in objects:
-            xb = cmd.index('nucleic_acid')
-            nb = len(xb)
-            if(nb < 1):
-                cmd.delete('nucleic_acid')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('nucleic_acid')\n''')
-        if 'protein' in objects:
-            xc = cmd.index('protein')
-            nc = len(xc)
-            if(nc < 1):
-                cmd.delete('protein')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('protein')\n''')
-                
-        if 'hydrophilic' in objects:
-            xd = cmd.index('hydrophilic')
-            nd = len(xd)
-            if(nd < 1):
-                cmd.delete('hydrophilic')
-
-        if 'hydrophobic' in objects:
-            xe = cmd.index('hydrophobic')
-            ne = len(xe)
-            if(ne < 1):
-                cmd.delete('hydrophobic')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('hydrophobic')\n''')
-
-        if 'acidic' in objects:
-            xe = cmd.index('acidic')
-            ne = len(xe)
-            if(ne < 1):
-                cmd.delete('acidic')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('acidic')\n''')
-
-        if 'basic' in objects:
-            xg = cmd.index('basic')
-            ng = len(xg)
-            if(ng < 1):
-                cmd.delete('basic')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('basic')\n''')
-
-        if 'heme' in objects:
-            xh = cmd.index('heme')
-            nh = len(xh)
-            if(nh < 1):
-                cmd.delete('heme')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('heme')\n''')
+      checktiforthese()
 
 
      #---Delete empty Chain selections for Chain Pull Movie------
     def checkforchain(self):
-        objects = cmd.get_names('all')
-        if 'Chain-A' in objects:
-            x1 = cmd.index('Chain-A')
-            n1  = len(x1)
-            if(n1 < 1):
-                cmd.delete('Chain-A')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-A')\n''')
-        if 'Chain-B' in objects:
-            x2 = cmd.index('Chain-B')
-            n2 = len(x2)
-            if(n2 < 1):
-                cmd.delete('Chain-B')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-B')\n''')
-        if 'Chain-C' in objects:
-            x3 = cmd.index('Chain-C')
-            n3 = len(x3)
-            if(n3 < 1):
-                cmd.delete('Chain-C')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-C')\n''')
-        if 'Chain-D' in objects:
-            x4 = cmd.index('Chain-D')
-            n4  = len(x4)
-            if(n4 < 1):
-                cmd.delete('Chain-D')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-D')\n''')
-        if 'Chain-E' in objects:
-            x5 = cmd.index('Chain-E')
-            n5 = len(x5)
-            if(n5 < 1):
-                cmd.delete('Chain-E')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-E')\n''')
-        if 'Chain-F' in objects:
-            x6 = cmd.index('Chain-F')
-            n6 = len(x6)
-            if(n6 < 1):
-                cmd.delete('Chain-F')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-F')\n''')
-        if 'Chain-G' in objects:
-            x7 = cmd.index('Chain-G')
-            n7  = len(x7)
-            if(n7 < 1):
-                cmd.delete('Chain-G')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-G')\n''')
-        if 'Chain-H' in objects:
-            x8 = cmd.index('Chain-H')
-            n8 = len(x8)
-            if(n8 < 1):
-                cmd.delete('Chain-H')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-H')\n''')
-        if 'Chain-I' in objects:
-            x9 = cmd.index('Chain-I')
-            n9 = len(x9)
-            if(n9 < 1):
-                cmd.delete('Chain-I')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-I')\n''')
-        if 'Chain-J' in objects:
-            x10 = cmd.index('Chain-J')
-            n10  = len(x10)
-            if(n10 < 1):
-                cmd.delete('Chain-J')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-J')\n''')
-        if 'Chain-K' in objects:
-            x11 = cmd.index('Chain-K')
-            n11 = len(x11)
-            if(n11 < 1):
-                cmd.delete('Chain-K')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-K')\n''')
-        if 'Chain-L' in objects:
-            x12 = cmd.index('Chain-L')
-            n12 = len(x12)
-            if(n12 < 1):
-                cmd.delete('Chain-L')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-L')\n''')
-        if 'Chain-M' in objects:
-            x13 = cmd.index('Chain-M')
-            n13  = len(x13)
-            if(n13 < 1):
-                cmd.delete('Chain-M')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-M')\n''')
-        if 'Chain-N' in objects:
-            x14 = cmd.index('Chain-N')
-            n14 = len(x14)
-            if(n14 < 1):
-                cmd.delete('Chain-N')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-N')\n''')
-        if 'Chain-O' in objects:
-            x15 = cmd.index('Chain-O')
-            n15 = len(x15)
-            if(n15 < 1):
-                cmd.delete('Chain-O')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-O')\n''')
-        if 'Chain-P' in objects:
-            x16 = cmd.index('Chain-P')
-            n16  = len(x16)
-            if(n16 < 1):
-                cmd.delete('Chain-P')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-P')\n''')
-        if 'Chain-Q' in objects:
-            x17 = cmd.index('Chain-Q')
-            n17 = len(x17)
-            if(n17 < 1):
-                cmd.delete('Chain-Q')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-Q')\n''')
-        if 'Chain-R' in objects:
-            x18 = cmd.index('Chain-R')
-            n18 = len(x18)
-            if(n18 < 1):
-                cmd.delete('Chain-R')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-R')\n''')
-        if 'Chain-S' in objects:
-            x19 = cmd.index('Chain-S')
-            n19  = len(x19)
-            if(n19 < 1):
-                cmd.delete('Chain-S')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-S')\n''')
-        if 'Chain-T' in objects:
-            x20 = cmd.index('Chain-T')
-            n20 = len(x20)
-            if(n20 < 1):
-                cmd.delete('Chain-T')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-T')\n''')
-        if 'Chain-U' in objects:
-            x21 = cmd.index('Chain-U')
-            n21 = len(x21)
-            if(n21 < 1):
-                cmd.delete('Chain-U')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-U')\n''')
-        if 'Chain-V' in objects:
-            x22 = cmd.index('Chain-V')
-            n22 = len(x22)
-            if(n22 < 1):
-                cmd.delete('Chain-V')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-V')\n''')
-        if 'Chain-W' in objects:
-            x23 = cmd.index('Chain-W')
-            n23 = len(x23)
-            if(n23 < 1):
-                cmd.delete('Chain-W')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-W')\n''')
-        if 'Chain-X' in objects:
-            x24 = cmd.index('Chain-X')
-            n24 = len(x24)
-            if(n24 < 1):
-                cmd.delete('Chain-X')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-X')\n''')
-        if 'Chain-Y' in objects:
-            x25 = cmd.index('Chain-Y')
-            n25 = len(x25)
-            if(n25 < 1):
-                cmd.delete('Chain-Y')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-Y')\n''')
-        if 'Chain-Z' in objects:
-            x26 = cmd.index('Chain-Z')
-            n26 = len(x26)
-            if(n26 < 1):
-                cmd.delete('Chain-Z')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-Z')\n''')
-        if 'Chain-' '' in objects:
-            x26 = cmd.index('Chain-' '')
-            n26 = len(x26)
-            if(n26 < 1):
-                cmd.delete('Chain-' '')
-                if self.script=='1':
-                    self.f.write('''cmd.delete('Chain-' '')\n''')
+      checkforchain()
 
 
-    #------------Had to make cpk definitions for all selections made
-    #-----------because couldn't get it to work on self.mot or original cpk+str
-    def cpkprotein(self):
-       objects = cmd.get_names('all')
-       if 'protein' in objects:
-           cmd.color("oxygen","(elem O and protein)")
-           cmd.color("nitrogen","(elem N and protein)")
-           cmd.color("sulfur","(elem S and protein)")
-           cmd.color("hydrogen","(elem H and protein)")
-           cmd.color("gray","(elem C and protein)")
-           if self.script=='1':
-               self.f.write('''cmd.color("oxygen","(elem O and protein)")
-cmd.color("nitrogen","(elem N and protein)")
-cmd.color("sulfur","(elem S and protein)")
-cmd.color("hydrogen","(elem H and protein)")
-cmd.color("gray","(elem C and protein)")\n''')
-
-    def cpknucleic(self):
-       objects = cmd.get_names('all')
-       if 'nucleic_acid' in objects:
-           cmd.color("oxygen","(elem O and nucleic_acid)")
-           cmd.color("nitrogen","(elem N and nucleic_acid)")
-           cmd.color("sulfur","(elem S and nucleic_acid)")
-           cmd.color("hydrogen","(elem H and nucleic_acid)")
-           cmd.color("gray","(elem C and nucleic_acid)")
-           if self.script=='1':
-               self.f.write('''cmd.color("oxygen","(elem O and nucleic_acid)")
-cmd.color("nitrogen","(elem N and nucleic_acid)")
-cmd.color("sulfur","(elem S and nucleic_acid)")
-cmd.color("hydrogen","(elem H and nucleic_acid)")
-cmd.color("gray","(elem C and nucleic_acid)")\n''')
-
-    def cpkligands(self):
-       objects = cmd.get_names('all')
-       if 'ligands' in objects:
-           cmd.color("oxygen","(elem O and ligands)")
-           cmd.color("nitrogen","(elem N and ligands)")
-           cmd.color("sulfur","(elem S and ligands)")
-           cmd.color("hydrogen","(elem H and ligands)")
-           cmd.color("gray","(elem C and ligands)")
-           if self.script=='1':
-               self.f.write('''cmd.color("oxygen","(elem O and ligands)")
-cmd.color("nitrogen","(elem N and ligands)")
-cmd.color("sulfur","(elem S and ligands)")
-cmd.color("hydrogen","(elem H and ligands)")
-cmd.color("gray","(elem C and ligands)")\n''')
-
-    def cpkduh(self):
-       objects = cmd.get_names('all')
-       if 'duh' in objects:
-           cmd.color("oxygen","(elem O and duh)")
-           cmd.color("nitrogen","(elem N and duh)")
-           cmd.color("sulfur","(elem S and duh)")
-           cmd.color("hydrogen","(elem H and duh)")
-           cmd.color("white","(elem C and duh)")
-
-    def cpkinteraction(self):
-       objects = cmd.get_names('all')
-       if 'interaction' in objects:
-           cmd.color("oxygen","(elem O and interaction)")
-           cmd.color("nitrogen","(elem N and interaction)")
-           cmd.color("sulfur","(elem S and interaction)")
-           cmd.color("hydrogen","(elem H and interaction)")
-           cmd.color("gray","(elem C and interaction)")
-           if self.script=='1':
-               self.f.write('''cmd.color("oxygen","(elem O and interaction)")
-cmd.color("nitrogen","(elem N and interaction)")
-cmd.color("sulfur","(elem S and interaction)")
-cmd.color("hydrogen","(elem H and interaction)")
-cmd.color("gray","(elem C and interaction)")\n''')
-
-    def cpkserineprotease(self):
-       objects = cmd.get_names('all')
-       if 'serineprotease' in objects:
-           cmd.color("oxygen","(elem O and serineprotease)")
-           cmd.color("nitrogen","(elem N and serineprotease)")
-           cmd.color("sulfur","(elem S and serineprotease)")
-           cmd.color("hydrogen","(elem H and serineprotease)")
-           cmd.color("white","(elem C and serineprotease)")
-
-    def cpkBlactamase(self):
-     objects = cmd.get_names('all')
-     if 'lactamase' in objects:
-         cmd.color("oxygen","(elem O and lactamase)")
-         cmd.color("nitrogen","(elem N and lactamase)")
-         cmd.color("sulfur","(elem S and lactamase)")
-         cmd.color("hydrogen","(elem H and lactamase)")
-         cmd.color("white","(elem C and lactamase)")
-
-    def cpkmotif(self):
-     objects = cmd.get_names('all')
-     if 'motif' in objects:
-         cmd.color("oxygen","(elem O and motif)")
-         cmd.color("nitrogen","(elem N and motif)")
-         cmd.color("sulfur","(elem S and motif)")
-         cmd.color("hydrogen","(elem H and motif)")
-         cmd.color("white","(elem C and motif)")
-
-    def cpkmetalloprotease(self):
-     objects = cmd.get_names('all')
-     if 'metalloprotease' in objects:
-         cmd.color("oxygen","(elem O and metalloprotease)")
-         cmd.color("nitrogen","(elem N and metalloprotease)")
-         cmd.color("sulfur","(elem S and metalloprotease)")
-         cmd.color("hydrogen","(elem H and metalloprotease)")
-         cmd.color("white","(elem C and metalloprotease)")
-
-    def cpktyrophos(self):
-     objects = cmd.get_names('all')
-     if 'tyrophos' in objects:
-         cmd.color("oxygen","(elem O and tyrophos)")
-         cmd.color("nitrogen","(elem N and tyrophos)")
-         cmd.color("sulfur","(elem S and tyrophos)")
-         cmd.color("hydrogen","(elem H and tyrophos)")
-         cmd.color("white","(elem C and tyrophos)")
-
-    
-    def cpkreductase(self):
-     objects = cmd.get_names('all')
-     if 'superoxide' in objects:
-         cmd.color("oxygen","(elem O and superoxide)")
-         cmd.color("nitrogen","(elem N and superoxide)")
-         cmd.color("sulfur","(elem S and superoxide)")
-         cmd.color("hydrogen","(elem H and superoxide)")
-         cmd.color("white","(elem C and superoxide)")
-
-    def cpkcarbanhyd(self):
-     objects = cmd.get_names('all')
-     if 'carbonicanhydrase' in objects:
-         cmd.color("oxygen","(elem O and carbonicanhydrase)")
-         cmd.color("nitrogen","(elem N and carbonicanhydrase)")
-         cmd.color("sulfur","(elem S and carbonicanhydrase)")
-         cmd.color("hydrogen","(elem H and carbonicanhydrase)")
-         cmd.color("white","(elem C and carbonicanhydrase)")
-
-    def cpkpaplike(self):
-     objects = cmd.get_names('all')
-     if 'paplike' in objects:
-         cmd.color("oxygen","(elem O and paplike)")
-         cmd.color("nitrogen","(elem N and paplike)")
-         cmd.color("sulfur","(elem S and paplike)")
-         cmd.color("hydrogen","(elem H and paplike)")
-         cmd.color("white","(elem C and paplike)")
-
-
-    def cpkzincfinger(self):
-     objects = cmd.get_names('all')
-     if 'Zinc_finger' in objects:
-         cmd.color("oxygen","(elem O and Zinc_finger)")
-         cmd.color("nitrogen","(elem N and Zinc_finger)")
-         cmd.color("sulfur","(elem S and Zinc_finger)")
-         cmd.color("hydrogen","(elem H and Zinc_finger)")
-         cmd.color("white","(elem C and Zinc_finger)")
-
-         
-    def cpkaminotransferase(self):
-     objects = cmd.get_names('all')
-     if 'Aminotransferase' in objects:
-         cmd.color("oxygen","(elem O and Aminotransferase)")
-         cmd.color("nitrogen","(elem N and Aminotransferase)")
-         cmd.color("sulfur","(elem S and Aminotransferase)")
-         cmd.color("hydrogen","(elem H and Aminotransferase)")
-         cmd.color("white","(elem C and Aminotransferase)")
-
-
-    def cpkfucoseisomerase(self):
-     objects = cmd.get_names('all')
-     if 'fucoseisomerase' in objects:
-         cmd.color("oxygen","(elem O and fucoseisomerase)")
-         cmd.color("nitrogen","(elem N and fucoseisomerase)")
-         cmd.color("sulfur","(elem S and fucoseisomerase)")
-         cmd.color("hydrogen","(elem H and fucoseisomerase)")
-         cmd.color("white","(elem C and fucoseisomerase)")
-         cmd.color('purpleblue', 'elem mn')
-
-
-    def cpkglu_amidotransferase(self):
-     objects = cmd.get_names('all')
-     if 'glu_amidotransferase' in objects:
-         cmd.color("oxygen","(elem O and glu_amidotransferase)")
-         cmd.color("nitrogen","(elem N and glu_amidotransferase)")
-         cmd.color("sulfur","(elem S and glu_amidotransferase)")
-         cmd.color("hydrogen","(elem H and glu_amidotransferase)")
-         cmd.color("white","(elem C and glu_amidotransferase)")
-
-
-    def cpkdnaligase(self):
-      objects = cmd.get_names('all')
-      if 'Ligase' in objects:
-         cmd.color("oxygen","(elem O and Ligase)")
-         cmd.color("nitrogen","(elem N and Ligase)")
-         cmd.color("sulfur","(elem S and Ligase)")
-         cmd.color("hydrogen","(elem H and Ligase)")
-         cmd.color("white","(elem C and Ligase)")
-
-    def cpkoglycosyl(self):
-      objects = cmd.get_names('all')
-      if 'o-glycosyl' in objects:
-         cmd.color("oxygen","(elem O and o-glycosyl)")
-         cmd.color("nitrogen","(elem N and o-glycosyl)")
-         cmd.color("sulfur","(elem S and o-glycosyl)")
-         cmd.color("hydrogen","(elem H and o-glycosyl)")
-         cmd.color("white","(elem C and o-glycosyl)")
-
-    def cpkcarboncarbon(self):
-      objects = cmd.get_names('all')
-      if 'carboncarbon' in objects:
-         cmd.color("oxygen","(elem O and carboncarbon)")
-         cmd.color("nitrogen","(elem N and carboncarbon)")
-         cmd.color("sulfur","(elem S and carboncarbon)")
-         cmd.color("hydrogen","(elem H and carboncarbon)")
-         cmd.color("white","(elem C and carboncarbon)")
-
-    def cpkkinase(self):
-      objects = cmd.get_names('all')
-      if 'Tkinase' in objects:
-         cmd.color("oxygen","(elem O and Tkinase)")
-         cmd.color("nitrogen","(elem N and Tkinase)")
-         cmd.color("sulfur","(elem S and Tkinase)")
-         cmd.color("hydrogen","(elem H and Tkinase)")
-         cmd.color("white","(elem C and Tkinase)")
-
-    def cpkperoxidase(self):
-      objects = cmd.get_names('all')
-      if 'Peroxidase' in objects:
-         cmd.color("oxygen","(elem O and Peroxidase)")
-         cmd.color("nitrogen","(elem N and Peroxidase)")
-         cmd.color("sulfur","(elem S and Peroxidase)")
-         cmd.color("hydrogen","(elem H and Peroxidase)")
-         cmd.color("white","(elem C and Peroxidase)")
-
-    def cpktriose(self):
-      objects = cmd.get_names('all')
-      if 'TrioseIsomerase' in objects:
-         cmd.color("oxygen","(elem O and TrioseIsomerase)")
-         cmd.color("nitrogen","(elem N and TrioseIsomerase)")
-         cmd.color("sulfur","(elem S and TrioseIsomerase)")
-         cmd.color("hydrogen","(elem H and TrioseIsomerase)")
-         cmd.color("white","(elem C and TrioseIsomerase)")
-
-         
-    def cpkalcoholdehyd(self):
-      objects = cmd.get_names('all')
-      if 'alcoholdehyd' in objects:
-         cmd.color("oxygen","(elem O and alcoholdehyd)")
-         cmd.color("nitrogen","(elem N and alcoholdehyd)")
-         cmd.color("sulfur","(elem S and alcoholdehyd)")
-         cmd.color("hydrogen","(elem H and alcoholdehyd)")
-         cmd.color("white","(elem C and alcoholdehyd)")
-
-    def cpkaldoreductase(self):
-      objects = cmd.get_names('all')
-      if 'aldoreductase' in objects:
-         cmd.color("oxygen","(elem O and aldoreductase)")
-         cmd.color("nitrogen","(elem N and aldoreductase)")
-         cmd.color("sulfur","(elem S and aldoreductase)")
-         cmd.color("hydrogen","(elem H and aldoreductase)")
-         cmd.color("white","(elem C and aldoreductase)")
-
-
-    def cpkcistrans(self):
-       objects = cmd.get_names('all')
-       if 'Cis-trans' in objects:
-           cmd.color("oxygen","(elem O and Cis-trans)")
-           cmd.color("nitrogen","(elem N and Cis-trans)")
-           cmd.color("sulfur","(elem S and Cis-trans)")
-           cmd.color("hydrogen","(elem H and Cis-trans)")
-           cmd.color("white","(elem C and Cis-trans)")
-
-    def cpksubstrate(self):
-       objects = cmd.get_names('all')
-       if 'substrate' in objects:
-           util.cnc('substrate')
-           cmd.color("oxygen","(elem O and substrate)")
-           cmd.color("nitrogen","(elem N and substrate)")
-           cmd.color("sulfur","(elem S and substrate)")
-           cmd.color("hydrogen","(elem H and substrate)")
-           cmd.color("gray","(elem C and substrate)")
-
-    def cpknadreductase(self):
-       objects = cmd.get_names('all')
-       if 'NAD-reductase' in objects:
-           cmd.color("oxygen","(elem O and NAD-reductase)")
-           cmd.color("nitrogen","(elem N and NAD-reductase)")
-           cmd.color("sulfur","(elem S and NAD-reductase)")
-           cmd.color("hydrogen","(elem H and NAD-reductase)")
-           cmd.color("white","(elem C and NAD-reductase)")
-           
-    def cpknadreductase2(self):
-       objects = cmd.get_names('all')
-       if 'NAD-reductase2' in objects:
-           cmd.color("oxygen","(elem O and NAD-reductase2)")
-           cmd.color("nitrogen","(elem N and NAD-reductase2)")
-           cmd.color("sulfur","(elem S and NAD-reductase2)")
-           cmd.color("hydrogen","(elem H and NAD-reductase2)")
-           cmd.color("white","(elem C and NAD-reductase2)")
-
-    def cpkdeacetylase(self):
-       objects = cmd.get_names('all')
-       if 'deacetylase' in objects:
-           cmd.color("oxygen","(elem O and deacetylase)")
-           cmd.color("nitrogen","(elem N and deacetylase)")
-           cmd.color("sulfur","(elem S and deacetylase)")
-           cmd.color("hydrogen","(elem H and deacetylase)")
-           cmd.color("white","(elem C and deacetylase)")
-
-    def cpkchondro(self):
-       objects = cmd.get_names('all')
-       if 'chondroitinase' in objects:
-           cmd.color("oxygen","(elem O and chondroitinase)")
-           cmd.color("nitrogen","(elem N and chondroitinase)")
-           cmd.color("sulfur","(elem S and chondroitinase)")
-           cmd.color("hydrogen","(elem H and chondroitinase)")
-           cmd.color("white","(elem C and chondroitinase)")
-           
-    def cpkhyaluron(self):
-     objects = cmd.get_names('all')
-     if 'Hyaluronate_Lyase' in objects:
-         cmd.color("oxygen","(elem O and Hyaluronate_Lyase)")
-         cmd.color("nitrogen","(elem N and Hyaluronate_Lyase)")
-         cmd.color("sulfur","(elem S and Hyaluronate_Lyase)")
-         cmd.color("hydrogen","(elem H and Hyaluronate_Lyase)")
-         cmd.color("white","(elem C and Hyaluronate_Lyase)")
-
-    def cpkactase(self):
-       objects = cmd.get_names('all')
-       if 'actase' in objects:
-           cmd.color("oxygen","(elem O and actase)")
-           cmd.color("nitrogen","(elem N and actase)")
-           cmd.color("sulfur","(elem S and actase)")
-           cmd.color("hydrogen","(elem H and actase)")
-           cmd.color("white","(elem C and actase)")
-
-    def cpkadenylatekinase(self):
-       objects = cmd.get_names('all')
-       if 'adenylatekinase' in objects:
-           cmd.color("oxygen","(elem O and adenylatekinase)")
-           cmd.color("nitrogen","(elem N and adenylatekinase)")
-           cmd.color("sulfur","(elem S and adenylatekinase)")
-           cmd.color("hydrogen","(elem H and adenylatekinase)")
-           cmd.color("white","(elem C and adenylatekinase)")
-
-    def cpknuclease(self):
-       objects = cmd.get_names('all')
-       if 'Exonuclease3' in objects:
-           cmd.color("oxygen","(elem O and Exonuclease3)")
-           cmd.color("nitrogen","(elem N and Exonuclease3)")
-           cmd.color("sulfur","(elem S and Exonuclease3)")
-           cmd.color("hydrogen","(elem H and Exonuclease3)")
-           cmd.color("white","(elem C and Exonuclease3)")
-
-    def cpkcitrate(self):
-       objects = cmd.get_names('all')
-       if 'Citrate_Synth' in objects:
-           cmd.color("oxygen","(elem O and Citrate_Synth)")
-           cmd.color("nitrogen","(elem N and Citrate_Synth)")
-           cmd.color("sulfur","(elem S and Citrate_Synth)")
-           cmd.color("hydrogen","(elem H and Citrate_Synth)")
-           cmd.color("white","(elem C and Citrate_Synth)")
-
-    def cpktyrokinase(self):
-       objects = cmd.get_names('all')
-       if 'SRC-Kinase' in objects:
-           cmd.color("oxygen","(elem O and SRC-Kinase)")
-           cmd.color("nitrogen","(elem N and SRC-Kinase)")
-           cmd.color("sulfur","(elem S and SRC-Kinase)")
-           cmd.color("hydrogen","(elem H and SRC-Kinase)")
-           cmd.color("white","(elem C and SRC-Kinase)")
-
-    def cpkhhal(self):
-       objects = cmd.get_names('all')
-       if 'hhal' in objects:
-           cmd.color("oxygen","(elem O and hhal)")
-           cmd.color("nitrogen","(elem N and hhal)")
-           cmd.color("sulfur","(elem S and hhal)")
-           cmd.color("hydrogen","(elem H and hhal)")
-           cmd.color("white","(elem C and hhal)")
-
-    def cpkbetaine(self):
-       objects = cmd.get_names('all')
-       if 'betaine_dehydrogenase' in objects:
-           cmd.color("oxygen","(elem O and betaine_dehydrogenase)")
-           cmd.color("nitrogen","(elem N and betaine_dehydrogenase)")
-           cmd.color("sulfur","(elem S and betaine_dehydrogenase)")
-           cmd.color("hydrogen","(elem H and betaine_dehydrogenase)")
-           cmd.color("white","(elem C and betaine_dehydrogenase)")
-
-    def cpkseracetyl(self):
-          objects = cmd.get_names('all')
-          if 'Serotonin_transferase' in objects:
-             cmd.color("oxygen","(elem O and Serotonin_transferase)")
-             cmd.color("nitrogen","(elem N and Serotonin_transferase)")
-             cmd.color("sulfur","(elem S and Serotonin_transferase)")
-             cmd.color("hydrogen","(elem H and Serotonin_transferase)")
-             cmd.color("white","(elem C and Serotonin_transferase)")
-
-    def cpkcyclinkinase(self):
-       objects = cmd.get_names('all')
-       if 'Cyclin_Kinase' in objects:
-           cmd.color("oxygen","(elem O and Cyclin_Kinase)")
-           cmd.color("nitrogen","(elem N and Cyclin_Kinase)")
-           cmd.color("sulfur","(elem S and Cyclin_Kinase)")
-           cmd.color("hydrogen","(elem H and Cyclin_Kinase)")
-           cmd.color("white","(elem C and Cyclin_Kinase)")
 
     #-------Version 1---------#
 
@@ -18509,8 +17879,8 @@ cmd.color("gray","(elem C and interaction)")\n''')
         value = self.toonThickness.get()
         cmd.set('cartoon_rect_width', value, 'all') # strands
         cmd.set('cartoon_oval_width', value, 'all') # helices
-        if self.script=='1':
-            self.f.write('''value = '''+str(self.toonThickness.get())+'''
+        if script=='1':
+            f.write('''value = '''+str(self.toonThickness.get())+'''
 cmd.set('cartoon_rect_width', value, 'all')
 cmd.set('cartoon_oval_width', value, 'all')\n''')
         
@@ -18522,8 +17892,8 @@ cmd.set('cartoon_oval_width', value, 'all')\n''')
         value = self.toonWidth.get()
         cmd.set('cartoon_rect_length', value, 'all') # strands
         cmd.set('cartoon_oval_length', value, 'all') # helices
-        if self.script=='1':
-            self.f.write('''value = '''+str(self.toonWidth.get())+'''
+        if script=='1':
+            f.write('''value = '''+str(self.toonWidth.get())+'''
 cmd.set('cartoon_rect_length', value, 'all')
 cmd.set('cartoon_oval_length', value, 'all')\n''')
             
@@ -18533,8 +17903,8 @@ cmd.set('cartoon_oval_length', value, 'all')\n''')
         self.sel1 = ''
         amount=self.cartoonTransparency.get()
         cmd.set('cartoon_transparency', amount, 'all')
-        if self.script=='1':
-            self.f.write('''amount='''+str(self.cartoonTransparency.get())+'''
+        if script=='1':
+            f.write('''amount='''+str(self.cartoonTransparency.get())+'''
 cmd.set('cartoon_transparency', amount, 'all')\n''')
        
     # Set Cartoon Tube Radius 
@@ -18543,8 +17913,8 @@ cmd.set('cartoon_transparency', amount, 'all')\n''')
         self.sel1 = ''
         value = self.toonTubeRadius.get()
         cmd.set('cartoon_tube_radius', value, 'all') # strands
-        if self.script=='1':
-            self.f.write('''value = '''+str(self.toonTubeRadius.get())+'''
+        if script=='1':
+            f.write('''value = '''+str(self.toonTubeRadius.get())+'''
 cmd.set('cartoon_tube_radius', value, 'all')\n''')
         
     #Set Ribbon Type
@@ -18553,78 +17923,78 @@ cmd.set('cartoon_tube_radius', value, 'all')\n''')
             try:
                 if tag == 'Skip':
                         cmd.cartoon('skip', self.sel1)
-                        if self.script=='1':
-                            self.f.write('''cmd.cartoon('skip', '''+self.sel1+''')\n''')
+                        if script=='1':
+                            f.write('''cmd.cartoon('skip', '''+self.sel1+''')\n''')
                 elif tag == 'Automatic':
                         cmd.cartoon('automatic', self.sel1)
-                        if self.script=='1':
-                            self.f.write('''cmd.cartoon('automatic', '''+self.sel1+''')\n''')
+                        if script=='1':
+                            f.write('''cmd.cartoon('automatic', '''+self.sel1+''')\n''')
                 elif tag == 'Oval':
                         cmd.cartoon('oval', self.sel1)
-                        if self.script=='1':
-                            self.f.write('''cmd.cartoon('oval', '''+self.sel1+''')\n''')
+                        if script=='1':
+                            f.write('''cmd.cartoon('oval', '''+self.sel1+''')\n''')
                 elif tag == 'Tube':
                         cmd.cartoon('tube', self.sel1)
-                        if self.script=='1':
-                            self.f.write('''cmd.cartoon('tube', '''+self.sel1+''')\n''')
+                        if script=='1':
+                            f.write('''cmd.cartoon('tube', '''+self.sel1+''')\n''')
                 elif tag == 'Rectangle':
                         cmd.cartoon('rectangle', self.sel1)
-                        if self.script=='1':
-                            self.f.write('''cmd.cartoon('rectangle', '''+self.sel1+''')\n''')
+                        if script=='1':
+                            f.write('''cmd.cartoon('rectangle', '''+self.sel1+''')\n''')
                 elif tag == 'Loop':
                         cmd.cartoon('loop', self.sel1)
-                        if self.script=='1':
-                            self.f.write('''cmd.cartoon('loop', '''+self.sel1+''')\n''')
+                        if script=='1':
+                            f.write('''cmd.cartoon('loop', '''+self.sel1+''')\n''')
                 elif tag == 'Arrow':
                         cmd.cartoon('arrow', self.sel1)
-                        if self.script=='1':
-                            self.f.write('''cmd.cartoon('arrow', '''+self.sel1+''')\n''')
+                        if script=='1':
+                            f.write('''cmd.cartoon('arrow', '''+self.sel1+''')\n''')
                 elif tag == 'Dumbbell':
                         cmd.cartoon('dumbbell', self.sel1)
-                        if self.script=='1':
-                            self.f.write('''cmd.cartoon('dumbbell', '''+self.sel1+''')\n''')
+                        if script=='1':
+                            f.write('''cmd.cartoon('dumbbell', '''+self.sel1+''')\n''')
                 elif tag == 'Putty':
                         cmd.cartoon('putty', self.sel1)
-                        if self.script=='1':
-                            self.f.write('''cmd.cartoon('putty', '''+self.sel1+''')\n''')
+                        if script=='1':
+                            f.write('''cmd.cartoon('putty', '''+self.sel1+''')\n''')
             except:
                 self.populate()
                 if tag == 'Skip':
                         cmd.cartoon('skip', self.sel1)
-                        if self.script=='1':
-                            self.f.write('''cmd.cartoon('skip', '''+self.sel1+''')\n''')
+                        if script=='1':
+                            f.write('''cmd.cartoon('skip', '''+self.sel1+''')\n''')
                 elif tag == 'Automatic':
                         cmd.cartoon('automatic', self.sel1)
-                        if self.script=='1':
-                            self.f.write('''cmd.cartoon('automatic', '''+self.sel1+''')\n''')
+                        if script=='1':
+                            f.write('''cmd.cartoon('automatic', '''+self.sel1+''')\n''')
                 elif tag == 'Oval':
                         cmd.cartoon('oval', self.sel1)
-                        if self.script=='1':
-                            self.f.write('''cmd.cartoon('oval', '''+self.sel1+''')\n''')
+                        if script=='1':
+                            f.write('''cmd.cartoon('oval', '''+self.sel1+''')\n''')
                 elif tag == 'Tube':
                         cmd.cartoon('tube', self.sel1)
-                        if self.script=='1':
-                            self.f.write('''cmd.cartoon('tube', '''+self.sel1+''')\n''')
+                        if script=='1':
+                            f.write('''cmd.cartoon('tube', '''+self.sel1+''')\n''')
                 elif tag == 'Rectangle':
                         cmd.cartoon('rectangle', self.sel1)
-                        if self.script=='1':
-                            self.f.write('''cmd.cartoon('rectangle', '''+self.sel1+''')\n''')
+                        if script=='1':
+                            f.write('''cmd.cartoon('rectangle', '''+self.sel1+''')\n''')
                 elif tag == 'Loop':
                         cmd.cartoon('loop', self.sel1)
-                        if self.script=='1':
-                            self.f.write('''cmd.cartoon('loop', '''+self.sel1+''')\n''')
+                        if script=='1':
+                            f.write('''cmd.cartoon('loop', '''+self.sel1+''')\n''')
                 elif tag == 'Arrow':
                         cmd.cartoon('arrow', self.sel1)
-                        if self.script=='1':
-                            self.f.write('''cmd.cartoon('arrow', '''+self.sel1+''')\n''')
+                        if script=='1':
+                            f.write('''cmd.cartoon('arrow', '''+self.sel1+''')\n''')
                 elif tag == 'Dumbbell':
                         cmd.cartoon('dumbbell', self.sel1)
-                        if self.script=='1':
-                            self.f.write('''cmd.cartoon('dumbell', '''+self.sel1+''')\n''')
+                        if script=='1':
+                            f.write('''cmd.cartoon('dumbell', '''+self.sel1+''')\n''')
                 elif tag == 'Putty':
                         cmd.cartoon('putty', self.sel1)
-                        if self.script=='1':
-                            self.f.write('''cmd.cartoon('putty', '''+self.sel1+''')\n''')
+                        if script=='1':
+                            f.write('''cmd.cartoon('putty', '''+self.sel1+''')\n''')
         except:
             import tkMessageBox
             tkMessageBox.showinfo('Error', 'Drop down menu is set to an invalid selection\nYou may need to update selections')
@@ -18638,8 +18008,8 @@ cmd.set('cartoon_tube_radius', value, 'all')\n''')
         self.sel1 = 'all'
         amount=self.sphereTransparency.get()
         cmd.set('sphere_transparency', amount, 'all')
-        if self.script=='1':
-            self.f.write('''amount='''+str(self.sphereTransparency.get())+'''
+        if script=='1':
+            f.write('''amount='''+str(self.sphereTransparency.get())+'''
 cmd.set('sphere_transparency', amount, 'all')\n''')
                 
     # Set Sphere Size
@@ -18648,8 +18018,8 @@ cmd.set('sphere_transparency', amount, 'all')\n''')
         self.sel1 = 'all'
         size=self.sphereScale.get()
         cmd.set('sphere_scale', size, 'all')
-        if self.script=='1':
-            self.f.write('''size='''+str(self.sphereScale.get())+'''
+        if script=='1':
+            f.write('''size='''+str(self.sphereScale.get())+'''
 cmd.set('sphere_scale', size, 'all')\n''')
       
     #------------------------------------------#
@@ -18661,8 +18031,8 @@ cmd.set('sphere_scale', size, 'all')\n''')
         self.sel1 = 'all'
         amount=self.surfaceTransparency.get()
         cmd.set('transparency', amount, 'all')
-        if self.script=='1':
-            self.f.write('''amount='''+str(self.surfaceTransparency.get())+'''
+        if script=='1':
+            f.write('''amount='''+str(self.surfaceTransparency.get())+'''
 cmd.set('transparency', amount, 'all')\n''')
        
     #------------------------------------------#
@@ -18674,8 +18044,8 @@ cmd.set('transparency', amount, 'all')\n''')
         self.sel1 = 'all'
         amount=self.stickTransparency.get()
         cmd.set('stick_transparency', amount, 'all')
-        if self.script=='1':
-            self.f.write('''amount='''+str(self.stickTransparency.get())+'''
+        if script=='1':
+            f.write('''amount='''+str(self.stickTransparency.get())+'''
 cmd.set('stick_transparency', amount, 'all')\n''')
         
      # Set Stick Radius
@@ -18684,8 +18054,8 @@ cmd.set('stick_transparency', amount, 'all')\n''')
         self.sel1 = 'all'
         size=self.stickRadius.get()
         cmd.set('stick_radius',size, 'all')
-        if self.script=='1':
-            self.f.write('''size='''+str(self.stickRadius.get())+'''
+        if script=='1':
+            f.write('''size='''+str(self.stickRadius.get())+'''
 cmd.set('stick_radius',size, 'all')\n''')
        
 
@@ -18694,23 +18064,23 @@ cmd.set('stick_radius',size, 'all')\n''')
         #             Set Default Values                      #
         #------------------------------------------#       
     def set_advanced_defaults(self, tag):
-            if tag == 'Cartoon':
-                
-                # apply the changes
-                cmd.set('cartoon_rect_length', '1.4', 'all') 
-                cmd.set('cartoon_oval_length', '1.4', 'all')
-                cmd.set('cartoon_rect_width', '0.3', 'all') 
-                cmd.set('cartoon_oval_width', '0.3', 'all') 
-                cmd.set('cartoon_tube_radius','0.5','all')
-                cmd.set('cartoon_transparency','0.0','all')
-                cmd.cartoon('automatic',self.sel1)
-                self.toonWidth.set('1.4')
-                self.toonThickness.set('0.3')
-                self.cartoonTransparency.set('0.0')
-                self.toonTubeRadius.set('0.5')
-                self.ribbonTypes.invoke(0)
-                if self.script=='1':
-                    self.f.write('''cmd.set('cartoon_rect_length', '1.4', 'all') 
+      if tag == 'cartoon':
+        
+        # apply the changes
+        cmd.set('cartoon_rect_length', '1.4', 'all') 
+        cmd.set('cartoon_oval_length', '1.4', 'all')
+        cmd.set('cartoon_rect_width', '0.3', 'all') 
+        cmd.set('cartoon_oval_width', '0.3', 'all') 
+        cmd.set('cartoon_tube_radius','0.5','all')
+        cmd.set('cartoon_transparency','0.0','all')
+        cmd.cartoon('automatic',self.sel1)
+        self.toonWidth.set('1.4')
+        self.toonThickness.set('0.3')
+        self.cartoonTransparency.set('0.0')
+        self.toonTubeRadius.set('0.5')
+        self.ribbonTypes.invoke(0)
+        if script=='1':
+          f.write('''cmd.set('cartoon_rect_length', '1.4', 'all') 
 cmd.set('cartoon_oval_length', '1.4', 'all')
 cmd.set('cartoon_rect_width', '0.3', 'all') 
 cmd.set('cartoon_oval_width', '0.3', 'all') 
@@ -18723,104 +18093,110 @@ self.cartoonTransparency.set('0.0')
 self.toonTubeRadius.set('0.5')
 self.ribbonTypes.invoke(0)\n''')
                 
-            elif tag == 'Spheres':
+      elif tag == 'spheres':
 
-                cmd.set('sphere_scale','0.7','all')
-                cmd.set('sphere_transparency','0.0','all')
-                self.sphereScale.set('0.7')
-                self.sphereTransparency.set('0.0')
-                if self.script=='1':
-                    self.f.write('''cmd.set('sphere_scale','0.7','all')
+        cmd.set('sphere_scale','0.7','all')
+        cmd.set('sphere_transparency','0.0','all')
+        self.sphereScale.set('0.7')
+        self.sphereTransparency.set('0.0')
+        if script=='1':
+          f.write('''cmd.set('sphere_scale','0.7','all')
 cmd.set('sphere_transparency','0.0','all')
 self.sphereScale.set('0.7')
 self.sphereTransparency.set('0.0')\n''')
                 
-            elif tag == 'Sticks':
+      elif tag == 'sticks':
 
-                cmd.set('stick_radius','0.2','all')
-                cmd.set('stick_transparency','0.0','all')
-                self.stickRadius.set('0.2')
-                self.stickTransparency.set('0.0')
-                if self.script=='1':
-                    self.f.write('''cmd.set('stick_radius','0.2','all')
+        cmd.set('stick_radius','0.2','all')
+        cmd.set('stick_transparency','0.0','all')
+        self.stickRadius.set('0.2')
+        self.stickTransparency.set('0.0')
+        if script=='1':
+          f.write('''cmd.set('stick_radius','0.2','all')
 cmd.set('stick_transparency','0.0','all')
 self.stickRadius.set('0.2')
 self.stickTransparency.set('0.0')\n''')
                 
-            elif tag == 'Surface':	
-                # apply the changes
-                cmd.set('transparency','0.0','all')
-                self.surfaceTransparency.set('0.0')
-                if self.script=='1':
-                    self.f.write('''cmd.set('transparency','0.0','all')
+      elif tag == 'surface':	
+        # apply the changes
+        cmd.set('transparency','0.0','all')
+        self.surfaceTransparency.set('0.0')
+        if script=='1':
+          f.write('''cmd.set('transparency','0.0','all')
 self.surfaceTransparency.set('0.0')\n''')
 
-            elif tag == 'Ambient':
-                cmd.set('ambient', '0.25', 'all')
-                self.asca.set('0.25')
-                if self.script=='1':
-                    self.f.write('''cmd.set('ambient', '0.25', 'all')
+      elif tag == 'ambient':
+        cmd.set('ambient', '0.25', 'all')
+        self.asca.set('0.25')
+        if script=='1':
+          f.write('''cmd.set('ambient', '0.25', 'all')
 self.asca.set('0.25')\n''')
-                    
+    cmd.extend('set_advanced_defaults',set_advanced_defaults)
     #--------Version 2---------#
     #deletes created objects used in various tools to save on memory usage
-    def delcrea(self):
-            object = cmd.get_names('all')
-            if 'surface' in object:
-                cmd.delete('surface')
-            if 'mesh1' in object:
-                cmd.delete('mesh1')
-            if 'cartoon' in object:
-                cmd.delete('cartoon')
-            if 'helix' in object:
-                cmd.delete('helix')
-            if 'sheets' in object:
-                cmd.delete('sheets')
-            if 'sticks' in object:
-                cmd.delete('sticks')
-            if 'rov_1' in object:
-                cmd.delete('rov_1')
-            if 'rov_m1' in object:
-                cmd.delete('rov_m1')
-            if 'map1' in object:
-                cmd.delete('map1')
-            if 'sphere1' in object:
-                cmd.delete('sphere1')
-            if 'rov_pc' in object:
-                cmd.delete('rov_pc')
-            if 'rov_s1' in object:
-                cmd.delete('rov_s1')
-            cmd.set("roving_detail",0)
-            cmd.set("roving_origin",0)
-            cmd.set("roving_sticks",0)
-            cmd.set('roving_spheres',0)
-            cmd.set("roving_polar_contacts",0)
-            cmd.set('roving_lines',0)
-            cmd.delete('rov_1')
-            cmd.set('roving_isosurface',0)
+#     def delcrea(self):
+#             object = cmd.get_names('all')
+#             if 'surface' in object:
+#                 cmd.delete('surface')
+#             if 'mesh1' in object:
+#                 cmd.delete('mesh1')
+#             if 'cartoon' in object:
+#                 cmd.delete('cartoon')
+#             if 'helix' in object:
+#                 cmd.delete('helix')
+#             if 'sheets' in object:
+#                 cmd.delete('sheets')
+#             if 'sticks' in object:
+#                 cmd.delete('sticks')
+#             if 'rov_1' in object:
+#                 cmd.delete('rov_1')
+#             if 'rov_m1' in object:
+#                 cmd.delete('rov_m1')
+#             if 'map1' in object:
+#                 cmd.delete('map1')
+#             if 'sphere1' in object:
+#                 cmd.delete('sphere1')
+#             if 'rov_pc' in object:
+#                 cmd.delete('rov_pc')
+#             if 'rov_s1' in object:
+#                 cmd.delete('rov_s1')
+#             cmd.set("roving_detail",0)
+#             cmd.set("roving_origin",0)
+#             cmd.set("roving_sticks",0)
+#             cmd.set('roving_spheres',0)
+#             cmd.set("roving_polar_contacts",0)
+#             cmd.set('roving_lines',0)
+#             cmd.delete('rov_1')
+#             cmd.set('roving_isosurface',0)
             
-   
+    
           #populates the selection list      
     def populate(self):
-            objects = cmd.get_names('all')
-            cmd.select('protein','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
-            cmd.select('nucleic_acid', 'resn a+t+g+c+u')
-            cmd.select('hydrophobic','resn ALA+ILE+LEU+MET+PHE+PRO+TRP+VAL')
-            cmd.select('hydrophilic','resn THR+SER+ARG+ASN+ASP+GLN+GLU+HIS+LYS')
-            cmd.select('acidic','resn ASP+GLU')
-            cmd.select('basic','resn ARG+HIS+LYS')
-            cmd.select('ligands', 'het')
-            cmd.select('heme', 'resn hem')
-            cmd.disable('heme')
-            cmd.disable('ligands')
-            cmd.disable('basic')
-            cmd.disable('acidic')
-            cmd.disable('hydrophilic')
-            cmd.disable('hydrophobic')
-            cmd.disable('nucleic_acid')
-            cmd.disable('protein')
-            if self.script=='1':
-                self.f.write('''objects = cmd.get_names('all')
+      letters = ['A', 'B', 'C', 'D', 'E',
+                 'F', 'G', 'H', 'I', 'J',
+                 'K', 'L', 'M', 'N', 'O',
+                 'P', 'Q', 'R', 'S', 'T',
+                 'U', 'V', 'W', 'X', 'Y', 'Z']
+
+      objects = cmd.get_names('all')
+      cmd.select('protein','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
+      cmd.select('nucleic_acid', 'resn a+t+g+c+u')
+      cmd.select('hydrophobic','resn ALA+ILE+LEU+MET+PHE+PRO+TRP+VAL')
+      cmd.select('hydrophilic','resn THR+SER+ARG+ASN+ASP+GLN+GLU+HIS+LYS')
+      cmd.select('acidic','resn ASP+GLU')
+      cmd.select('basic','resn ARG+HIS+LYS')
+      cmd.select('ligands', 'het')
+      cmd.select('heme', 'resn hem')
+      cmd.disable('heme')
+      cmd.disable('ligands')
+      cmd.disable('basic')
+      cmd.disable('acidic')
+      cmd.disable('hydrophilic')
+      cmd.disable('hydrophobic')
+      cmd.disable('nucleic_acid')
+      cmd.disable('protein')
+      if script=='1':
+        f.write('''objects = cmd.get_names('all')
 cmd.select('protein','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
 cmd.select('nucleic_acid', 'resn a+t+g+c+u')
 cmd.select('hydrophobic','resn ALA+ILE+LEU+MET+PHE+PRO+TRP+VAL')
@@ -18837,35 +18213,12 @@ cmd.disable('hydrophilic')
 cmd.disable('hydrophobic')
 cmd.disable('nucleic_acid')
 cmd.disable('protein')\n''')
-            self.checkitforthese()
-            cmd.select("Chain-A", "chain A")
-            cmd.select("Chain-B", "chain B")
-            cmd.select("Chain-C", "chain C")
-            cmd.select("Chain-D", "chain D")
-            cmd.select("Chain-E", "chain E")
-            cmd.select("Chain-F", "chain F")
-            cmd.select("Chain-G", "chain G")
-            cmd.select("Chain-H", "chain H")
-            cmd.select("Chain-I", "chain I")
-            cmd.select("Chain-J", "chain J")
-            cmd.select("Chain-K", "chain K")
-            cmd.select("Chain-L", "chain L")
-            cmd.select("Chain-M", "chain M")
-            cmd.select("Chain-N", "chain N")
-            cmd.select("Chain-O", "chain O")
-            cmd.select("Chain-P", "chain P")
-            cmd.select("Chain-Q", "chain Q")
-            cmd.select("Chain-R", "chain R")
-            cmd.select("Chain-S", "chain S")
-            cmd.select("Chain-T", "chain T")
-            cmd.select("Chain-U", "chain U")
-            cmd.select("Chain-V", "chain V")
-            cmd.select("Chain-W", "chain W")
-            cmd.select("Chain-X", "chain X")
-            cmd.select("Chain-Y", "chain Y")
-            cmd.select("Chain-Z", "chain Z")
-            if self.script=='1':
-                self.f.write('''cmd.select("Chain-A", "chain A")
+      checkitforthese()
+      for each in letters:
+        cmd.select("Chain-" + each, "chain " + each)
+
+      if script=='1':
+        f.write('''cmd.select("Chain-A", "chain A")
 cmd.select("Chain-B", "chain B")
 cmd.select("Chain-C", "chain C")
 cmd.select("Chain-D", "chain D")
@@ -18891,42 +18244,913 @@ cmd.select("Chain-W", "chain W")
 cmd.select("Chain-X", "chain X")
 cmd.select("Chain-Y", "chain Y")
 cmd.select("Chain-Z", "chain Z")\n''')
-            self.checkforchain()            
-            items=[]
-            objects = cmd.get_names('all')
-            items.append('All')
-            items.append('Not Selected')
-            if 'protein' in objects:
-              items.append('protein')
-            if 'nucleic_acid' in objects:
-              items.append('nucleic_acid')
-            if 'hydrophobic' in objects:
-              items.append('hydrophobic')
-            if 'hydrophilic' in objects:
-              items.append('hydrophilic')
-            if 'acidic' in objects:
-              items.append('acidic')
-            if 'basic' in objects:
-              items.append('basic')
-            if 'ligands' in objects:
-              items.append('ligands')
-            if 'heme' in objects:
-              items.append('heme') 
+        checkforchain()            
+        items=[]
+        objects = cmd.get_names('all')
+        items.append('All')
+        items.append('Not Selected')
+        if 'protein' in objects:
+          items.append('protein')
+        if 'nucleic_acid' in objects:
+          items.append('nucleic_acid')
+        if 'hydrophobic' in objects:
+          items.append('hydrophobic')
+        if 'hydrophilic' in objects:
+          items.append('hydrophilic')
+        if 'acidic' in objects:
+          items.append('acidic')
+        if 'basic' in objects:
+          items.append('basic')
+        if 'ligands' in objects:
+          items.append('ligands')
+        if 'heme' in objects:
+          items.append('heme') 
 	#Checks to see if there are chains in objects
-	    letters = ['A', 'B', 'C', 'D', 'E',
-                       'F', 'G', 'H', 'I', 'J',
-                       'K', 'L', 'M', 'N', 'O',
-                       'P', 'Q', 'R', 'S', 'T',
-                       'U', 'V', 'W', 'X', 'Y', 'Z']
 
-	    for i in range(len(letters)):
-    		if 'Chain-' + letters[i] in objects:
-			items.append('Chain-' + letters[i])
 
-            self.sel1 = 'All'
-            self.sel = 'All'
-            items.sort()
-            self.selection.setitems(items) 
-            self.advancedSelection.setitems(items)
+        for i in range(len(letters)):
+          if 'Chain-' + letters[i] in objects:
+            items.append('Chain-' + letters[i])
+
+        self.sel1 = 'All'
+        self.sel = 'All'
+        items.sort()
+        self.selection.setitems(items) 
+        self.advancedSelection.setitems(items)
 
     #-------The End------for now.... 
+def write_script(tag):
+  if tag == 'Off':
+    script ='0'
+    
+  if tag=='On': #write a scritp
+    try:
+      script = '1'
+      import tkFileDialog
+      Q = tkFileDialog.asksaveasfilename(defaultextension=".py", initialdir="./modules/pmg_tk/startup/Scripts")
+      cmd.do('log_open %s,a' %(Q))            
+      self.f=open(Q, 'w')
+    except:
+      pass
+
+def delcrea():
+  object = cmd.get_names('all')
+  if 'surface' in object:
+      cmd.delete('surface')
+  if 'mesh1' in object:
+      cmd.delete('mesh1')
+  if 'cartoon' in object:
+      cmd.delete('cartoon')
+  if 'helix' in object:
+      cmd.delete('helix')
+  if 'sheets' in object:
+      cmd.delete('sheets')
+  if 'sticks' in object:
+      cmd.delete('sticks')
+  if 'rov_1' in object:
+      cmd.delete('rov_1')
+  if 'rov_m1' in object:
+      cmd.delete('rov_m1')
+  if 'map1' in object:
+      cmd.delete('map1')
+  if 'sphere1' in object:
+      cmd.delete('sphere1')
+  if 'rov_pc' in object:
+      cmd.delete('rov_pc')
+  if 'rov_s1' in object:
+      cmd.delete('rov_s1')
+  cmd.set("roving_detail",0)
+  cmd.set("roving_origin",0)
+  cmd.set("roving_sticks",0)
+  cmd.set('roving_spheres',0)
+  cmd.set("roving_polar_contacts",0)
+  cmd.set('roving_lines',0)
+  cmd.delete('rov_1')
+  cmd.set('roving_isosurface',0)
+cmd.extend('delcrea',delcrea)
+
+
+def set_defaults():
+  cmd.hide('everything','all')
+  cmd.set('transparency','0.0','all')
+  cmd.set('cartoon_transparency','0.0','all')
+  cmd.set('transparency','0','all')
+  cmd.set('sphere_transparency','0.0','all')
+  cmd.set('stick_transparency','0.0','all')
+  cmd.set('sphere_scale','0.7','all')
+  cmd.cartoon('automatic', 'all')
+  cmd.set('stick_radius','0.2','all')
+  if script == '1':
+    f.write('''cmd.hide("everything","all") 
+cmd.set("transparency","0.0","all")
+cmd.set("cartoon_transparency","0.0","all")
+cmd.set("transparency","0","all")
+cmd.set("sphere_transparency","0.0","all")
+cmd.set("stick_transparency","0.0","all")
+cmd.set("sphere_scale","0.7","all")
+cmd.cartoon("automatic", "all")
+cmd.set("stick_radius","0.2","all")\n''')
+  delcrea()
+cmd.extend('set_defaults',set_defaults)
+
+def checkforchain():
+    objects = cmd.get_names('all')
+    if 'Chain-A' in objects:
+        x1 = cmd.index('Chain-A')
+        n1  = len(x1)
+        if(n1 < 1):
+            cmd.delete('Chain-A')
+            if script=='1':
+                f.write('''cmd.delete('Chain-A')\n''')
+    if 'Chain-B' in objects:
+        x2 = cmd.index('Chain-B')
+        n2 = len(x2)
+        if(n2 < 1):
+            cmd.delete('Chain-B')
+            if script=='1':
+                f.write('''cmd.delete('Chain-B')\n''')
+    if 'Chain-C' in objects:
+        x3 = cmd.index('Chain-C')
+        n3 = len(x3)
+        if(n3 < 1):
+            cmd.delete('Chain-C')
+            if script=='1':
+                f.write('''cmd.delete('Chain-C')\n''')
+    if 'Chain-D' in objects:
+        x4 = cmd.index('Chain-D')
+        n4  = len(x4)
+        if(n4 < 1):
+            cmd.delete('Chain-D')
+            if script=='1':
+                f.write('''cmd.delete('Chain-D')\n''')
+    if 'Chain-E' in objects:
+        x5 = cmd.index('Chain-E')
+        n5 = len(x5)
+        if(n5 < 1):
+            cmd.delete('Chain-E')
+            if script=='1':
+                f.write('''cmd.delete('Chain-E')\n''')
+    if 'Chain-F' in objects:
+        x6 = cmd.index('Chain-F')
+        n6 = len(x6)
+        if(n6 < 1):
+            cmd.delete('Chain-F')
+            if script=='1':
+                f.write('''cmd.delete('Chain-F')\n''')
+    if 'Chain-G' in objects:
+        x7 = cmd.index('Chain-G')
+        n7  = len(x7)
+        if(n7 < 1):
+            cmd.delete('Chain-G')
+            if script=='1':
+                f.write('''cmd.delete('Chain-G')\n''')
+    if 'Chain-H' in objects:
+        x8 = cmd.index('Chain-H')
+        n8 = len(x8)
+        if(n8 < 1):
+            cmd.delete('Chain-H')
+            if script=='1':
+                f.write('''cmd.delete('Chain-H')\n''')
+    if 'Chain-I' in objects:
+        x9 = cmd.index('Chain-I')
+        n9 = len(x9)
+        if(n9 < 1):
+            cmd.delete('Chain-I')
+            if script=='1':
+                f.write('''cmd.delete('Chain-I')\n''')
+    if 'Chain-J' in objects:
+        x10 = cmd.index('Chain-J')
+        n10  = len(x10)
+        if(n10 < 1):
+            cmd.delete('Chain-J')
+            if script=='1':
+                f.write('''cmd.delete('Chain-J')\n''')
+    if 'Chain-K' in objects:
+        x11 = cmd.index('Chain-K')
+        n11 = len(x11)
+        if(n11 < 1):
+            cmd.delete('Chain-K')
+            if script=='1':
+                f.write('''cmd.delete('Chain-K')\n''')
+    if 'Chain-L' in objects:
+        x12 = cmd.index('Chain-L')
+        n12 = len(x12)
+        if(n12 < 1):
+            cmd.delete('Chain-L')
+            if script=='1':
+                f.write('''cmd.delete('Chain-L')\n''')
+    if 'Chain-M' in objects:
+        x13 = cmd.index('Chain-M')
+        n13  = len(x13)
+        if(n13 < 1):
+            cmd.delete('Chain-M')
+            if script=='1':
+                f.write('''cmd.delete('Chain-M')\n''')
+    if 'Chain-N' in objects:
+        x14 = cmd.index('Chain-N')
+        n14 = len(x14)
+        if(n14 < 1):
+            cmd.delete('Chain-N')
+            if script=='1':
+                f.write('''cmd.delete('Chain-N')\n''')
+    if 'Chain-O' in objects:
+        x15 = cmd.index('Chain-O')
+        n15 = len(x15)
+        if(n15 < 1):
+            cmd.delete('Chain-O')
+            if script=='1':
+                f.write('''cmd.delete('Chain-O')\n''')
+    if 'Chain-P' in objects:
+        x16 = cmd.index('Chain-P')
+        n16  = len(x16)
+        if(n16 < 1):
+            cmd.delete('Chain-P')
+            if script=='1':
+                f.write('''cmd.delete('Chain-P')\n''')
+    if 'Chain-Q' in objects:
+        x17 = cmd.index('Chain-Q')
+        n17 = len(x17)
+        if(n17 < 1):
+            cmd.delete('Chain-Q')
+            if script=='1':
+                f.write('''cmd.delete('Chain-Q')\n''')
+    if 'Chain-R' in objects:
+        x18 = cmd.index('Chain-R')
+        n18 = len(x18)
+        if(n18 < 1):
+            cmd.delete('Chain-R')
+            if script=='1':
+                f.write('''cmd.delete('Chain-R')\n''')
+    if 'Chain-S' in objects:
+        x19 = cmd.index('Chain-S')
+        n19  = len(x19)
+        if(n19 < 1):
+            cmd.delete('Chain-S')
+            if script=='1':
+                f.write('''cmd.delete('Chain-S')\n''')
+    if 'Chain-T' in objects:
+        x20 = cmd.index('Chain-T')
+        n20 = len(x20)
+        if(n20 < 1):
+            cmd.delete('Chain-T')
+            if script=='1':
+                f.write('''cmd.delete('Chain-T')\n''')
+    if 'Chain-U' in objects:
+        x21 = cmd.index('Chain-U')
+        n21 = len(x21)
+        if(n21 < 1):
+            cmd.delete('Chain-U')
+            if script=='1':
+                f.write('''cmd.delete('Chain-U')\n''')
+    if 'Chain-V' in objects:
+        x22 = cmd.index('Chain-V')
+        n22 = len(x22)
+        if(n22 < 1):
+            cmd.delete('Chain-V')
+            if script=='1':
+                f.write('''cmd.delete('Chain-V')\n''')
+    if 'Chain-W' in objects:
+        x23 = cmd.index('Chain-W')
+        n23 = len(x23)
+        if(n23 < 1):
+            cmd.delete('Chain-W')
+            if script=='1':
+                f.write('''cmd.delete('Chain-W')\n''')
+    if 'Chain-X' in objects:
+        x24 = cmd.index('Chain-X')
+        n24 = len(x24)
+        if(n24 < 1):
+            cmd.delete('Chain-X')
+            if script=='1':
+                f.write('''cmd.delete('Chain-X')\n''')
+    if 'Chain-Y' in objects:
+        x25 = cmd.index('Chain-Y')
+        n25 = len(x25)
+        if(n25 < 1):
+            cmd.delete('Chain-Y')
+            if script=='1':
+                f.write('''cmd.delete('Chain-Y')\n''')
+    if 'Chain-Z' in objects:
+        x26 = cmd.index('Chain-Z')
+        n26 = len(x26)
+        if(n26 < 1):
+            cmd.delete('Chain-Z')
+            if script=='1':
+                f.write('''cmd.delete('Chain-Z')\n''')
+    if 'Chain-' '' in objects:
+        x26 = cmd.index('Chain-' '')
+        n26 = len(x26)
+        if(n26 < 1):
+            cmd.delete('Chain-' '')
+            if script=='1':
+                f.write('''cmd.delete('Chain-' '')\n''')
+cmd.extend('checkforchain',checkforchain)
+
+def deletemotif():
+
+    cmd.delete('p-loop')
+    cmd.delete('serineprotease')
+    cmd.delete('lactamase')
+    cmd.delete('superoxide')
+    cmd.delete('metalloprotease')
+    cmd.delete('tyrophos')
+    cmd.delete('carbonicanhydrase')
+    cmd.delete('paplike')
+    cmd.delete('Zinc_finger')
+    cmd.delete('Aminotransferase')
+    cmd.delete('fucoseisomerase')
+    cmd.delete('Ligase')
+    cmd.delete('o-glycosyl')
+    cmd.delete('glu_amidotransferase')
+    cmd.delete('Peroxidase')
+    cmd.delete('carboncarbon')
+    cmd.delete('Tkinase')
+    cmd.delete('TrioseIsomerase')
+    cmd.delete('alcoholdehyd')
+    cmd.delete('Cis-trans')
+    cmd.delete('aldoreductase')
+    cmd.delete('NAD-reductase')
+    cmd.delete('NAD-reductase2')
+    cmd.delete('chondroitinase')
+    cmd.delete('Hyaluronate_Lyase')
+    cmd.delete('deacetylase')
+    cmd.delete('p-loop')
+    cmd.delete('adenylatekinase')
+    cmd.delete('SRC-Kinase')
+    cmd.delete('Cyclin_Kinase')
+    cmd.delete('Serotonin_transferase')
+    cmd.delete('actase')
+    cmd.delete('Exonuclease3')
+    cmd.delete('Citrate_Synth')
+    cmd.delete('hhal')
+    cmd.delete('betaine_dehydrogenase')
+cmd.extend('deletemotif',deletemotif)
+
+def checkitforthese():
+    objects = cmd.get_names('all')
+    if 'ligands' in objects:
+        xa = cmd.index('ligands')
+        na  = len(xa)
+        if(na < 1):
+            cmd.delete('ligands')
+            if script=='1':
+                f.write('''cmd.delete('ligands')\n''')
+    if 'nucleic_acid' in objects:
+        xb = cmd.index('nucleic_acid')
+        nb = len(xb)
+        if(nb < 1):
+            cmd.delete('nucleic_acid')
+            if script=='1':
+                f.write('''cmd.delete('nucleic_acid')\n''')
+    if 'protein' in objects:
+        xc = cmd.index('protein')
+        nc = len(xc)
+        if(nc < 1):
+            cmd.delete('protein')
+            if script=='1':
+                f.write('''cmd.delete('protein')\n''')
+
+    if 'hydrophilic' in objects:
+        xd = cmd.index('hydrophilic')
+        nd = len(xd)
+        if(nd < 1):
+            cmd.delete('hydrophilic')
+
+    if 'hydrophobic' in objects:
+        xe = cmd.index('hydrophobic')
+        ne = len(xe)
+        if(ne < 1):
+            cmd.delete('hydrophobic')
+            if script=='1':
+                f.write('''cmd.delete('hydrophobic')\n''')
+
+    if 'acidic' in objects:
+        xe = cmd.index('acidic')
+        ne = len(xe)
+        if(ne < 1):
+            cmd.delete('acidic')
+            if script=='1':
+                f.write('''cmd.delete('acidic')\n''')
+
+    if 'basic' in objects:
+        xg = cmd.index('basic')
+        ng = len(xg)
+        if(ng < 1):
+            cmd.delete('basic')
+            if script=='1':
+                f.write('''cmd.delete('basic')\n''')
+
+    if 'heme' in objects:
+        xh = cmd.index('heme')
+        nh = len(xh)
+        if(nh < 1):
+            cmd.delete('heme')
+            if script=='1':
+                f.write('''cmd.delete('heme')\n''')
+cmd.extend('checkitforthese',checkitforthese)
+
+
+    #------------Had to make cpk definitions for all selections made
+    #-----------because couldn't get it to work on self.mot or original cpk+str
+
+def cpkprotein():
+  objects = cmd.get_names('all')
+  if 'protein' in objects:
+    cmd.color("oxygen","(elem O and protein)")
+    cmd.color("nitrogen","(elem N and protein)")
+    cmd.color("sulfur","(elem S and protein)")
+    cmd.color("hydrogen","(elem H and protein)")
+    cmd.color("gray","(elem C and protein)")
+    if script=='1':
+      f.write('''cmd.color("oxygen","(elem O and protein)")
+cmd.color("nitrogen","(elem N and protein)")
+cmd.color("sulfur","(elem S and protein)")
+cmd.color("hydrogen","(elem H and protein)")
+cmd.color("gray","(elem C and protein)")\n''')
+
+def cpknucleic():
+  objects = cmd.get_names('all')
+  if 'nucleic_acid' in objects:
+    cmd.color("oxygen","(elem O and nucleic_acid)")
+    cmd.color("nitrogen","(elem N and nucleic_acid)")
+    cmd.color("sulfur","(elem S and nucleic_acid)")
+    cmd.color("hydrogen","(elem H and nucleic_acid)")
+    cmd.color("gray","(elem C and nucleic_acid)")
+    if script=='1':
+      f.write('''cmd.color("oxygen","(elem O and nucleic_acid)")
+cmd.color("nitrogen","(elem N and nucleic_acid)")
+cmd.color("sulfur","(elem S and nucleic_acid)")
+cmd.color("hydrogen","(elem H and nucleic_acid)")
+cmd.color("gray","(elem C and nucleic_acid)")\n''')
+
+def cpkligands():
+  objects = cmd.get_names('all')
+  if 'ligands' in objects:
+    cmd.color("oxygen","(elem O and ligands)")
+    cmd.color("nitrogen","(elem N and ligands)")
+    cmd.color("sulfur","(elem S and ligands)")
+    cmd.color("hydrogen","(elem H and ligands)")
+    cmd.color("gray","(elem C and ligands)")
+    if script=='1':
+      f.write('''cmd.color("oxygen","(elem O and ligands)")
+cmd.color("nitrogen","(elem N and ligands)")
+cmd.color("sulfur","(elem S and ligands)")
+cmd.color("hydrogen","(elem H and ligands)")
+cmd.color("gray","(elem C and ligands)")\n''')
+
+def cpkduh():
+   objects = cmd.get_names('all')
+   if 'duh' in objects:
+       cmd.color("oxygen","(elem O and duh)")
+       cmd.color("nitrogen","(elem N and duh)")
+       cmd.color("sulfur","(elem S and duh)")
+       cmd.color("hydrogen","(elem H and duh)")
+       cmd.color("white","(elem C and duh)")
+
+def cpkinteraction():
+  objects = cmd.get_names('all')
+  if 'interaction' in objects:
+    cmd.color("oxygen","(elem O and interaction)")
+    cmd.color("nitrogen","(elem N and interaction)")
+    cmd.color("sulfur","(elem S and interaction)")
+    cmd.color("hydrogen","(elem H and interaction)")
+    cmd.color("gray","(elem C and interaction)")
+    if script=='1':
+      f.write('''cmd.color("oxygen","(elem O and interaction)")
+cmd.color("nitrogen","(elem N and interaction)")
+cmd.color("sulfur","(elem S and interaction)")
+cmd.color("hydrogen","(elem H and interaction)")
+cmd.color("gray","(elem C and interaction)")\n''')
+
+def cpkserineprotease():
+   objects = cmd.get_names('all')
+   if 'serineprotease' in objects:
+       cmd.color("oxygen","(elem O and serineprotease)")
+       cmd.color("nitrogen","(elem N and serineprotease)")
+       cmd.color("sulfur","(elem S and serineprotease)")
+       cmd.color("hydrogen","(elem H and serineprotease)")
+       cmd.color("white","(elem C and serineprotease)")
+
+def cpkBlactamase():
+ objects = cmd.get_names('all')
+ if 'lactamase' in objects:
+     cmd.color("oxygen","(elem O and lactamase)")
+     cmd.color("nitrogen","(elem N and lactamase)")
+     cmd.color("sulfur","(elem S and lactamase)")
+     cmd.color("hydrogen","(elem H and lactamase)")
+     cmd.color("white","(elem C and lactamase)")
+
+def cpkmotif():
+ objects = cmd.get_names('all')
+ if 'motif' in objects:
+     cmd.color("oxygen","(elem O and motif)")
+     cmd.color("nitrogen","(elem N and motif)")
+     cmd.color("sulfur","(elem S and motif)")
+     cmd.color("hydrogen","(elem H and motif)")
+     cmd.color("white","(elem C and motif)")
+
+def cpkmetalloprotease():
+ objects = cmd.get_names('all')
+ if 'metalloprotease' in objects:
+     cmd.color("oxygen","(elem O and metalloprotease)")
+     cmd.color("nitrogen","(elem N and metalloprotease)")
+     cmd.color("sulfur","(elem S and metalloprotease)")
+     cmd.color("hydrogen","(elem H and metalloprotease)")
+     cmd.color("white","(elem C and metalloprotease)")
+
+def cpktyrophos():
+ objects = cmd.get_names('all')
+ if 'tyrophos' in objects:
+     cmd.color("oxygen","(elem O and tyrophos)")
+     cmd.color("nitrogen","(elem N and tyrophos)")
+     cmd.color("sulfur","(elem S and tyrophos)")
+     cmd.color("hydrogen","(elem H and tyrophos)")
+     cmd.color("white","(elem C and tyrophos)")
+
+
+def cpkreductase():
+ objects = cmd.get_names('all')
+ if 'superoxide' in objects:
+     cmd.color("oxygen","(elem O and superoxide)")
+     cmd.color("nitrogen","(elem N and superoxide)")
+     cmd.color("sulfur","(elem S and superoxide)")
+     cmd.color("hydrogen","(elem H and superoxide)")
+     cmd.color("white","(elem C and superoxide)")
+
+def cpkcarbanhyd():
+ objects = cmd.get_names('all')
+ if 'carbonicanhydrase' in objects:
+     cmd.color("oxygen","(elem O and carbonicanhydrase)")
+     cmd.color("nitrogen","(elem N and carbonicanhydrase)")
+     cmd.color("sulfur","(elem S and carbonicanhydrase)")
+     cmd.color("hydrogen","(elem H and carbonicanhydrase)")
+     cmd.color("white","(elem C and carbonicanhydrase)")
+
+def cpkpaplike():
+ objects = cmd.get_names('all')
+ if 'paplike' in objects:
+     cmd.color("oxygen","(elem O and paplike)")
+     cmd.color("nitrogen","(elem N and paplike)")
+     cmd.color("sulfur","(elem S and paplike)")
+     cmd.color("hydrogen","(elem H and paplike)")
+     cmd.color("white","(elem C and paplike)")
+
+
+def cpkzincfinger():
+ objects = cmd.get_names('all')
+ if 'Zinc_finger' in objects:
+     cmd.color("oxygen","(elem O and Zinc_finger)")
+     cmd.color("nitrogen","(elem N and Zinc_finger)")
+     cmd.color("sulfur","(elem S and Zinc_finger)")
+     cmd.color("hydrogen","(elem H and Zinc_finger)")
+     cmd.color("white","(elem C and Zinc_finger)")
+
+
+def cpkaminotransferase():
+ objects = cmd.get_names('all')
+ if 'Aminotransferase' in objects:
+     cmd.color("oxygen","(elem O and Aminotransferase)")
+     cmd.color("nitrogen","(elem N and Aminotransferase)")
+     cmd.color("sulfur","(elem S and Aminotransferase)")
+     cmd.color("hydrogen","(elem H and Aminotransferase)")
+     cmd.color("white","(elem C and Aminotransferase)")
+
+
+def cpkfucoseisomerase():
+ objects = cmd.get_names('all')
+ if 'fucoseisomerase' in objects:
+     cmd.color("oxygen","(elem O and fucoseisomerase)")
+     cmd.color("nitrogen","(elem N and fucoseisomerase)")
+     cmd.color("sulfur","(elem S and fucoseisomerase)")
+     cmd.color("hydrogen","(elem H and fucoseisomerase)")
+     cmd.color("white","(elem C and fucoseisomerase)")
+     cmd.color('purpleblue', 'elem mn')
+
+
+def cpkglu_amidotransferase():
+ objects = cmd.get_names('all')
+ if 'glu_amidotransferase' in objects:
+     cmd.color("oxygen","(elem O and glu_amidotransferase)")
+     cmd.color("nitrogen","(elem N and glu_amidotransferase)")
+     cmd.color("sulfur","(elem S and glu_amidotransferase)")
+     cmd.color("hydrogen","(elem H and glu_amidotransferase)")
+     cmd.color("white","(elem C and glu_amidotransferase)")
+
+
+def cpkdnaligase():
+  objects = cmd.get_names('all')
+  if 'Ligase' in objects:
+     cmd.color("oxygen","(elem O and Ligase)")
+     cmd.color("nitrogen","(elem N and Ligase)")
+     cmd.color("sulfur","(elem S and Ligase)")
+     cmd.color("hydrogen","(elem H and Ligase)")
+     cmd.color("white","(elem C and Ligase)")
+
+def cpkoglycosyl():
+  objects = cmd.get_names('all')
+  if 'o-glycosyl' in objects:
+     cmd.color("oxygen","(elem O and o-glycosyl)")
+     cmd.color("nitrogen","(elem N and o-glycosyl)")
+     cmd.color("sulfur","(elem S and o-glycosyl)")
+     cmd.color("hydrogen","(elem H and o-glycosyl)")
+     cmd.color("white","(elem C and o-glycosyl)")
+
+def cpkcarboncarbon():
+  objects = cmd.get_names('all')
+  if 'carboncarbon' in objects:
+     cmd.color("oxygen","(elem O and carboncarbon)")
+     cmd.color("nitrogen","(elem N and carboncarbon)")
+     cmd.color("sulfur","(elem S and carboncarbon)")
+     cmd.color("hydrogen","(elem H and carboncarbon)")
+     cmd.color("white","(elem C and carboncarbon)")
+
+def cpkkinase():
+  objects = cmd.get_names('all')
+  if 'Tkinase' in objects:
+     cmd.color("oxygen","(elem O and Tkinase)")
+     cmd.color("nitrogen","(elem N and Tkinase)")
+     cmd.color("sulfur","(elem S and Tkinase)")
+     cmd.color("hydrogen","(elem H and Tkinase)")
+     cmd.color("white","(elem C and Tkinase)")
+
+def cpkperoxidase():
+  objects = cmd.get_names('all')
+  if 'Peroxidase' in objects:
+     cmd.color("oxygen","(elem O and Peroxidase)")
+     cmd.color("nitrogen","(elem N and Peroxidase)")
+     cmd.color("sulfur","(elem S and Peroxidase)")
+     cmd.color("hydrogen","(elem H and Peroxidase)")
+     cmd.color("white","(elem C and Peroxidase)")
+
+def cpktriose():
+  objects = cmd.get_names('all')
+  if 'TrioseIsomerase' in objects:
+     cmd.color("oxygen","(elem O and TrioseIsomerase)")
+     cmd.color("nitrogen","(elem N and TrioseIsomerase)")
+     cmd.color("sulfur","(elem S and TrioseIsomerase)")
+     cmd.color("hydrogen","(elem H and TrioseIsomerase)")
+     cmd.color("white","(elem C and TrioseIsomerase)")
+
+
+def cpkalcoholdehyd():
+  objects = cmd.get_names('all')
+  if 'alcoholdehyd' in objects:
+     cmd.color("oxygen","(elem O and alcoholdehyd)")
+     cmd.color("nitrogen","(elem N and alcoholdehyd)")
+     cmd.color("sulfur","(elem S and alcoholdehyd)")
+     cmd.color("hydrogen","(elem H and alcoholdehyd)")
+     cmd.color("white","(elem C and alcoholdehyd)")
+
+def cpkaldoreductase():
+  objects = cmd.get_names('all')
+  if 'aldoreductase' in objects:
+     cmd.color("oxygen","(elem O and aldoreductase)")
+     cmd.color("nitrogen","(elem N and aldoreductase)")
+     cmd.color("sulfur","(elem S and aldoreductase)")
+     cmd.color("hydrogen","(elem H and aldoreductase)")
+     cmd.color("white","(elem C and aldoreductase)")
+
+
+def cpkcistrans():
+   objects = cmd.get_names('all')
+   if 'Cis-trans' in objects:
+       cmd.color("oxygen","(elem O and Cis-trans)")
+       cmd.color("nitrogen","(elem N and Cis-trans)")
+       cmd.color("sulfur","(elem S and Cis-trans)")
+       cmd.color("hydrogen","(elem H and Cis-trans)")
+       cmd.color("white","(elem C and Cis-trans)")
+
+def cpksubstrate():
+   objects = cmd.get_names('all')
+   if 'substrate' in objects:
+       util.cnc('substrate')
+       cmd.color("oxygen","(elem O and substrate)")
+       cmd.color("nitrogen","(elem N and substrate)")
+       cmd.color("sulfur","(elem S and substrate)")
+       cmd.color("hydrogen","(elem H and substrate)")
+       cmd.color("gray","(elem C and substrate)")
+
+def cpknadreductase():
+   objects = cmd.get_names('all')
+   if 'NAD-reductase' in objects:
+       cmd.color("oxygen","(elem O and NAD-reductase)")
+       cmd.color("nitrogen","(elem N and NAD-reductase)")
+       cmd.color("sulfur","(elem S and NAD-reductase)")
+       cmd.color("hydrogen","(elem H and NAD-reductase)")
+       cmd.color("white","(elem C and NAD-reductase)")
+
+def cpknadreductase2():
+   objects = cmd.get_names('all')
+   if 'NAD-reductase2' in objects:
+       cmd.color("oxygen","(elem O and NAD-reductase2)")
+       cmd.color("nitrogen","(elem N and NAD-reductase2)")
+       cmd.color("sulfur","(elem S and NAD-reductase2)")
+       cmd.color("hydrogen","(elem H and NAD-reductase2)")
+       cmd.color("white","(elem C and NAD-reductase2)")
+
+def cpkdeacetylase():
+   objects = cmd.get_names('all')
+   if 'deacetylase' in objects:
+       cmd.color("oxygen","(elem O and deacetylase)")
+       cmd.color("nitrogen","(elem N and deacetylase)")
+       cmd.color("sulfur","(elem S and deacetylase)")
+       cmd.color("hydrogen","(elem H and deacetylase)")
+       cmd.color("white","(elem C and deacetylase)")
+
+def cpkchondro():
+   objects = cmd.get_names('all')
+   if 'chondroitinase' in objects:
+       cmd.color("oxygen","(elem O and chondroitinase)")
+       cmd.color("nitrogen","(elem N and chondroitinase)")
+       cmd.color("sulfur","(elem S and chondroitinase)")
+       cmd.color("hydrogen","(elem H and chondroitinase)")
+       cmd.color("white","(elem C and chondroitinase)")
+
+def cpkhyaluron():
+ objects = cmd.get_names('all')
+ if 'Hyaluronate_Lyase' in objects:
+     cmd.color("oxygen","(elem O and Hyaluronate_Lyase)")
+     cmd.color("nitrogen","(elem N and Hyaluronate_Lyase)")
+     cmd.color("sulfur","(elem S and Hyaluronate_Lyase)")
+     cmd.color("hydrogen","(elem H and Hyaluronate_Lyase)")
+     cmd.color("white","(elem C and Hyaluronate_Lyase)")
+
+def cpkactase():
+   objects = cmd.get_names('all')
+   if 'actase' in objects:
+       cmd.color("oxygen","(elem O and actase)")
+       cmd.color("nitrogen","(elem N and actase)")
+       cmd.color("sulfur","(elem S and actase)")
+       cmd.color("hydrogen","(elem H and actase)")
+       cmd.color("white","(elem C and actase)")
+
+def cpkadenylatekinase():
+   objects = cmd.get_names('all')
+   if 'adenylatekinase' in objects:
+       cmd.color("oxygen","(elem O and adenylatekinase)")
+       cmd.color("nitrogen","(elem N and adenylatekinase)")
+       cmd.color("sulfur","(elem S and adenylatekinase)")
+       cmd.color("hydrogen","(elem H and adenylatekinase)")
+       cmd.color("white","(elem C and adenylatekinase)")
+
+def cpknuclease():
+   objects = cmd.get_names('all')
+   if 'Exonuclease3' in objects:
+       cmd.color("oxygen","(elem O and Exonuclease3)")
+       cmd.color("nitrogen","(elem N and Exonuclease3)")
+       cmd.color("sulfur","(elem S and Exonuclease3)")
+       cmd.color("hydrogen","(elem H and Exonuclease3)")
+       cmd.color("white","(elem C and Exonuclease3)")
+
+def cpkcitrate():
+   objects = cmd.get_names('all')
+   if 'Citrate_Synth' in objects:
+       cmd.color("oxygen","(elem O and Citrate_Synth)")
+       cmd.color("nitrogen","(elem N and Citrate_Synth)")
+       cmd.color("sulfur","(elem S and Citrate_Synth)")
+       cmd.color("hydrogen","(elem H and Citrate_Synth)")
+       cmd.color("white","(elem C and Citrate_Synth)")
+
+def cpktyrokinase():
+   objects = cmd.get_names('all')
+   if 'SRC-Kinase' in objects:
+       cmd.color("oxygen","(elem O and SRC-Kinase)")
+       cmd.color("nitrogen","(elem N and SRC-Kinase)")
+       cmd.color("sulfur","(elem S and SRC-Kinase)")
+       cmd.color("hydrogen","(elem H and SRC-Kinase)")
+       cmd.color("white","(elem C and SRC-Kinase)")
+
+def cpkhhal():
+   objects = cmd.get_names('all')
+   if 'hhal' in objects:
+       cmd.color("oxygen","(elem O and hhal)")
+       cmd.color("nitrogen","(elem N and hhal)")
+       cmd.color("sulfur","(elem S and hhal)")
+       cmd.color("hydrogen","(elem H and hhal)")
+       cmd.color("white","(elem C and hhal)")
+
+def cpkbetaine():
+   objects = cmd.get_names('all')
+   if 'betaine_dehydrogenase' in objects:
+       cmd.color("oxygen","(elem O and betaine_dehydrogenase)")
+       cmd.color("nitrogen","(elem N and betaine_dehydrogenase)")
+       cmd.color("sulfur","(elem S and betaine_dehydrogenase)")
+       cmd.color("hydrogen","(elem H and betaine_dehydrogenase)")
+       cmd.color("white","(elem C and betaine_dehydrogenase)")
+
+def cpkseracetyl():
+      objects = cmd.get_names('all')
+      if 'Serotonin_transferase' in objects:
+         cmd.color("oxygen","(elem O and Serotonin_transferase)")
+         cmd.color("nitrogen","(elem N and Serotonin_transferase)")
+         cmd.color("sulfur","(elem S and Serotonin_transferase)")
+         cmd.color("hydrogen","(elem H and Serotonin_transferase)")
+         cmd.color("white","(elem C and Serotonin_transferase)")
+
+def cpkcyclinkinase():
+   objects = cmd.get_names('all')
+   if 'Cyclin_Kinase' in objects:
+       cmd.color("oxygen","(elem O and Cyclin_Kinase)")
+       cmd.color("nitrogen","(elem N and Cyclin_Kinase)")
+       cmd.color("sulfur","(elem S and Cyclin_Kinase)")
+       cmd.color("hydrogen","(elem H and Cyclin_Kinase)")
+       cmd.color("white","(elem C and Cyclin_Kinase)")
+
+def color_by_chain():
+    set_defaults()
+    checkitforthese()
+    delcrea()
+    cmd.hide('all')
+    cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
+    cmd.show('sticks','resn a+g+c+t+u')
+    cmd.set('sphere_scale','0.4','resn u')   
+    cmd.color("blue","chain A")
+    cmd.color("orange","chain B" )
+    cmd.color("silver","chain C")
+    cmd.color("green","chain D")
+    cmd.color("yellow","chain E")
+    cmd.color("purple","chain F")
+    cmd.color("grey","chain G")
+    cmd.color("brown","chain H")
+    cmd.color("slate","chain I")
+    cmd.color("brightorange","chain J")
+    cmd.color("lightblue","chain K" )
+    cmd.color("lightorange","chain L" )
+    cmd.color("purple","chain M" )
+    cmd.color("pink","chain N" )
+    cmd.color("forest","chain O" )
+    cmd.color("firebrick","chain P" )
+    cmd.color("paleyellow","chain Q" )
+    cmd.color("purpleblue","chain R" )
+    cmd.color("deepteal","chain S" )
+    cmd.color("deepolive","chain T" )
+    cmd.color("pink","chain U" )
+    cmd.color("salmon","chain V" )
+    cmd.color("ruby","chain W" )
+    cmd.color("wheat","chain X" )
+    cmd.color("lightmagenta","chain Y")
+    cmd.color("aquamarine","chain Z")
+    if script=='1':
+        f.write('''cmd.hide('all')
+cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
+cmd.show('sticks','resn a+g+c+t+u')
+cmd.set('sphere_scale','0.4','resn u')   
+cmd.color("blue","chain A")
+cmd.color("orange","chain B" )
+cmd.color("silver","chain C")
+cmd.color("green","chain D")
+cmd.color("yellow","chain E")
+cmd.color("purple","chain F")
+cmd.color("grey","chain G")
+cmd.color("brown","chain H")
+cmd.color("slate","chain I")
+cmd.color("brightorange","chain J")
+cmd.color("lightblue","chain K" )
+cmd.color("lightorange","chain L" )
+cmd.color("purple","chain M" )
+cmd.color("pink","chain N" )
+cmd.color("forest","chain O" )
+cmd.color("firebrick","chain P" )
+cmd.color("paleyellow","chain Q" )
+cmd.color("purpleblue","chain R" )
+cmd.color("deepteal","chain S" )
+cmd.color("deepolive","chain T" )
+cmd.color("pink","chain U" )
+cmd.color("salmon","chain V" )
+cmd.color("ruby","chain W" )
+cmd.color("wheat","chain X" )
+cmd.color("lightmagenta","chain Y")
+cmd.color("aquamarine","chain Z")\n''')
+
+def color_cpk(str):
+  cmd.color("carbgray", "(elem C)" + str )
+  cmd.color("red", "elem O" + str )
+  cmd.color("white", "elem H" + str )
+  cmd.color("nitblue", "elem N" + str )
+  cmd.color("sulfyellow", "elem S" + str )
+  cmd.color("phosorange", "elem P+Fe+Ba" + str )
+  cmd.color("green", "elem Cl+B" + str )
+  cmd.color("brown", "elem Br+Zn+Cu+Ni" + str )
+  cmd.color("blue", "elem Na" + str )
+  cmd.color("forest", "elem Mg" + str )
+  cmd.color("darkgray", "elem Ca+Mn+Al+Ti+Cr+Ag" + str )
+  cmd.color("goldenrod", "elem Au+F+Si" + str)
+  cmd.color("ipurple", "elem I" + str)
+  cmd.color("firebrick", "elem Li" + str)
+  cmd.color("helpink", "elem He" + str)
+  if script=='1':
+    f.write('''cmd.color("carbgray", "(elem C)" + str )
+cmd.color("red", "elem O" + str )
+cmd.color("white", "elem H" + str )
+cmd.color("nitblue", "elem N" + str )
+cmd.color("sulfyellow", "elem S" + str )
+cmd.color("phosorange", "elem P+Fe+Ba" + str )
+cmd.color("green", "elem Cl+B" + str )
+cmd.color("brown", "elem Br+Zn+Cu+Ni" + str )
+cmd.color("blue", "elem Na" + str )
+cmd.color("forest", "elem Mg" + str )
+cmd.color("darkgray", "elem Ca+Mn+Al+Ti+Cr+Ag" + str )
+cmd.color("goldenrod", "elem Au+F+Si" + str)
+cmd.color("ipurple", "elem I" + str)
+cmd.color("firebrick", "elem Li" + str)
+cmd.color("helpink", "elem He" + str)\n''')
