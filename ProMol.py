@@ -790,62 +790,62 @@ cmd.disable('interaction')\n''')
       except:
           pass
       update()
-        objects = cmd.get_names('all')
-        if script=='1':
-            f.write('''objects = cmd.get_names('all')\n''')
-        checkitforthese()
-        set_defaults()
-        delcrea()
-        cmd.set("stick_radius","0.1","all")
-        cmd.set("sphere_scale","0.3","all")
-        if script=='1':
-            f.write('''cmd.set("stick_radius","0.1","all")
+      objects = cmd.get_names('all')
+      if script=='1':
+          f.write('''objects = cmd.get_names('all')\n''')
+      checkitforthese()
+      set_defaults()
+      delcrea()
+      cmd.set("stick_radius","0.1","all")
+      cmd.set("sphere_scale","0.3","all")
+      if script=='1':
+          f.write('''cmd.set("stick_radius","0.1","all")
 cmd.set("sphere_scale","0.3","all")\n''')
-        if 'protein' in objects:
-            cmd.show('spheres','protein')
-            cmd.show('sticks','protein')
-            if script=='1':
-                f.write('''cmd.show('spheres','protein')
+      if 'protein' in objects:
+          cmd.show('spheres','protein')
+          cmd.show('sticks','protein')
+          if script=='1':
+              f.write('''cmd.show('spheres','protein')
 cmd.show('sticks','protein')\n''')
-            cpkprotein()
-        if 'nucleic_acid' in objects:
-            try:
-                cmd.set('cartoon_ring_mode', '1')
-                cmd.show('cartoon','resn a+g+c+t+u')
-                cmd.show('spheres','resn a+g+c+t+u')
-                cmd.show('sticks','resn a+g+c+t+u')
-                if script=='1':
-                    f.write('''cmd.set('cartoon_ring_mode', '1')
+          cpkprotein()
+      if 'nucleic_acid' in objects:
+          try:
+              cmd.set('cartoon_ring_mode', '1')
+              cmd.show('cartoon','resn a+g+c+t+u')
+              cmd.show('spheres','resn a+g+c+t+u')
+              cmd.show('sticks','resn a+g+c+t+u')
+              if script=='1':
+                  f.write('''cmd.set('cartoon_ring_mode', '1')
 cmd.show('cartoon','resn a+g+c+t+u')
 cmd.show('spheres','resn a+g+c+t+u')
 cmd.show('sticks','resn a+g+c+t+u')\n''')
-                cpknucleic()
-            except:
-                cmd.show('cartoon','resn a+g+c+t+u')
-                if script=='1':
-                    f.write('''cmd.show('cartoon','resn a+g+c+t+u')\n''')
-                cpknucleic()
-        if 'ligands' in objects:
-            cmd.show('spheres','ligands')
-            cmd.color('orange', 'ligands')
-            if script=='1':
-                f.write('''cmd.show('spheres','ligands')
+              cpknucleic()
+          except:
+              cmd.show('cartoon','resn a+g+c+t+u')
+              if script=='1':
+                  f.write('''cmd.show('cartoon','resn a+g+c+t+u')\n''')
+              cpknucleic()
+      if 'ligands' in objects:
+          cmd.show('spheres','ligands')
+          cmd.color('orange', 'ligands')
+          if script=='1':
+              f.write('''cmd.show('spheres','ligands')
 cmd.color('orange', 'ligands')\n''')
     cmd.extend('ball_and_stick',ball_and_stick)
 	    
     # show the surface of the molecule
     def surface_view(*args):
-        delcrea()
+      delcrea()
       update()
-        objects = cmd.get_names('all')
-        if script=='1':
-                f.write('''objects = cmd.get_names('all')\n''')
-        checkitforthese()
-        set_defaults()
-        cmd.show('surface','all')
-        if script=='1':
-                f.write(''' cmd.show('surface','all')\n''')
-        cpkprotein()
+      objects = cmd.get_names('all')
+      if script=='1':
+        f.write('''objects = cmd.get_names('all')\n''')
+      checkitforthese()
+      set_defaults()
+      cmd.show('surface','all')
+      if script=='1':
+        f.write(''' cmd.show('surface','all')\n''')
+      cpkprotein()
     cmd.extend('surface_view',surface_view)
        
        	
@@ -891,7 +891,7 @@ cmd.color('green','het')\n''')
     # putty representation
     def show_putty(*args):
       try:
-      try:
+        try:
           self = args[0]
           update()
         except:
@@ -927,23 +927,23 @@ cmd.show('sticks','resn t+g+c+a+u')\n''')
     # aromatics view
     def color_aromatics(*args):
       update()
-        set_defaults()
-        checkitforthese()
-        delcrea()
-        cmd.hide('all')
-        cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
-        cmd.color('aquamarine','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
-        cmd.set('cartoon_transparency','0.6','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
-        cmd.show('cartoon','resn t+u+g+c+a')
-        cmd.color('aquamarine','resn u+g+c+a+t')
-        cmd.set('cartoon_transparency','0.6','resn a+u+c+t+g')
-        cmd.select('aromatics','resn phe+tyr+trp+his')
-        cmd.color('red', 'aromatics')
-        cmd.show('sticks','aromatics and (!name c+n+o)')
-        cmd.set('stick_radius','0.4','all')
-        cmd.delete('aromatics')
-        if script=='1':
-            f.write('''cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
+      set_defaults()
+      checkitforthese()
+      delcrea()
+      cmd.hide('all')
+      cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
+      cmd.color('aquamarine','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
+      cmd.set('cartoon_transparency','0.6','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
+      cmd.show('cartoon','resn t+u+g+c+a')
+      cmd.color('aquamarine','resn u+g+c+a+t')
+      cmd.set('cartoon_transparency','0.6','resn a+u+c+t+g')
+      cmd.select('aromatics','resn phe+tyr+trp+his')
+      cmd.color('red', 'aromatics')
+      cmd.show('sticks','aromatics and (!name c+n+o)')
+      cmd.set('stick_radius','0.4','all')
+      cmd.delete('aromatics')
+      if script=='1':
+          f.write('''cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
 cmd.color('aquamarine','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
 cmd.set('cartoon_transparency','0.6','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
 cmd.show('cartoon','resn t+u+g+c+a')
@@ -954,7 +954,7 @@ cmd.color('red', 'aromatics')
 cmd.show('sticks','aromatics and (!name c+n+o)')
 cmd.set('stick_radius','0.4','all')
 cmd.delete('aromatics')\n''')
-        cmd.deselect()
+      cmd.deselect()
     cmd.extend('color_aromatics',color_aromatics)
 	
     # color the molecule by chain
@@ -1158,9 +1158,9 @@ cmd.set("roving_polar_contacts",8)\n''')
         cmdRovLine = float(args[0])
       except:
         pass
-        try:
+      try:
         self = args[0]
-        except:
+      except:
         print 'Usage: roving_line # (# is value between 0 and 20)'
           
       update()
@@ -1196,12 +1196,12 @@ cmd.set("roving_polar_contacts",8)\n''')
         cmdRovBall = float(args[0])
       except:
         pass
-        try:
+      try:
         self = args[0]
-        except:
+      except:
         print 'Usage: roving_ballstick # (# is value between 0 and 20)'
       update()
-          
+
       checkitforthese()
       delcrea()
       cmd.hide('everything')
@@ -1244,9 +1244,9 @@ cmd.set("sphere_scale","0.3","all")\n''')
         cmdRovSphere = float(args[0])
       except:
         pass
-        try:
+      try:
         self = args[0]
-        except:
+      except:
         print 'Usage: roving_sphere # (# is value between 0 and 20)'
 
       update()
@@ -10366,9 +10366,9 @@ cmd.show('spheres', '(resn HOH)')\n''')
           
         def savefile(filename, fileString):
           try:
-          newFile = open(filename,"w")
-          newFile.write(fileString)
-          newFile.close()               
+            newFile = open(filename,"w")
+            newFile.write(fileString)
+            newFile.close()               
           except:
             pass
 
@@ -10464,7 +10464,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                 f.write(each + '\n')
           f.close()
           try:
-          f=open('./temp')
+            f=open('./temp')
           except:
             pass
           try:
