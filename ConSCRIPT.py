@@ -25,6 +25,9 @@ except KeyError:
     
 ## Global defintions
 
+map_name = 0
+clip_dist_near = -50.0
+clip_dist_far = 50.0
 filestack = []
 filelevel = 0
 UserDefinedGroups = {}
@@ -1376,6 +1379,41 @@ class converter:
 
             return selection
 
+        ## Handles all map commands
+        def mapsupport( parameters ):
+            parameterslist = parameters.split( ' ' )
+            try:
+                if int(parameterslist[0]):
+                    print 'You gave a number. The Count says "Good Job!"'
+            except:
+                print 'Map command'
+                handlemap( parameterslist )
+
+        ## Handles all map commands.
+        def handlemap( parameterslist ):
+            goodlist = ['generate']
+            badlist = ['level', 'load', 'mask', 'resolution', 'restrict', 'save', 'select', 'show', 'spacing', 'spread', 'zap']
+            try:
+                if parameterslist[0] in goodlist:
+                    if parameterslist[0] == 'generate':
+                        if parameterslist[1] == 'mesh':
+                            cmd.do( 'map_new( "' + str(map_name) + '" )' )
+                            cmd.do( 'isomesh( "mesh_' + str(map_name) + '", "' + str(map_name) + '" )' )
+                            map_name += 1
+                            print 'Mesh map complete'
+                        elif parameterslist[1] == 'dots':
+                            cmd.do( 'map_new( "' + str(map_name) + '" )' )
+                            cmd.do( 'isodot( "dot_' + str(map_name) + '", "' + str(map_name) + '" )' )
+                            print 'Dots map complete'
+                        elif parameterslist[1] == 'surface':
+                            cmd.do( 'map_new( "' + str(map_name) + '" )' )
+                            cmd.show( 'surface' )                          
+                            print 'Surface map complete'
+                else:
+                    print 'That map command is currently not supported by ConSCRIPT and PyMOL.'
+            except:
+                print 'An error has occured with a map command.'
+
         ## Handles RGB Triplet for colors
         def RGBTriplet(name, triplet):
 
@@ -1427,6 +1465,8 @@ class converter:
             global VSLselection
             global VSLselectionsaved
             global VSLVerbose
+            global clip_dist_near
+            global clip_dist_far
 
             if( p.replace( ' ', '' )=="\n" ):
                 return 0
@@ -1539,7 +1579,6 @@ class converter:
                         centerselection = 'all'
                         cmd.select('VSLCenterSelection', centerselection)
                         cmd.center( centerselection )
-                        clip_dist = 0
                         VSLselection = '( all )'
                         color_cpk( VSLselection )
                         if VSLVerbose > 0:
@@ -1557,7 +1596,6 @@ class converter:
                         centerselection = 'all'
                         cmd.select('VSLCenterSelection', centerselection)
                         cmd.center( centerselection )
-                        clip_dist = 0
                         VSLselection = '( all )'
                         color_cpk( VSLselection )
                         if VSLVerbose > 0:
@@ -1679,7 +1717,7 @@ class converter:
 
             ##---------------Spacefill/CPK---------------##
 
-            if p[:9]=='spacefill' or p[:3]=='cpk':
+            if p[:9]=='spacefill' or p[:3]=='cpk' or p[:6]=='cpknew':
                 try:
                     p = p + ' '
                     command = p.split( ' ', 1 )[1].rstrip()
@@ -1901,13 +1939,58 @@ class converter:
                 except:
                     print 'Translate did not execute properly.  Please revise your translate command'
                 return 0
+
+            ##---------------Slab---------------##
+
+            if p[:4]=='slab':
+                try:
+                    cmd.clip( 'near', -clip_dist_near )
+                    p = p + ' '
+                    command = p.split( ' ', 1 )[1].rstrip()
+                    if command=='false' or command=='off':
+                        clip_dist_near = 0
+                        print 'Slab off complete'
+                    elif command=='true' or command=='on' or command=='':
+                        print clip_dist_near
+                        cmd.clip( 'near', clip_dist_near )
+                        print 'Slab on complete'
+                    elif float(command)>=0 and float(command)<=100:
+                        command = float(command)
+                        clip_dist_near = command-100
+                        cmd.clip( 'near', clip_dist_near )
+                        print 'Slab on complete'
+                except:
+                    print 'An error occured with the slab command'
+                return 0
+
+            ##---------------Depth---------------##
+
+            if p[:5]=='depth':
+                try:
+                    cmd.clip( 'far', -clip_dist_far )
+                    p = p + ' '
+                    command = p.split( ' ', 1 )[1].rstrip()
+                    if command=='false' or command=='off':
+                        clip_dist_far = 0
+                        print 'Depth off complete'
+                    elif command=='true' or command=='on' or command=='':
+                        cmd.clip( 'far', clip_dist_far )
+                        print 'Depth on complete'
+                    elif float(command)>=0 and float(command)<=100:
+                        command = float(command)
+                        clip_dist_far = command
+                        cmd.clip( 'far', clip_dist_far )
+                        print 'Depth on complete'
+                except:
+                    print 'An error occured with the depth command'
+                return 0
                 
             ##---------------HBonds---------------##
 
             if p[:6]=='hbonds':
                 try:
-                    command = p.split( ' ', 1 )[1].lower()
-                    print command
+                    p = p + ' '
+                    command = p.split( ' ', 1 )[1].rstrip()
                     if command=='false' or command=='off':
                         HBonds()
                         print 'HBonds off complete'
@@ -1925,8 +2008,8 @@ class converter:
 
             if p[:6]=='ssbonds':
                 try:
-                    command = p.split( ' ', 1 )[1].lower()
-                    print command
+                    p = p + ' '
+                    command = p.split( ' ', 1 )[1].rstrip()
                     if command=='false' or command=='off':
                         SSBonds()
                         print 'SSBonds off complete'
@@ -1944,8 +2027,29 @@ class converter:
 
             if p[:8]=='backbone':
                 try:
-                    cmd.show( 'ribbon', select('backbone') )
-                except:    
+                    p = p + ' '
+                    command = p.split( ' ', 1 )[1].rstrip()
+                    if command=='false' or command=='off':
+                        cmd.hide( 'cartoon', select('backbone') )
+                        print 'Backbone off complete'
+                    elif command=='true' or command=='on' or command=='':
+                        cmd.cartoon( 'tube', 'VSLselection' )
+                        cmd.show( 'cartoon', select('backbone') )
+                        print 'Backbone on complete'
+                    elif command=='dash':
+                        print 'PyMOL does not include funcionality for this command...yet...'
+                    elif float(command)>=0 and float(command)<=500:
+                        if '.' in command:
+                            command = float(command)
+                        else:
+                            command = float(command)/250
+                        cmd.cartoon( 'tube', 'VSLselection' )
+                        cmd.show( 'cartoon', select('backbone') )
+                        cmd.set( 'cartoon_tube_radius', command )
+                        print 'Backbone on complete'
+                    else:
+                        print 'That function is not supported by PyMOL.'
+                except:
                     print 'An error occured while trying to display the backbone.'
                 return 0
 
@@ -1990,6 +2094,16 @@ class converter:
                 else:
                     print 'That function is not supported by PyMOL.'
                 return 0
+
+            ##---------------Map---------------##
+
+            if p[:3]=='map':
+                try:
+                    parameters = p[4:]
+                    mapsupport( parameters )
+                    return 0
+                except:
+                    print 'An error occured with a map command.'
 
             ##---------------Refresh---------------##
 
@@ -2077,14 +2191,17 @@ class converter:
             global filelevel
             global filestack
 
-            Q = tkFileDialog.askopenfilename(initialdir=('./modules/pmg_tk/startup'))
-            filelevel = 0
-            filestack = []
-            donext = processVSLscript(Q)
-            if donext == QuitTok:
-                cmd.quit()
-            #Reset the GUI
-            interior.mainloop()
+            try:
+                Q = tkFileDialog.askopenfilename(initialdir=('./modules/pmg_tk/startup'))
+                filelevel = 0
+                filestack = []
+                donext = processVSLscript(Q)
+                if donext == QuitTok:
+                    cmd.quit()
+                #Reset the GUI
+                interior.mainloop()
+            except:
+                interior.mainloop()
 
         #Define the Boffocmd Function
         def Boffocmd(Event):
