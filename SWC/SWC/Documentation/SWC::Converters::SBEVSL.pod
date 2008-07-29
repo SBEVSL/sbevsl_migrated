@@ -1,0 +1,58 @@
+=head1 NAME
+
+SWC::Converters::SBEVSL - Base class for all SBEVSL output converters
+
+=head1 SYNOPSIS
+
+    #Inheritance usage for subclasses
+    use SWC::Converters::SBEVSL;
+    our @ISA = qw(SWC::Converters::SBEVSL);
+
+=head1 DESCRIPTION
+
+This module is the base class 
+or superclass to all output converters 
+that convert from SBEVSL -> another 
+language. This module is used via inheritance 
+and is instantiated in the constructor of the 
+subclass. This module contains the mapping of 
+SBEVSL commands to the functions implemented 
+in the subclass.
+
+=head2 Methods
+
+=over 12
+
+=item C<new>
+
+Returns a new SWC::Converters::SBEVSL object. 
+This method should be called in the subclass 
+constructor and the returned object should 
+then be blessed into the subclass type.
+
+=item C<init>
+
+Method in which any subclass initalization 
+commands can be added to the beginning of 
+the results array.
+
+=item C<convert>
+
+This method is called by the SWC::Director object 
+to convert SBEVSL commands to subclass's specific 
+commands. Method contains the mapping of SBEVSL commands 
+to the subclass methods to handle the conversion 
+and pushes the results into the results array.
+
+=item C<get_output>
+
+Returns an array of strings that represent
+the final conversion.
+
+=back
+
+=head1 AUTHOR
+
+Anthony Corbett
+
+=cut

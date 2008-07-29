@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>SWC::Director</title>
+<link rev="made" href="mailto:root@pastamaker.bioinformatics.rit.edu" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<ul>
+
+		<li><a href="#methods">Methods</a></li>
+	</ul>
+
+	<li><a href="#author">AUTHOR</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>SWC::Director - main object in the SWC package</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<pre>
+    use SWC::Director;
+    my $object = SWC::Director-&gt;new();
+    $object-&gt;set_input_converter(&quot;SBEVSL&quot;);
+    $object-&gt;set_output_converter(&quot;pymol&quot;);
+    $object-&gt;convert(\@lines);
+    my @output = @ { $object-&gt;get_output() };
+    foreach (@output) { 
+        print &quot;$_\n&quot;;
+    }</pre>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>This module is the main object in
+the SWC package. This object is the
+only object that is manually created by
+the user. This object contains methods
+to create and control input and output
+converters.</p>
+<p>
+</p>
+<h2><a name="methods">Methods</a></h2>
+<dl>
+<dt><strong><a name="item_new"><code>new</code></a></strong><br />
+</dt>
+<dd>
+Returns a new SWC::Director object with no converters defined.
+</dd>
+<p></p>
+<dt><strong><a name="item_set_input_converter"><code>set_input_converter</code></a></strong><br />
+</dt>
+<dd>
+Sets the input converter type to the input language.
+</dd>
+<p></p>
+<dt><strong><a name="item_set_output_converter"><code>set_output_converter</code></a></strong><br />
+</dt>
+<dd>
+Sets the output converter type to the desired output language.
+</dd>
+<p></p>
+<dt><strong><a name="item_get_output"><code>get_output</code></a></strong><br />
+</dt>
+<dd>
+Retrieves the output from the output converter.
+</dd>
+<dd>
+<p>Returns an array of strings that represent
+the final conversion.</p>
+</dd>
+<p></p>
+<dt><strong><a name="item_convert"><code>convert</code></a></strong><br />
+</dt>
+<dd>
+This method calls the convert methods
+in the input converter and then the
+output converter.
+</dd>
+<p></p></dl>
+<p>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p>Anthony Corbett</p>
+
+</body>
+
+</html>

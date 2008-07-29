@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>SWC::Director</title>
+<link rev="made" href="mailto:root@pastamaker.bioinformatics.rit.edu" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<ul>
+
+		<li><a href="#methods">Methods</a></li>
+	</ul>
+
+	<li><a href="#author">AUTHOR</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>SWC::Converters::SBEVSL - Base class for all SBEVSL output converters</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<pre>
+    #Inheritance usage for subclasses
+    use SWC::Converters::SBEVSL;
+    our @ISA = qw(SWC::Converters::SBEVSL);</pre>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>This module is the base class 
+or superclass to all output converters 
+that convert from SBEVSL -&gt; another 
+language. This module is used via inheritance 
+and is instantiated in the constructor of the 
+subclass. This module contains the mapping of 
+SBEVSL commands to the functions implemented 
+in the subclass.</p>
+<p>
+</p>
+<h2><a name="methods">Methods</a></h2>
+<dl>
+<dt><strong><a name="item_new"><code>new</code></a></strong><br />
+</dt>
+<dd>
+Returns a new SWC::Converters::SBEVSL object. 
+This method should be called in the subclass 
+constructor and the returned object should 
+then be blessed into the subclass type.
+</dd>
+<p></p>
+<dt><strong><a name="item_init"><code>init</code></a></strong><br />
+</dt>
+<dd>
+Method in which any subclass initalization 
+commands can be added to the beginning of 
+the results array.
+</dd>
+<p></p>
+<dt><strong><a name="item_convert"><code>convert</code></a></strong><br />
+</dt>
+<dd>
+This method is called by the SWC::Director object 
+to convert SBEVSL commands to subclass's specific 
+commands. Method contains the mapping of SBEVSL commands 
+to the subclass methods to handle the conversion 
+and pushes the results into the results array.
+</dd>
+<p></p>
+<dt><strong><a name="item_get_output"><code>get_output</code></a></strong><br />
+</dt>
+<dd>
+Returns an array of strings that represent
+the final conversion.
+</dd>
+<p></p></dl>
+<p>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p>Anthony Corbett</p>
+
+</body>
+
+</html>

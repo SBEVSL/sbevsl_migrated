@@ -1,0 +1,62 @@
+
+=head1 NAME
+
+SWC::Director - main object in the SWC package
+
+=head1 SYNOPSIS
+
+    use SWC::Director;
+    my $object = SWC::Director->new();
+    $object->set_input_converter("SBEVSL");
+    $object->set_output_converter("pymol");
+    $object->convert(\@lines);
+    my @output = @ { $object->get_output() };
+    foreach (@output) { 
+	print "$_\n";
+    }
+
+=head1 DESCRIPTION
+
+This module is the main object in
+the SWC package. This object is the
+only object that is manually created by
+the user. This object contains methods
+to create and control input and output
+converters.
+
+=head2 Methods
+
+=over 12
+
+=item C<new>
+
+Returns a new SWC::Director object with no converters defined.
+
+=item C<set_input_converter>
+
+Sets the input converter type to the input language.
+
+=item C<set_output_converter>
+
+Sets the output converter type to the desired output language.
+
+=item C<get_output>
+
+Retrieves the output from the output converter.
+
+Returns an array of strings that represent
+the final conversion.
+
+=item C<convert>
+
+This method calls the convert methods
+in the input converter and then the
+output converter.
+
+=back
+
+=head1 AUTHOR
+
+Anthony Corbett
+
+=cut
