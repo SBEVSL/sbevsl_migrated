@@ -26,6 +26,12 @@ except KeyError:
 ## Global defintions
 
 map_name = 0
+map_type = 'gaussian'
+map_grid = 1.0
+map_level = 1.0
+map_selection = 'VSLselection'
+centerselection = '( all )'
+zoomnum = 0
 clip_dist_near = -50.0
 clip_dist_far = 50.0
 filestack = []
@@ -1385,30 +1391,42 @@ class converter:
             try:
                 if int(parameterslist[0]):
                     print 'You gave a number. The Count says "Good Job!"'
+                    handlemap( parameterslist[1:] )
             except:
                 print 'Map command'
                 handlemap( parameterslist )
 
         ## Handles all map commands.
         def handlemap( parameterslist ):
-            goodlist = ['generate']
-            badlist = ['level', 'load', 'mask', 'resolution', 'restrict', 'save', 'select', 'show', 'spacing', 'spread', 'zap']
+            goodlist = ['generate', 'level']
+            badlist = ['load', 'mask', 'resolution', 'restrict', 'save', 'select', 'show', 'spacing', 'spread', 'zap']
+            global map_name, map_type, map_grid, map_level, map_selection, centerselection, zoomnum
             try:
                 if parameterslist[0] in goodlist:
                     if parameterslist[0] == 'generate':
                         if parameterslist[1] == 'mesh':
-                            cmd.do( 'map_new( "' + str(map_name) + '" )' )
-                            cmd.do( 'isomesh( "mesh_' + str(map_name) + '", "' + str(map_name) + '" )' )
+                            cmd.do( 'map_new ' + str(map_name)+ ', ' + map_type + ', ' + str(map_grid) + ', ' + map_selection )
+                            cmd.do( 'isomesh mesh_' + str(map_name) + ', ' + str(map_name) + ', ' + str(map_level) )
                             map_name += 1
+                            cmd.do( 'zoom ' + centerselection + ', ' + str(zoomnum) )
                             print 'Mesh map complete'
                         elif parameterslist[1] == 'dots':
-                            cmd.do( 'map_new( "' + str(map_name) + '" )' )
-                            cmd.do( 'isodot( "dot_' + str(map_name) + '", "' + str(map_name) + '" )' )
+                            cmd.do( 'map_new ' + str(map_name)+ ', ' + map_type + ', ' + str(map_grid) + ', ' + map_selection )
+                            cmd.do( 'isodot dot_' + str(map_name) + ', ' + str(map_name) )
+                            map_name += 1
+                            cmd.do( 'zoom ' + centerselection + ', ' + str(zoomnum) )
                             print 'Dots map complete'
                         elif parameterslist[1] == 'surface':
-                            cmd.do( 'map_new( "' + str(map_name) + '" )' )
+                            cmd.do( 'map_new ' + str(map_name)+ ', ' + map_type + ', ' + str(map_grid) + ', ' + map_selection )
                             cmd.show( 'surface' )                          
+                            map_name += 1
+                            cmd.do( 'zoom ' + centerselection + ', ' + str(zoomnum) )
                             print 'Surface map complete'
+                    elif parameterslist[0] == 'level':
+                        if parameterslist[1] == 'mean':
+                            print 'The MEAN function is not supported by PyMOL.'
+                else:
+                            map_level = int(parameterslist[1])
                 else:
                     print 'That map command is currently not supported by ConSCRIPT and PyMOL.'
             except:
@@ -1467,6 +1485,8 @@ class converter:
             global VSLVerbose
             global clip_dist_near
             global clip_dist_far
+            global centerselection
+            global zoomnum
 
             if( p.replace( ' ', '' )=="\n" ):
                 return 0
@@ -1576,7 +1596,6 @@ class converter:
                         cmd.load( '\"'+TokenIdent+'\"' )
                         cmd.rotate( 'x', 180 )
                         cmd.select('VSLselection','( all )')
-                        centerselection = 'all'
                         cmd.select('VSLCenterSelection', centerselection)
                         cmd.center( centerselection )
                         VSLselection = '( all )'
@@ -1593,7 +1612,6 @@ class converter:
                         cmd.load( ts )
                         cmd.rotate( 'x', 180 )
                         cmd.select('VSLselection','( all )')
-                        centerselection = 'all'
                         cmd.select('VSLCenterSelection', centerselection)
                         cmd.center( centerselection )
                         VSLselection = '( all )'
@@ -1885,10 +1903,12 @@ class converter:
                     p = p + ' '
                     command = p.split( ' ', 1 )[1].rstrip()
                     if command=='false' or command=='off' or command=='':
-                        cmd.zoom( 'VSLCenterSelection', 0 )
+                        zoomnum = 0
+                        cmd.zoom( 'VSLCenterSelection', zoomnum )
                         print 'Zoom off complete'
                     elif command=='true' or command=='on':
-                        cmd.zoom( 'VSLCenterSelection', -25 )
+                        zoomnum = -25
+                        cmd.zoom( 'VSLCenterSelection', zoomnum )
                         print 'Zoom on complete'
                     elif int(command) in range(0, 100):
                         zoomnum = int(command)
