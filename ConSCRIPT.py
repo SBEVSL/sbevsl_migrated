@@ -1425,7 +1425,7 @@ class converter:
                     elif parameterslist[0] == 'level':
                         if parameterslist[1] == 'mean':
                             print 'The MEAN function is not supported by PyMOL.'
-                else:
+                    else:
                             map_level = int(parameterslist[1])
                 else:
                     print 'That map command is currently not supported by ConSCRIPT and PyMOL.'
