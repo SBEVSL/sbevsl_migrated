@@ -2168,7 +2168,7 @@ class converter:
 
 
     ## Handler for SBEVSL commands from the command line
-        def VSL( *args ):
+        def VSL( *args, **kwargs  ):
           p = ' '.join(args)
           donext = handlecommand(p.rstrip())
           if donext == QuitTok or donext == ExitTok:
