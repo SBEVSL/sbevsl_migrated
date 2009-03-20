@@ -2212,6 +2212,7 @@ class converter:
             global filestack
 
             try:
+                openbtn.config(relief=SUNKEN)
                 Q = tkFileDialog.askopenfilename(initialdir=('./modules/pmg_tk/startup'))
                 filelevel = 0
                 filestack = []
@@ -2219,8 +2220,10 @@ class converter:
                 if donext == QuitTok:
                     cmd.quit()
                 #Reset the GUI
+                openbtn.config(relief=RAISED)
                 interior.mainloop()
             except:
+                openbtn.config(relief=RAISED)
                 interior.mainloop()
 
         #Define the Boffocmd Function
@@ -2230,6 +2233,8 @@ class converter:
             cmd.extend('vsl', VSL)
             cmd.extend('SBEVSL', VSL)
             cmd.extend('sbevsl', VSL)
+            openbtncmd.config(relief=SUNKEN)
+            openbtncmd.config(text="VSL enabled")
             interiorcmd.mainloop()
             #Reset the GUI
             interior.mainloop()
