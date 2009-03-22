@@ -363,7 +363,7 @@ class PGUI:
     global splash
     
     # Images used in Presets tab
-    defaultImage = PhotoImage( file="modules\pmg_tk\startup\default.gif")
+    defaultImage = PhotoImage( file="modules\pmg_tk\startup\default.GIF")
     chains = PhotoImage(file="modules\pmg_tk\startup\chains.GIF")
     heteroImg = PhotoImage(file="modules\pmg_tk\startup\heteroAtom.GIF")
     ballStickImg = PhotoImage(file="C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup\showBallStick.GIF")
