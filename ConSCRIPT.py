@@ -1,3 +1,6 @@
+# vim: set tabstop=4 expandtab shiftwidth=4 softtabstop=4 cindent:
+# This file is formatted using spaces for indentation.
+# 4 spaces = 1 "tab" or indent. Do NOT mix tab characters with spaces.
 import Pmw
 import pymol
 from pymol import cmd
@@ -40,6 +43,7 @@ UserDefinedGroups = {}
 VSLselection = "( all )"
 VSLselectionsaved = "( all )"
 VSLVerbose = 0
+VSLenabled = False
 
 ### /* Lexeme Tokens */
 IdentTok =      256
@@ -55,6 +59,7 @@ CentreTok =     263
 ClipboardTok =  264
 ColourTok =     265
 ColourModeTok = 609
+ConcealTok  =   611
 ConnectTok =    266
 DashTok =       267
 DefineTok =     268
@@ -83,6 +88,7 @@ ResetTok =      289
 ResizeTok =     290
 RestoreTok =    291
 RestrictTok =   292
+RevealTok   =   612
 RotateTok =     293
 SaveTok =       294
 ScriptTok =     295
@@ -476,6 +482,7 @@ VSLTok["COLORS"] = ColourTok
 VSLTok["COLOUR"] = ColourTok
 VSLTok["COLOURMODE"] = ColourModeTok
 VSLTok["COLOURS"] = ColourTok
+VSLTok["CONCEAL"] = ConcealTok
 VSLTok["CONNECT"] = ConnectTok
 VSLTok["CONTOUR"] = ContourTok
 VSLTok["COORDINATE"] = CoordTok
@@ -674,6 +681,7 @@ VSLTok["RESIZE"] = ResizeTok
 VSLTok["RESNO"] = ResNoTok
 VSLTok["RESOLUTION"] = ResolutionTok
 VSLTok["RESTRICT"] = RestrictTok
+VSLTok["REVEAL"] = RevealTok
 VSLTok["RGB"] = IRISTok
 VSLTok["RIBBON"] = RibbonTok
 VSLTok["RIBBON1"] = Ribbon1Tok
@@ -1061,6 +1069,7 @@ def __init__(self):
 
 class converter:
     def __init__(self, app):
+        global VSLenabled
 
         # create the dialog box which contains the GUI
         parent = app.root
@@ -1072,7 +1081,7 @@ class converter:
             
         #TITLE BAR
         lab = Label(interior, 
-            text='ConSCRIPT (C) Copyright 2007-2008\nS. Mottarella, C. Craig, H. Bernstein\nGPL, No Warranty', 
+            text='ConSCRIPT (C) Copyright 2007-2008\nS. Mottarella, P. Craig, H. Bernstein\nGPL, No Warranty', 
             background='#000066', foreground='white')
                         
         lab.pack(expand=0, fill='x', padx=4, pady=0)
@@ -1097,8 +1106,16 @@ class converter:
         interiorcmd = groupcmd.interior()
                 
         #Run the Boffocmd Function	
-        openbtncmd = Button(interiorcmd, text = 'Enable VSL')
-        openbtncmd.grid()
+        # here I replaced the button with a checkbutton (checkbox) and
+        # disguised it as a button for a similar appearance. - GM
+        chkEnableVSL = Checkbutton(interiorcmd, text = 'Enable VSL',
+				indicatoron=False, padx=10, pady=4)
+        if VSLenabled == True:
+            # set the text. here we're disabling it just termporarily
+            # until we've found a method to 'unextend' the pymol commands.
+            chkEnableVSL.config(text='VSL Enabled', state=DISABLED)
+            chkEnableVSL.select()
+        chkEnableVSL.grid()
         
         ##---Apply Color to Selection--##
         def apply_color(rgbcolor,selection):
@@ -2161,6 +2178,36 @@ class converter:
             if CurToken == ExitTok or CurToken == QuitTok or CurToken == 0 :
                 return CurToken
 
+            
+            ##--------------------CONCEAL--------------------##
+            if CurToken == ConcealTok:
+                # get next token
+                try:
+                    (TokenPtr, CurToken, TokenStart, TokenIdent,
+                     TokenValue) = VSLFetchToken(p, TokenPtr)
+
+                except:
+                    pass
+                    print 'VSLFetchToken failed TokenPtr =', TokenPtr
+
+                # if there is no token
+                if CurToken == 0:
+                    cmd.hide()  # just call hide, no args.
+                return 0
+
+            ##--------------------REVEAL--------------------##
+            if CurToken == RevealTok:
+                # get next token
+                try:
+                    (TokenPtr, CurToken, TokenStart, TokenIdent,
+                     TokenValue) = VSLFetchToken(p, TokenPtr)
+                except:
+                    pass
+                    #print 'VSLFetchToken failed TokenPtr = ',
+                            #str(TokenPtr)
+
+                if CurToken == 0:
+                    cmd.show()
 
             print p
             print 'not implemented as a VSL command'
@@ -2221,29 +2268,38 @@ class converter:
                     cmd.quit()
                 #Reset the GUI
                 openbtn.config(relief=RAISED)
-                interior.mainloop()
+                #interior.mainloop()
             except:
                 openbtn.config(relief=RAISED)
-                interior.mainloop()
+                #interior.mainloop()
 
         #Define the Boffocmd Function
         def Boffocmd(Event):
-        
-            cmd.extend('VSL', VSL)
-            cmd.extend('vsl', VSL)
-            cmd.extend('SBEVSL', VSL)
-            cmd.extend('sbevsl', VSL)
-            openbtncmd.config(relief=SUNKEN)
-            openbtncmd.config(text="VSL enabled")
-            interiorcmd.mainloop()
-            #Reset the GUI
-            interior.mainloop()
+            global VSLenabled
+
+            print 'VSLenabled', VSLenabled
+
+            if VSLenabled == False:
+                cmd.extend('VSL', VSL)
+                cmd.extend('vsl', VSL)
+                cmd.extend('SBEVSL', VSL)
+                cmd.extend('sbevsl', VSL)
+                VSLenabled = True
+
+                chkEnableVSL.config(text="VSL Enabled.")
+                #interiorcmd.mainloop()
+                #Reset the GUI
+                #interior.mainloop()
+            else:
+                pass
+                # disabled it for now since there's no working code here
+                # TODO: Disable VSL somehow.
 
 
 
         #Bind buttons to the functions
         openbtn.bind('<Button-1>', Boffo)
-        openbtncmd.bind('<Button-1>', Boffocmd)
+        chkEnableVSL.bind('<Button-1>', Boffocmd)
                     
                     
 
