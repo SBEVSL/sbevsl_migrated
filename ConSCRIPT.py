@@ -1144,8 +1144,6 @@ class csDialog:
         """Enable the use of the 'VSL' command on the command line"""
         global VSLenabled
 
-        print 'VSLenabled', VSLenabled
-
         if VSLenabled == False:
             cmd.extend('VSL', VSL)
             cmd.extend('vsl', VSL)
