@@ -2239,6 +2239,29 @@ def handlecommand( p ):
         # if there is no token
         if CurToken == 0:
             cmd.hide()  # just call hide, no args.
+            return 0
+        elif CurToken == BackboneTok:
+            cmd.hide('ribbon')
+        elif CurToken == CartoonTok:
+            cmd.hide('cartoon')
+        elif CurToken == DotsTok:
+            cmd.hide('dots')
+        elif CurToken == RibbonTok:
+            print 'Not yet implemented! Fix me!'
+        elif CurToken == SpacefillTok:
+            cmd.hide('spheres')
+        elif CurToken == StarTok:
+            print 'Not yet implemented! Fix me!'
+            #print 'PyMol has no native implementation of STARS (yet)! Add me!'
+        elif CurToken == StrandsTok:
+            print 'Not yet implemented! Fix me!'
+            #print 'PyMol has no native implementation of Strands! Add me!'
+        elif CurToken == SurfaceTok:
+            cmd.hide('surface')
+        elif CurToken == TraceTok:
+            print 'Not yet implemented! Fix me!'
+        elif CurToken == WireframeTok:
+            cmd.hide('lines')
         return 0
 
     ##--------------------REVEAL--------------------##
@@ -2253,8 +2276,30 @@ def handlecommand( p ):
                     #str(TokenPtr)
 
         if CurToken == 0:
-            cmd.show()
+            cmd.show()  # just call hide, no args.
             return 0
+        elif CurToken == BackboneTok:
+            cmd.show('ribbon')
+        elif CurToken == CartoonTok:
+            cmd.show('cartoon')
+        elif CurToken == DotsTok:
+            cmd.show('dots')
+        elif CurToken == RibbonTok:
+            print 'Not yet implemented! Fix me!'
+        elif CurToken == SpacefillTok:
+            cmd.show('spheres')
+        elif CurToken == StarTok:
+            print 'Not yet implemented! Fix me!'
+            #print 'PyMol has no native implementation of STARS (yet)! Add me!'
+        elif CurToken == StrandsTok:
+            print 'Not yet implemented! Fix me!'
+            #print 'PyMol has no native implementation of Strands! Add me!'
+        elif CurToken == SurfaceTok:
+            cmd.show('surface')
+        elif CurToken == TraceTok:
+            print 'Not yet implemented! Fix me!'
+        elif CurToken == WireframeTok:
+            cmd.show('lines')
         return 0
 
     print p
