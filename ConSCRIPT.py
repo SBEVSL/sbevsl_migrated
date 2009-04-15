@@ -1083,8 +1083,11 @@ class csDialog:
             
         #TITLE BAR
         self.lab = Tkinter.Label(self.interior, 
-            text='ConSCRIPT (C) Copyright 2007-2008\nS. Mottarella, P. Craig, H. Bernstein\nGPL, No Warranty', 
-            background='#000066', foreground='white')
+            text='ConSCRIPT (C) Copyright 2007-2008\n'
+                 'S. Mottarella, P. Craig, H. Bernstein, '
+                 'G. McQuillan\n'
+                 'GPL, No Warranty', 
+                 background='#000066', foreground='white')
                         
         self.lab.pack(expand=0, fill='x', padx=4, pady=0)
 	    #Makes pages possible
