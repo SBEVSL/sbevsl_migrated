@@ -14745,24 +14745,35 @@ cmd.show('spheres', '(resn HOH)')\n''')
                         import tkFileDialog
                         Q = tkFileDialog.asksaveasfilename(defaultextension=".py", initialdir="./modules/pmg_tk/startup/Motifs")
                         f=open(Q, 'w')
-                        atomlist = ['','C','CA','CB','CD','CD1','CD2','CE','CE1','CE2','CE3','CH2','CG','CG1','CG2','CZ','CZ2','CZ3','N','ND1','ND2','NE','NE1','NE2','NH1','NH2','NZ','O','OD1','OD2','OE1','OE2','OG','OG1','OH','SG','SD']
-                        atomlist2 = ['','CB','CD','CD1','CD2','CE','CE1','CE2','CE3','CH2','CG','CG1','CG2','CZ','CZ2','CZ3','ND1','ND2','NE','NE1','NE2','NH1','NH2','NZ','OD1','OD2','OE1','OE2','OG','OG1','OH','SG','SD']
-                        resnlist=['']
-                        resnlistf=['']
-                        resilist=['']
+                        f.write("######################################################################\n")
+                        f.write("### This motif uses shortened selection algebra and property selectors\n")
+                        f.write("### + = and\n")
+                        f.write("### w. = within\n")
+                        f.write("### br. = byres\n")
+                        f.write("### r. = resn\n")
+                        f.write("### n. = name\n")
+                        f.write("### e. = elem\n")
+                        f.write("######################################################################\n")
+                        ### backbone off
+                        atomlist = ['C','CA','CB','CD','CD1','CD2','CE','CE1','CE2','CE3','CH2','CG','CG1','CG2','CZ','CZ2','CZ3','N','ND1','ND2','NE','NE1','NE2','NH1','NH2','NZ','O','OD1','OD2','OE1','OE2','OG','OG1','OH','SG','SD']
+                        ### backbone on
+                        atomlist2 = ['CB','CD','CD1','CD2','CE','CE1','CE2','CE3','CH2','CG','CG1','CG2','CZ','CZ2','CZ3','ND1','ND2','NE','NE1','NE2','NH1','NH2','NZ','OD1','OD2','OE1','OE2','OG','OG1','OH','SG','SD']
+                        resnlist=['']### residue list
+                        resnlistf=['']### residue list with appended names, making them unique
+                        resilist=['']### residue id list. Based on sequence number.
 
                         if len(ent1B.get()) >0:
                             resnlist.append(ent1B.get())
-                            resnlistf.append(ent1B.get())
                             resilist.append(ent1.get())
+                            resnlistf.append(ent1B.get())
                         if len(ent2B.get())>0:      
                             resnlist.append(ent2B.get())
-                            resnlistf.append(ent1F.get())
                             resilist.append(ent2.get())
+                            resnlistf.append(ent1F.get())
                         if len(ent3B.get()) >0:
                             resnlist.append(ent3B.get())
-                            resnlistf.append(ent2F.get())
                             resilist.append(ent3.get())
+                            resnlistf.append(ent2F.get())
                         if len(ent4B.get()) >0:
                             resnlist.append(ent4B.get())
                             resilist.append(ent4.get())
@@ -14771,126 +14782,109 @@ cmd.show('spheres', '(resn HOH)')\n''')
                             resnlist.append(ent5B.get())
                             resilist.append(ent5.get())
                             resnlistf.append(ent4F.get())
-                       
-                        ente.delete(0,1000)
-                        ente.insert(0,0)
                         
-                        funrun = True
-                        while funrun:
+                        ### This loop will increment through the amino acids. The amino acid we are looking 
+                        ### at right now is specified by the e variable. The a variable will count the
+                        ### number of times it is compared to the carbons in the other amino acids. And is
+                        ### used later on to print the "byres" and select line, and delete line below.
+                        ### Then we will come back here.
+                        e = 0
+                        while e < 5:
                             try:
-                                
-                                enta.delete(0,1000)
-                                enta.insert(0,0)
-                
-                                e = int(ente.get()) + 1
-                                ente.delete(0,1000)
-                                ente.insert(0,e)
+                                a = 0
+                                e += 1
 
-                                if e ==1:
+                                if e == 1:
                                     if int(bonent1.get())==1:
-                                        list =atomlist2
+                                        list=atomlist2
                                     else:
                                         list=atomlist
 
-                                if e ==2:
+                                if e == 2:
                                     if int(bonent2.get())==1:
-                                        list =atomlist2
+                                        list=atomlist2
                                     else:
                                         list=atomlist
 
-                                if e ==3:
+                                if e == 3:
                                     if int(bonent3.get())==1:
-                                        list =atomlist2
+                                        list=atomlist2
                                     else:
                                         list=atomlist
 
-                                if e ==4:
+                                if e == 4:
                                     if int(bonent4.get())==1:
-                                        list =atomlist2
+                                        list=atomlist2
                                     else:
                                         list=atomlist
 
-                                if e ==5:
+                                if e == 5:
                                     if int(bonent5.get())==1:
-                                        list =atomlist2
+                                        list=atomlist2
                                     else:
                                         list=atomlist
-
-                                print resnlist[e]
                                 
-                                entd.delete(0,1000)
-                                entd.insert(0,0)
-
-                                running = True  
-                                
-                                while running:
+                                ### This loop will increment through the amino acids that we want
+                                ### to compare to the amino acid we want to find. The amino acid
+                                ### being compared is specified by the d variable.
+                                d = 0
+                                while d < 5:
                                     try:
 
-                                        d = int(entd.get()) + 1
-                                        entd.delete(0,1000)
-                                        entd.insert(0,d)
-                                        if resnlist[e] == resnlist[d]:
-                                            d = int(entd.get()) + 1
-                                            entd.delete(0,1000)
-                                            entd.insert(0,d)
+                                        d += 1
+                                        ### The following line: compare amino acids
+                                        ### If they are the same, then lets increment one.
+                                        if resnlistf[e] == resnlistf[d]:
+                                            d += 1
 
-                                        if d ==1:
+                                        if d == 1:
                                             if int(bonent1.get())==1:
-                                                list1 =atomlist2
+                                                list1=atomlist2
                                             else:
                                                 list1=atomlist
 
-                                        if d==2:
+                                        if d == 2:
                                             if int(bonent2.get())==1:
-                                                list1 =atomlist2
+                                                list1=atomlist2
                                             else:
                                                 list1=atomlist
 
-                                        if d ==3:
+                                        if d == 3:
                                             if int(bonent3.get())==1:
-                                                list1 =atomlist2
+                                                list1=atomlist2
                                             else:
                                                 list1=atomlist
 
-                                        if d ==4:
+                                        if d == 4:
                                             if int(bonent4.get())==1:
                                                 list1=atomlist2
                                             else:
                                                 list1=atomlist
 
-                                        if d ==5:
+                                        if d == 5:
                                             if int(bonent5.get())==1:
-                                                list1 =atomlist2
+                                                list1=atomlist2
                                             else:
                                                 list1=atomlist
-                                                    
-                                        entc.delete(0,1000)
-                                        entc.insert(0,0)
-                                    
-                                        print  resnlist[d]
+                                                                            
                                         
-                                        fastwalk = True
-                                        while fastwalk:
+                                        ### This loop increments through all the carbons
+                                        ### in the amino acid we want to find.
+                                        c = -1
+                                        while c < len(list):
                                             try:
                                                 
-                                                c = int(entc.get()) + 1
-                                                entc.delete(0,1000)
-                                                entc.insert(0,c)
-
-                                                entb.delete(0,1000)
-                                                entb.insert(0,0)   
-
-                                                print atomlist[c]
-
-                                                flojo = True
-                                                while flojo:
+                                                c += 1
+                                                
+                                                ### This loop increments through all the carbons
+                                                ### in the other amino acids that we are want to 
+                                                ### compare with.
+                                                b = -1
+                                                while b < len(list1):
                                                     
-                                                    b = int(entb.get()) + 1
-                                                    entb.delete(0,1000)
-                                                    entb.insert(0,b)
+                                                    b += 1
                                                     
                                                     try:
-                                                    
                                                         if resnlist[e] == ent1B.get():
                                                              chain = chainent.get()
                                                         if resnlist[e] == ent2B.get():
@@ -14916,121 +14910,94 @@ cmd.show('spheres', '(resn HOH)')\n''')
                                                         get_distance((chain+' and resi '+resilist[e]+' and name '+list[b]), (chain2+' and resi '+resilist[d]+' and name '+list1[c]))
                                                         
                                                         if entnum.get() != '-1':
-                                                           
+                                                            ### The precision factor
+                                                            ### The ranger is the slider that is moved.
+                                                            ### entnum is set by that get_distance above.
                                                             g = float(entnum.get()) + float(ranger1.get())
                                                             entnum.delete(0,1000)
                                                             entnum.insert(0,g)
 
-                                                            a = int(enta.get()) + 1
-                                                            enta.delete(0,1000)
-                                                            enta.insert(0,a)
+                                                            a += 1
 
                                                             if e == 2 and d ==1:
-                                                                f.write( 'cmd.select("'+resnlist[e]+''+str(a)+'", "name '+list[b]+' and resn '+resnlist[e]+' within %s of (name '+list1[c]+' and '+resnlist[e-1]+')"%('+entnum.get()+'))\n')
+                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and '+resnlistf[e-1]+')"%('+entnum.get()+'))\n')
                                                                 continue
                                                             if e == 3 and d ==1:
-                                                                f.write( 'cmd.select("'+resnlist[e]+''+str(a)+'", "name '+list[b]+' and resn '+resnlist[e]+' within %s of (name '+list1[c]+' and '+resnlist[e-2]+')"%('+entnum.get()+'))\n')
+                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and '+resnlistf[e-2]+')"%('+entnum.get()+'))\n')
                                                                 continue
                                                             if e == 3 and d ==2:
-                                                                f.write( 'cmd.select("'+resnlist[e]+''+str(a)+'", "name '+list[b]+' and resn '+resnlist[e]+' within %s of (name '+list1[c]+' and '+resnlist[e-1]+')"%('+entnum.get()+'))\n')
+                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and '+resnlistf[e-1]+')"%('+entnum.get()+'))\n')
                                                                 continue
                                                             if e == 4 and d ==1:
-                                                                f.write( 'cmd.select("'+resnlist[e]+''+str(a)+'", "name '+list[b]+' and resn '+resnlist[e]+' within %s of (name '+list1[c]+' and '+resnlist[e-3]+')"%('+entnum.get()+'))\n')
+                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and '+resnlistf[e-3]+')"%('+entnum.get()+'))\n')
                                                                 continue
                                                             if e == 4 and d ==2:
-                                                                f.write( 'cmd.select("'+resnlist[e]+''+str(a)+'", "name '+list[b]+' and resn '+resnlist[e]+' within %s of (name '+list1[c]+' and '+resnlist[e-2]+')"%('+entnum.get()+'))\n')
+                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and '+resnlistf[e-2]+')"%('+entnum.get()+'))\n')
                                                                 continue
                                                             if e == 4 and d ==3:
-                                                                f.write( 'cmd.select("'+resnlist[e]+''+str(a)+'", "name '+list[b]+' and resn '+resnlist[e]+' within %s of (name '+list1[c]+' and '+resnlist[e-1]+')"%('+entnum.get()+'))\n')
+                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and '+resnlistf[e-1]+')"%('+entnum.get()+'))\n')
                                                                 continue
                                                             if e == 5 and d ==1:
-                                                                f.write( 'cmd.select("'+resnlist[e]+''+str(a)+'", "name '+list[b]+' and resn '+resnlist[e]+' within %s of (name '+list1[c]+' and '+resnlist[e-4]+')"%('+entnum.get()+'))\n')
+                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and '+resnlistf[e-4]+')"%('+entnum.get()+'))\n')
                                                                 continue
                                                             if e == 5 and d ==2:
-                                                                f.write( 'cmd.select("'+resnlist[e]+''+str(a)+'", "name '+list[b]+' and resn '+resnlist[e]+' within %s of (name '+list1[c]+' and '+resnlist[e-3]+')"%('+entnum.get()+'))\n')
+                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and '+resnlistf[e-3]+')"%('+entnum.get()+'))\n')
                                                                 continue
                                                             if e == 5 and d ==3:
-                                                                f.write( 'cmd.select("'+resnlist[e]+''+str(a)+'", "name '+list[b]+' and resn '+resnlist[e]+' within %s of (name '+list1[c]+' and '+resnlist[e-2]+')"%('+entnum.get()+'))\n')
+                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and '+resnlistf[e-2]+')"%('+entnum.get()+'))\n')
                                                                 continue
                                                             if e == 5 and d ==4:
-                                                                f.write( 'cmd.select("'+resnlist[e]+''+str(a)+'", "name '+list[b]+' and resn '+resnlist[e]+' within %s of (name '+list1[c]+' and '+resnlist[e-1]+')"%('+entnum.get()+'))\n')
-                                                                continue
-                                                            if e == 6 and d ==1:
-                                                                f.write( 'cmd.select("'+resnlist[e]+''+str(a)+'", "name '+list[b]+' and resn '+resnlist[e]+' within %s of (name '+list1[c]+' and '+resnlist[e-5]+')"%('+entnum.get()+'))\n')
-                                                                continue
-                                                            if e == 6 and d ==2:
-                                                                f.write( 'cmd.select("'+resnlist[e]+''+str(a)+'", "name '+list[b]+' and resn '+resnlist[e]+' within %s of (name '+list1[c]+' and '+resnlist[e-4]+')"%('+entnum.get()+'))\n')
-                                                                continue
-                                                            if e == 6 and d ==3:
-                                                                f.write( 'cmd.select("'+resnlist[e]+''+str(a)+'", "name '+list[b]+' and resn '+resnlist[e]+' within %s of (name '+list1[c]+' and '+resnlist[e-3]+')"%('+entnum.get()+'))\n')
-                                                                continue
-                                                            if e == 6 and d ==4:
-                                                                f.write( 'cmd.select("'+resnlist[e]+''+str(a)+'", "name '+list[b]+' and resn '+resnlist[e]+' within %s of (name '+list1[c]+' and '+resnlist[e-2]+')"%('+entnum.get()+'))\n')
-                                                                continue
-                                                            if e == 6 and d ==4:
-                                                                f.write( 'cmd.select("'+resnlist[e]+''+str(a)+'", "name '+list[b]+' and resn '+resnlist[e]+' within %s of (name '+list1[c]+' and '+resnlist[e-1]+')"%('+entnum.get()+'))\n')
-                                                                continue     
+                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and '+resnlistf[e-1]+')"%('+entnum.get()+'))\n')
+                                                                continue    
                                                             else:
-                                                               f.write( 'cmd.select("'+resnlist[e]+''+str(a)+'", "name '+list[b]+' and resn '+resnlist[e]+' within %s of (name '+list1[c]+' and resn '+resnlist[d]+')"%('+entnum.get()+'))\n')
+                                                               f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and r. '+resnlist[d]+')"%('+entnum.get()+'))\n')
                                                                continue
                                                     except:
-                                                        flojo = False
+                                                        break
                                             except:
-                                                fastwalk = False
+                                                break
                                     except:
-                                        j = a
-                                        f.write('cmd.select("'+resnlist[e]+'","')
-                                        f.write('byres '+resnlist[e]+''+str(a)+' ')
-                                        a = int(enta.get()) - 1
-                                        enta.delete(0,1000)
-                                        enta.insert(0,a)
-                                        sprinting = True
-                                        while sprinting:
-                                        
-                                            if a >1:
-                                                f.write('and byres '+resnlist[e]+''+str(a)+' ')
-                                                a = int(enta.get()) - 1
-                                                enta.delete(0,1000)
-                                                enta.insert(0,a)
+                                        f.write('cmd.select("'+resnlistf[e]+'","')
+                                        for i in range(1,a+1):
+                                            if i==a:
+                                                f.write('br. '+resnlistf[e]+str(i)+'")\n')
                                             else:
-                                               
-                                                f.write('and byres '+resnlist[e]+str(a)+'")\n')
-                                                sprinting = False
-                                        for i in range(j+1):
-                                            if i>=1:
-                                                f.write('cmd.delete("'+resnlist[e]+str(i)+'")\n')
+                                                f.write('br. '+resnlistf[e]+''+str(i)+' and ')
+                                        f.write('cmd.delete("')
+                                        for i in range(1,a+1):
+                                            if i==a:
+                                                f.write(resnlistf[e]+str(i)+'")\n')
                                             else:
-                                                running = False
+                                                f.write(resnlistf[e]+str(i)+'+')
+                                        break
 
                             except:
                                 f.write('cmd.select("Motif","')
                                 if len(ent1B.get()) >0:
                                      f.write(''+ent1B.get()+'')
                                 else:
-                                    funrun = False
-                                if len(ent2B.get())>0:      
-                                   f.write('('+ent2B.get()+'')
+                                    break
+                                if len(ent1F.get())>0:      
+                                   f.write('('+ent1F.get()+'')
                                 else:
                                     f.write('")\n')
-                                    funrun = False
-                                if len(ent3B.get()) >0:
-                                    f.write('('+ent3B.get()+'')
+                                    break
+                                if len(ent2F.get()) >0:
+                                    f.write('('+ent2F.get()+'')
                                 else:
                                     f.write(')")\n')
-                                    funrun = False
-                                if len(ent4B.get()) >0:
-                                    f.write('('+ent4B.get()+'')
+                                    break
+                                if len(ent3F.get()) >0:
+                                    f.write('('+ent3F.get()+'')
                                 else:
                                     f.write('))")\n')
-                                    funrun = False
-                                if len(ent5B.get()) >0:
-                                   f.write('('+ent5B.get()+'')
+                                    break
+                                if len(ent4F.get()) >0:
+                                   f.write('('+ent4F.get()+'')
                                    f.write('))))")\n')
-                                elif len(ent4B.get()) >0:
+                                else:
                                    f.write(')))")\n')
-                                funrun = False
-
-                    
+                                break
 
                     if ent1B.get()!='':
                         f.write("cmd.delete('"+ent1B.get()+"')\n")
@@ -15048,16 +15015,16 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     f.write('cmd.set("cartoon_transparency","0.5", "all")\n')
                     f.write('cmd.show("sticks","Motif")\n')
                     f.write('cmd.color("grey","all")\n')
-                    f.write('cmd.color("oxygen","(elem O and Motif)")\n')
-                    f.write('cmd.color("nitrogen","(elem N and Motif)")\n')
-                    f.write('cmd.color("sulfur","(elem S and Motif)")\n')
-                    f.write('cmd.color("hydrogen","(elem H and Motif)")\n')
-                    f.write('cmd.color("white","(elem C and Motif)")\n')
+                    f.write('cmd.color("oxygen","(e. O+Motif)")\n')
+                    f.write('cmd.color("nitrogen","(e. N+Motif)")\n')
+                    f.write('cmd.color("sulfur","(e. S+Motif)")\n')
+                    f.write('cmd.color("hydrogen","(e. H+Motif)")\n')
+                    f.write('cmd.color("white","(e. C+Motif)")\n')
                     f.write('cmd.deselect()\n')
                     f.write('cmd.orient("Motif")\n')
                     
                    
-                    print '\n\n\n\n\n\nMotif Maker\nBy: Brett Hanson and Charlie Westin\n2007\n'+str(int(len(resnlist))-1)+' Amino Acid Motif Written \n\n\n\n\n\n'
+                    print '\n\n\n\n\n\nMotif Maker\nBy: Brett Hanson and Charlie Westin\n2007\nImproved by: Mario Rosa\n2009\n'+str(int(len(resnlist))-1)+' Amino Acid Motif Written \n\n\n\n'
                     f.close()
                     interior.mainloop()
                 except:
