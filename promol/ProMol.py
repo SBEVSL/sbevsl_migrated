@@ -61,7 +61,7 @@ universalPDB = ''
 class PDBParser:
 	#Most of this not called anymore, not enough time to sift through
         #and delete though
-    
+
 	global true
 	#------Constructor----------
 	def __init__(self):
@@ -79,8 +79,8 @@ class PDBParser:
 		self.idList=[]
 		self.allHet=[]
 		self.helices=[]
-	
-	
+
+
 	# Read in the PDB file line by line
 	# Call method depending on what line starts with
 	def readFile(self, file):
@@ -124,7 +124,7 @@ class PDBParser:
           	self.journal=self.author+"\n"+self.title+"\n"+self.ref
       		in_file.close()
 
-      
+
   	# Get journal entry information
     	def getJrnl(self, line):
   		temp2=[]
@@ -142,7 +142,7 @@ class PDBParser:
   			for list in temp2:
   				for item in list:
   					self.ref = self.ref+' '+item
-  					
+
   	#Get list of hetero atoms found in molecule
   	def getHet(self, line):
   		temp = string.strip(line[7:10])
@@ -168,7 +168,7 @@ class PDBParser:
  			self.chains[chainID]=seq
  		else:
  			self.chains[chainID]=seq
- 	
+
  	# Get Helix start/stop locations
 	# (adds a helix object to an array)
 	def get_helix_entry(self, line):
@@ -177,8 +177,8 @@ class PDBParser:
 	 	chain = string.strip(line[19:20])
 	 	tempHelix = Helix(start,end,chain)
 	 	self.helices.append(tempHelix)
- 		
- 		
+
+
 #------------------------------------------------------------------#
 #						#
 #                     Helix Class                                                                   #
@@ -189,7 +189,7 @@ class PDBParser:
 #						#
 #------------------------------------------------------------------#
 class Helix:
-   
+
     def __init__(self, start, end, chain):
         self.start = start
         self.end = end
@@ -199,8 +199,8 @@ class Helix:
         return self.start
 
     def getEnd(self):
-        return self.end    
-        		
+        return self.end
+
     def getChain(self):
     	return self.chain
 
@@ -214,8 +214,8 @@ class Helix:
 #					              #
 #---------------------------------------------------------------#
 
-class ChimeConverter: 	
-     
+class ChimeConverter:
+
     #------Constructor----------
     def __init__(self):
         # initialize variables
@@ -226,7 +226,7 @@ class ChimeConverter:
 	self.argsLength = 0
 	self.rpsts = {'cartoon':'cartoon',
 		      'cartoons':'cartoon',
-		      'backbone':'ribbon', 
+		      'backbone':'ribbon',
 		      'spacefill':'spheres',
 		      'dots':'dots',
 		      'wireframe':'lines',
@@ -236,10 +236,10 @@ class ChimeConverter:
 	self.coloring={'colour':'color',
 		       'color':'color',
 		       'background':'bg_color'}
-	
+
 	self.individuals={'center':'zoom',
 			  'centre':'zoom'}
-		
+
 	selections={'dna':'resn a+g+c+t+u',
 		         'protein':'resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR+ACD+ACE+ALB+ALI+ABU+ARO+ASX+BAS+BET+FOR+GLX+HET+HSE+HYP+HYL+ORN+PCA+SAR+TAU+TER+THY+UNK+MSE',
 			 'hydrophobic':'resn ALA+ILE+LEU+MET+PHE+PRO+TRP+VAL',
@@ -248,19 +248,19 @@ class ChimeConverter:
 			 'basic':'resn ARG+HIS+LYS'}
     # parse the command
     def parseIt(self, input, commLine, resultBox):
-        
+
         self.cmdLine = commLine
         self.results = resultBox
-	
+
 	# get rid of capitalizations and leading/ending
 	# white space
         ui = input.lower()
         ui = ui.strip()
-        
+
         # store the command
         self.args = ui.split()
         self.argsLength = len(self.args)
-        
+
         self.command = self.args[0]
 
   	# representations
@@ -268,7 +268,7 @@ class ChimeConverter:
   		# repeat the command back to the user
 		self.results.appendtext('Chime: ' + ui + '\n')
   		self.on_off_conversions()
-  		
+
   	# coloring stuff
   	elif self.command in self.coloring.keys():
   		# repeat the command back to the user
@@ -280,47 +280,47 @@ class ChimeConverter:
   		# repeat the command back to the user
 	        self.results.appendtext('Chime: ' + ui + '\n')
   		self.convert_individual()
-  	
-  	# action commands ( such as spin )	
+
+  	# action commands ( such as spin )
         elif self.command == 'spin':
         	self.results.appendtext('Chime: ' + ui + '\n')
         	self.convert_spin()
-        	
+
   	# selections from the user
   	elif self.command == 'select':
   		self.results.appendtext('Chime: ' + ui + '\n')
   		self.convert_selections()
-	# if the command is not recognized, let the user know  	 	
+	# if the command is not recognized, let the user know
   	else:
   		self.results.appendtext('Error:  Chime command not recognized.\n\n')
-	
-	self.cmdLine.clear() 
+
+	self.cmdLine.clear()
 	#self.cmdLine.focus_force()
-    #-----------------------------------------#  	
+    #-----------------------------------------#
     #        Chime Conversion Methods       #
     #-----------------------------------------#
-    
+
     # handle on/off type commands
     def on_off_conversions(self):
 	pymShow = 'PyMOL: show '+ self.rpsts[self.command] + ', all\n\n'
 	pymHide = 'PyMOL: hide ' + self.rpsts[self.command]+ ', all\n\n'
-	if self.args[0] == 'backbone': 
+	if self.args[0] == 'backbone':
 	    cmd.hide('everything')
 	    cmd.show('ribbon','all')
 	    pymShow = 'PyMOL: hide everything; show '+ self.rpsts[self.command] + ', all\n\n'
-	
+
 	if self.argsLength > 1:
             switch = self.args[1]
-            if switch == 'on': 
+            if switch == 'on':
                 cmd.show(self.rpsts[self.command],'all')
                 self.results.appendtext(pymShow)
             else:
                 cmd.hide(self.rpsts[self.command],'all')
                 self.results.appendtext(pymHide)
-        else: 
+        else:
             cmd.show(self.rpsts[self.command],'all')
             self.results.appendtext(pymShow)
-       	
+
     # background command
     def coloring_conversions(self):
         selections = cmd.get_names('all')
@@ -334,16 +334,16 @@ class ChimeConverter:
        	    elif self.command=='background':
        	    	cmd.bg_color(self.args[1])
        	    	pymCmd = pymCmd + '\n\n'
-       	    	
+
        	    self.results.appendtext(pymCmd)
-       	    
+
        	else:
        	    self.results.appendtext('Usage: '+self.command+' + [color]\n\n')
-    
+
     def convert_spin(self):
         pymSpin = 'PyMOL: mset 1 x180; util.mroll(1,180,1); mplay\n\n'
         if self.argsLength > 1:
-            if self.args[1] == 'off': 
+            if self.args[1] == 'off':
                 cmd.do('mstop; mset')
                 pymSpin = 'PyMOL: mstop; mset\n\n'
             else:
@@ -351,7 +351,7 @@ class ChimeConverter:
         else:
             cmd.do('mset 1 x180; util.mroll(1,180,1);mplay')
         self.results.appendtext(pymSpin)
-            
+
     # convert chime selections
     def convert_selections(self):
       try:
@@ -364,13 +364,13 @@ class ChimeConverter:
       except:
         import tkMessageBox
         tkMessageBox.showinfo('Error', 'That is not a supported command')
-   	    
+
     # 'individual command' conversions
     def convert_individual(self):
-        pymShow = 'PyMOL: '+self.individuals[self.command]+'\n\n' 
+        pymShow = 'PyMOL: '+self.individuals[self.command]+'\n\n'
         cmd.do(self.individuals[self.command])
         self.results.appendtext(pymShow)
-    
+
 #---------------------------------------------------------------#
 #					                        #
 #                           GUI Class                           #
@@ -381,7 +381,7 @@ class ChimeConverter:
 #					                        #
 #---------------------------------------------------------------#
 class PGUI:
-    
+
     global splash
     global TACOBUENO
     global GLYTACO
@@ -424,10 +424,13 @@ class PGUI:
     global TYRGUM
     global VALGUM
     global script
-    
+    global AminoMenuList
+    global AminoList
+    global AlphaSequence
+    global alphaSequence
 
-    
-    #-----Brett's and Charlie's amino acid images--------- 
+
+    #-----Brett's and Charlie's amino acid images---------
     #3D Reference Image
     TACOBUENO = PhotoImage(file="./modules/pmg_tk/startup/AminoPics/TACOBUENO.GIF")
     GLYTACO = PhotoImage(file="./modules/pmg_tk/startup/AminoPics/GLYTACO.GIF")
@@ -471,17 +474,25 @@ class PGUI:
     LEUGUM = PhotoImage(file="./modules/pmg_tk/startup/AminoPics/LEUGUM.GIF")
     LYSGUM = PhotoImage(file="./modules/pmg_tk/startup/AminoPics/LYSGUM.GIF")
     TYRGUM = PhotoImage(file="./modules/pmg_tk/startup/AminoPics/TYRGUM.GIF")
-        
+
     # Welcome tab image
     splash = PhotoImage(file="./modules/pmg_tk/startup/splashmol.GIF")
 
-    
+    #Amino Acid Abbre List for Menus
+    AminoMenuList = ('','ala','arg','asn','asp','cys','gln','glu','gly','his','ile','leu','lys','met','phe','pro','ser','thr','trp','tyr','val')
+    #Amino Acid Array for validation
+    AminoList = ('ala','arg','asn','asp','cys','gln','glu','gly','his','ile','leu','lys','met','phe','pro','ser','thr','trp','tyr','val')
+    #A - Z
+    AlphaSequence = [ "%c" % (x) for x in range(ord('A'), ord('Z')+1)]
+    #a - z
+    alphaSequence = [ "%c" % (x) for x in range(ord('a'), ord('z')+1)]
+
     #--------------------------------------#
     #			                   #
     #         PRESETS METHODS              #
     #                                      #
     #--------------------------------------#
-    
+
     #All initially Larua's and Chris's code, but modified by Brett and Charlie
     #none of the preset views worked when a PDB file was loaded
     #through Pymol, all had to be loaded through EZViz for parsing
@@ -490,20 +501,20 @@ class PGUI:
     #want, and still have the view work.  Only functionality loss was distinguishin between DNA and RNA
 
     #---------------------Version 2-------------------------#
-    
+
     script = 0
 #     def write_script(self, tag):
 #         if tag == 'Off':
 #             script ='0'
-           
+
 #         if tag=='On': #write a script
 #             try:
 #                 script = '1'
 #                 import tkFileDialog
 #                 self.Q = tkFileDialog.asksaveasfilename(defaultextension=".py", initialdir="./modules/pmg_tk/startup/Scripts")
-#                 cmd.do('log_open %s,a' %(self.Q))            
+#                 cmd.do('log_open %s,a' %(self.Q))
 #                 self.f=open(self.Q, 'w')
-              
+
 #             except:
 #                pass
 
@@ -518,7 +529,7 @@ class PGUI:
 #         cmd.cartoon('automatic', 'all')
 #         cmd.set('stick_radius','0.2','all')
 #         if script == '1':
-#                 f.write('''cmd.hide("everything","all") 
+#                 f.write('''cmd.hide("everything","all")
 # cmd.set("transparency","0.0","all")
 # cmd.set("cartoon_transparency","0.0","all")
 # cmd.set("transparency","0","all")
@@ -529,7 +540,7 @@ class PGUI:
 # cmd.set("stick_radius","0.2","all")\n''')
 #         delcrea()
 #     cmd.extend('set_defaults',set_defaults)
-    
+
    # emphasize DNA
     def show_dna_rna(*args):
         import tkMessageBox
@@ -584,7 +595,7 @@ cmd.color('paleyellow', 'resn u')\n''')
 
           else:
                 tkMessageBox.showinfo("Error", "There is no DNA or RNA in this molecule.")
-        except:              
+        except:
           if 'nucleic_acid' in objects:
               set_defaults()
               if 'protein' in objects:
@@ -624,8 +635,8 @@ cmd.color('paleyellow', 'resn u')\n''')
           else:
                 tkMessageBox.showinfo("Error", "There is no DNA or RNA in this molecule.")
     cmd.extend('show_dna_rna',show_dna_rna)
-    
-  
+
+
     # default view
     def std_view(self):
       try:
@@ -638,14 +649,14 @@ cmd.color('paleyellow', 'resn u')\n''')
         cmd.color("red", "ss h")
         cmd.color("yellow", "ss s")
         cmd.color("cyan", "ss l+\'\'")
-        cmd.set('cartoon_ring_mode' ,'1')	
+        cmd.set('cartoon_ring_mode' ,'1')
         cmd.show('spheres','het')
         if script == '1':
             f.write('''cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
 cmd.color("red", "ss h")
 cmd.color("yellow", "ss s")
 cmd.color("cyan", "ss l+\'\'")
-cmd.set('cartoon_ring_mode' ,'1')	
+cmd.set('cartoon_ring_mode' ,'1')
 cmd.show('spheres','het')\n''')
         cpkligands()
         cmd.show('cartoon', 'resn a+t+g+c+u')
@@ -662,13 +673,13 @@ cmd.color('limegreen','resn a+t+g+c+u')\n''')
         cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
         cmd.color("red", "ss h")
         cmd.color("yellow", "ss s")
-        cmd.color("cyan", "ss l+\'\'")	
+        cmd.color("cyan", "ss l+\'\'")
         cmd.show('spheres','het')
         if script=='1':
             f.write('''cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
 cmd.color("red", "ss h")
 cmd.color("yellow", "ss s")
-cmd.color("cyan", "ss l+\'\'")	
+cmd.color("cyan", "ss l+\'\'")
 cmd.show('spheres','het')''')
         cpkligands()
         cmd.show('cartoon', 'resn a+t+g+c+u')
@@ -677,7 +688,7 @@ cmd.show('spheres','het')''')
             f.write('''cmd.show('cartoon', 'resn a+t+g+c+u')
 cmd.color('limegreen','resn a+t+g+c+u')\n''')
 
-    # show hetero atoms    
+    # show hetero atoms
     def show_hetero(*args):
         try:
             self = args[0]
@@ -783,7 +794,7 @@ cmd.disable('interaction')\n''')
 	    tkMessageBox.showinfo("Error", "There are no hetero atoms in this molecule.")
     cmd.extend('show_hetero',show_hetero)
 
-    # ball and stick view	
+    # ball and stick view
     def ball_and_stick(*args):
       try:
           self = args[0]
@@ -832,7 +843,7 @@ cmd.show('sticks','resn a+g+c+t+u')\n''')
               f.write('''cmd.show('spheres','ligands')
 cmd.color('orange', 'ligands')\n''')
     cmd.extend('ball_and_stick',ball_and_stick)
-	    
+
     # show the surface of the molecule
     def surface_view(*args):
       delcrea()
@@ -847,8 +858,8 @@ cmd.color('orange', 'ligands')\n''')
         f.write(''' cmd.show('surface','all')\n''')
       cpkprotein()
     cmd.extend('surface_view',surface_view)
-       
-       	
+
+
     # show the polarities of the molecule
     def view_polarity(*args):
         delcrea()
@@ -887,7 +898,7 @@ cmd.color('green','het')\n''')
         tkMessageBox.showinfo('Info', 'Red = Hydrophobic\nBlue = Hydrophilic')
 
     cmd.extend('solubility', view_polarity)
-        
+
     # putty representation
     def show_putty(*args):
       try:
@@ -923,7 +934,7 @@ cmd.show('sticks','resn t+g+c+a+u')\n''')
         import tkMessageBox
         tkMessageBox.showinfo('Error', 'Putty is not supported by this version of PyMol\nTry downloading the newest version to troubleshoot this problem')
     cmd.extend('putty',show_putty)
-                  	    
+
     # aromatics view
     def color_aromatics(*args):
       update()
@@ -956,7 +967,7 @@ cmd.set('stick_radius','0.4','all')
 cmd.delete('aromatics')\n''')
       cmd.deselect()
     cmd.extend('color_aromatics',color_aromatics)
-	
+
     # color the molecule by chain
     def color_by_chain(self):
       color_by_chain()
@@ -1004,8 +1015,8 @@ cmd.set('cartoon_smooth_loops','0')\n''')
           import tkMessageBox
           tkMessageBox.showinfo('Charge Info', 'Blue = Positively charged Amino Acids\nRed = Negatively charged Amino Acids')
     cmd.extend('show_charged', show_charged)
-      
-   
+
+
     def surf_toon(*args):
       delcrea()
       color_by_chain()
@@ -1014,7 +1025,7 @@ cmd.set('cartoon_smooth_loops','0')\n''')
       cmd.select('surface', 'all')
       cmd.do('show surface, all')
       cmd.do('set transparency, 0.5, surface')
-      cmd.set('cartoon_smooth_loops','0')       
+      cmd.set('cartoon_smooth_loops','0')
       cmd.delete('surface')
       if script=='1':
           f.write('''cmd.hide('everything')
@@ -1022,12 +1033,12 @@ cmd.show('cartoon','all')
 cmd.select('surface', 'all')
 cmd.do('show surface, all')
 cmd.do('set transparency, 0.5, surface')
-cmd.set('cartoon_smooth_loops','0')       
+cmd.set('cartoon_smooth_loops','0')
 cmd.delete('surface')\n''')
     cmd.extend('surf_over_toon',surf_toon)
-     
-      
-  
+
+
+
     def surf_stick(*args):
       delcrea()
       update()
@@ -1036,22 +1047,22 @@ cmd.delete('surface')\n''')
       cmd.show('stick','all')
       cmd.select('surface', 'all')
       cmd.do('show surface, all')
-      cmd.do('set transparency, 0.5, surface')              
+      cmd.do('set transparency, 0.5, surface')
       cmd.delete('surface')
       if script=='1':
           f.write('''  cmd.hide('everything')
 cmd.show('stick','all')
 cmd.select('surface', 'all')
 cmd.do('show surface, all')
-cmd.do('set transparency, 0.5, surface')              
+cmd.do('set transparency, 0.5, surface')
 cmd.delete('surface')\n''')
       cpkprotein()
       cpknucleic()
       cpkligands()
     cmd.extend('surf_over_stick',surf_stick)
 
-      
-          
+
+
     def mesh_stick(*args):
         delcrea()
         cmd.hide('everything')
@@ -1090,7 +1101,7 @@ cmd.color('salmon', 'cartoon')
 cmd.color('cyan', 'resn a+t+u+g+c')\n''')
     cmd.extend('stick_and_cartoon',stick_toon)
 
-        
+
     def dot_line(*args):
         delcrea()
         cmd.set('dot_density', '3')
@@ -1107,7 +1118,7 @@ cmd.hide('everything')
 cmd.show('lines')
 cmd.show('dots', 'all')\n''')
     cmd.extend('dot_line',dot_line)
-        
+
     def rovingstickers(*args):
       cmdRovStick = ' '
 
@@ -1147,7 +1158,7 @@ cmd.set("roving_polar_contacts",8)\n''')
       cpknucleic()
       cpkligands()
     cmd.extend('roving_stick',rovingstickers)
-    
+
     def rovinglines(*args):
       cmdRovLine = ''
       print len(args)
@@ -1162,7 +1173,7 @@ cmd.set("roving_polar_contacts",8)\n''')
         self = args[0]
       except:
         print 'Usage: roving_line # (# is value between 0 and 20)'
-          
+
       update()
       checkitforthese()
       delcrea()
@@ -1188,7 +1199,7 @@ cmd.set("roving_polar_contacts",8)\n''')
       cpknucleic()
       cpkligands()
     cmd.extend('roving_line', rovinglines)
-        
+
     def rovingballstick(*args):
       cmdRovBall = ''
 
@@ -1235,11 +1246,11 @@ cmd.set("sphere_scale","0.3","all")\n''')
       cpknucleic()
       cpkligands()
     cmd.extend('roving_ballstick',rovingballstick)
-    
+
 
     def rovingspheres(*args):
       cmdRovSphere = ''
-      
+
       try:
         cmdRovSphere = float(args[0])
       except:
@@ -1325,7 +1336,7 @@ cmd.set('sphere_scale', '0.8', 'all')\n''')
       if 'Chain-D' in objects:
         chainpulllist.append('Chain-D')
       if 'Chain-E' in objects:
-        chainpulllist.append('Chain-E')           
+        chainpulllist.append('Chain-E')
       if 'Chain-F' in objects:
         chainpulllist.append('Chain-F')
       if 'Chain-G' in objects:
@@ -1367,12 +1378,12 @@ cmd.set('sphere_scale', '0.8', 'all')\n''')
       if 'Chain-Y' in objects:
         chainpulllist.append('Chain-Y')
       if 'Chain-Z' in objects:
-        chainpulllist.append('Chain-Z')         
+        chainpulllist.append('Chain-Z')
 
       if len(chainpulllist) >1:
         cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[1])
         cpkduh()
-        cmd.delete('duh')    
+        cmd.delete('duh')
         cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[0])
         cpkduh()
         cmd.delete('duh')
@@ -1399,51 +1410,51 @@ cmd.set('sphere_scale', '0.8', 'all')\n''')
         if len(chainpulllist) >5:
           cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[1])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[5])
           cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >6:
           cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[1])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[6])
           cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >7:
           cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[1])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[7])
           cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >8:
           cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[1])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[8])
           cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >9:
           cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[1])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[9])
           cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >10:
           cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[1])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[10])
           cpkduh()
           cmd.delete('duh')
 
       if len(chainpulllist) >2:
-        
+
         cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[2])
         cpkduh()
-        cmd.delete('duh')    
+        cmd.delete('duh')
         cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[0])
         cpkduh()
         cmd.delete('duh')
@@ -1471,35 +1482,35 @@ cmd.set('sphere_scale', '0.8', 'all')\n''')
         if len(chainpulllist) >6:
           cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[2])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[6])
           cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >7:
           cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[2])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[7])
           cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >8:
           cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[2])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[8])
           cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >9:
           cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[2])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[9])
           cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >10:
           cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[2])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[10])
           cpkduh()
           cmd.delete('duh')
@@ -1507,7 +1518,7 @@ cmd.set('sphere_scale', '0.8', 'all')\n''')
       if len(chainpulllist) >3:
         cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[3])
         cpkduh()
-        cmd.delete('duh')    
+        cmd.delete('duh')
         cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[0])
         cpkduh()
         cmd.delete('duh')
@@ -1535,28 +1546,28 @@ cmd.set('sphere_scale', '0.8', 'all')\n''')
         if len(chainpulllist) >7:
           cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[3])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[7])
           cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >8:
           cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[3])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[8])
           cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >9:
           cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[3])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[9])
           cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >10:
           cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[3])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[10])
           cpkduh()
           cmd.delete('duh')
@@ -1564,7 +1575,7 @@ cmd.set('sphere_scale', '0.8', 'all')\n''')
       if len(chainpulllist) >4:
         cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[4])
         cpkduh()
-        cmd.delete('duh')    
+        cmd.delete('duh')
         cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[0])
         cpkduh()
         cmd.delete('duh')
@@ -1592,21 +1603,21 @@ cmd.set('sphere_scale', '0.8', 'all')\n''')
         if len(chainpulllist) >8:
           cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[4])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[8])
           cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >9:
           cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[4])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[9])
           cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >10:
           cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[4])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[10])
           cpkduh()
           cmd.delete('duh')
@@ -1614,7 +1625,7 @@ cmd.set('sphere_scale', '0.8', 'all')\n''')
       if len(chainpulllist) >5:
         cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[5])
         cpkduh()
-        cmd.delete('duh')    
+        cmd.delete('duh')
         cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[0])
         cpkduh()
         cmd.delete('duh')
@@ -1642,14 +1653,14 @@ cmd.set('sphere_scale', '0.8', 'all')\n''')
         if len(chainpulllist) >9:
           cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[5])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[9])
           cpkduh()
           cmd.delete('duh')
         if len(chainpulllist) >10:
           cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[5])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[10])
           cpkduh()
           cmd.delete('duh')
@@ -1657,7 +1668,7 @@ cmd.set('sphere_scale', '0.8', 'all')\n''')
       if len(chainpulllist) >6:
         cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[6])
         cpkduh()
-        cmd.delete('duh')    
+        cmd.delete('duh')
         cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[0])
         cpkduh()
         cmd.delete('duh')
@@ -1685,16 +1696,16 @@ cmd.set('sphere_scale', '0.8', 'all')\n''')
         if len(chainpulllist) >10:
           cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[6])
           cpkduh()
-          cmd.delete('duh')    
+          cmd.delete('duh')
           cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[10])
           cpkduh()
           cmd.delete('duh')
 
-          
+
       if len(chainpulllist) >7:
         cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[7])
         cpkduh()
-        cmd.delete('duh')    
+        cmd.delete('duh')
         cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[0])
         cpkduh()
         cmd.delete('duh')
@@ -1719,11 +1730,11 @@ cmd.set('sphere_scale', '0.8', 'all')\n''')
           cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[10])
           cpkduh()
           cmd.delete('duh')
-        
+
       if len(chainpulllist) >8:
         cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[8])
         cpkduh()
-        cmd.delete('duh')    
+        cmd.delete('duh')
         cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[0])
         cpkduh()
         cmd.delete('duh')
@@ -1741,11 +1752,11 @@ cmd.set('sphere_scale', '0.8', 'all')\n''')
           cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[10])
           cpkduh()
           cmd.delete('duh')
-        
+
       if len(chainpulllist) >9:
         cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[9])
         cpkduh()
-        cmd.delete('duh')    
+        cmd.delete('duh')
         cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[0])
         cpkduh()
         cmd.delete('duh')
@@ -1760,13 +1771,13 @@ cmd.set('sphere_scale', '0.8', 'all')\n''')
       if len(chainpulllist) >10:
         cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[10])
         cpkduh()
-        cmd.delete('duh')    
+        cmd.delete('duh')
         cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[0])
         cpkduh()
         cmd.delete('duh')
-        
+
     cmd.extend('chain_contact',chain_contact)
-   
+
 
     def show_cpk(*args):
       try:
@@ -1818,7 +1829,7 @@ cmd.set('transparency', '0.4')\n''')
       cpkligands()
     cmd.extend('surf_over_spheres',spheresurf)
       #-----------Electron Density Presets----------------#
-      
+
     def mesh_ribbon(self):
         try:
             delcrea()
@@ -1828,27 +1839,27 @@ cmd.set('transparency', '0.4')\n''')
                     if script=='1':
                         f.write('''cmd.hide('everything')
 cmd.isomesh('map1','map', contour1.get())\n''')
-                    
+
             except:
                     try:
                         cmd.set("suspend_updates",1,quiet=1)
-                        cmd.remove("hydro")      
+                        cmd.remove("hydro")
                         cmd.map_new('map',"gaussian","0.75", 'all')
                         cmd.set("suspend_updates",0,quiet=1)
                         cmd.refresh()
                         cmd.isomesh('map1','map', '1')
                         if script=='1':
                             f.write('''cmd.set("suspend_updates",1,quiet=1)
-cmd.remove("hydro")      
+cmd.remove("hydro")
 cmd.map_new('map',"gaussian","0.75", 'all')
 cmd.set("suspend_updates",0,quiet=1)
 cmd.refresh()
 cmd.isomesh('map1','map', '1')\n''')
-                       
+
                     except:
                             import tkMessageBox
                             tkMessageBox.showinfo("Error", 'No PDB is present')
-                            
+
                     cmd.show('ribbon', 'all')
             cmd.show('lines', 'all')
             cmd.color('red', 'all')
@@ -1858,7 +1869,7 @@ cmd.isomesh('map1','map', '1')\n''')
 cmd.show('lines', 'all')
 cmd.color('red', 'all')
 cmd.color('purpleblue', 'map1')\n''')
-            
+
         except:
             cmd.show('lines', 'all')
             if script=='1':
@@ -1868,14 +1879,14 @@ cmd.color('purpleblue', 'map1')\n''')
     cmd.extend('mesh_ribbon',mesh_ribbon)
 
     def dot_sticks(*args):
-         try:  
+         try:
              delcrea()
              cmd.hide('everything')
              if script=='1':
                 f.write('''cmd.hide('everything')\n''')
              try:
                 cmd.set("suspend_updates",1,quiet=1)
-                cmd.remove("hydro")      
+                cmd.remove("hydro")
                 cmd.enable('all')
                 cmd.map_new('map',"gaussian","0.75", 'all')
                 cmd.isodot("map1", "map", 9999.0, 'all')
@@ -1884,7 +1895,7 @@ cmd.color('purpleblue', 'map1')\n''')
                 cmd.isodot('map1','map', '1')
                 if script=='1':
                     f.write('''cmd.set("suspend_updates",1,quiet=1)
-cmd.remove("hydro")      
+cmd.remove("hydro")
 cmd.enable('all')
 cmd.map_new('map',"gaussian","0.75", 'all')
 cmd.isodot("map1", "map", 9999.0, 'all')
@@ -1894,7 +1905,7 @@ cmd.isodot('map1','map', '1')\n''')
              except:
                 import tkMessageBox
                 tkMessageBox.showinfo("Error", 'No PDB is present')
-                
+
              cmd.show('sticks', 'all')
              cmd.color('blue', 'all')
              cmd.color('red', 'map1')
@@ -1920,9 +1931,9 @@ cmd.color('red', 'map1')\n''')
             update()
             checkitforthese()
             delcrea()
-            
+
             try:
-                cmd.remove("hydro")      
+                cmd.remove("hydro")
                 cmd.map_new('map',"gaussian","0.75", 'all')
                 cmd.isosurface('map1','map','1')
                 cmd.show('lines', 'all')
@@ -1934,7 +1945,7 @@ cmd.color('red', 'map1')\n''')
                 cmd.set('transparency', '0.4')
                 cmd.set('ambient', '0.45')
                 if script=='1':
-                    f.write('''cmd.remove("hydro")      
+                    f.write('''cmd.remove("hydro")
 cmd.map_new('map',"gaussian","0.75", 'all')
 cmd.isosurface('map1','map','1')
 cmd.show('lines', 'all')
@@ -1963,7 +1974,7 @@ cmd.set('ambient', '0.45')\n''')
     def deletemotif(self):
       deletemotif()
 
-        
+
 #----------Motif definitions consisting of measuring atom to atom between different
         #  amino acid residues and allowing them to be altered by a slider
 
@@ -1976,14 +1987,14 @@ cmd.set('ambient', '0.45')\n''')
       deletemotif()#deletes previous motif
       cmd.select('asp1', 'resn asp within %s of resn his' %(self.range.get()*3)) #selects aspartate within 3 of histidine
       cmd.select('asp2', 'resn asp within %s of resn ser'%(self.range.get()*7))
-      cmd.select('asp', 'byres asp1 and byres asp2') 
+      cmd.select('asp', 'byres asp1 and byres asp2')
       cmd.select('his1', 'resn his within %s of asp' %(self.range.get()*4))
       cmd.select('his2', 'resn his within %s of resn ser' %(self.range.get()*4))
-      cmd.select('his', 'byres his1 and byres his2') 
+      cmd.select('his', 'byres his1 and byres his2')
       cmd.select('ser1', 'name og within %s of name ne2' %(self.range.get()*3.5))
       cmd.select('ser2', 'resn ser within %s of asp' %(self.range.get()*7))
-      cmd.select('ser', 'byres ser1 and byres ser2') 
-      cmd.select('serineprotease', 'ser(his(asp))') 
+      cmd.select('ser', 'byres ser1 and byres ser2')
+      cmd.select('serineprotease', 'ser(his(asp))')
       cmd.hide('everything')
       cmd.show('cartoon', 'all')
       cmd.set('cartoon_transparency', '0.5', 'all')
@@ -2001,7 +2012,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('asp2')
       cmd.delete('his2')
       cmd.delete('ser2')
-      
+
 
     def Blactamase(self):
       update()
@@ -2063,7 +2074,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.select('glu12', 'name cd and resn glu within %s of (name og and resn ser)' %(self.range.get()*11.8))
       cmd.select('glu13', 'name cd and resn glu within %s of (name cb and ser)' %(self.range.get()*11))
       cmd.select('glu14', 'name oe1 and resn glu within %s of (name cg and tyr)' %(self.range.get()*7.4))
-      cmd.select('glu', 'byres glu1 and byres glu2 and byres glu3 and byres glu4 and byres glu5 and byres glu6 and byres glu7 and byres glu8 and byres glu9 and byres glu10 and byres glu11 and byres glu12 and byres glu13 and byres glu14')     
+      cmd.select('glu', 'byres glu1 and byres glu2 and byres glu3 and byres glu4 and byres glu5 and byres glu6 and byres glu7 and byres glu8 and byres glu9 and byres glu10 and byres glu11 and byres glu12 and byres glu13 and byres glu14')
       cmd.select('lactamase', 'ser(tyr(glu(lys)))')
       cmd.hide('everything')
       cmd.show('cartoon', 'all')
@@ -2231,7 +2242,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.select('ser7', 'name og and resn ser within %s of (name ca and cys)'%(self.range.get()*6.5))
       cmd.select('ser8', 'name cb and resn ser within %s of (name cb and cys)'%(self.range.get()*7))
       cmd.select('ser9', 'name ca and resn ser within %s of (name sg and cys)'%(self.range.get()*6))
-      cmd.select('ser', 'byres ser1 and byres ser2 and byres ser3 and byres ser4 and byres ser5 and byres ser6 and byres ser7 and byres ser8 and byres ser9')      
+      cmd.select('ser', 'byres ser1 and byres ser2 and byres ser3 and byres ser4 and byres ser5 and byres ser6 and byres ser7 and byres ser8 and byres ser9')
       cmd.select('tyrophos', 'ser(asp(arg(cys)))')
       tycount = cmd.index('tyrophos')
       atcount  = len(tycount)
@@ -2273,7 +2284,7 @@ cmd.set('ambient', '0.45')\n''')
         cmd.delete('arg6')
         cmd.delete('arg7')
         cmd.delete('arg8')
-        cmd.delete('arg9')    
+        cmd.delete('arg9')
         cmd.delete('ser')
         cmd.delete('ser1')
         cmd.delete('ser2')
@@ -2293,7 +2304,7 @@ cmd.set('ambient', '0.45')\n''')
         cmd.delete('asp6')
         cmd.delete('asp7')
         cmd.delete('asp8')
-        cmd.delete('asp9') 
+        cmd.delete('asp9')
         cmd.delete('cys')
         cmd.delete('cys1')
         cmd.delete('cys2')
@@ -2321,7 +2332,7 @@ cmd.set('ambient', '0.45')\n''')
         cmd.delete('arg6')
         cmd.delete('arg7')
         cmd.delete('arg8')
-        cmd.delete('arg9')    
+        cmd.delete('arg9')
         cmd.delete('ser')
         cmd.delete('ser1')
         cmd.delete('ser2')
@@ -2341,7 +2352,7 @@ cmd.set('ambient', '0.45')\n''')
         cmd.delete('asp6')
         cmd.delete('asp7')
         cmd.delete('asp8')
-        cmd.delete('asp9') 
+        cmd.delete('asp9')
         cmd.delete('cys')
         cmd.delete('cys1')
         cmd.delete('cys2')
@@ -2426,7 +2437,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('gln2')
       cmd.delete('gln3')
       cmd.delete('gln4')
-      cmd.delete('gln5')                        
+      cmd.delete('gln5')
       cmd.orient('paplike')
       cmd.deselect()
 
@@ -2436,7 +2447,7 @@ cmd.set('ambient', '0.45')\n''')
           set_defaults()
           delcrea()
           deletemotif()
-          cmd.select('zn1', 'elem zn')        
+          cmd.select('zn1', 'elem zn')
           xm = cmd.index('zn1')
           nm  = len(xm)
           if(nm < 1):
@@ -2465,7 +2476,7 @@ cmd.set('ambient', '0.45')\n''')
                cmd.show('cartoon', 'all')
                cmd.color('white', 'all')
                cmd.set('cartoon_transparency', '0.6', 'all')
-          
+
     def aminotransferase(self):
       update()
       checkitforthese()
@@ -2607,7 +2618,7 @@ cmd.set('ambient', '0.45')\n''')
           cmd.select('ramp1', 'byres resn amp around %s'%(self.range.get()*7.4))
           cmd.select('lys1', 'byres resn lys and ramp1')
           cmd.select('ramp2', 'byres resn amp around %s'%(self.range.get()*7))
-          
+
           cmd.select('ramp3', 'byres resn amp around %s'%(self.range.get()*5.3))
           cmd.select('asp1', 'ramp3 and(byres resn asp within %s of lys1)'%(self.range.get()*3))
           cmd.select('arg1', 'ramp2 and(byres resn arg within %s of asp1)'%(self.range.get()*5))
@@ -2623,7 +2634,7 @@ cmd.set('ambient', '0.45')\n''')
           cmd.select('ratp1', 'byres resn atp around %s'%(self.range.get()*7.4))
           cmd.select('lys1', 'byres resn lys and ratp1')
           cmd.select('ratp2', 'byres resn atp around %s'%(self.range.get()*7))
-          
+
           cmd.select('ratp3', 'byres resn atp around %s'%(self.range.get()*5.3))
           cmd.select('asp1', 'ratp3 and(byres resn asp within %s of lys1)'%(self.range.get()*3))
           cmd.select('arg1', 'ratp2 and(byres resn arg within %s of asp1)'%(self.range.get()*5))
@@ -2635,9 +2646,9 @@ cmd.set('ambient', '0.45')\n''')
           cmd.show('sticks', 'Ligase')
           cpkdnaligase()
           cmd.deselect()
-    
+
       elif 'amp1' or 'atp1' not in objects:
-          
+
           cmd.select('asp1', 'name OD2 within %s of name NE'%(self.range.get()*5.5))
           cmd.select('arg1', 'name NE within %s of name OD2'%(self.range.get()*5.5))
           cmd.select('lys1', 'name NZ within %s of name OD2'%(self.range.get()*9))
@@ -2680,7 +2691,7 @@ cmd.set('ambient', '0.45')\n''')
       delcrea()
       deletemotif()
 
-     
+
       cmd.select('glu1', 'name OE1 and resn glu within %s of name NH2 and resn arg'%(self.range.get()*5))
       cmd.select('glu2', 'resn glu and name OE2 within %s of name NE and resn arg'%(self.range.get()*5))
       cmd.select('glu3', 'resn glu and name OE1 within %s of name NH1 and resn arg'%(self.range.get()*6))
@@ -2803,8 +2814,8 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('his2')
       cmd.delete('his3')
       cmd.delete('his')
-      
-      
+
+
     def peroxidase(self):
       update()
       checkitforthese()
@@ -2890,7 +2901,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('arg11')
       cmd.delete('arg12')
       cmd.delete('arg')
-      
+
     def trioseisomerase(self):
       update()
       checkitforthese()
@@ -3130,9 +3141,9 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('lys24')
       cmd.delete('lys25')
       cmd.delete('lys')
-      
-      
-              
+
+
+
     def alcoholdehyd(self):
       update()
       checkitforthese()
@@ -3420,7 +3431,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('ile14')
       cmd.delete('ile15')
       cmd.delete('ile')
-      
+
     def nadhbinder(self):
       update()
       checkitforthese()
@@ -3502,7 +3513,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('ser9')
       cmd.delete('ser10')
       cmd.delete('ser')
-   
+
 
     def nadhbinder2(self):
       update()
@@ -3569,16 +3580,16 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('cys3')
       cmd.delete('cys4')
       cmd.delete('cys5')
-      cmd.delete('cys6') 
-      cmd.delete('cys7') 
+      cmd.delete('cys6')
+      cmd.delete('cys7')
       cmd.delete('cys8')
       cmd.delete('cys9')
-      cmd.delete('cys') 
+      cmd.delete('cys')
       cmd.delete('ser1')
       cmd.delete('ser2')
-      cmd.delete('ser3') 
+      cmd.delete('ser3')
       cmd.delete('ser4')
-      cmd.delete('ser5') 
+      cmd.delete('ser5')
       cmd.delete('ser6')
       cmd.delete('ser7')
       cmd.delete('ser8')
@@ -3796,7 +3807,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('arg')
 
 
-   
+
     def hyaluronlyase(self):
       update()
       checkitforthese()
@@ -3979,7 +3990,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('ser')
       cmd.delete('gln')
       cmd.delete('his')
-      
+
     def exonucleaseiii(self):
       update()
       checkitforthese()
@@ -4163,7 +4174,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.select('lys2', 'name cg and resn lys within %s of (name c and resn gly)'%(self.range.get()*6))
       cmd.select('lys3', 'name n and resn lys within %s of (name n and resn gly)'%(self.range.get()*5))
       cmd.select('lys4', 'name n and resn lys within %s of (resn gly)'%(self.range.get()*2))
-      cmd.select('lys5', 'name c and resn lys within %s of (resn gly)'%(self.range.get()*2))  
+      cmd.select('lys5', 'name c and resn lys within %s of (resn gly)'%(self.range.get()*2))
       cmd.select('lys6', 'name nz and resn lys within %s of (name od2 and resn asp)'%(self.range.get()*13))
       cmd.select('lys7', 'name nz and resn lys within %s of (name ne and resn arg)'%(self.range.get()*11))
       cmd.select('lys8', 'name nz and resn lys within %s of (name nh2 and resn arg)'%(self.range.get()*9.5))
@@ -4229,12 +4240,12 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('arg1')
       cmd.delete('arg2')
       cmd.delete('arg')
-      
-      
-      
-      
-      
-      
+
+
+
+
+
+
     def citratesynth(self):
       update()
       checkitforthese()
@@ -4313,7 +4324,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('asp6')
       cmd.delete('asp')
 
-      
+
     def tyrosinekinase(self):
       update()
       checkitforthese()
@@ -4555,7 +4566,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.select('ser1', 'name og and resn ser within %s of (name ne2 and his)'%(self.range.get()*4.5))
       cmd.select('ser2', 'name cb and resn ser within %s of (name ne2 and his)'%(self.range.get()*5.5))
       cmd.select('ser3', 'name og and resn ser within %s of (name cd2 and his)'%(self.range.get()*5.5))
-      cmd.select('ser4', 'name cb and resn ser within %s of (name cd2 and his)'%(self.range.get()*6)) 
+      cmd.select('ser4', 'name cb and resn ser within %s of (name cd2 and his)'%(self.range.get()*6))
       cmd.select('ser5', 'name og and resn ser within %s of (name nd1 and his)'%(self.range.get()*7.5))
       cmd.select('ser6', 'name og and resn ser within %s of (name o and resn leu)'%(self.range.get()*5))
       cmd.select('ser7', 'name og and resn ser within %s of (name cb and resn leu)'%(self.range.get()*8))
@@ -4645,7 +4656,7 @@ cmd.set('ambient', '0.45')\n''')
 
 
 
-        
+
 
 
 ########################################
@@ -4659,14 +4670,14 @@ cmd.set('ambient', '0.45')\n''')
       deletemotif()
       cmd.select('asp1', 'resn asp within %s of resn his' %(self.range.get()*3))
       cmd.select('asp2', 'resn asp within %s of resn ser'%(self.range.get()*7))
-      cmd.select('asp', 'byres asp1 and byres asp2') 
+      cmd.select('asp', 'byres asp1 and byres asp2')
       cmd.select('his1', 'resn his within %s of asp' %(self.range.get()*4))
       cmd.select('his2', 'resn his within %s of resn ser' %(self.range.get()*4))
-      cmd.select('his', 'byres his1 and byres his2') 
+      cmd.select('his', 'byres his1 and byres his2')
       cmd.select('ser1', 'name og within %s of name ne2' %(self.range.get()*3.5))
       cmd.select('ser2', 'resn ser within %s of asp' %(self.range.get()*7))
-      cmd.select('ser', 'byres ser1 and byres ser2') 
-      cmd.select('serineprotease', 'ser(his(asp))') 
+      cmd.select('ser', 'byres ser1 and byres ser2')
+      cmd.select('serineprotease', 'ser(his(asp))')
       cmd.deselect()
       cmd.delete('asp')
       cmd.delete('his')
@@ -4814,7 +4825,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.select('glu12', 'name cd and resn glu within %s of (name og and resn ser)' %(self.range.get()*11.8))
       cmd.select('glu13', 'name cd and resn glu within %s of (name cb and resn ser)' %(self.range.get()*11))
       cmd.select('glu14', 'name oe1 and resn glu within %s of (name cg and resn tyr)' %(self.range.get()*7.4))
-      cmd.select('glu', 'byres glu1 and byres glu2 and byres glu3 and byres glu4 and byres glu5 and byres glu6 and byres glu7 and byres glu8 and byres glu9 and byres glu10 and byres glu11 and byres glu12 and byres glu13 and byres glu14')     
+      cmd.select('glu', 'byres glu1 and byres glu2 and byres glu3 and byres glu4 and byres glu5 and byres glu6 and byres glu7 and byres glu8 and byres glu9 and byres glu10 and byres glu11 and byres glu12 and byres glu13 and byres glu14')
       cmd.select('lactamase', 'ser(tyr(glu(lys)))')
       cmd.deselect
       cmd.delete('lys1')
@@ -4948,7 +4959,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.select('ser7', 'name og and resn ser within %s of (name ca and cys)'%(self.range.get()*6.5))
       cmd.select('ser8', 'name cb and resn ser within %s of (name cb and cys)'%(self.range.get()*7))
       cmd.select('ser9', 'name ca and resn ser within %s of (name sg and cys)'%(self.range.get()*6))
-      cmd.select('ser', 'byres ser1 and byres ser2 and byres ser3 and byres ser4 and byres ser5 and byres ser6 and byres ser7 and byres ser8 and byres ser9')      
+      cmd.select('ser', 'byres ser1 and byres ser2 and byres ser3 and byres ser4 and byres ser5 and byres ser6 and byres ser7 and byres ser8 and byres ser9')
       cmd.select('tyrophos', 'ser(asp(arg(cys)))')
       tycount = cmd.index('tyrophos')
       atcount  = len(tycount)
@@ -4985,7 +4996,7 @@ cmd.set('ambient', '0.45')\n''')
         cmd.delete('arg6')
         cmd.delete('arg7')
         cmd.delete('arg8')
-        cmd.delete('arg9')    
+        cmd.delete('arg9')
         cmd.delete('ser')
         cmd.delete('ser1')
         cmd.delete('ser2')
@@ -5005,7 +5016,7 @@ cmd.set('ambient', '0.45')\n''')
         cmd.delete('asp6')
         cmd.delete('asp7')
         cmd.delete('asp8')
-        cmd.delete('asp9') 
+        cmd.delete('asp9')
         cmd.delete('cys')
         cmd.delete('cys1')
         cmd.delete('cys2')
@@ -5028,7 +5039,7 @@ cmd.set('ambient', '0.45')\n''')
         cmd.delete('arg6')
         cmd.delete('arg7')
         cmd.delete('arg8')
-        cmd.delete('arg9')    
+        cmd.delete('arg9')
         cmd.delete('ser')
         cmd.delete('ser1')
         cmd.delete('ser2')
@@ -5048,7 +5059,7 @@ cmd.set('ambient', '0.45')\n''')
         cmd.delete('asp6')
         cmd.delete('asp7')
         cmd.delete('asp8')
-        cmd.delete('asp9') 
+        cmd.delete('asp9')
         cmd.delete('cys')
         cmd.delete('cys1')
         cmd.delete('cys2')
@@ -5158,7 +5169,7 @@ cmd.set('ambient', '0.45')\n''')
 
     def zincfinger2(self):
           deletemotif()
-          cmd.select('zn1', 'elem zn')        
+          cmd.select('zn1', 'elem zn')
           xm = cmd.index('zn1')
           nm  = len(xm)
           if(nm < 1):
@@ -5175,7 +5186,7 @@ cmd.set('ambient', '0.45')\n''')
               cmd.delete('cys')
               cmd.delete('cys1')
               cmd.deselect()
-          
+
     def aminotransferase2(self):
       deletemotif()
       cmd.select('asp1', 'name od1 and resn asp within %s of (name cb and resn his)'%(self.range.get()*5))
@@ -5279,7 +5290,7 @@ cmd.set('ambient', '0.45')\n''')
           cmd.select('ramp1', 'byres resn amp around %s'%(self.range.get()*7.4))
           cmd.select('lys1', 'byres resn lys and ramp1')
           cmd.select('ramp2', 'byres resn amp around %s'%(self.range.get()*7))
-          
+
           cmd.select('ramp3', 'byres resn amp around %s'%(self.range.get()*5.3))
           cmd.select('asp1', 'ramp3 and(byres resn asp within %s of lys1)'%(self.range.get()*3))
           cmd.select('arg1', 'ramp2 and(byres resn arg within %s of asp1)'%(self.range.get()*5))
@@ -5289,15 +5300,15 @@ cmd.set('ambient', '0.45')\n''')
           cmd.select('ratp1', 'byres resn atp around %s'%(self.range.get()*7.4))
           cmd.select('lys1', 'byres resn lys and ratp1')
           cmd.select('ratp2', 'byres resn atp around %s'%(self.range.get()*7))
-          
+
           cmd.select('ratp3', 'byres resn atp around %s'%(self.range.get()*5.3))
           cmd.select('asp1', 'ratp3 and(byres resn asp within %s of lys1)'%(self.range.get()*3))
           cmd.select('arg1', 'ratp2 and(byres resn arg within %s of asp1)'%(self.range.get()*5))
           cmd.select('Ligase', 'byres lys1(atp1(byres arg1(byres asp1)))')
           cmd.deselect()
-    
+
       elif 'amp1' or 'atp1' not in objects:
-          
+
           cmd.select('asp1', 'name OD2 within %s of name NE'%(self.range.get()*5.5))
           cmd.select('arg1', 'name NE within %s of name OD2'%(self.range.get()*5.5))
           cmd.select('lys1', 'name NZ within %s of name OD2'%(self.range.get()*9))
@@ -5414,8 +5425,8 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('his2')
       cmd.delete('his3')
       cmd.delete('his')
-      
-      
+
+
     def peroxidase2(self):
       deletemotif()
       cmd.select('asn1', 'name od1 within %s of name nd1'%(self.range.get()*8))
@@ -5490,7 +5501,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('arg11')
       cmd.delete('arg12')
       cmd.delete('arg')
-      
+
     def trioseisomerase2(self):
       deletemotif()
       cmd.select('lys1', 'name nz and resn lys within %s of (name od1 and resn asn)'%(self.range.get()*7.5))
@@ -5719,9 +5730,9 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('lys24')
       cmd.delete('lys25')
       cmd.delete('lys')
-      
-      
-              
+
+
+
     def alcoholdehyd2(self):
       deletemotif()
       cmd.select('tyr1', 'name cd1 and resn tyr within %s of (name nd2 and resn asn)'%(self.range.get()*5))
@@ -5977,7 +5988,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('ile14')
       cmd.delete('ile15')
       cmd.delete('ile')
-      
+
     def nadhbinder22(self):
       deletemotif()
       cmd.select('asp1', 'name od2 and resn asp within %s of (name sg and resn cys)'%(self.range.get()*5))
@@ -6049,7 +6060,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('ser9')
       cmd.delete('ser10')
       cmd.delete('ser')
-   
+
 
     def nadhbinder222(self):
       deletemotif()
@@ -6106,16 +6117,16 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('cys3')
       cmd.delete('cys4')
       cmd.delete('cys5')
-      cmd.delete('cys6') 
-      cmd.delete('cys7') 
+      cmd.delete('cys6')
+      cmd.delete('cys7')
       cmd.delete('cys8')
       cmd.delete('cys9')
-      cmd.delete('cys') 
+      cmd.delete('cys')
       cmd.delete('ser1')
       cmd.delete('ser2')
-      cmd.delete('ser3') 
+      cmd.delete('ser3')
       cmd.delete('ser4')
-      cmd.delete('ser5') 
+      cmd.delete('ser5')
       cmd.delete('ser6')
       cmd.delete('ser7')
       cmd.delete('ser8')
@@ -6309,7 +6320,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('arg10')
       cmd.delete('arg11')
       cmd.delete('arg')
-      
+
     def hyaluronlyase2(self):
       deletemotif()
       cmd.select('tyr1', 'name oh and resn tyr within %s of (name nh2 and resn arg)'%(self.range.get()*6))
@@ -6437,7 +6448,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('ser')
       cmd.delete('gln')
       cmd.delete('his')
-      
+
     def exonucleaseiii2(self):
       deletemotif()
       cmd.select('his1', 'name ne2 and resn his within %s of (name nd2 and resn asn)'%(self.range.get()*5.5))
@@ -6519,7 +6530,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.select('lys2', 'name cg and resn lys within %s of (name c and resn gly)'%(self.range.get()*6))
       cmd.select('lys3', 'name n and resn lys within %s of (name n and resn gly)'%(self.range.get()*5))
       cmd.select('lys4', 'name n and resn lys within %s of (resn gly)'%(self.range.get()*2))
-      cmd.select('lys5', 'name c and resn lys within %s of (resn gly)'%(self.range.get()*2))  
+      cmd.select('lys5', 'name c and resn lys within %s of (resn gly)'%(self.range.get()*2))
       cmd.select('lys6', 'name nz and resn lys within %s of (name od2 and resn asp)'%(self.range.get()*13))
       cmd.select('lys7', 'name nz and resn lys within %s of (name ne and resn arg)'%(self.range.get()*11))
       cmd.select('lys8', 'name nz and resn lys within %s of (name nh2 and resn arg)'%(self.range.get()*9.5))
@@ -6578,12 +6589,12 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('arg1')
       cmd.delete('arg2')
       cmd.delete('arg')
-      
-      
-      
-      
-      
-      
+
+
+
+
+
+
     def citratesynth2(self):
       deletemotif()
       cmd.select('his1', 'name ne2 and resn his within %s of (name og and resn ser)'%(self.range.get()*5))
@@ -6651,7 +6662,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('asp6')
       cmd.delete('asp')
 
-      
+
     def tyrosinekinase2(self):
       deletemotif()
       cmd.select('arg1', 'name nh1 and resn arg within %s of (name cb and resn ala)'%(self.range.get()*5))
@@ -6800,7 +6811,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.delete('cys7')
       cmd.delete('cys8')
       cmd.delete('cys9')
-      
+
     def serotoninacetyl2(self):
       cmd.select('his1', 'name ne2 and resn his within %s of (name og and resn ser)'%(self.range.get()*4.5))
       cmd.select('his2', 'name ne2 and resn his within %s of (name cb and resn ser)'%(self.range.get()*5.5))
@@ -6816,7 +6827,7 @@ cmd.set('ambient', '0.45')\n''')
       cmd.select('ser1', 'name og and resn ser within %s of (name ne2 and his)'%(self.range.get()*4.5))
       cmd.select('ser2', 'name cb and resn ser within %s of (name ne2 and his)'%(self.range.get()*5.5))
       cmd.select('ser3', 'name og and resn ser within %s of (name cd2 and his)'%(self.range.get()*5.5))
-      cmd.select('ser4', 'name cb and resn ser within %s of (name cd2 and his)'%(self.range.get()*6)) 
+      cmd.select('ser4', 'name cb and resn ser within %s of (name cd2 and his)'%(self.range.get()*6))
       cmd.select('ser5', 'name og and resn ser within %s of (name nd1 and his)'%(self.range.get()*7.5))
       cmd.select('ser6', 'name og and resn ser within %s of (name o and resn leu)'%(self.range.get()*5))
       cmd.select('ser7', 'name og and resn ser within %s of (name cb and resn leu)'%(self.range.get()*8))
@@ -6901,7 +6912,7 @@ cmd.set('ambient', '0.45')\n''')
 
 
 
-      
+
 #motif options
     def motifoption(self, tag):
       if tag=='Surface Pocket':
@@ -6918,7 +6929,7 @@ cmd.set('ambient', '0.45')\n''')
         self.dellabel()
       elif tag=='Hide Substrate':
         self.hidesubstrate()
-        
+
 #Show binding pocket
     def surfmotifer(self):
         objects = cmd.get_names('all')
@@ -7065,7 +7076,7 @@ cmd.set('ambient', '0.45')\n''')
                     cmd.show('surface', 'all')
                     cmd.hide('cartoon', 'all')
                     cmd.color('white', '!Exonuclease3 and !Adjacent')
-                               
+
                 cpksubstrate()
                 cmd.orient('all')
             else:
@@ -7220,7 +7231,7 @@ cmd.set('ambient', '0.45')\n''')
     def motifcontact(self):
       objects = cmd.get_names('all')
       try:
-        
+
         try:
           cmd.dist(self.mot+"_polar_conts",self.mot,self.mot,quiet=1,mode=2,label=0,reset=1)
           cmd.enable(self.mot+"_polar_conts")
@@ -7228,13 +7239,13 @@ cmd.set('ambient', '0.45')\n''')
         except:
           cmd.dist("motif_polar_conts","motif","motif",quiet=1,mode=2,label=0,reset=1)
           cmd.enable("motif_polar_conts")
-          
+
         if 'Adjacent' in objects:
             cmd.dist('Adjacent_polar_conts','Adjacent','Adjacent',quiet=1,mode=2,label=0,reset=1)
         if 'substrate' in objects:
             cmd.dist(self.mot+"_around_polar_conts",self.mot,"(byobj ("+self.mot+")) and (not ("+self.mot+"))",quiet=1,mode=2,label=0,reset=1)
             cmd.enable(self.mot+"_around_polar_conts")
-       
+
       except:
         import tkMessageBox
         tkMessageBox.showinfo('Alert', "Select a motif first")
@@ -7255,13 +7266,13 @@ cmd.set('ambient', '0.45')\n''')
           import tkMessageBox
           tkMessageBox.showinfo('Alert', "No motif polar contacts to hide")
 #develop spot
-          
+
 #substrate#
-          
+
     def showsubstrate(self):
       try:
         try:
-          
+
           cmd.select('substrate', 'byres het within 7 of '+self.mot)
           objects = cmd.get_names('all')
           xp = cmd.index('substrate')
@@ -7272,7 +7283,7 @@ cmd.set('ambient', '0.45')\n''')
               cmd.show('sticks', 'substrate')
               cmd.deselect()
               cpksubstrate()
-         
+
         except:
           cmd.select('substrate', 'byres het within 7 of motif')
           objects = cmd.get_names('all')
@@ -7294,9 +7305,9 @@ cmd.set('ambient', '0.45')\n''')
       except:
         import tkMessageBox
         tkMessageBox.showinfo('Alert', "No substrate selected")
-        
+
 #Labels
-        
+
     def dellabel(self):
       objects = cmd.get_names('all')
       try:
@@ -7322,13 +7333,13 @@ cmd.set('ambient', '0.45')\n''')
       except:
         import tkMessageBox
         tkMessageBox.showinfo('Alert', "Select a motif first")
-        
+
 #bind to menu for motifs
-        
+
     def oxidoreductase(self, tag):
       if tag=='Superoxide Dismutase':
               self.superoxide()
-              self.mot='superoxide' 
+              self.mot='superoxide'
       elif tag=='Peroxidase':
               self.peroxidase()
               self.mot='Peroxidase'
@@ -7347,10 +7358,10 @@ cmd.set('ambient', '0.45')\n''')
       elif tag=='Betaine aldehyde dehydrogenase':
               self.betainedehydrogenase()
               self.mot='betaine_dehydrogenase'
-              
+
 
     def transferase(self, tag):
-      
+
       if tag =='Amino Transferase':
               self.aminotransferase()
               self.mot='Aminotransferase'
@@ -7372,7 +7383,7 @@ cmd.set('ambient', '0.45')\n''')
       elif tag=='Hhal Methyltransferase':
               self.hhal()
               self.mot='hhal'
-              
+
       elif tag=='Serotonin Acetyltransferase':
               self.serotoninacetyl()
               self.mot = 'Serotonin_transferase'
@@ -7446,7 +7457,7 @@ cmd.set('ambient', '0.45')\n''')
               self.mot='Zinc_finger'
 #after appending motif to motif search field allows user to click on it
 #and run the motif function
-   
+
     def allmotif(self):
         motif = self.motifbox.getcurselection()
         for item in motif:
@@ -7552,7 +7563,7 @@ cmd.set('ambient', '0.45')\n''')
                   self.mot='hhal'
             elif tag=='1-Superoxide Dismutase':
                   self.superoxide()
-                  self.mot='superoxide' 
+                  self.mot='superoxide'
             elif tag=='1-Peroxidase':
                   self.peroxidase()
                   self.mot='Peroxidase'
@@ -7645,7 +7656,7 @@ cmd.set('ambient', '0.45')\n''')
                   self.mot='hhal'
             elif tag=='2-Superoxide Dismutase':
                   self.superoxide()
-                  self.mot='superoxide' 
+                  self.mot='superoxide'
             elif tag=='2-Peroxidase':
                   self.peroxidase()
                   self.mot='Peroxidase'
@@ -7665,9 +7676,9 @@ cmd.set('ambient', '0.45')\n''')
         except:
             import tkMessageBox
             tkMessageBox.showinfo('Alert', 'There is no motif there')
-        
+
     #def custom motif dropdown selection
-            
+
     def set_motifA(self, tag):
       cmd.deselect()
       if tag=='gly':
@@ -8015,8 +8026,8 @@ cmd.set('ambient', '0.45')\n''')
       elif tag=='gln':
               self.mAD = 'gln'
 
-              
-#Custom motif functions            
+
+#Custom motif functions
 
 
     def bimotif(self):
@@ -8154,7 +8165,7 @@ cmd.set('ambient', '0.45')\n''')
           cmd.select('AA', 'byres AA1 and byres AA2')
           cmd.do('sel BB1, resn %s within %s of resn %s' % (mAB, selAB.get(), mAA))
           cmd.select('BB2', 'resn %s within %s of resn %s' % (mAB, selBC.get(), mAC))
-          cmd.select('BB', 'byres BB1 and byres BB2')          
+          cmd.select('BB', 'byres BB1 and byres BB2')
           cmd.do('sel CC1, resn %s within %s of resn %s' % (mAC, selBC.get(), mAB))
           cmd.select('CC2', 'resn %s within %s of resn %s' % (mAC, selAC.get(), mAA))
           cmd.select('CC', 'byres CC1 and byres CC2')
@@ -8194,7 +8205,7 @@ cmd.set('ambient', '0.45')\n''')
           cmd.do('sel BB1, resn %s within %s of resn %s' % (mAB, selAB.get(), mAA))
           cmd.select('BB2', 'resn %s within %s of resn %s' % (mAB, selBC.get(), mAC))
           cmd.select('BB3', 'resn %s within %s of resn %s' % (mAB, selBD.get(), mAD))
-          cmd.select('BB', 'byres BB1 and byres BB2 and byres BB3')          
+          cmd.select('BB', 'byres BB1 and byres BB2 and byres BB3')
           cmd.do('sel CC1, resn %s within %s of resn %s' % (mAC, selBC.get(), mAB))
           cmd.select('CC2', 'resn %s within %s of resn %s' % (mAC, selAC.get(), mAA))
           cmd.select('CC3', 'resn %s within %s of resn %s' % (mAC, selCD.get(), mAD))
@@ -8218,8 +8229,8 @@ cmd.set('ambient', '0.45')\n''')
       except:
           import tkMessageBox
           tkMessageBox.showinfo('Alert', 'You must select an amino acid for menus A, B, C, and D')
- 
-    #reset the range sliders   
+
+    #reset the range sliders
     def resetmotif(self):
       selA.set(4.0)
       selB.set(4.0)
@@ -8233,7 +8244,7 @@ cmd.set('ambient', '0.45')\n''')
 
     def resetrange(self):
       self.range.set(1.0)
-      
+
     def setcusmotif(self):
         a = []
         for object in os.listdir('./modules/pmg_tk/startup/Motifs'):
@@ -8253,8 +8264,8 @@ cmd.set('ambient', '0.45')\n''')
                         cmd.do('run ./modules/pmg_tk/startup/Motifs/'+a[i])
             except:
                 pass
-          
-        
+
+
 #No more motifs......Hurray
 
 
@@ -8262,7 +8273,7 @@ cmd.set('ambient', '0.45')\n''')
     #			             #
     #COMMANDS" TAB METHODS  #
     #                                                                   #
-    #--------------------------------------#	
+    #--------------------------------------#
     # Color the molecule
     def color_cpk(self, str ):
       color_cpk()
@@ -8276,7 +8287,7 @@ cmd.set('ambient', '0.45')\n''')
                       f.write('''cmd.color("green", "elem C")
 cmd.color("red", "elem O")
 cmd.color("blue", "elem N")\n''')
-    
+
     # Show ligands as spheres
     def space_fill_ligand(self):
 	cmd.select("Bad", "resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR+ACD+ACE+ALB+ALI+ABU+ARO+ASX+BAS+BET+FOR+GLX+HET+HSE+HYP+HYL+ORN+PCA+SAR+TAU+TER+THY+UNK+a+g+c+t+u+HOH+MSE")
@@ -8292,9 +8303,9 @@ cmd.show("spheres", "ligand")
 cmd.delete("Bad")\n''')
 	cpkligands()
 	cmd.deselect()
-    
+
     # create additional colors
-    # (adopted from some code written by 
+    # (adopted from some code written by
     #  Kevin Galens and Jamie Duke at RIT)
     def init_color(self):
         cmd.set_color("sulfyellow", "[ 1.00, 0.78, 0.20 ]")
@@ -8307,7 +8318,7 @@ cmd.delete("Bad")\n''')
         cmd.set_color("helpink", "[ 1.00, 0.75, 0.80 ]")
         cmd.set_color("darkgray", "[ 0.5, 0.5, 0.56 ]")
 
-                     
+
     # Show/Hide ALL representations
     def show_all(self, tag):
     	list = self.rep1.getvalue()
@@ -8395,13 +8406,13 @@ cmd.show('sticks',"'''+sel+'''")\n''')
                         f.write('''cmd.dist(sel+"_polar_conts","'''+sel+'''","'''+sel+'''",quiet=1,mode=2,label=0,reset=1)
 cmd.enable('''+sel+'''"1CHO_polar_conts")\n''')
 
-        
-                    
+
+
         except:
             import tkMessageBox
             tkMessageBox.showinfo('Error', 'Update Selection!')
 
-      	    
+
     # Hide individual representations
     def hide_rep(self, tag):
         try:
@@ -8457,14 +8468,14 @@ cmd.enable('''+sel+'''"1CHO_polar_conts")\n''')
                     cmd.delete(sel+"_polar_conts")
                     if script=='1':
                         f.write(''' cmd.delete("'''+sel+'''_polar_conts")\n''')
-            
+
         except:
             import tkMessageBox
             tkMessageBox.showinfo('Error', 'Update Selection!')
 
 
      #-------------Version 2--------------#
-            
+
     # Set selection of atoms
     #   - initial selection is 'all'
     def set_sel(self, tag):
@@ -8533,7 +8544,7 @@ cmd.enable('''+sel+'''"1CHO_polar_conts")\n''')
       elif tag=='Chain-Y':
             sel=('Chain-Y')
       elif tag=='Chain-Z':
-            sel=('Chain-Z')              
+            sel=('Chain-Z')
       elif tag=='Not Selected':
         try:
               cmd.select('selection', '!sele')
@@ -8553,7 +8564,7 @@ cmd.enable('''+sel+'''"1CHO_polar_conts")\n''')
 
     # Set selection of atoms
     #   - initial selection is 'all'
-    
+
     def set_sel1(self, tag):
       cmd.deselect()
       c=re.compile("^Chain")
@@ -8620,7 +8631,7 @@ cmd.enable('''+sel+'''"1CHO_polar_conts")\n''')
       elif tag=='Chain-Y':
             sel1=('Chain-Y')
       elif tag=='Chain-Z':
-            sel1=('Chain-Z')              
+            sel1=('Chain-Z')
       elif tag=='Not Selected':
               cmd.select('selection', '!sele')
               cmd.deselect()
@@ -8635,7 +8646,7 @@ cmd.enable('''+sel+'''"1CHO_polar_conts")\n''')
               sel1='basic'
 
     #preset menubar link functions
-              
+
     def presurf(self, tag):
         if tag=='Surface':
             self.surface_view()
@@ -8721,7 +8732,7 @@ cmd.enable('''+sel+'''"1CHO_polar_conts")\n''')
             self.stop()
           elif tag=='Rewind':
             self.rewind()
-         
+
 
     #------------------Version 1--------------#
     # Tell our command line what type of commands to read
@@ -8732,8 +8743,8 @@ cmd.enable('''+sel+'''"1CHO_polar_conts")\n''')
         else:
             self.commandLine.setvalue('Enter Chime Commands Here')
             self.cmdType = 'Chime'
-            
-    # Read commands from command line    
+
+    # Read commands from command line
     def command_line(self):
         try:
             command = self.commandLine.getvalue()
@@ -8745,7 +8756,7 @@ cmd.enable('''+sel+'''"1CHO_polar_conts")\n''')
         except:
             import tkMessageBox
             tkMessageBox.showinfo('Error', 'Invalid command or you must load the PDB through Pro-MOL')
-       
+
     # Coloring on Selection
     def color_sel(self, tag):
         try:
@@ -8799,7 +8810,7 @@ cmd.color("gray","(elem C and "'''+sel+'''")")\n''')
                             cmd.set_color('newcolor', colorArray)
                             cmd.color('newcolor', sel)
 
-                            
+
         except:
             import tkMessageBox
             tkMessageBox.showinfo('Error', 'Update Selection!')
@@ -8808,19 +8819,19 @@ cmd.color("gray","(elem C and "'''+sel+'''")")\n''')
 
 
     #------------------Version 2-----------------#
-            
+
     #--------------------------------------#
     #					   #
     #           SAVE   METHODS             #
     #                                      #
-    #--------------------------------------#	 
+    #--------------------------------------#
     def imgSave(self):
     	import tkFileDialog
     	file = tkFileDialog.asksaveasfilename(defaultextension=".png", initialdir="./PyMOL/")
         if len(file)>0:
             cmd.save(file)
-            
- 
+
+
     #------
     #Brett and Charlie's (first attempt) code--------
     #--Ray tracing with an auto calculator for height and width----
@@ -8843,7 +8854,7 @@ cmd.color("gray","(elem C and "'''+sel+'''")")\n''')
         b_label.place(x=10,y=80)
         name2.place(x=50,y=80)
         name2.insert(0, 480)
-        a_button.place(x=10,y=110)        
+        a_button.place(x=10,y=110)
         b_button.place(x=80,y=110)
         c_button = Button(root, text = "Auto Calc")
         c_button.place(x=150,y=64)
@@ -8869,7 +8880,7 @@ cmd.color("gray","(elem C and "'''+sel+'''")")\n''')
                 elif len(name2.get()) >= 1:
                     name1.delete(0,20)
                     name1.insert(0, int(int(name2.get())*1.3333333333333333333333333333))
-            
+
             except:
                 import tkFileDialog
                 import tkMessageBox
@@ -8882,7 +8893,7 @@ cmd.color("gray","(elem C and "'''+sel+'''")")\n''')
                 if len(name1.get()) > 3:
                   import tkFileDialog
                   import tkMessageBox
-                  tkMessageBox.showinfo("Ray Trace","You have entered a large value. Please be patient.\nClick OK to continue.")         
+                  tkMessageBox.showinfo("Ray Trace","You have entered a large value. Please be patient.\nClick OK to continue.")
                   cmd.ray(name1.get(),name2.get())
                   root.mainloop()
                 else:
@@ -8899,39 +8910,39 @@ cmd.color("gray","(elem C and "'''+sel+'''")")\n''')
                 cmd.save(file)
             root.destroy()
         a_button.bind('<Button-1>',raytrace)
-        b_button.bind('<Button-1>',savestop)         
+        b_button.bind('<Button-1>',savestop)
         root.mainloop()
-        
-  
-        
+
+
+
     #---------Version 1---------------#
 
     #For future modifications---->Better to use Tcl/Tk methods instead of
     #Megawidgets for button creations and GUI manipulation, not enough time to
     #completely redo though
 
-        
+
     #--------------------------------------#
     #					   #
     #         UTILITY  METHODS             #
     #                                      #
-    #--------------------------------------#	 
+    #--------------------------------------#
     # ADD BUTTONS
     # Create and add buttons to the GUI
     def buttonAdd(self,frame,text,size,cmd,gridrow,gridcol,gridstick):
         #the button
-        newBtn = Button(frame, text=text,highlightthickness=0, 
+        newBtn = Button(frame, text=text,highlightthickness=0,
                       width=size,command=cmd,padx=0,pady=0)
 
 	# add it to the gui
         newBtn.grid(row=gridrow, column=gridcol, sticky=gridstick, padx=2, pady=2)
-        
+
     # ADD RADIO BUTTONS
     # Create and add radio buttons to the GUI
-    def radioAdd(self,frame,pos,orient,cmd,label,btn_labels, gridrow, 
+    def radioAdd(self,frame,pos,orient,cmd,label,btn_labels, gridrow,
     		 gridcol, cspan, rspan, gridstick):
     	labels = btn_labels   #the list of labels passed in by the user
-    	
+
     	# create the radio button
     	newRadio = Pmw.RadioSelect(frame, labelpos=pos, labelmargin=0,
     				    buttontype='radiobutton',
@@ -8939,14 +8950,14 @@ cmd.color("gray","(elem C and "'''+sel+'''")")\n''')
     				    label_text=label,
     				    command=cmd)
  	# add it to the gui
- 	newRadio.grid(row=gridrow, column=gridcol, columnspan=cspan, 
+ 	newRadio.grid(row=gridrow, column=gridcol, columnspan=cspan,
  		      rowspan=rspan, sticky=gridstick, padx=5)
- 	
+
  	# add text to the buttons
  	for text in labels:
    	    newRadio.add(text)
 	    newRadio.setvalue(labels[0])
-	   
+
     # ADD FORMATTING SPACERS
     # Add white space to the GUI (used in formatting)
     def addSpace(self,frame,gridrow, gridcol):
@@ -8991,7 +9002,7 @@ cmd.stereo('on')\n''')
                         f.write('''cmd.stereo('off')
 cmd.stereo('walleye')
 cmd.stereo('on')\n''')
-        
+
     # change background colors
     def bgcolor_switch(self, tag):
         if tag == 'Black':
@@ -9021,9 +9032,9 @@ cmd.stereo('on')\n''')
         		if script=='1':
                                          f.write('''cmd.set_color('newcolor', '''+colorArray+'''')
 cmd.do('bg_color newcolor')\n''')
-        else: 
+        else:
        	    self.do_nothing()
-        
+
     # change the color space
     def cspace_switch(self, tag):
 	if tag == 'PyMOL':
@@ -9034,11 +9045,11 @@ cmd.do('bg_color newcolor')\n''')
 	    cmd.space('rgb')
 	    if script=='1':
                             f.write('''cmd.space('rgb')\n''')
-	else: 
+	else:
 	    cmd.space('cmyk')
 	    if script=='1':
                             f.write('''cmd.space('cmyk')\n''')
-	    
+
     # hide/show interface
     def hide_interface(self, tag):
 	if tag == 'Show':
@@ -9062,7 +9073,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
     #				#
     #         PARSING  METHODS             #
     #                                                                   #
-    #--------------------------------------#        	
+    #--------------------------------------#
     # Sequence Getter
     def seqGetter(self, id):
     	seq = self.p.chains[id]
@@ -9084,7 +9095,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
     	self.info.insert(END, info)
     	self.info.config(state=DISABLED)
     	return type
-    	
+
     #--------------------------------------#
     #					   #
     #           MOVIE METHODS              #
@@ -9106,19 +9117,19 @@ cmd.show('spheres', '(resn HOH)')\n''')
 	cmd.mclear()
 	cmd.mset()
 	set_defaults()
-	
+
 	colors = ['blue','orange','silver','green','yellow',
        	        'purple','brightorange','lightblue','lightorange',
        	        'pink','forest','firebrick','paleyellow','salmon',
        	        'ruby','wheat','lightmagenta','nitblue']
-       	        
+
         numChains = len(self.p.chains)
         numFrames = (numChains*200)+70
         cmd.mset('1',numFrames)
         cmd.do('mdo 1: color red, all; hide cartoon, all')
         cmd.orient()
         cmd.mview('store','1')
-       
+
         colorCount = 0
         frameCount = 1
         for i in self.p.chains.keys():
@@ -9144,20 +9155,20 @@ cmd.show('spheres', '(resn HOH)')\n''')
         #cmd.set('transparency','0.75','all')
         #cmd.set('cartoon_transparency','0.0','all')
     cmd.extend('highlight_chains',highlight_chains)
-    
+
     # flash the chains on and off, eventually changing the color
-    # (utilized by the highlight_chains method)       
+    # (utilized by the highlight_chains method)
     def flash_chain(self, chainID, frame, initialColor, afterColor):
        cmd.do('mdo ' + str(frame)+': show cartoon, chain ' + str(chainID))
        cmd.do('mdo '+str(frame+7)+': color '+afterColor+', chain '+str(chainID))
-       cmd.do('mdo '+str(frame+14)+': color '+initialColor+', chain '+str(chainID))                  
+       cmd.do('mdo '+str(frame+14)+': color '+initialColor+', chain '+str(chainID))
        cmd.do('mdo '+str(frame+21)+': color '+afterColor+', chain '+str(chainID))
-       cmd.do('mdo '+str(frame+28)+': color '+initialColor+', chain '+str(chainID))                  	              
+       cmd.do('mdo '+str(frame+28)+': color '+initialColor+', chain '+str(chainID))
        cmd.do('mdo '+str(frame+35)+': color '+afterColor+', chain '+str(chainID))
-       cmd.do('mdo '+str(frame+42)+': color '+initialColor+', chain '+str(chainID))         
+       cmd.do('mdo '+str(frame+42)+': color '+initialColor+', chain '+str(chainID))
        cmd.do('mdo '+str(frame+49)+': color '+afterColor+', chain '+str(chainID))
-    
-    #does not run on external pdbs 
+
+    #does not run on external pdbs
     def ligandZoom(self):
         try:
             delcrea()
@@ -9227,8 +9238,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
                         cmd.mview('store', str(numFrames))
                     else:
                         cmd.mview('store', str(q+335))
-                        q=q+335		
-                            
+                        q=q+335
+
                 cmd.do('mdo '+str(numFrames)+': hide spheres, ligands; hide sticks, ligands around 4; label ligands, \' \'')
                 cmd.do('mdo '+str(numFrames)+': mstop')
                 cmd.mview('interpolate')
@@ -9256,48 +9267,48 @@ cmd.show('spheres', '(resn HOH)')\n''')
     	if 'protein' in objects:
             set_defaults()
     	    cmd.bg_color('black')
-    	    
+
     	    # create the objects to be used in this movie
     	    cmd.create('helix', 'ss h and protein')
     	    cmd.create('sheets', 'ss s and protein')
-    	    cmd.create('surface', objects[0]) 
-    	    
+    	    cmd.create('surface', objects[0])
+
     	    cmd.mset('1', '1400')
-    	    
+
     	    # dna and rna will be represented as sticks
     	    # to make them stand out from the protein
     	    if 'dna' in objects:
    	        cmd.show('sticks','dna')
     	        cpknucleic()
-   	    
+
     	    if 'rna' in objects:
  	        cmd.show('sticks','rna')
  	        cmd.show('spheres','rna')
     	        cmd.set('sphere_scale','0.4','rna')
     	        color_cpk(' & rna')
-    	     	        
+
     	    # coloring the protein and secondary structures
     	    cmd.color('white', 'protein')
        	    cmd.color('purple', 'helix')
     	    cmd.color('teal', 'sheets')
-    	    
+
     	    cmd.cartoon('loop', 'protein')
     	    cmd.cartoon('automatic', 'helix')
     	    cmd.cartoon('automatic', 'sheets')
     	    cmd.show('cartoon', 'protein')
-    	    
-    	    
-    	
+
+
+
     	    #cmd.do('mdo 1: hide cartoon, helix; hide cartoon, sheets;')
     	    cmd.util.mrock('2','200','90','1','1')
     	    cmd.do('mdo 201: show cartoon, helix;')
-    	    cmd.util.mrock('202','400','90','1','1') 
+    	    cmd.util.mrock('202','400','90','1','1')
     	    cmd.do('mdo 401: show cartoon, sheets;')
     	    cmd.util.mrock('402','600','90','1','1')
     	    if 'ligands' in objects:
     	        cmd.color('hotpink','ligands')
     	        cmd.do('mdo 600: show spheres, ligands; show sticks, ligands; set sphere_transparency=0.5, ligands;')
-    	    
+
     	    cmd.util.mroll('601','800','1',axis="x")
     	    cmd.color('blue', 'surface')
     	    cmd.mview('store', '800')
@@ -9328,9 +9339,9 @@ cmd.show('spheres', '(resn HOH)')\n''')
 
 
 
-    	    
+
     	#---------Version 2--------#
-	 
+
     #--------Haven't you seeen my MOVIES!-----------
 	#surface over cartoon movie
     def surface_cartoon(*args):
@@ -9346,11 +9357,11 @@ cmd.show('spheres', '(resn HOH)')\n''')
           cmd.mset('1','60')
           cmd.hide('everything')
           objects = cmd.get_names('all')
-          cmd.create('surface','all')                  
-          cmd.create('cartoon','all') 
+          cmd.create('surface','all')
+          cmd.create('cartoon','all')
           cmd.show('cartoon', 'cartoon')
           cmd.show('surface', 'surface')
-          cmd.color('grey', 'surface')         
+          cmd.color('grey', 'surface')
           cmd.color('red', 'elem O')
           cmd.color('blue', 'elem N')
           cmd.set("cartoon_fancy_helices", "1")
@@ -9415,7 +9426,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
           cmd.do('mdo 59: set transparency=0.85, surface;')
           cmd.do('mdo 60: set transparency=0.8, surface;')
     cmd.extend('surface_cartoon', surface_cartoon)
-   
+
         #surface over stick movie
     def surface_stick(*args):
       delcrea()
@@ -9429,12 +9440,12 @@ cmd.show('spheres', '(resn HOH)')\n''')
       cmd.mset('1','60')
       cmd.hide('everything')
       objects = cmd.get_names('all')
-      cmd.create('surface', 'all')                  
-      cmd.create('sticks', 'all') 
+      cmd.create('surface', 'all')
+      cmd.create('sticks', 'all')
       cmd.show('sticks', 'sticks')
       color_cpk('& sticks')
       cmd.show('surface', 'surface')
-      cmd.color('grey', 'surface')   
+      cmd.color('grey', 'surface')
       cmd.color('red', 'elem O')
       cmd.color('blue', 'elem N')
       cmd.do('mdo 1: set transparency=0.75, surface;')
@@ -9497,7 +9508,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
       cmd.do('mdo 59: set transparency=0.85, surface;')
       cmd.do('mdo 60: set transparency=0.8, surface;')
     cmd.extend('surface_stick',surface_stick)
-   
+
 
         #movie that pulls ligands out of  and puts them back in
     def Ligand_Pull(*args):
@@ -9512,7 +9523,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
           cmd.hide('everything')
           cmd.remove('resn HOH')
           cmd.color('green', 'all')
-          objects = cmd.get_names('all')          
+          objects = cmd.get_names('all')
           cmd.select("Bad", "resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR+ACD+ACE+ALB+ALI+ABU+ARO+ASX+BAS+BET+FOR+GLX+HET+HSE+HYP+HYL+ORN+PCA+SAR+TAU+TER+THY+UNK+a+g+c+t+u+HOH+MSE")
           cmd.select("ligand","!Bad")
           cmd.hide("everything", "ligand")
@@ -9591,7 +9602,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
           cmd.do('mdo 238: translate [-2,0,0],ligand;')
           cmd.do('mdo 239: translate [-2,0,0],ligand;')
           cmd.do('mdo 240: translate [-2,0,0],ligand;')
-          cmd.do('mdo 241: translate [-2,0,0],ligand;')         
+          cmd.do('mdo 241: translate [-2,0,0],ligand;')
           cmd.do('mdo 242: translate [-2,0,0],ligand;')
           cmd.do('mdo 243: translate [-2,0,0],ligand;')
           cmd.do('mdo 244: translate [-2,0,0],ligand;')
@@ -9672,7 +9683,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
           if 'Chain-D' in objects:
             chainpulllist.append('Chain-D')
           if 'Chain-E' in objects:
-            chainpulllist.append('Chain-E')           
+            chainpulllist.append('Chain-E')
           if 'Chain-F' in objects:
             chainpulllist.append('Chain-F')
           if 'Chain-G' in objects:
@@ -9715,14 +9726,14 @@ cmd.show('spheres', '(resn HOH)')\n''')
             chainpulllist.append('Chain-Y')
           if 'Chain-Z' in objects:
             chainpulllist.append('Chain-Z')
-          
-          
+
+
           if len(chainpulllist) >1:
             cmd.do('mdo 2: translate [0,0,0],'+chainpulllist[0]+';')
             cmd.do('mdo 3: translate [50,0,0],'+chainpulllist[1]+';')
             cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[1])
             cpkduh()
-            cmd.delete('duh')    
+            cmd.delete('duh')
             cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[0])
             cpkduh()
             cmd.delete('duh')
@@ -9750,51 +9761,51 @@ cmd.show('spheres', '(resn HOH)')\n''')
             if len(chainpulllist) >5:
               cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[1])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[5])
               cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >6:
               cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[1])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[6])
               cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >7:
               cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[1])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[7])
               cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >8:
               cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[1])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[8])
               cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >9:
               cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[1])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[9])
               cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >10:
               cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[1])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[1] + ' within 5 of ' + chainpulllist[10])
               cpkduh()
               cmd.delete('duh')
-  
+
           if len(chainpulllist) >2:
             cmd.do('mdo 4: translate [0,50,0],'+chainpulllist[2]+';')
             cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[2])
             cpkduh()
-            cmd.delete('duh')    
+            cmd.delete('duh')
             cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[0])
             cpkduh()
             cmd.delete('duh')
@@ -9822,35 +9833,35 @@ cmd.show('spheres', '(resn HOH)')\n''')
             if len(chainpulllist) >6:
               cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[2])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[6])
               cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >7:
               cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[2])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[7])
               cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >8:
               cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[2])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[8])
               cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >9:
               cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[2])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[9])
               cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >10:
               cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[2])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[2] + ' within 5 of ' + chainpulllist[10])
               cpkduh()
               cmd.delete('duh')
@@ -9859,7 +9870,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
             cmd.do('mdo 5: translate [0,0,50],'+chainpulllist[3]+';')
             cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[3])
             cpkduh()
-            cmd.delete('duh')    
+            cmd.delete('duh')
             cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[0])
             cpkduh()
             cmd.delete('duh')
@@ -9887,28 +9898,28 @@ cmd.show('spheres', '(resn HOH)')\n''')
             if len(chainpulllist) >7:
               cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[3])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[7])
               cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >8:
               cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[3])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[8])
               cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >9:
               cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[3])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[9])
               cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >10:
               cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[3])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[3] + ' within 5 of ' + chainpulllist[10])
               cpkduh()
               cmd.delete('duh')
@@ -9917,7 +9928,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
             cmd.do('mdo 6: translate [-50,0,0],'+chainpulllist[4]+';')
             cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[4])
             cpkduh()
-            cmd.delete('duh')    
+            cmd.delete('duh')
             cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[0])
             cpkduh()
             cmd.delete('duh')
@@ -9945,21 +9956,21 @@ cmd.show('spheres', '(resn HOH)')\n''')
             if len(chainpulllist) >8:
               cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[4])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[8])
               cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >9:
               cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[4])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[9])
               cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >10:
               cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[4])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[4] + ' within 5 of ' + chainpulllist[10])
               cpkduh()
               cmd.delete('duh')
@@ -9968,7 +9979,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
             cmd.do('mdo 7: translate [0,-50,0],'+chainpulllist[5]+';')
             cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[5])
             cpkduh()
-            cmd.delete('duh')    
+            cmd.delete('duh')
             cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[0])
             cpkduh()
             cmd.delete('duh')
@@ -9996,14 +10007,14 @@ cmd.show('spheres', '(resn HOH)')\n''')
             if len(chainpulllist) >9:
               cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[5])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[9])
               cpkduh()
               cmd.delete('duh')
             if len(chainpulllist) >10:
               cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[5])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[5] + ' within 5 of ' + chainpulllist[10])
               cpkduh()
               cmd.delete('duh')
@@ -10012,7 +10023,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
             cmd.do('mdo 8: translate [0,-50,0],'+chainpulllist[5]+';')
             cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[6])
             cpkduh()
-            cmd.delete('duh')    
+            cmd.delete('duh')
             cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[0])
             cpkduh()
             cmd.delete('duh')
@@ -10040,17 +10051,17 @@ cmd.show('spheres', '(resn HOH)')\n''')
             if len(chainpulllist) >10:
               cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[6])
               cpkduh()
-              cmd.delete('duh')    
+              cmd.delete('duh')
               cmd.do('select duh,' +chainpulllist[6] + ' within 5 of ' + chainpulllist[10])
               cpkduh()
               cmd.delete('duh')
 
-              
+
           if len(chainpulllist) >7:
             cmd.do('mdo 9: translate [0,0,-50],'+chainpulllist[6]+';')
             cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[7])
             cpkduh()
-            cmd.delete('duh')    
+            cmd.delete('duh')
             cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[0])
             cpkduh()
             cmd.delete('duh')
@@ -10075,12 +10086,12 @@ cmd.show('spheres', '(resn HOH)')\n''')
               cmd.do('select duh,' +chainpulllist[7] + ' within 5 of ' + chainpulllist[10])
               cpkduh()
               cmd.delete('duh')
-            
+
           if len(chainpulllist) >8:
             cmd.do('mdo 10: translate [-50,0,50],'+chainpulllist[7]+';')
             cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[8])
             cpkduh()
-            cmd.delete('duh')    
+            cmd.delete('duh')
             cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[0])
             cpkduh()
             cmd.delete('duh')
@@ -10098,12 +10109,12 @@ cmd.show('spheres', '(resn HOH)')\n''')
               cmd.do('select duh,' +chainpulllist[8] + ' within 5 of ' + chainpulllist[10])
               cpkduh()
               cmd.delete('duh')
-            
+
           if len(chainpulllist) >9:
             cmd.do('mdo 11: translate [50,0,50],'+chainpulllist[8]+';')
             cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[9])
             cpkduh()
-            cmd.delete('duh')    
+            cmd.delete('duh')
             cmd.do('select duh,' +chainpulllist[9] + ' within 5 of ' + chainpulllist[0])
             cpkduh()
             cmd.delete('duh')
@@ -10119,11 +10130,11 @@ cmd.show('spheres', '(resn HOH)')\n''')
             cmd.do('mdo 12: translate [50,0,-50],'+chainpulllist[10]+';')
             cmd.do('select duh,' +chainpulllist[0] + ' within 5 of ' + chainpulllist[10])
             cpkduh()
-            cmd.delete('duh')    
+            cmd.delete('duh')
             cmd.do('select duh,' +chainpulllist[10] + ' within 5 of ' + chainpulllist[0])
             cpkduh()
             cmd.delete('duh')
-   
+
           cmd.do('mdo 13: zoom all')
           cmd.util.mroll('14','181','1')
 
@@ -10165,15 +10176,15 @@ cmd.show('spheres', '(resn HOH)')\n''')
     #movie controls
     def play(self):
     	cmd.mplay()
-    
+
     def stop(self):
     	cmd.mstop()
-    
+
     def rewind(self):
 	cmd.mstop()
         cmd.rewind()
 
-     #Ray Trace Frames   
+     #Ray Trace Frames
     def ray(self,r,state):
 	import tkMessageBox
      	if state:
@@ -10189,25 +10200,25 @@ cmd.show('spheres', '(resn HOH)')\n''')
     def cacheframe(self,r,state):
       if state:
           cmd.set('cache_frames','0')
-     
-          
-          
+
+
+
       else:
 
           cmd.set('cache_frames', '1')
-     
+
 # Copyright Notice
 # ================
-# 
+#
 # The PyMOL Plugin source code in this file is copyrighted, but you can
 # freely use and copy it as long as you don't change or remove any of
 # the copyright notices.
-# 
+#
 # ----------------------------------------------------------------------
 # This PyMOL Plugin is Copyright (C) 2004 by Charles Moad <cmoad@indiana.edu>
-# 
+#
 #                        All Rights Reserved
-# 
+#
 # Permission to use, copy, modify, distribute, and distribute modified
 # versions of this software and its documentation for any purpose and
 # without fee is hereby granted, provided that the above copyright
@@ -10216,7 +10227,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
 # the name(s) of the author(s) not be used in advertising or publicity
 # pertaining to distribution of the software without specific, written
 # prior permission.
-# 
+#
 # THE AUTHOR(S) DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
 # INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.  IN
 # NO EVENT SHALL THE AUTHOR(S) BE LIABLE FOR ANY SPECIAL, INDIRECT OR
@@ -10234,8 +10245,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
       import gzip
       import os
       import string
-      
-      if self.fileLoaded ==' ':	
+
+      if self.fileLoaded ==' ':
       	pdbCode = tkSimpleDialog.askstring('PDB Loader Service',
                                          'Please enter a 4-digit pdb code:')
 	#f=open('/home/corey/Desktop/workfile', 'a')
@@ -10243,15 +10254,15 @@ cmd.show('spheres', '(resn HOH)')\n''')
       else:
       	pdbCode=fileLoaded
       	#print pdbCode
-      
+
       if pdbCode: # None is returned for user cancel
          pdbCode = string.upper(pdbCode)
          filename = urllib.urlretrieve('http://www.rcsb.org/pdb/cgi/export.cgi/' +
                     pdbCode + '.pdb.gz?format=PDB&pdbId=' +
-                    pdbCode + '&compression=gz')[0]        
-         # If 0, then pdb code was invalid           
-         if (os.path.getsize(filename) > 0): 
-	    
+                    pdbCode + '&compression=gz')[0]
+         # If 0, then pdb code was invalid
+         if (os.path.getsize(filename) > 0):
+
             # Decompress the file while reading
             fpin = gzip.open(filename)
 
@@ -10259,13 +10270,13 @@ cmd.show('spheres', '(resn HOH)')\n''')
             outputname = os.path.dirname(filename) + os.sep + pdbCode + '.pdb'
             fpout = open(outputname, 'w')
             fpout.write(fpin.read()) # Write pdb file
-            
+
             fpin.close()
             fpout.close()
-            
+
             cmd.load(outputname) # Load the fresh pdb
-            
-            	
+
+
             #---------------THIS WAS JUST ADDED---------------------------
             self.p=PDBParser()
             self.p.readFile(outputname)
@@ -10277,8 +10288,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
                                    'You entered an invalid pdb code:' + pdbCode)
 
          os.remove(filename) # Remove tmp file (leave the pdb)
-        		
-   
+
+
     #------Open Help File---------#
     def help(self):
     	import webbrowser
@@ -10286,42 +10297,42 @@ cmd.show('spheres', '(resn HOH)')\n''')
             webbrowser.open('./modules/pmg_tk/startup/Help/EZ-Viz.chm')
         except:
             webbrowser.open('./modules/pmg_tk/startup/Help/EZ-VizWebMain.html')
-    			
+
     #---------------------------------------------------------------#
     #						#
     #                   GUI CREATION METHOD                         #
     #			      (INIT)		#
     #						#
     #						#
-    #	             create and organize the interface              #          
+    #	             create and organize the interface              #
     #						#
     #---------------------------------------------------------------#
     def __init__(self, app):
-        
-        self.pdbCode = ' '  	
+
+        self.pdbCode = ' '
         self.p=PDBParser()
         self.converter = ChimeConverter()
-        
+
         # initialize the additional colors
-        self.init_color() 
+        self.init_color()
         sel1='all'
-   
+
         # create the dialog box which contains the GUI
         parent = app.root
         self.dialog = Pmw.Dialog(parent,buttons = ('Open','Fetch PDB','Clear','Help', 'Thanks' ,'Quit'),
                       title = 'Pro-MOL',command = self.execute)
-        
-        # set the size of the 
+
+        # set the size of the
         #self.dialog.geometry('550x550')
      	interior = self.dialog.interior()
- 	
+
  	#TITLE BAR
- 	lab = Label(interior, 
- 		    text='ProMol \nDeveloped By: Charlie Westin, Brett Hanson & Paul Craig\nVersion 3.02, 2007', 
+ 	lab = Label(interior,
+ 		    text='ProMol \nDeveloped By: Charlie Westin, Brett Hanson & Paul Craig\nVersion 3.02, 2007',
  		    background='#000066', foreground='white')
- 		    
+
  	lab.pack(expand=0, fill='x', padx=4, pady=0)
- 	
+
         # Create the notebook to hold the tabs
         notebook = Pmw.NoteBook(interior)
         notebook.pack(fill='both', expand=1, padx=10, pady=10)
@@ -10348,13 +10359,13 @@ cmd.show('spheres', '(resn HOH)')\n''')
 	group = Pmw.Group(page, tag_text='Enter Location of List')
         group.grid(row=0, column=0, padx=0, pady=0)
         interior=group.interior()
-        
+
         myFormats = [('Text File', '*.txt')]
-        
+
 	def openfilename(event):
           filename = askopenfilename()
           entry123.insert(0, filename)
-		
+
 	def savefilename(*args):
           filename = asksaveasfilename(filetypes=myFormats,
                                        title="Save Output As...")
@@ -10363,30 +10374,30 @@ cmd.show('spheres', '(resn HOH)')\n''')
                                    'Destination does not exist')
           else:
             return filename
-          
+
         def savefile(filename, fileString):
           try:
             newFile = open(filename,"w")
             newFile.write(fileString)
-            newFile.close()               
+            newFile.close()
           except:
             pass
 
         topFrame = Frame(interior)
         bottomFrame = Frame(interior)
-                            
+
 	w = Text(interior, height = 3)
         w.insert(END, "\n")
         w.insert(END, "Make a comma separated list of sensitivities")
         w.insert(END, "\n")
 	w.insert(END, "Find your text file of molecules.")
-        
+
 
 	w.config(state = DISABLED)
 
         sensEntry = Entry(interior)
 	entry123 = Entry(interior)
-	button123 = Button(interior, 
+	button123 = Button(interior,
                            text = 'Run')
 	browse = Button(interior, text = 'Browse')
 	browse.bind('<Button-1>', openfilename);
@@ -10399,7 +10410,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
 	button123.grid(row = 3, column = 0, sticky = E)
 	interior.pack()
 	browse.grid(row = 3, column = 1, sticky = W)
-		
+
         def myGetPdb(pdbNum):
 
 
@@ -10409,8 +10420,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
                             pdbCode + '.pdb.gz?format=PDB&pdbId=' +
                             pdbCode + '&compression=gz')[0]
 
-            # If 0, then pdb code was invalid           
-            if (os.path.getsize(filename) > 0): 
+            # If 0, then pdb code was invalid
+            if (os.path.getsize(filename) > 0):
 
                 # Decompress the file while reading
                 fpin = gzip.open(filename)
@@ -10454,7 +10465,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
             try:
               f=open('./temp', 'w')
             except:
-              tkMessageBox.showerror('Filewrite error', 
+              tkMessageBox.showerror('Filewrite error',
                                      'Sorry, there was an error writing the file')
             for each in args:
               try:
@@ -10486,7 +10497,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                 tkMessageBox.showerror('Incorrect Formatting',
                                        'Check the formatting of sensitivities')
                 #sensEntry.delete(0,END)
-              else:  
+              else:
                 self.range.set(each)
                 line = line.strip()
                 cmd.delete('all')
@@ -10501,7 +10512,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                 savefile(filename, string)
         cmd.extend('batchLoop',batchLoop)
         button123.bind('<Button-1>', batchLoop)
-	
+
     #-------------Version 2----------------#
 
         #--------------------------------------#
@@ -10509,12 +10520,12 @@ cmd.show('spheres', '(resn HOH)')\n''')
         #            EZ-Viz TAB                #
         #                                      #
         #--------------------------------------#
-        
+
         # Add "Settings" tab to notebook
         page = notebook.add('EZ-Viz')
 
         #------Write Script Out-------------
-        
+
         scriptwrite = Pmw.OptionMenu(page,label_text = 'Script Writing:',labelpos = 'n',
                 items = ("Off", "On"),
                 menubutton_width = 11, command=write_script)
@@ -10526,7 +10537,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         scriptbutton = Button(interior, width = 10, text = 'Run Script')
         scriptbutton.grid()
 
-    
+
         loaderent = Entry(interior, width = 7)
 
         def loadlog(event):
@@ -10542,58 +10553,58 @@ cmd.show('spheres', '(resn HOH)')\n''')
         #------------ Presets Group  ---------------
         group = Pmw.Group(page, tag_text='Preset Views')
         group.grid(row=0, column=0, padx=0, pady=0)
-        
+
         interior=group.interior()
 
         #menus for presets
-        
+
         surface = Pmw.OptionMenu(interior,label_text = 'Surfaces:',labelpos = 'n',
                                  items = ('','Surface','Surface on Cartoon','Surface on Sticks',
                                           'Surface on Spheres', 'Mesh on Sticks', 'Dots on Lines'),
                                  menubutton_width = 10, command=self.presurf)
         surface.grid(row=0,column=0,sticky=NW)
-        
+
         cartoon = Pmw.OptionMenu(interior,label_text = 'Cartoons:',labelpos = 'n',
                     items = ('','Cartoon','Putty','Lines on Cartoon', 'Color by Chain'),
                     menubutton_width = 10, command=self.pretoon)
         cartoon.grid(row=0,column=1,sticky=NW)
-        
+
         residue = Pmw.OptionMenu(interior,label_text = 'By Residue:',labelpos = 'n',
                                  items = ('','Aromatics','Show Charged','Solubility'),
                                  menubutton_width = 10, command=self.preres)
         residue.grid(row=0,column=2,sticky=NW)
-        
+
         roving = Pmw.OptionMenu(interior,label_text = 'Roving:',labelpos = 'n',
                                 items = ('','Roving Sticks','Roving Ball&Sticks','Roving Spheres', 'Roving Lines'),
                                 menubutton_width = 10, command=self.prerov)
         roving.grid(row=1,column=2,sticky=NW)
-        
+
         elecdensity = Pmw.OptionMenu(interior,label_text = 'Electron Density:',labelpos = 'n',
                                      items = ('','Mesh on Ribbon','Dots on Sticks','Surface on Lines'),
                                      menubutton_width = 10, command=self.preele)
         elecdensity.grid(row=1,column=1,sticky=NW)
-        
+
         misc = Pmw.OptionMenu(interior,label_text = 'Miscellaneous:',labelpos = 'n',
                               items = ('','Hetero Atoms','Chain Contacts','DNA & RNA','CPK','Ball & Stick'),
                               menubutton_width = 10, command=self.premisc)
         misc.grid(row=1,column=0,sticky=NW)
 
         #roving slider
-        
+
         self.rovingradius2 = Scale(interior, width =8)
         self.rovingradius2.configure(showvalue="0")
         self.rovingradius2.configure(troughcolor="#ffffff")
         self.rovingradius2.configure(length="90")
         self.rovingradius2.configure(orient="horizontal")
         self.rovingradius2.configure(resolution="0.1")
-        self.rovingradius2.configure(to="15.0")    
+        self.rovingradius2.configure(to="15.0")
         self.rovingradius2.grid(row=1, column=3, padx=0, pady=0, sticky=S)
         self.rovingradius2.set(8.0)
         labelradius = Label(interior, text = 'Roving Detail')
         labelradius.grid(row=1, column=3, padx=0, pady=0, sticky=N)
 
     #preset movies dropdown
-        
+
         movies = Pmw.OptionMenu(interior,label_text = 'Preset Movies:',labelpos = 'n',
                     items = ('','Ligand Zoom','Build Protein','Highlight Chains','Rotate','Chain Pull', 'Ligand Pull', 'Surface to Stick', 'Surface to Cartoon', 'Play', 'Stop', 'Rewind'),
                     menubutton_width = 10, command=self.premovie)
@@ -10603,18 +10614,18 @@ cmd.show('spheres', '(resn HOH)')\n''')
         #---------------Version 1-----------------#
 
 
-        
+
         #------------ Display Group ----------------#
         #                                                                           #
-        #                                                                           #               
+        #                                                                           #
         #-------------------------------------------#
-        
-        
+
+
         group = Pmw.Group(page, tag_text='Display Options')
         group.grid(row=4, column=0, columnspan=2, padx=0, pady=0)
         self.int=group.interior()
-        
-	
+
+
         # menu for stereo options
         stereo = Pmw.OptionMenu(self.int,label_text = 'Stereo:',labelpos = 'n',
                     items = ("Off", "Quad", "Cross-Eye", "Wall-Eye"),
@@ -10641,16 +10652,16 @@ cmd.show('spheres', '(resn HOH)')\n''')
         stereo.grid(row=0,column=3,sticky=NW)
 
 
-                  
+
 
     #----------------Version 2------------#
 
- 	
+
         # AUTOMATED COMMANDS TAB
         group = Pmw.Group(page, tag_text = 'Automated Commands')
         group.grid(row=2, column=0, padx=0, pady=0)
         interior = group.interior()
-        
+
         def populater(event):
             objects = cmd.get_names('all')
             cmd.select('protein','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
@@ -10696,7 +10707,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
             cmd.select("Chain-X", "chain X")
             cmd.select("Chain-Y", "chain Y")
             cmd.select("Chain-Z", "chain Z")
-            checkforchain()            
+            checkforchain()
             items=[]
             objects = cmd.get_names('all')
             items.append('All')
@@ -10716,7 +10727,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
             if 'ligands' in objects:
               items.append('ligands')
             if 'heme' in objects:
-              items.append('heme') 
+              items.append('heme')
             if 'Chain-A' in objects:
               items.append('Chain-A')
             if 'Chain-B' in objects:
@@ -10726,7 +10737,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
             if 'Chain-D' in objects:
               items.append('Chain-D')
             if 'Chain-E' in objects:
-              items.append('Chain-E')           
+              items.append('Chain-E')
             if 'Chain-F' in objects:
               items.append('Chain-F')
             if 'Chain-G' in objects:
@@ -10768,7 +10779,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
             if 'Chain-Y' in objects:
               items.append('Chain-Y')
             if 'Chain-Z' in objects:
-              items.append('Chain-Z')            
+              items.append('Chain-Z')
             items.sort()
             selection.setitems(items)
             self.advancedSelection.setitems(items)
@@ -10776,8 +10787,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
             sel1 = 'All'
 
 
-                  
-            
+
+
         popbtn=Button(interior, text='Update Selection',width=15)
         popbtn.place(x=50, y=32)
         popbtn.bind('<Button-1>', populater)
@@ -10786,57 +10797,57 @@ cmd.show('spheres', '(resn HOH)')\n''')
         selection = Pmw.OptionMenu(interior,labelpos = 'w',
                    label_text = 'Select:',
                     items = (''),
-                    menubutton_width = 10, command = self.set_sel)                       
+                    menubutton_width = 10, command = self.set_sel)
         selection.grid(row=0, column=0, padx=8, pady=0)
 
 
-        
+
         self.viewOptions = Pmw.OptionMenu(interior, labelpos='w',
     		label_text = 'Show:',
     		items = ('Lines', 'Sticks', 'Ribbons','Cartoon','Dots','Spheres','Mesh','Surface','Ball and Stick','Water', 'Everything', 'Polar Contacts'),
     		menubutton_width=10, command=self.show_rep)
-    		
+
  	self.viewOptions.grid(row=0,column=1,padx=0,pady=0,sticky='N')
- 	
+
  	self.hideOptions = Pmw.OptionMenu(interior, labelpos='w',
     		label_text = 'Hide:',
     		items = ('Lines', 'Sticks', 'Ribbons','Cartoon','Dots','Spheres','Mesh','Surface','Ball and Stick','Water','Everything', 'Polar Contacts'),
     		menubutton_width=10, command=self.hide_rep)
-    		
+
  	self.hideOptions.grid(row=1,column=1,padx=0,pady=0, sticky='SE')
- 	
+
  	# Coloring choices
 	selection = Pmw.OptionMenu(interior,labelpos = 'w',
                    label_text = 'Color:',
                     items = ('Red','Green','Blue','Orange','Violet','Yellow','CPK','Other'),
                     menubutton_width = 7, command = self.color_sel)
-                       
+
         selection.grid(row=0, column=2, padx=0, pady=0)
-        
+
          # MANUAL COMMANDS SECTION
         group = Pmw.Group(page, tag_text='Manual Commands')
         group.grid(row=3,column=0, padx=0,pady=0)
         interior = group.interior()
-        
+
         labels = ('PyMOL','Chime')
-        self.commandChooser = self.radioAdd(interior,'w','vertical',self.set_cmd_type,'Command Type:',labels, 0, 
+        self.commandChooser = self.radioAdd(interior,'w','vertical',self.set_cmd_type,'Command Type:',labels, 0,
                                             0, 1, 1, 'W')
-        
+
         self.output = Pmw.ScrolledText(interior,
                                        usehullsize = 1,
                                        hull_width = 250,
                                        hull_height = 50,
                                        text_wrap= WORD)
-        
+
         self.output.grid(row=0,column=1,padx=8,pady=2)
         self.output.setvalue('Command results will show in this box.\n\n')
-        
+
         # PyMOL Command Prompt
         self.commandLine = Pmw.EntryField(interior, labelpos='w', label_text='Command Line:',
                                           value='Enter PyMOL Commands Here', entry_width=25, command=self.command_line)
         self.commandLine.grid(row=1, column=0, columnspan=2, pady=2)
 
-        
+
         #---------------Version 2-------------#
 
         #--------------------------------------#
@@ -10846,21 +10857,21 @@ cmd.show('spheres', '(resn HOH)')\n''')
         #--------------------------------------#
 	page = notebook.add('Motifs')
 	notebook.tab('Motifs').focus_set()
-	
+
 	#Molecular Classification Field
         label = Label(page, text='Protein Classification')
         label.grid(row=1,column=0,sticky='sw',padx=5,pady=0)
         self.classify = Text(page, state=NORMAL, height=1.4, width=30)
 	self.classify.insert(END,"Protein Classification")
 	self.classify.grid(row=2, column=0, sticky='sw',padx=5, pady=0)
-	
+
 	#Molecule Name Field
 	self.name = StringVar()
 	self.molName = Label(page, textvariable=self.name, font='arial, 14', wraplength='450')
 	self.name.set("")
 	self.molName.grid(row=0, column=0, columnspan=2,sticky='w',padx=5, pady=5)
-	
-	
+
+
 	#Hetero Atoms
 	label=Label(page, text="Hetero Atoms")
 	label.grid(row=1, column=1, sticky='sw', padx=5, pady=0)
@@ -10872,7 +10883,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         group = Pmw.Group(page, tag_text = 'Motifs')
         group.grid(row=3, column=0,columnspan =2, padx=0, pady=0)
         interior = group.interior()
-        
+
         # Menu for motifs
         stereo = Pmw.OptionMenu(interior,label_text = 'Oxidoreductases:',labelpos = 'n',
                     items = ('','Superoxide Dismutase','Peroxidase','Alcohol Dehydrogenase',
@@ -10887,25 +10898,25 @@ cmd.show('spheres', '(resn HOH)')\n''')
                                          'Hhal Methyltransferase','Serotonin Acetyltransferase', 'Cyclin Dependent Kinase'),
                                 menubutton_width = 8, command=self.transferase)
         stereo.grid(row=0,column=1,sticky=NW)
-        
+
        # Menu for motifs
         stereo = Pmw.OptionMenu(interior,label_text = 'Hydrolases:',labelpos = 'n',
                     items = ('','Serine Protease', 'Papain Like', 'Metalloprotease', 'Tyrosine Phosphatase', 'Beta Lactamase', 'O-Glycosyl', 'Cephalosporin deacetylase'),
                     menubutton_width = 8, command=self.hydrolase)
         stereo.grid(row=0,column=2,sticky=NW)
-        
+
         # Menu for motifs
         stereo = Pmw.OptionMenu(interior,label_text = 'Lyases:',labelpos = 'n',
                     items = ('','Carbonic Anhydrase', 'Carbon Carbon','Chondroitinase', 'Hyaluronate-Lyase', 'Exonuclease 3', 'Citrate Synthase'),
                     menubutton_width = 8, command=self.lyase)
         stereo.grid(row=0,column=3,sticky=NW)
-        
+
         # Menu for motifs
         stereo = Pmw.OptionMenu(interior,label_text = 'Isomerases:',labelpos = 'n',
                     items = ('','Fucose Isomerase','Triose Phosphate Isomerase', 'FK506 Cis-Trans'),
                     menubutton_width = 8, command=self.isomerase)
         stereo.grid(row=1,column=0,sticky=NW)
-        
+
         # Menu for motifs
         stereo = Pmw.OptionMenu(interior,label_text = 'Ligase:',labelpos = 'n',
                     items = (' ', 'DNA Ligase'),
@@ -10917,7 +10928,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     items = ('','Zinc Finger'),
                     menubutton_width = 8, command=self.other)
         stereo.grid(row=1,column=2,sticky=NW)
-        
+
         stereo = Pmw.OptionMenu(interior,label_text = 'Options:',labelpos = 'n',
                     items = ('','Surface Pocket','Polar Contacts', 'Hide Contacts', 'Show Substrate', 'Hide Substrate', 'Show label', 'Hide Label'),
                     menubutton_width = 8, command=self.motifoption)
@@ -10931,7 +10942,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         self.range.configure(length="200")
         self.range.configure(orient="horizontal")
         self.range.configure(resolution="0.01")
-        self.range.configure(to="2.0")    
+        self.range.configure(to="2.0")
         self.range.grid(row=2, column=1,columnspan = 4, padx=0, pady=0, sticky=NW)
         self.range.set(1)
 
@@ -10940,8 +10951,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
 
         self.buttonAdd(interior, 'Reset', 10, self.resetrange, 3, 3, 'SE')
 
-        
-            
+
+
     #---------------------Show residues around active site---------------#
         group = Pmw.Group(page, tag_text='Tools')
  	group.grid(row=4, column=0, columnspan=1, padx=2, pady=2, sticky=W)
@@ -10955,18 +10966,18 @@ cmd.show('spheres', '(resn HOH)')\n''')
         selA.configure(length="130")
         selA.configure(orient="horizontal")
         selA.configure(resolution="0.2")
-        selA.configure(to="10.0")    
+        selA.configure(to="10.0")
         selA.grid(row=0, column=0, columnspan= 2, padx=0, pady=0, sticky=N)
         selA.set(5.0)
         frameadj = Frame(interior)
         frameadj.grid(row=1, column=0, padx=1, pady=1, sticky=NW)
         balladj = Pmw.Balloon(interior)
         balladj.bind(frameadj, 'Display residues adjacent to motif')
-        
-                       
+
+
         showround = Button(frameadj, width = 12, text = 'Adjacent')
         showround.grid(row=1, column=0, padx=1, pady=1, sticky=NW)
-                	
+
         def roundres(event):
             try:
                 cmd.hide('sticks', '!'+self.mot)
@@ -10998,13 +11009,13 @@ cmd.show('spheres', '(resn HOH)')\n''')
                 import tkMessageBox
                 tkMessageBox.showinfo('Alert', 'You must load a motif first')
                 interior.mainloop()
-            
+
         delres.bind('<Button-1>', resdel)
 
 
         #Mofit Finder---------------------------------
         #------Goes through all motif functions and counts atoms for viable returns
-        
+
         group = Pmw.Group(page, tag_text='Motif Search')
     	group.grid(row=4, column=1, columnspan=1, padx=2, pady=2, sticky=W)
 	interior = group.interior()
@@ -11014,17 +11025,17 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     cmd.hide('everything', 'all')
                     cmd.remove("(all) and hydro")
                     list=[]
-                    
+
                     self.exonucleaseiii2()
                     x = cmd.count_atoms('Exonuclease3')
                     if x == 42:
                        list.append('1-Exonuclease 3')
                     if x < 42 and x > 32:
                        list.append('2-Exonuclease 3')
-                   
+
                     cmd.delete('Exonuclease3')
-                    
-                    
+
+
                     self.cyclinkinase2()
                     x = cmd.count_atoms('Cyclin_Kinase')
                     if x == 26:
@@ -11058,7 +11069,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                         list.append('2-Triose Phosphate Isomerase')
                     if x < 80 and x > 64:
                         list.append('2-Triose Phosphate Isomerase')
-                    
+
                     self.serineprotease2()
                     x = cmd.count_atoms('serineprotease')
                     if x == 24:
@@ -11112,7 +11123,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                         cmd.delete('zn')
                     else:
                         cmd.delete('zn')
-                        
+
 
 
                     cmd.select('zn', 'elem zn')
@@ -11135,7 +11146,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                         cmd.delete('zn')
                         cmd.delete('Zince_finger')
 
-                    
+
                     self.aminotransferase2()
                     x = cmd.count_atoms('Aminotransferase')
                     if x == 27 :
@@ -11183,7 +11194,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     if x < 82 and x > 62:
                         list.append('2-Hyaluronate-Lyase')
                     cmd.delete('Hyaluronate_Lyase')
-                        
+
                     self.peroxidase2()
                     x = cmd.count_atoms('Peroxidase')
                     if x == 29 :
@@ -11283,8 +11294,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     if x < 24*2 and x > 16*2:
                         list.append('2-SRC Family Kinase')
                     cmd.delete('SRC-Kinase')
-                    
-                    
+
+
                     self.cistransisomerase2()
                     x = cmd.count_atoms('Cis-trans')
                     if x == 36:
@@ -11544,7 +11555,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     if x < 25*4 and x > 17*4:
                       list.append('2-Carbon Carbon')
                     cmd.delete('carboncarbon')
-                      
+
                     self.carbanhyd2()
                     x = cmd.count_atoms('carbonicanhydrase')
                     if x == 32:
@@ -11698,7 +11709,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                       list.append('2-Betaine aldehyde dehydrogenase')
                     if x < 23*9 and x > 20*9:
                       list.append('2-Betaine aldehyde dehydrogenase')
-                      
+
                     self.serotoninacetyl2()
                     x = cmd.count_atoms('Serotonin_transferase')
                     if x == 44:
@@ -11728,7 +11739,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
 
                     cmd.delete('tyrophos')
                     deletemotif()
-                    cmd.orient('all')  
+                    cmd.orient('all')
                     list.sort()
                     self.motifbox.setlist(list)
                     cmd.show('cartoon', 'all')
@@ -11741,20 +11752,20 @@ cmd.show('spheres', '(resn HOH)')\n''')
         ballmot.bind(framemot, 'Searches through all motifs\n1 = better, 2 = worse\nDouble click on returns to show')
         find_motif = Button(framemot, text ='Motif Finder')
         find_motif.grid(row = 0, column = 0)
-	
+
         find_motif.bind('<Button-1>', motifchecker)
-	
+
 
         self.motifbox = Pmw.ScrolledListBox(interior,
         items=(),
-        listbox_height = 6,                       
+        listbox_height = 6,
         dblclickcommand=self.allmotif,
         usehullsize = 1,
         hull_width = 180,
         hull_height = 100,)
 	#Changed hull_height to 100 to see more - Corey
         self.motifbox.grid()
-	
+
         #--------------------------------------#
         #			                 #
         #           Custom Motifs Tab               #
@@ -11762,8 +11773,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
         #--------------------------------------#
 	page = notebook.add('Custom\nMotifs')
 	notebook.tab('Custom\nMotifs').focus_set()
-              
- 
+
+
         #custom group
         group = Pmw.Group(page, tag_text = 'Custom Motifs')
         group.grid(row=0, column=0,columnspan =4, padx=0, pady=0)
@@ -11796,7 +11807,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         selA.configure(length="80")
         selA.configure(orient="horizontal")
         selA.configure(resolution="0.25")
-        selA.configure(to="8.0")    
+        selA.configure(to="8.0")
         selA.grid(row=1, column=0, padx=0, pady=0, sticky=NW)
         selA.set(4.0)
 
@@ -11805,7 +11816,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         selB.configure(length="80")
         selB.configure(orient="horizontal")
         selB.configure(resolution="0.25")
-        selB.configure(to="8.0")    
+        selB.configure(to="8.0")
         selB.grid(row=1, column=1, padx=0, pady=0, sticky=NW)
         selB.set(4.0)
 
@@ -11819,7 +11830,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         selC.set(4.0)
 
         #labels
-        
+
         lab1 = Label(interior, text='Range A to B')
         lab1.grid(row = 2, column = 0)
         lab2 = Label(interior, text='Range B to C')
@@ -11872,25 +11883,25 @@ cmd.show('spheres', '(resn HOH)')\n''')
         selAB.configure(length="100")
         selAB.configure(orient="horizontal")
         selAB.configure(resolution="0.25")
-        selAB.configure(to="15")    
+        selAB.configure(to="15")
         selAB.grid(row=1, column=0, padx=0, pady=0, sticky=NW)
         selAB.set(4.0)
-        
+
         selAC = Scale(interior, width =8)
         selAC.configure(troughcolor="#ffffff")
         selAC.configure(length="100")
         selAC.configure(orient="horizontal")
         selAC.configure(resolution="0.25")
-        selAC.configure(to="15")    
+        selAC.configure(to="15")
         selAC.grid(row=1, column=1,columnspan=2, padx=2, pady=0, sticky=NW)
         selAC.set(4.0)
-        
+
         selAD = Scale(interior, width =8)
         selAD.configure(troughcolor="#ffffff")
         selAD.configure(length="100")
         selAD.configure(orient="horizontal")
         selAD.configure(resolution="0.25")
-        selAD.configure(to="15")    
+        selAD.configure(to="15")
         selAD.grid(row=1, column=2,columnspan=2, padx=2, pady=0, sticky=NW)
         selAD.set(4.0)
 
@@ -11899,16 +11910,16 @@ cmd.show('spheres', '(resn HOH)')\n''')
         selBC.configure(length="100")
         selBC.configure(orient="horizontal")
         selBC.configure(resolution="0.25")
-        selBC.configure(to="15")    
+        selBC.configure(to="15")
         selBC.grid(row=3, column=0,columnspan=2, padx=2, pady=0, sticky=NW)
         selBC.set(4.0)
-        
+
         selBD = Scale(interior, width =8)
         selBD.configure(troughcolor="#ffffff")
         selBD.configure(length="100")
         selBD.configure(orient="horizontal")
         selBD.configure(resolution="0.25")
-        selBD.configure(to="15")    
+        selBD.configure(to="15")
         selBD.grid(row=3, column=1,columnspan=2, padx=2, pady=0, sticky=NW)
         selBD.set(4.0)
 
@@ -11922,7 +11933,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         selCD.set(4.0)
 
         #labels
-        
+
         lab1 = Label(interior, text='Range A to B')
         lab1.grid(row = 2, column = 0)
         lab2 = Label(interior, text='Range A to C')
@@ -11944,7 +11955,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         self.buttonAdd(interior, 'ABCD Selection', 15, self.Aquadmotif, 5, 2, 'N,S,E,W')
         self.buttonAdd(interior, 'Reset', 12, self.resetmotif, 1, 3, 'SE')
 
-                
+
         #--------------------------------------#
         #			               #
         #            Ligand Binding                      #
@@ -11957,8 +11968,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
         group.grid(row=2, column=0, padx=0, pady=0)
         interior = group.interior()
 
-        
-        
+
+
         Codeent = Label(interior, text = "Enter PDB Code:")
         Codeent.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = 'nw')
         entpdb = Entry(interior, width = 6)
@@ -11975,8 +11986,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
         databtn = Button(interior, text = 'Databaser')
         databtn.grid()
 
-   
-          
+
+
 
         def editor(event):
             root = Tk()
@@ -11992,8 +12003,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
                 items = eval(line)
                 items.sort()
                 pdblists.setitems(items)
-        
-  
+
+
         editbtn = Button(interior, text = 'Database Edit')
         editbtn.grid()
         editbtn.bind('<Button-1>', editor)
@@ -12005,29 +12016,29 @@ cmd.show('spheres', '(resn HOH)')\n''')
 
 
             f = open('./modules/pmg_tk/startup/PDB_List/'+tag+'.log', 'r')
-       
+
             for line in f:
                 print line
                 listpdb = line
-            
-            
-            #Read the file dummy 
+
+
+            #Read the file dummy
 
             while running: #loop
                 try:
-                                    
+
                     ent2.delete(0,100000)
-                    
+
                     a = int(entl.get()) + 1
-                    
+
                     if a ==1:
                         b = 2
                         c = 7
-                     
+
                     if a >1:
                        b = int(entl1.get()) + 9
                        c = int(entl3.get()) + 9
-                    
+
                     ent2.insert(0,listpdb[b:c])
                     if len(ent2.get())<4:
                         thiswillkillit.dead#make it except
@@ -12038,28 +12049,28 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     entl1.insert(0,b)
                     entl3.delete(0,100000)
                     entl3.insert(0,c)
-                    
+
                     cmd.do("load /Program Files/DeLano Scientific/PyMOL/modules/pmg_tk/startup/dump/%s.pdb"%(listpdb[b:c]))
 
                     try:
                         cmd.do('set all_states, on')
                         cmd.intra_fit ('%s'%(entpdb.get()))
                         cmd.intra_fit('%s'%(listpdb[b:c]))
-                        
+
                     except:
                         pass
-                   
+
                     cmd.do('align %s////CA, %s////CA, object=alignment'%(entpdb.get(),listpdb[b:c]))
-                    
+
                     cmd.delete("%s"%(listpdb[b:c]))
-                    
+
                 except:
                     running = False #end the loop
                     entl.delete(0,100000)
                     entl.insert(0,0)
-                
-                    
-        
+
+
+
 
         #master list stuff
         pdblists = Pmw.OptionMenu(interior,label_text = 'Databases:',labelpos = 'n',
@@ -12076,7 +12087,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         #
 #                              pdb_index_search.py
 #                             -------------------
-#     begin                : Sat Oct 22 2005 
+#     begin                : Sat Oct 22 2005
 #     email                : j.pansanel@pansanel.net
 #     last modification    : Tue Apr 11 2006
 #     version              : 0.7
@@ -12089,28 +12100,28 @@ cmd.show('spheres', '(resn HOH)')\n''')
 # window by double-clicking on the row.
 # PyMOL software is an OPEN SOURCE program distribued under the "Python"
 # license. Please visit the PyMOL website for more informations:
-# http://www.pymol.org 
+# http://www.pymol.org
 # To use this program, you need a database supported by Python DB-API.
 # This database must contain a table with at least 2 fields, the
 # structure (in mdl mol format) and the name.
 #
 # PDB Index Search Copyright Notice
 # ====================================
-# 
+#
 # The PDB Entry Search source code in this file is copyrighted, but you can
 # freely use and copy it as long as you don't change or remove any of
 # the copyright notices.
-# 
+#
 # ----------------------------------------------------------------------
 # Copyright notice:
 #   Copyright (C) 2005 by Jerome Pansanel <j.pansanel@pansanel.net
-#   Copyright (C) 2004 Charles Moad <cmoad@indiana.edu> 
+#   Copyright (C) 2004 Charles Moad <cmoad@indiana.edu>
 #           FecthPDB class: http://
 #   Copyright (C) 2004 Georgy Gruss <d001120t0330@hotmail.com>
 #           MolSheet and MolSheetApp class: http://zxw.nm.ru/tk_ss.htm
-# 
+#
 #                        All Rights Reserved
-# 
+#
 # Permission to use, copy, modify, distribute, and distribute modified
 # versions of this software and its documentation for any purpose and
 # without fee is hereby granted, provided that the above copyright
@@ -12119,7 +12130,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
 # the name(s) of the author(s) not be used in advertising or publicity
 # pertaining to distribution of the software without specific, written
 # prior permission.
-# 
+#
 # THE AUTHOR(S) DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
 # INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.  IN
 # NO EVENT SHALL THE AUTHOR(S) BE LIABLE FOR ANY SPECIAL, INDIRECT OR
@@ -12128,7 +12139,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
 # OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 # PERFORMANCE OF THIS SOFTWARE.
 # ----------------------------------------------------------------------
-      
+
         def PDBIndexSearch(event):
             word_list = []
             string_list = []
@@ -12164,7 +12175,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         class PDBEntryFile:
             '''
             def __init__(self)
-            This function initialize the PDBEntryFile class. It set : 
+            This function initialize the PDBEntryFile class. It set :
             req_url : the url, where the entries file can be download
             PDBDir : the directory where is stored the entries file. This directory is called pdb, as it can contain other pdb related files.
             EntryFile : the file itself
@@ -12196,7 +12207,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                         if not regexp.search(line):
                             state = False
                             break
-                    if state: 
+                    if state:
                         row = row+1
                         temp = line.split("\t")
                         col = 0
@@ -12407,13 +12418,13 @@ cmd.show('spheres', '(resn HOH)')\n''')
                 #entry fields for database function...Charlie's Code
                 self.lab1 = Label(frame, text='ligand:')
                 self.lab1.pack(side='left')
-                
+
                 self.entry1 = Entry(frame, width=5)
                 self.entry1.pack(side='left')
-                
+
                 self.lab2 = Label(frame, text='range:')
                 self.lab2.pack(side='left')
-                
+
                 self.entry2 = Entry(frame, width=5)
                 self.entry2.pack(side='left')
                 Button(frame, text='Database',  command=self.database).pack(side='left')
@@ -12422,7 +12433,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                 self.entl.insert(0,0)
                 self.ent2 = Entry(frame)
                 self.ent3 = Entry(frame)
-              
+
                 #end of Charlie's code
 
                 Button(frame, text='home',  command=self.scroll_home ).pack(side='left',padx=4)
@@ -12433,15 +12444,15 @@ cmd.show('spheres', '(resn HOH)')\n''')
                 Button(frame, text='help',  command=self.help_msg    ).pack(side='left',padx=8)
                 Button(frame, text='quit',  command=self.execute     ).pack(side='left')
 
-                
+
                 start_widget = self.lbls[ (1,1) ]
                 selct( start_widget )
                 if values:
                     self.loadValues(values)
                 self.entry.focus_set()
-                
+
                 self.root.mainloop()
-            
+
             def populate(self):
                     objects = cmd.get_names('all')
                     cmd.select("Chain-A", "chain A")
@@ -12606,7 +12617,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                 running = True
                 import os
                 f = open('./modules/pmg_tk/startup/PDB_List/%s_%s.log'%(self.entry1.get(),self.entry2.get()), 'r')
-                
+
                 for line in f:
                     listpdb = eval(line)
                 self.dumbent.delete(0,100000)
@@ -12614,122 +12625,122 @@ cmd.show('spheres', '(resn HOH)')\n''')
                 listpdb.insert(0, "bar")
                 while running:
                     try:
-                  
+
                         self.ent2.delete(0,100000)
-                        a = int(self.entl.get()) + 1            
-                        self.entl.delete(0,100000)            
-                        self.entl.insert(0,a)           
+                        a = int(self.entl.get()) + 1
+                        self.entl.delete(0,100000)
+                        self.entl.insert(0,a)
                         self.ent2.insert(0,listpdb[a])
-                       
+
                         cmd.do("load /Program Files/DeLano Scientific/PyMOL/modules/pmg_tk/startup/dump/%s.pdb"%(listpdb[a]))
-                 
+
                         self.populate()
-                
+
                         objects = cmd.get_names('all')
-                
+
                         if 'Chain-A' in objects:
-               
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sA.pdb,(Chain-A)'%(listpdb[a]))
-                 
+
                             pdblist2.append(self.ent2.get()+'A')
-               
+
                         if 'Chain-B' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sB.pdb,(Chain-B)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'B')
                         if 'Chain-C' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sC.pdb,(Chain-C)'%(listpdb[a]))
-                            pdblist2.append(self.ent2.get()+'C') 
+                            pdblist2.append(self.ent2.get()+'C')
                         if 'Chain-D' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sD.pdb,(Chain-D)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'D')
                         if 'Chain-E' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sE.pdb,(Chain-E)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'E')
                         if 'Chain-F' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sF.pdb,(Chain-F)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'F')
                         if 'Chain-G' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sG.pdb,(Chain-G)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'G')
                         if 'Chain-H' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sH.pdb,(Chain-H)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'H')
                         if 'Chain-I' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sI.pdb,(Chain-I)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'I')
                         if 'Chain-J' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sJ.pdb,(Chain-J)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'J')
                         if 'Chain-K' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sK.pdb,(Chain-K)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'K')
                         if 'Chain-L' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sL.pdb,(Chain-L)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'L')
                         if 'Chain-M' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sM.pdb,(Chain-M)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'M')
                         if 'Chain-N' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sN.pdb,(Chain-N)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'N')
                         if 'Chain-O' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sO.pdb,(Chain-O)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'O')
                         if 'Chain-P' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sP.pdb,(Chain-P)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'P')
                         if 'Chain-Q' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sQ.pdb,(Chain-Q)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'Q')
                         if 'Chain-R' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sR.pdb,(Chain-R)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'R')
                         if 'Chain-S' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sS.pdb,(Chain-S)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'S')
                         if 'Chain-T' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sT.pdb,(Chain-T)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'T')
                         if 'Chain-U' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sU.pdb,(Chain-U)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'U')
                         if 'Chain-V' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sV.pdb,(Chain-V)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'V')
                         if 'Chain-W' in objects:
-                           
+
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sW.pdb,(Chain-W)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'W')
-                            
+
                         if 'Chain-X' in objects:
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sX.pdb,(Chain-X)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'X')
-                            
+
                         if 'Chain-Y' in objects:
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sY.pdb,(Chain-Y)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'Y')
-                            
+
                         if 'Chain-Z' in objects:
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%sZ.pdb,(Chain-Z)'%(listpdb[a]))
                             pdblist2.append(self.ent2.get()+'Z')
@@ -12740,15 +12751,15 @@ cmd.show('spheres', '(resn HOH)')\n''')
                         fil = './modules/pmg_tk/startup/dump/%s.pdb'%(listpdb[a])
                         os.remove(fil)
 
-                        
-                        
+
+
                     except:
-                        
-                     
+
+
                         running = False
                         self.dumbent.insert(0,pdblist2)
                         logfile1 = open(f.name, 'w')
-                        logfile1.write(self.dumbent.get()) 
+                        logfile1.write(self.dumbent.get())
                         logfile1.close()
                         print file(f.name).read()
                         self.dumbent.delete(0,10000)
@@ -12757,10 +12768,10 @@ cmd.show('spheres', '(resn HOH)')\n''')
                             items = eval(line)
                             items.sort()
                             pdblists.setitems(items)
-                        
-                        
-                    
-                
+
+
+
+
             def database (self):
                 running = True #keep the loop running...
                 garbage = []
@@ -12778,9 +12789,9 @@ cmd.show('spheres', '(resn HOH)')\n''')
                         if(n < 1): #make sure that something was selected
                             cmd.do('reinitialize')
                             self.scroll_down()
-                        else:         
+                        else:
                             cmd.do('save C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup/dump/%s.pdb,(sele)'%(self.entry.get()))
-                            pdblist.append(self.entry.get())                   
+                            pdblist.append(self.entry.get())
                             cmd.do('reinitialize')
                             self.scroll_down()
                     else: #your at the end
@@ -12788,7 +12799,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                 else:
                     self.dumbent.insert(0,pdblist)
                     logfile = open('./modules/pmg_tk/startup/PDB_List/%s_%s.log'%(self.entry1.get(),self.entry2.get()), 'w')
-                    logfile.write(self.dumbent.get()) 
+                    logfile.write(self.dumbent.get())
                     logfile.close()
                     print file('./modules/pmg_tk/startup/PDB_List/%s_%s.log'%(self.entry1.get(),self.entry2.get())).read()
 
@@ -12804,15 +12815,15 @@ cmd.show('spheres', '(resn HOH)')\n''')
 
                     self.clean()
                     cmd.reinitialize()
-                   
-                                       
-                    
+
+
+
                     self.execute()
-                    
 
 
 
-               #End of Charlie's Code 
+
+               #End of Charlie's Code
 
 
             def add_label( self, r, c, txt, bg, w ):
@@ -12910,7 +12921,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     value = ''
                 elif isinstance(value,int):
                     value = str(value)
-                elif isinstance(value,float): 
+                elif isinstance(value,float):
                     value = "%.16g" % value
                 elif isinstance(value,str):
                     value = "'" + value
@@ -13151,17 +13162,17 @@ cmd.show('spheres', '(resn HOH)')\n''')
                         bar = ProgressBar(self.parent,self.filename,0)
                     else:
                         bar = ProgressBar(self.parent,self.filename,1)
-                        
+
                     # Initialize variables tracking download progress
                     perc_step, perc, next_perc = self.PERC_STEP, 0, 0
-                    perc_chunk = f_in_size / (100/self.PERC_STEP) 
+                    perc_chunk = f_in_size / (100/self.PERC_STEP)
                     content_size = 0
                     while True:
-                        # Read in a chunk of data, breaking from loop if 
+                        # Read in a chunk of data, breaking from loop if
                         # no data returned
                         data = f_in.read(self.CHUNK_SIZE)
                         if len(data) == 0: break
-                    
+
                         # Write a chunk of data, incrementing output file size
                         self.content = self.content + data
                         content_size += len(data)
@@ -13174,15 +13185,15 @@ cmd.show('spheres', '(resn HOH)')\n''')
                             bar.updateProgress(perc)
                             perc += perc_step
                             next_perc += perc_chunk
-                    
+
                     # Close output and return container with data
                     if "cancel" == bar.event:
                         self.state = "cancel"
                         self.content = None
                     bar.destroy()
                     f_in.close()
-                    return self.content	
-                    
+                    return self.content
+
                 except:
                     print sys.exc_info()[1]
                     if f_in is not None:
@@ -13193,7 +13204,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
 
         class ProgressBar(Toplevel):
             '''
-            This provides a progress bar. 
+            This provides a progress bar.
             '''
             def __init__(self,parent,filename=None,bartype=0):
                 Toplevel.__init__(self,parent)
@@ -13243,7 +13254,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                 # create interface
                 self.event = ''
                 update()
-        
+
             def updateProgress(self,value=None):
                 if value is None:
                     if self.bartype == 0:
@@ -13269,7 +13280,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     self.bar.coords('scale',0,0,2*value,10)
                 time.sleep(0.1)
                 update()
-            
+
             def cancel(self, event=None):
                 self.event = 'cancel'
                 if self.parent:
@@ -13279,77 +13290,57 @@ cmd.show('spheres', '(resn HOH)')\n''')
         if __name__ == "__main__":
             root= Tk()
             root.update()
-            t=PDBSearch(root) 
+            t=PDBSearch(root)
 
         databtn.bind('<Button-1>', PDBIndexSearch)
-        
+
         group = Pmw.Group(page, tag_text = 'Motif Database')
         group.grid(row=3, column=0, padx=0, pady=0)
         interior = group.interior()
         atlab = Label(interior, text = "Atoms")
         atlab.grid(row=1, column =0, sticky = 'w')
 
-        nmlab = Label(interior, text = 'Motif Name')
-        nmlab.grid(row=1, column =0, sticky = 'n')
-        runbtn1 = Button(interior, text = 'Run all Motifs')
-        runbtn1.grid(row = 0, column =0, sticky = 'W')
-        mobtn = Button(interior, text = 'Motif maker')
-        mobtn.grid(row = 0, column = 0, sticky = 'E')
-        entz = Entry(interior)
-
-        button333 =Button(interior, text = 'Get Random PDB', width =25)
-        button333.grid(row = 3, column = 0, padx = 10, sticky = 'N')
-        randent = Entry(interior)
-
         def randomized(*args):
-                cmd.delete('all')
-                q = random.randint(1, 41258)
-                p = linecache.getline('./modules/pmg_tk/startup/pdb_entry_type.txt', q)
-                randent.insert(0,p)
-                randent.delete(4,1000)
-        
-                pdbCode = randent.get()
-                
-           
-                pdbCode = string.upper(pdbCode)
-                try:
-                    filename = urllib.urlretrieve('http://www.rcsb.org/pdb/cgi/export.cgi/' +
-                                                            pdbCode + '.pdb.gz?format=PDB&pdbId=' +
-                                                            pdbCode + '&compression=gz')[0]
-                except:
-                    tkMessageBox.showerror('Connection Error',
-                                           'Can not access to the PDB database.\n'+
-                                           'Please check your Internet access.',
-                                           parent=app.root)
+            cmd.delete('all')
+            pdbCode = linecache.getline('./modules/pmg_tk/startup/pdb_entry_type.txt',random.randint(1, 41258))
+
+            pdbCode = string.upper(pdbCode)
+            try:
+                filename = urllib.urlretrieve('http://www.rcsb.org/pdb/cgi/export.cgi/' +
+                                                        pdbCode + '.pdb.gz?format=PDB&pdbId=' +
+                                                        pdbCode + '&compression=gz')[0]
+            except:
+                tkMessageBox.showerror('Connection Error',
+                                       'Can not access to the PDB database.\n'+
+                                       'Please check your Internet access.',
+                                       parent=app.root)
+            else:
+                if (os.path.getsize(filename) > 0): # If 0, then pdb code was invalid
+                    # Uncompress the file while reading
+                    fpin = gzip.open(filename)
+
+                    # Form the pdb output name
+                    outputname = os.path.dirname(filename) + os.sep + pdbCode + '.pdb'
+                    fpout = open(outputname, 'w')
+                    fpout.write(fpin.read()) # Write pdb file
+
+                    fpin.close()
+                    fpout.close()
+
+                    cmd.load(outputname,quiet=0) # Load the fresh pdb
                 else:
-                    if (os.path.getsize(filename) > 0): # If 0, then pdb code was invalid
-                        # Uncompress the file while reading
-                        fpin = gzip.open(filename)
+                    tkMessageBox.showerror('Invalid Code',
+                                                  'You entered an invalid pdb code:' + pdbCode,
+                                                  parent=app.root)
 
-                        # Form the pdb output name
-                        outputname = os.path.dirname(filename) + os.sep + pdbCode + '.pdb'
-                        fpout = open(outputname, 'w')
-                        fpout.write(fpin.read()) # Write pdb file
-
-                        fpin.close()
-                        fpout.close()
-
-                        cmd.load(outputname,quiet=0) # Load the fresh pdb
-                    else:
-                        tkMessageBox.showerror('Invalid Code',
-                                                      'You entered an invalid pdb code:' + pdbCode,
-                                                      parent=app.root)
-
-                    os.remove(filename) # Remove tmp file (leave the pdb)
+                os.remove(filename) # Remove tmp file (leave the pdb)
 
         cmd.extend('randomized',randomized)
-        button333.bind('<Button-1>', randomized)
-
-            
 
         entcount = Entry(interior)
-        def runum(event):#run all the motifs and count the atoms n the Motifs folder
-           
+        entz = Entry(interior)
+        def runum():#run all the motifs and count the atoms n the Motifs folder
+
                 a = ['']
                 entz.delete(0,1000)
                 entz.insert(0,0)
@@ -13358,7 +13349,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                 skipping =True
                 list  = []
                 while skipping:
-    
+
                     z = int(entz.get()) + 1
                     entz.delete(0,1000)
                     entz.insert(0,z)
@@ -13369,11 +13360,11 @@ cmd.show('spheres', '(resn HOH)')\n''')
                         cmd.do('run ./modules/pmg_tk/startup/Motifs/'+a[z])
                         cmd.set("suspend_updates",0,quiet=1)
                         time.sleep(1)#rate limiter
-                       
+
                         r = cmd.count_atoms('Motif')
                         entcount.delete(0,100)
                         entcount.insert(0,r)
-                        
+
 
                         time.sleep(1)
                         if len(entcount.get())==1:
@@ -13382,1963 +13373,526 @@ cmd.show('spheres', '(resn HOH)')\n''')
                                list.append(entcount.get()+'       '+a[z])
                         if len(entcount.get())==3:
                                list.append(entcount.get()+'      '+a[z])
-                        
-                    
+
+
                     except:
                         cmd.set("suspend_updates",0,quiet=1)
                         skipping = False
                         self.motifdrop.setlist(list)
                         list.sort()
 
-          
-                        
-
-        runbtn1.bind('<Button-1>', runum)
-                    
         self.motifdrop = Pmw.ScrolledListBox(interior,
                     items=(),
                     dblclickcommand = self.runcusmotif,
-                    listbox_height = 6,                       
+                    listbox_height = 6,
                     usehullsize = 1,
                     hull_width = 300,
                     hull_height = 150,)
         self.motifdrop.grid(row=2, column =0)
 
-        def loadmotifer(event):
-            root = Tk()
-            group = Pmw.Group(root, tag_text='Motif Maker')#And a new group
-            group.grid(row=0, column=0, padx=0, pady=0, sticky=NW)
-            interior = group.interior()
-            
-            
-    #widgets
-            ent1 = Entry(interior, width = 8)
-            ent1.grid(row = 0, column =2)
+        def loadmotifer():
+            try:
+                import tkSimpleDialog
+                ###mRN = motif resn number aka number of residues in motif
+                premRN = tkSimpleDialog.askstring('Motif Maker','How many residues are in your motif?\n'
+                                                  +'Please enter a number >= 2 and <=10.\n')
+                if premRN == None:
+                    raise Exception
+                else:
+                    mRN = int(premRN)
+                if mRN < 2 or mRN > 10:
+                    raise ValueError
 
-            ent2 = Entry(interior, width = 8)
-            ent2.grid(row = 1, column =2)
+                def populate_chain_list():
+                    items=[]
+                    items.append('')
+                    for letter in AlphaSequence:
+                        if cmd.count_atoms("chain "+letter) > 0:
+                            items.append(letter)
+                    items.sort()
+                    for i in range(1,mRN+1):
+                        chain[i].setitems(items)
 
-            ent3 = Entry(interior, width = 8)
-            ent3.grid(row = 2, column =2)
+                def makemotif():
+                    try:
+                        exception = False
+                        excepLoop = 0
+                        exceptions = ''
+                        skip = {}
+                        skip[0] = 0
+                        for i in range(1,mRN+1):
+                            skip[i] = False
+                            if resn[i].getvalue() == '' and resi[i].get() != '':
+                                exception = True
+                                exceptions += 'Please enter a residue for residue %s\n'%(i)
+                            elif resn[i].getvalue() != '' and resi[i].get() == '':
+                                exception = True
+                                exceptions += 'Please enter a number for residue %s\n'%(i)
+                            elif resn[i].getvalue() == '' and resi[i].get() == '':
+                                ### this gives us the ability to skip whole blocks
+                                skip[i] = True
+                                skip[0] += 1
+                            else:
+                                excepLoop +=1
+                                if chain[i].getvalue() == '':
+                                    exception = True
+                                    exceptions += 'Please select a chain for residue %s\n.'%(i)
+                                elif resn[i].getvalue() == "gly" and backbone[i].getvalue() == "Off":
+                                    exception = True
+                                    exceptions += 'Please turn on the backbone for glycine residue %s\n'%(i)
+                                elif cmd.count_atoms(chain[i].getvalue()+'/'+resn[i].getvalue()+'`'+resi[i].get()+'/') == 0:
+                                    exception = True
+                                    exceptions += 'There is no '+resn[i].getvalue()+' at number '+resi[i].get()+' on chain '+chain[i].getvalue()+'.\n'
+                        if excepLoop < 2:
+                            exception = True
+                            exceptions += 'Motifs require that 2 or more residues be entered.'
+                        if exception == True:
+                            import tkMessageBox
+                            tkMessageBox.showinfo('Error', 'The following errors have occurred:\n'+exceptions)
+                            interior.mainloop()
+                        else:
+                            cmd.remove('resn HOH')
+                            import tkFileDialog
+                            Q = tkFileDialog.asksaveasfilename(defaultextension=".py", initialdir="./modules/pmg_tk/startup/Motifs")
+                            if Q == None:
+                                interior.mainloop()
+                            f=open(Q, 'w')
+                            f.write("######################################################################\n")
+                            f.write("### This motif uses shortened selection algebra and property selectors\n")
+                            f.write("### + = and\n")
+                            f.write("### w. = within\n")
+                            f.write("### br. = byres\n")
+                            f.write("### r. = resn\n")
+                            f.write("### n. = name\n")
+                            f.write("### e. = elem\n")
+                            f.write("######################################################################\n")
+                            atomlist = {}
+                            ### backbone off aka just side chains from beta carbon onwards
+                            atomlist[0] = {'ala':('CB'),
+                                           'arg':('CB','CG','CD','NE','CZ','NH1','NH2'),
+                                           'asn':('CB','CG','OD1','ND2'),
+                                           'asp':('CB','CG','OD1','OD2'),
+                                           'cys':('CB','SG'),
+                                           'gln':('CB','CG','CD','OE1','NE2'),
+                                           'glu':('CB','CG','CD','OE1','OE2'),
+                                           'gly':(),
+                                           'his':('CB','CG','ND1','CD2','CE1','NE2'),
+                                           'ile':('CB','CG1','CG2','CD'),
+                                           'leu':('CB','CG','CD1','CD2'),
+                                           'lys':('CB','CG','CD','CE','NZ'),
+                                           'met':('CB','CG','SD','CE'),
+                                           'phe':('CB','CG','CD1','CD2','CE1','CE2','CZ'),
+                                           'pro':('CB','CG','CD'),
+                                           'ser':('CB','OG'),
+                                           'thr':('CB','OG1','CG2'),
+                                           'trp':('CB','CG','CD1','CD2','NE1','CE2','CE3','CZ2','CZ3','CH2'),
+                                           'tyr':('CB','CG','CD1','CD2','CE1','CE2','CZ','OH'),
+                                           'val':('CB','CG1','CG2')}
+                            atomlist[1] = ('O','C','CA','N')### backbone on
+                            resnlist = ['']### residue list
+                            resnlistf = ['']### residue list with appended 'i', making them unique
+                            resilist = ['']### residue id list. Based on sequence number.
+                            chainlist = ['']### chain list
+                            bonelist = ['']### backbone list
 
-            ent4 = Entry(interior, width = 8)
-            ent4.grid(row = 3, column =2)
+                            numOfi = 0
+                            for i in range(1,mRN+1):
+                                if skip[i] == False:
+                                    resnlist.append(resn[i].getvalue())
+                                    resilist.append(resi[i].get())
+                                    resnlistf.append(resn[i].getvalue()+('i'*(numOfi)))
+                                    chainlist.append(chain[i].getvalue())
+                                    bonelist.append(backbone[i].getvalue())
+                                    numOfi += 1
 
-            ent5 = Entry(interior, width = 8)
-            ent5.grid(row = 4, column =2)
-
-            lent1 = Label(interior, text = 'Number:')
-            lent1.grid(row = 0, column =1)
-
-            lent2 = Label(interior, text =  'Number:')
-            lent2.grid(row = 1, column =1)
-
-            lent3 = Label(interior, text =  'Number:')
-            lent3.grid(row = 2, column =1)
-
-            lent4 = Label(interior, text =  'Number:')
-            lent4.grid(row = 3, column =1)
-
-            lent5 = Label(interior, text =  'Number:')
-            lent5.grid(row = 4, column =1)
-
-            ent1B = Entry(interior)
-
-            ent2B = Entry(interior)
-
-            ent3B = Entry(interior)
-
-            ent4B = Entry(interior)
-
-            ent5B = Entry(interior)
-            
-            but1 = Button(interior, text = 'Make Motif', width = 10)
-            but1.grid(row =5, column =3, sticky = 'se')
-
-            popbtn = Button(interior, text = 'Chain Info', width = 10)
-            popbtn.grid(row = 5, column = 4, sticky = 'se')
-            
-            enta = Entry(interior)
-            enta.insert(0,0)
-
-            entb = Entry(interior)
-            entb.insert(0,0)
-
-            entc = Entry(interior)
-            entc.insert(0,0)
-
-            entd = Entry(interior)
-            entd.insert(0,0)
-
-            ente = Entry(interior)
-            ente.insert(0,0)
-            
-            enth = Entry(interior)
-            enth.insert(0,0)
-            
-            entnum = Entry(interior)                    
-            entnum.insert(0,0)
-
-            bonent1 = Entry(interior)
-            bonent1.insert(0,1)
-
-            bonent2 = Entry(interior)
-            bonent2.insert(0,1)
-            
-            bonent3 = Entry(interior)
-            bonent3.insert(0,1)
-            
-            bonent4 = Entry(interior)
-            bonent4.insert(0,1)
-            
-            bonent4 = Entry(interior)
-            bonent4.insert(0,1)
-
-            bonent5 = Entry(interior)
-            bonent5.insert(0,1)
-
-            ent1F = Entry(interior)
-            ent2F = Entry(interior)
-            ent3F = Entry(interior)
-            ent4F = Entry(interior)
-
-
-
-            def set_motif1(tag):
-                if tag=='gly':
-                    ent1B.delete(0,10)  
-                    ent1B.insert(0,'gly')
-                elif tag=='ala':
-                    ent1B.delete(0,10)
-                    ent1B.insert(0,'ala')
-                elif tag=='val':
-                    ent1B.delete(0,10)
-                    ent1B.insert(0,'val')
-                elif tag=='leu':
-                    ent1B.delete(0,10)
-                    ent1B.insert(0,'leu')
-                elif tag=='ile':
-                    ent1B.delete(0,10)
-                    ent1B.insert(0,'ile')
-                elif tag=='met':
-                    ent1B.delete(0,10)
-                    ent1B.insert(0,'met')
-                elif tag=='pro':
-                    ent1B.delete(0,10)
-                    ent1B.insert(0,'pro')
-                elif tag=='phe':
-                    ent1B.delete(0,10)
-                    ent1B.insert(0,'phe')
-                elif tag=='tyr':
-                    ent1B.delete(0,10)
-                    ent1B.insert(0,'tyr')
-                elif tag=='trp':
-                    ent1B.delete(0,10)
-                    ent1B.insert(0,'trp')
-                elif tag=='ser':
-                    ent1B.delete(0,10)
-                    ent1B.insert(0,'ser')
-                elif tag=='thr':
-                    ent1B.delete(0,10)
-                    ent1B.insert(0,'thr')
-                elif tag=='cys':
-                    ent1B.delete(0,10)
-                    ent1B.insert(0,'cys')
-                elif tag=='lys':
-                    ent1B.delete(0,10)
-                    ent1B.insert(0,'lys')
-                elif tag=='arg':
-                    ent1B.delete(0,10)
-                    ent1B.insert(0,'arg')
-                elif tag=='his':
-                    ent1B.delete(0,10)
-                    ent1B.insert(0,'his')
-                elif tag=='asp':
-                    ent1B.delete(0,10)
-                    ent1B.insert(0,'asp')
-                elif tag=='glu':
-                    ent1B.delete(0,10)
-                    ent1B.insert(0,'glu')
-                elif tag=='asn':
-                    ent1B.delete(0,10)
-                    ent1B.insert(0,'asn')
-                elif tag=='gln':
-                    ent1B.delete(0,10)
-                    ent1B.insert(0,'gln')
-                elif tag==' ':
-                    ent1B.delete(0,10)
-                    
-            def set_motif2(tag):
-                if tag=='gly':
-                    ent2B.delete(0,10)  
-                    ent2B.insert(0,'gly')
-                    ent1F.delete(0,10)  
-                    ent1F.insert(0,'glyi')
-                elif tag=='ala':
-                    ent2B.delete(0,10)
-                    ent2B.insert(0,'ala')
-                    ent1F.delete(0,10)  
-                    ent1F.insert(0,'alai')
-                elif tag=='val':
-                    ent2B.delete(0,10)
-                    ent2B.insert(0,'val')
-                    ent1F.delete(0,10)  
-                    ent1F.insert(0,'vali')
-                elif tag=='leu':
-                    ent2B.delete(0,10)
-                    ent2B.insert(0,'leu')
-                    ent1F.delete(0,10)  
-                    ent1F.insert(0,'leui')
-                elif tag=='ile':
-                    ent2B.delete(0,10)
-                    ent2B.insert(0,'ile')
-                    ent1F.delete(0,10)  
-                    ent1F.insert(0,'ilei')
-                elif tag=='met':
-                    ent2B.delete(0,10)
-                    ent2B.insert(0,'met')
-                    ent1F.delete(0,10)  
-                    ent1F.insert(0,'meti')
-                elif tag=='pro':
-                    ent2B.delete(0,10)
-                    ent2B.insert(0,'pro')
-                    ent1F.delete(0,10)  
-                    ent1F.insert(0,'proi')
-                elif tag=='phe':
-                    ent2B.delete(0,10)
-                    ent2B.insert(0,'phe')
-                    ent1F.delete(0,10)  
-                    ent1F.insert(0,'phei')
-                elif tag=='tyr':
-                    ent2B.delete(0,10)
-                    ent2B.insert(0,'tyr')
-                    ent1F.delete(0,10)  
-                    ent1F.insert(0,'tyri')
-                elif tag=='trp':
-                    ent2B.delete(0,10)
-                    ent2B.insert(0,'trp')
-                    ent1F.delete(0,10)  
-                    ent1F.insert(0,'trpi')
-                elif tag=='ser':
-                    ent2B.delete(0,10)
-                    ent2B.insert(0,'ser')
-                    ent1F.delete(0,10)  
-                    ent1F.insert(0,'seri')
-                elif tag=='thr':
-                    ent2B.delete(0,10)
-                    ent2B.insert(0,'thr')
-                    ent1F.delete(0,10)  
-                    ent1F.insert(0,'thri')
-                elif tag=='cys':
-                    ent2B.delete(0,10)
-                    ent2B.insert(0,'cys')
-                    ent1F.delete(0,10)  
-                    ent1F.insert(0,'cysi')
-                elif tag=='lys':
-                    ent2B.delete(0,10)
-                    ent2B.insert(0,'lys')
-                    ent1F.delete(0,10)  
-                    ent1F.insert(0,'lysi')
-                elif tag=='arg':
-                    ent2B.delete(0,10)
-                    ent2B.insert(0,'arg')
-                    ent1F.delete(0,10)  
-                    ent1F.insert(0,'argi')
-                elif tag=='his':
-                    ent2B.delete(0,10)
-                    ent2B.insert(0,'his')
-                    ent1F.delete(0,10)  
-                    ent1F.insert(0,'hisi')
-                elif tag=='asp':
-                    ent2B.delete(0,10)
-                    ent2B.insert(0,'asp')
-                    ent1F.delete(0,10)  
-                    ent1F.insert(0,'aspi')
-                elif tag=='glu':
-                    ent2B.delete(0,10)
-                    ent2B.insert(0,'glu')
-                    ent1F.delete(0,10)  
-                    ent1F.insert(0,'glui')
-                elif tag=='asn':
-                    ent2B.delete(0,10)
-                    ent2B.insert(0,'asn')
-                    ent1F.delete(0,10)  
-                    ent1F.insert(0,'asni')
-                elif tag=='gln':
-                    ent2B.delete(0,10)
-                    ent2B.insert(0,'gln')
-                    ent1F.delete(0,10)  
-                    ent1F.insert(0,'glni')
-                elif tag==' ':
-                    ent2B.delete(0,10)
-                    ent1F.delete(0,10)
-
-            def set_motif3(tag):
-                if tag=='gly':
-                    ent3B.delete(0,10)  
-                    ent3B.insert(0,'gly')
-                    ent2F.delete(0,10)  
-                    ent2F.insert(0,'glyii')
-                elif tag=='ala':
-                    ent3B.delete(0,10)
-                    ent3B.insert(0,'ala')
-                    ent2F.delete(0,10)  
-                    ent2F.insert(0,'alaii')
-                elif tag=='val':
-                    ent3B.delete(0,10)
-                    ent3B.insert(0,'val')
-                    ent2F.delete(0,10)  
-                    ent2F.insert(0,'valii')
-                elif tag=='leu':
-                    ent3B.delete(0,10)
-                    ent3B.insert(0,'leu')
-                    ent2F.delete(0,10)  
-                    ent2F.insert(0,'leuii')
-                elif tag=='ile':
-                    ent3B.delete(0,10)
-                    ent3B.insert(0,'ile')
-                    ent2F.delete(0,10)  
-                    ent2F.insert(0,'ileii')
-                elif tag=='met':
-                    ent3B.delete(0,10)
-                    ent3B.insert(0,'met')
-                    ent2F.delete(0,10)  
-                    ent2F.insert(0,'metii')
-                elif tag=='pro':
-                    ent3B.delete(0,10)
-                    ent3B.insert(0,'pro')
-                    ent2F.delete(0,10)  
-                    ent2F.insert(0,'proii')
-                elif tag=='phe':
-                    ent3B.delete(0,10)
-                    ent3B.insert(0,'phe')
-                    ent2F.delete(0,10)  
-                    ent2F.insert(0,'pheii')
-                elif tag=='tyr':
-                    ent3B.delete(0,10)
-                    ent3B.insert(0,'tyr')
-                    ent2F.delete(0,10)  
-                    ent2F.insert(0,'tyrii')
-                elif tag=='trp':
-                    ent3B.delete(0,10)
-                    ent3B.insert(0,'trp')
-                    ent2F.delete(0,10)  
-                    ent2F.insert(0,'trpii')
-                elif tag=='ser':
-                    ent3B.delete(0,10)
-                    ent3B.insert(0,'ser')
-                    ent2F.delete(0,10)  
-                    ent2F.insert(0,'serii')
-                elif tag=='thr':
-                    ent3B.delete(0,10)
-                    ent3B.insert(0,'thr')
-                    ent2F.delete(0,10)  
-                    ent2F.insert(0,'thrii')
-                elif tag=='cys':
-                    ent3B.delete(0,10)
-                    ent3B.insert(0,'cys')
-                    ent2F.delete(0,10)  
-                    ent2F.insert(0,'cysii')
-                elif tag=='lys':
-                    ent3B.delete(0,10)
-                    ent3B.insert(0,'lys')
-                    ent2F.delete(0,10)  
-                    ent2F.insert(0,'lysii')
-                elif tag=='arg':
-                    ent3B.delete(0,10)
-                    ent3B.insert(0,'arg')
-                    ent2F.delete(0,10)  
-                    ent2F.insert(0,'argii')
-                elif tag=='his':
-                    ent3B.delete(0,10)
-                    ent3B.insert(0,'his')
-                    ent2F.delete(0,10)  
-                    ent2F.insert(0,'hisii')
-                elif tag=='asp':
-                    ent3B.delete(0,10)
-                    ent3B.insert(0,'asp')
-                    ent2F.delete(0,10)  
-                    ent2F.insert(0,'aspii')
-                elif tag=='glu':
-                    ent3B.delete(0,10)
-                    ent3B.insert(0,'glu')
-                    ent2F.delete(0,10)  
-                    ent2F.insert(0,'gluii')
-                elif tag=='asn':
-                    ent3B.delete(0,10)
-                    ent3B.insert(0,'asn')
-                    ent2F.delete(0,10)  
-                    ent2F.insert(0,'asnii')
-                elif tag=='gln':
-                    ent3B.delete(0,10)
-                    ent3B.insert(0,'gln')
-                    ent2F.delete(0,10)  
-                    ent2F.insert(0,'glnii')
-                elif tag==' ':
-                    ent3B.delete(0,10)
-                    ent2F.delete(0,10)
-                    
-            def set_motif4(tag):
-                if tag=='gly':
-                    ent4B.delete(0,10)  
-                    ent4B.insert(0,'gly')
-                    ent3F.delete(0,10)
-                    ent3F.insert(0,'glyiii')
-                elif tag=='ala':
-                    ent4B.delete(0,10)
-                    ent4B.insert(0,'ala')
-                    ent3F.delete(0,10)
-                    ent3F.insert(0,'alaiii')
-                elif tag=='val':
-                    ent4B.delete(0,10)
-                    ent4B.insert(0,'val')
-                    ent3F.delete(0,10)
-                    ent3F.insert(0,'valiii')
-                elif tag=='leu':
-                    ent4B.delete(0,10)
-                    ent4B.insert(0,'leu')
-                    ent3F.delete(0,10)
-                    ent3F.insert(0,'leuiii')
-                elif tag=='ile':
-                    ent4B.delete(0,10)
-                    ent4B.insert(0,'ile')
-                    ent3F.delete(0,10)
-                    ent3F.insert(0,'ileiii')
-                elif tag=='met':
-                    ent4B.delete(0,10)
-                    ent4B.insert(0,'met')
-                    ent3F.delete(0,10)
-                    ent3F.insert(0,'metiii')
-                elif tag=='pro':
-                    ent4B.delete(0,10)
-                    ent4B.insert(0,'pro')
-                    ent3F.delete(0,10)
-                    ent3F.insert(0,'proiii')
-                elif tag=='phe':
-                    ent4B.delete(0,10)
-                    ent4B.insert(0,'phe')
-                    ent3F.delete(0,10)
-                    ent3F.insert(0,'pheiii')
-                elif tag=='tyr':
-                    ent4B.delete(0,10)
-                    ent4B.insert(0,'tyr')
-                    ent3F.delete(0,10)
-                    ent3F.insert(0,'tyriii')
-                elif tag=='trp':
-                    ent4B.delete(0,10)
-                    ent4B.insert(0,'trp')
-                    ent3F.delete(0,10)
-                    ent3F.insert(0,'trpiii')
-                elif tag=='ser':
-                    ent4B.delete(0,10)
-                    ent4B.insert(0,'ser')
-                    ent3F.delete(0,10)
-                    ent3F.insert(0,'seriii')
-                elif tag=='thr':
-                    ent4B.delete(0,10)
-                    ent4B.insert(0,'thr')
-                    ent3F.delete(0,10)
-                    ent3F.insert(0,'thriii')
-                elif tag=='cys':
-                    ent4B.delete(0,10)
-                    ent4B.insert(0,'cys')
-                    ent3F.delete(0,10)
-                    ent3F.insert(0,'cysiii')
-                elif tag=='lys':
-                    ent4B.delete(0,10)
-                    ent4B.insert(0,'lys')
-                    ent3F.delete(0,10)
-                    ent3F.insert(0,'lysiii')
-                elif tag=='arg':
-                    ent4B.delete(0,10)
-                    ent4B.insert(0,'arg')
-                    ent3F.delete(0,10)
-                    ent3F.insert(0,'argiii')
-                elif tag=='his':
-                    ent4B.delete(0,10)
-                    ent4B.insert(0,'his')
-                    ent3F.delete(0,10)
-                    ent3F.insert(0,'hisiii')
-                elif tag=='asp':
-                    ent4B.delete(0,10)
-                    ent4B.insert(0,'asp')
-                    ent3F.delete(0,10)
-                    ent3F.insert(0,'aspiii')
-                elif tag=='glu':
-                    ent4B.delete(0,10)
-                    ent4B.insert(0,'glu')
-                    ent3F.delete(0,10)
-                    ent3F.insert(0,'gluiii')
-                elif tag=='asn':
-                    ent4B.delete(0,10)
-                    ent4B.insert(0,'asn')
-                    ent3F.delete(0,10)
-                    ent3F.insert(0,'asniii')
-                elif tag=='gln':
-                    ent4B.delete(0,10)
-                    ent4B.insert(0,'gln')
-                    ent3F.delete(0,10)
-                    ent3F.insert(0,'glniii')
-                elif tag==' ':
-                    ent4B.delete(0,10)
-
-            def set_motif5(tag):
-                if tag=='gly':
-                    ent5B.delete(0,10)  
-                    ent5B.insert(0,'gly')
-                    ent4F.delete(0,10)
-                    ent4F.insert(0,'glyiiii')
-                elif tag=='ala':
-                    ent5B.delete(0,10)
-                    ent5B.insert(0,'ala')
-                    ent4F.delete(0,10)
-                    ent4F.insert(0,'alaiiii')
-                elif tag=='val':
-                    ent5B.delete(0,10)
-                    ent5B.insert(0,'val')
-                    ent4F.delete(0,10)
-                    ent4F.insert(0,'valiiii')
-                elif tag=='leu':
-                    ent5B.delete(0,10)
-                    ent5B.insert(0,'leu')
-                    ent4F.delete(0,10)
-                    ent4F.insert(0,'leuiiii')
-                elif tag=='ile':
-                    ent5B.delete(0,10)
-                    ent5B.insert(0,'ile')
-                    ent4F.delete(0,10)
-                    ent4F.insert(0,'ileiiii')
-                elif tag=='met':
-                    ent5B.delete(0,10)
-                    ent5B.insert(0,'met')
-                    ent4F.delete(0,10)
-                    ent4F.insert(0,'metiiii')
-                elif tag=='pro':
-                    ent5B.delete(0,10)
-                    ent5B.insert(0,'pro')
-                    ent4F.delete(0,10)
-                    ent4F.insert(0,'proiiii')
-                elif tag=='phe':
-                    ent5B.delete(0,10)
-                    ent5B.insert(0,'phe')
-                    ent4F.delete(0,10)
-                    ent4F.insert(0,'pheiiii')
-                elif tag=='tyr':
-                    ent5B.delete(0,10)
-                    ent5B.insert(0,'tyr')
-                    ent4F.delete(0,10)
-                    ent4F.insert(0,'tyriiii')
-                elif tag=='trp':
-                    ent5B.delete(0,10)
-                    ent5B.insert(0,'trp')
-                    ent4F.delete(0,10)
-                    ent4F.insert(0,'trpiiii')
-                elif tag=='ser':
-                    ent5B.delete(0,10)
-                    ent5B.insert(0,'ser')
-                    ent4F.delete(0,10)
-                    ent4F.insert(0,'seriiii')
-                elif tag=='thr':
-                    ent5B.delete(0,10)
-                    ent5B.insert(0,'thr')
-                    ent4F.delete(0,10)
-                    ent4F.insert(0,'thriiii')
-                elif tag=='cys':
-                    ent5B.delete(0,10)
-                    ent5B.insert(0,'cys')
-                    ent4F.delete(0,10)
-                    ent4F.insert(0,'cysiiii')
-                elif tag=='lys':
-                    ent5B.delete(0,10)
-                    ent5B.insert(0,'lys')
-                    ent4F.delete(0,10)
-                    ent4F.insert(0,'lysiiii')
-                elif tag=='arg':
-                    ent5B.delete(0,10)
-                    ent5B.insert(0,'arg')
-                    ent4F.delete(0,10)
-                    ent4F.insert(0,'argiiii')
-                elif tag=='his':
-                    ent5B.delete(0,10)
-                    ent5B.insert(0,'his')
-                    ent4F.delete(0,10)
-                    ent4F.insert(0,'hisiiii')
-                elif tag=='asp':
-                    ent5B.delete(0,10)
-                    ent5B.insert(0,'asp')
-                    ent4F.delete(0,10)
-                    ent4F.insert(0,'aspiiii')
-                elif tag=='glu':
-                    ent5B.delete(0,10)
-                    ent5B.insert(0,'glu')
-                    ent4F.delete(0,10)
-                    ent4F.insert(0,'gluiiii')
-                elif tag=='asn':
-                    ent5B.delete(0,10)
-                    ent5B.insert(0,'asn')
-                    ent4F.delete(0,10)
-                    ent4F.insert(0,'asniiii')
-                elif tag=='gln':
-                    ent5B.delete(0,10)
-                    ent5B.insert(0,'gln')
-                    ent4F.delete(0,10)
-                    ent4F.insert(0,'glniiii')
-                elif tag==' ':
-                    ent5B.delete(0,10)
-            
-            def checkforchain(event):
-                objects = cmd.get_names('all')
-                if 'Chain-A' in objects:
-                    x1 = cmd.index('Chain-A')
-                    n1  = len(x1)
-                    if(n1 < 1):
-                        cmd.delete('Chain-A')
-                if 'Chain-B' in objects:
-                    x2 = cmd.index('Chain-B')
-                    n2 = len(x2)
-                    if(n2 < 1):
-                        cmd.delete('Chain-B')
-                if 'Chain-C' in objects:
-                    x3 = cmd.index('Chain-C')
-                    n3 = len(x3)
-                    if(n3 < 1):
-                        cmd.delete('Chain-C')
-                if 'Chain-D' in objects:
-                    x4 = cmd.index('Chain-D')
-                    n4  = len(x4)
-                    if(n4 < 1):
-                        cmd.delete('Chain-D')
-                if 'Chain-E' in objects:
-                    x5 = cmd.index('Chain-E')
-                    n5 = len(x5)
-                    if(n5 < 1):
-                        cmd.delete('Chain-E')
-                if 'Chain-F' in objects:
-                    x6 = cmd.index('Chain-F')
-                    n6 = len(x6)
-                    if(n6 < 1):
-                        cmd.delete('Chain-F')
-                if 'Chain-G' in objects:
-                    x7 = cmd.index('Chain-G')
-                    n7  = len(x7)
-                    if(n7 < 1):
-                        cmd.delete('Chain-G')
-                if 'Chain-H' in objects:
-                    x8 = cmd.index('Chain-H')
-                    n8 = len(x8)
-                    if(n8 < 1):
-                        cmd.delete('Chain-H')
-                if 'Chain-I' in objects:
-                    x9 = cmd.index('Chain-I')
-                    n9 = len(x9)
-                    if(n9 < 1):
-                        cmd.delete('Chain-I')
-                if 'Chain-J' in objects:
-                    x10 = cmd.index('Chain-J')
-                    n10  = len(x10)
-                    if(n10 < 1):
-                        cmd.delete('Chain-J')
-                if 'Chain-K' in objects:
-                    x11 = cmd.index('Chain-K')
-                    n11 = len(x11)
-                    if(n11 < 1):
-                        cmd.delete('Chain-K')
-                if 'Chain-L' in objects:
-                    x12 = cmd.index('Chain-L')
-                    n12 = len(x12)
-                    if(n12 < 1):
-                        cmd.delete('Chain-L')
-                if 'Chain-M' in objects:
-                    x13 = cmd.index('Chain-M')
-                    n13  = len(x13)
-                    if(n13 < 1):
-                        cmd.delete('Chain-M')
-                if 'Chain-N' in objects:
-                    x14 = cmd.index('Chain-N')
-                    n14 = len(x14)
-                    if(n14 < 1):
-                        cmd.delete('Chain-N')
-                if 'Chain-O' in objects:
-                    x15 = cmd.index('Chain-O')
-                    n15 = len(x15)
-                    if(n15 < 1):
-                        cmd.delete('Chain-O')
-                if 'Chain-P' in objects:
-                    x16 = cmd.index('Chain-P')
-                    n16  = len(x16)
-                    if(n16 < 1):
-                        cmd.delete('Chain-P')
-                if 'Chain-Q' in objects:
-                    x17 = cmd.index('Chain-Q')
-                    n17 = len(x17)
-                    if(n17 < 1):
-                        cmd.delete('Chain-Q')
-                if 'Chain-R' in objects:
-                    x18 = cmd.index('Chain-R')
-                    n18 = len(x18)
-                    if(n18 < 1):
-                        cmd.delete('Chain-R')
-                if 'Chain-S' in objects:
-                    x19 = cmd.index('Chain-S')
-                    n19  = len(x19)
-                    if(n19 < 1):
-                        cmd.delete('Chain-S')
-                if 'Chain-T' in objects:
-                    x20 = cmd.index('Chain-T')
-                    n20 = len(x20)
-                    if(n20 < 1):
-                        cmd.delete('Chain-T')
-                if 'Chain-U' in objects:
-                    x21 = cmd.index('Chain-U')
-                    n21 = len(x21)
-                    if(n21 < 1):
-                        cmd.delete('Chain-U')
-                if 'Chain-V' in objects:
-                    x22 = cmd.index('Chain-V')
-                    n22 = len(x22)
-                    if(n22 < 1):
-                        cmd.delete('Chain-V')
-                if 'Chain-W' in objects:
-                    x23 = cmd.index('Chain-W')
-                    n23 = len(x23)
-                    if(n23 < 1):
-                        cmd.delete('Chain-W')
-                if 'Chain-X' in objects:
-                    x24 = cmd.index('Chain-X')
-                    n24 = len(x24)
-                    if(n24 < 1):
-                        cmd.delete('Chain-X')
-                if 'Chain-Y' in objects:
-                    x25 = cmd.index('Chain-Y')
-                    n25 = len(x25)
-                    if(n25 < 1):
-                        cmd.delete('Chain-Y')
-                if 'Chain-Z' in objects:
-                    x26 = cmd.index('Chain-Z')
-                    n26 = len(x26)
-                    if(n26 < 1):
-                        cmd.delete('Chain-Z')
-                if "Chain-''" in objects:
-                    x27 = cmd.index("Chain-''")
-                    n27 = len(x27)
-                    if(n27 < 1):
-                        cmd.delete("Chain-''")
-            
-            def populate(event):
-                cmd.remove('resn HOH')
-                objects = cmd.get_names('all')
-                cmd.select("Chain-A", "chain A")
-                cmd.select("Chain-B", "chain B")
-                cmd.select("Chain-C", "chain C")
-                cmd.select("Chain-D", "chain D")
-                cmd.select("Chain-E", "chain E")
-                cmd.select("Chain-F", "chain F")
-                cmd.select("Chain-G", "chain G")
-                cmd.select("Chain-H", "chain H")
-                cmd.select("Chain-I", "chain I")
-                cmd.select("Chain-J", "chain J")
-                cmd.select("Chain-K", "chain K")
-                cmd.select("Chain-L", "chain L")
-                cmd.select("Chain-M", "chain M")
-                cmd.select("Chain-N", "chain N")
-                cmd.select("Chain-O", "chain O")
-                cmd.select("Chain-P", "chain P")
-                cmd.select("Chain-Q", "chain Q")
-                cmd.select("Chain-R", "chain R")
-                cmd.select("Chain-S", "chain S")
-                cmd.select("Chain-T", "chain T")
-                cmd.select("Chain-U", "chain U")
-                cmd.select("Chain-V", "chain V")
-                cmd.select("Chain-W", "chain W")
-                cmd.select("Chain-X", "chain X")
-                cmd.select("Chain-Y", "chain Y")
-                cmd.select("Chain-Z", "chain Z")
-                cmd.select("Chain-''", "chain ''")
-                checkforchain(event)            
-                items=[]
-                objects = cmd.get_names('all')
-                
-                if 'Chain-A' in objects:
-                  items.append('Chain-A')
-                if 'Chain-B' in objects:
-                  items.append('Chain-B')
-                if 'Chain-C' in objects:
-                  items.append('Chain-C')
-                if 'Chain-D' in objects:
-                  items.append('Chain-D')
-                if 'Chain-E' in objects:
-                  items.append('Chain-E')           
-                if 'Chain-F' in objects:
-                  items.append('Chain-F')
-                if 'Chain-G' in objects:
-                  items.append('Chain-G')
-                if 'Chain-H' in objects:
-                  items.append('Chain-H')
-                if 'Chain-I' in objects:
-                  items.append('Chain-I')
-                if 'Chain-J' in objects:
-                  items.append('Chain-J')
-                if 'Chain-K' in objects:
-                  items.append('Chain-K')
-                if 'Chain-L' in objects:
-                  items.append('Chain-L')
-                if 'Chain-M' in objects:
-                  items.append('Chain-M')
-                if 'Chain-N' in objects:
-                  items.append('Chain-N')
-                if 'Chain-O' in objects:
-                  items.append('Chain-O')
-                if 'Chain-P' in objects:
-                  items.append('Chain-P')
-                if 'Chain-Q' in objects:
-                  items.append('Chain-Q')
-                if 'Chain-R' in objects:
-                  items.append('Chain-R')
-                if 'Chain-S' in objects:
-                  items.append('Chain-S')
-                if 'Chain-T' in objects:
-                  items.append('Chain-T')
-                if 'Chain-U' in objects:
-                  items.append('Chain-U')
-                if 'Chain-V' in objects:
-                  items.append('Chain-V')
-                if 'Chain-W' in objects:
-                  items.append('Chain-W')
-                if 'Chain-X' in objects:
-                  items.append('Chain-X')
-                if 'Chain-Y' in objects:
-                  items.append('Chain-Y')
-                if 'Chain-Z' in objects:
-                  items.append('Chain-Z')
-                if "Chain-''" in objects:
-                  items.append("Chain-''")
-               
-                items.sort()
-                selection.setitems(items)
-                selectiona.setitems(items)
-                selectionb.setitems(items)
-                selectionc.setitems(items)
-                selectiond.setitems(items)
-
-            popbtn.bind('<Button-1>', populate)
-
-            chainent = Entry(interior)
-            chainent1 = Entry(interior)
-            chainent2 = Entry(interior)
-            chainent3 = Entry(interior)
-            chainent4 = Entry(interior) 
-
-            def bone1(tag):
-
-                if tag=='Off':
-                    bonent1.delete(0,1000)
-                    bonent1.insert(0,1)
-                elif tag=='On':
-                    bonent1.delete(0,1000)
-                    bonent1.insert(0,2)
-                    
-            def bone2(tag):
-
-                if tag=='Off':
-                    bonent2.delete(0,1000)
-                    bonent2.insert(0,1)
-                elif tag=='On':
-                    bonent2.delete(0,1000)
-                    bonent2.insert(0,2)
-                    
-            def bone3(tag):
-
-                if tag=='Off':
-                    bonent3.delete(0,1000)
-                    bonent3.insert(0,1)
-                elif tag=='On':
-                    bonent3.delete(0,1000)
-                    bonent3.insert(0,2)
-                    
-            def bone4(tag):
-
-                if tag=='Off':
-                    bonent4.delete(0,1000)
-                    bonent4.insert(0,1)
-                elif tag=='On':
-                    bonent4.delete(0,1000)
-                    bonent4.insert(0,2)
-                    
-            def bone5(tag):
-
-                if tag=='Off':
-                    bonent5.delete(0,1000)
-                    bonent5.insert(0,1)
-                elif tag=='On':
-                    bonent5.delete(0,1000)
-                    bonent5.insert(0,2)
-
-            def set_sel1(tag):
-                cmd.deselect()
-                c=re.compile("^Chain")
-
-                if tag=='Chain-A':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-A')
-                elif tag=='Chain-B':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-B')
-                elif tag=='Chain-C':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-C')
-                elif tag=='Chain-D':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-D')
-                elif tag=='Chain-E':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-E')
-                elif tag=='Chain-F':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-F')
-                elif tag=='Chain-G':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-G')
-                elif tag=='Chain-H':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-H')
-                elif tag=='Chain-I':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-I')
-                elif tag=='Chain-J':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-J')
-                elif tag=='Chain-K':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-K')
-                elif tag=='Chain-L':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-L')
-                elif tag=='Chain-M':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-M')
-                elif tag=='Chain-N':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-N')
-                elif tag=='Chain-O':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-O')
-                elif tag=='Chain-P':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-P')
-                elif tag=='Chain-Q':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-Q')
-                elif tag=='Chain-R':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-R')
-                elif tag=='Chain-S':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-S')
-                elif tag=='Chain-T':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-T')
-                elif tag=='Chain-U':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-U')
-                elif tag=='Chain-V':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-V')
-                elif tag=='Chain-W':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-W')
-                elif tag=='Chain-X':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-X')
-                elif tag=='Chain-Y':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-Y')
-                elif tag=='Chain-Z':
-                    chainent.delete(0,1000)
-                    chainent.insert(0,'Chain-Z')
-                elif tag=="Chain-''":
-                    chainent.insert(0,"Chain-'' ")
-
-            def set_sel2(tag):
-                cmd.deselect()
-                c=re.compile("^Chain")
-
-                if tag=='Chain-A':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-A')
-                elif tag=='Chain-B':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-B')
-                elif tag=='Chain-C':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-C')
-                elif tag=='Chain-D':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-D')
-                elif tag=='Chain-E':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-E')
-                elif tag=='Chain-F':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-F')
-                elif tag=='Chain-G':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-G')
-                elif tag=='Chain-H':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-H')
-                elif tag=='Chain-I':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-I')
-                elif tag=='Chain-J':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-J')
-                elif tag=='Chain-K':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-K')
-                elif tag=='Chain-L':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-L')
-                elif tag=='Chain-M':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-M')
-                elif tag=='Chain-N':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-N')
-                elif tag=='Chain-O':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-O')
-                elif tag=='Chain-P':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-P')
-                elif tag=='Chain-Q':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-Q')
-                elif tag=='Chain-R':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-R')
-                elif tag=='Chain-S':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-S')
-                elif tag=='Chain-T':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-T')
-                elif tag=='Chain-U':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-U')
-                elif tag=='Chain-V':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-V')
-                elif tag=='Chain-W':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-W')
-                elif tag=='Chain-X':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-X')
-                elif tag=='Chain-Y':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-Y')
-                elif tag=='Chain-Z':
-                    chainent1.delete(0,1000)
-                    chainent1.insert(0,'Chain-Z')
-                elif tag=="Chain-''":
-                    chainent1.insert(0,"Chain-'' ")
-
-            def set_sel3(tag):
-                cmd.deselect()
-                c=re.compile("^Chain")
-
-                if tag=='Chain-A':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-A')
-                elif tag=='Chain-B':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-B')
-                elif tag=='Chain-C':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-C')
-                elif tag=='Chain-D':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-D')
-                elif tag=='Chain-E':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-E')
-                elif tag=='Chain-F':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-F')
-                elif tag=='Chain-G':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-G')
-                elif tag=='Chain-H':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-H')
-                elif tag=='Chain-I':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-I')
-                elif tag=='Chain-J':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-J')
-                elif tag=='Chain-K':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-K')
-                elif tag=='Chain-L':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-L')
-                elif tag=='Chain-M':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-M')
-                elif tag=='Chain-N':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-N')
-                elif tag=='Chain-O':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-O')
-                elif tag=='Chain-P':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-P')
-                elif tag=='Chain-Q':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-Q')
-                elif tag=='Chain-R':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-R')
-                elif tag=='Chain-S':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-S')
-                elif tag=='Chain-T':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-T')
-                elif tag=='Chain-U':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-U')
-                elif tag=='Chain-V':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-V')
-                elif tag=='Chain-W':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-W')
-                elif tag=='Chain-X':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-X')
-                elif tag=='Chain-Y':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-Y')
-                elif tag=='Chain-Z':
-                    chainent2.delete(0,1000)
-                    chainent2.insert(0,'Chain-Z')
-                elif tag=="Chain-''":
-                    chainent2.insert(0,"Chain-'' ")
-
-            def set_sel4(tag):
-                cmd.deselect()
-                c=re.compile("^Chain")
-
-                if tag=='Chain-A':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-A')
-                elif tag=='Chain-B':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-B')
-                elif tag=='Chain-C':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-C')
-                elif tag=='Chain-D':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-D')
-                elif tag=='Chain-E':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-E')
-                elif tag=='Chain-F':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-F')
-                elif tag=='Chain-G':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-G')
-                elif tag=='Chain-H':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-H')
-                elif tag=='Chain-I':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-I')
-                elif tag=='Chain-J':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-J')
-                elif tag=='Chain-K':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-K')
-                elif tag=='Chain-L':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-L')
-                elif tag=='Chain-M':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-M')
-                elif tag=='Chain-N':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-N')
-                elif tag=='Chain-O':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-O')
-                elif tag=='Chain-P':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-P')
-                elif tag=='Chain-Q':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-Q')
-                elif tag=='Chain-R':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-R')
-                elif tag=='Chain-S':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-S')
-                elif tag=='Chain-T':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-T')
-                elif tag=='Chain-U':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-U')
-                elif tag=='Chain-V':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-V')
-                elif tag=='Chain-W':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-W')
-                elif tag=='Chain-X':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-X')
-                elif tag=='Chain-Y':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-Y')
-                elif tag=='Chain-Z':
-                    chainent3.delete(0,1000)
-                    chainent3.insert(0,'Chain-Z')
-                elif tag=="Chain-''":
-                    chainent3.insert(0,"Chain-'' ")
-
-            def set_sel5(tag):
-                cmd.deselect()
-                c=re.compile("^Chain")
-
-                if tag=='Chain-A':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-A')
-                elif tag=='Chain-B':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-B')
-                elif tag=='Chain-C':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-C')
-                elif tag=='Chain-D':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-D')
-                elif tag=='Chain-E':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-E')
-                elif tag=='Chain-F':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-F')
-                elif tag=='Chain-G':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-G')
-                elif tag=='Chain-H':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-H')
-                elif tag=='Chain-I':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-I')
-                elif tag=='Chain-J':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-J')
-                elif tag=='Chain-K':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-K')
-                elif tag=='Chain-L':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-L')
-                elif tag=='Chain-M':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-M')
-                elif tag=='Chain-N':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-N')
-                elif tag=='Chain-O':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-O')
-                elif tag=='Chain-P':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-P')
-                elif tag=='Chain-Q':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-Q')
-                elif tag=='Chain-R':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-R')
-                elif tag=='Chain-S':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-S')
-                elif tag=='Chain-T':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-T')
-                elif tag=='Chain-U':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-U')
-                elif tag=='Chain-V':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-V')
-                elif tag=='Chain-W':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-W')
-                elif tag=='Chain-X':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-X')
-                elif tag=='Chain-Y':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-Y')
-                elif tag=='Chain-Z':
-                    chainent4.delete(0,1000)
-                    chainent4.insert(0,'Chain-Z')
-                elif tag=="Chain-''":
-                    chainent4.insert(0,"Chain-'' ")
-
-            #Warren Delanos Code
-
-            def get_distance(atom1="pk1",atom2="pk2",state=0,quiet=1):
-
-                atom1 = selector.process(atom1)
-                atom2 = selector.process(atom2)
-
-                r = _cmd.get_distance(str(atom1),str(atom2),int(state)-1)
-                print " cmd.get_distance: %5.3f Angstroms."%r
-                entnum.delete(0,1000)
-                entnum.insert(0,r)
-                entnum.delete(4,1000)
-                return r
-
-                
-            def makemotif(event):
-                try:
-                    if len(ent1.get()) > 1 and len(chainent.get()) < 1:
-                        import tkMessageBox
-                        tkMessageBox.showinfo('Error', 'Please Select a Chain for Residue 1')
-                        interior.mainloop()
-                               
-                    if len(ent2.get()) > 1 and len(chainent1.get()) < 1:
-                        import tkMessageBox
-                        tkMessageBox.showinfo('Error', 'Please Select a Chain for Residue 2')
-                        interior.mainloop()
-                                            
-                    if len(ent3.get()) > 1 and len(chainent2.get()) < 1:
-                        import tkMessageBox
-                        tkMessageBox.showinfo('Error', 'Please Select a Chain for Residue 3')
-                        interior.mainloop()
-                               
-                    if len(ent4.get()) > 1 and len(chainent3.get()) < 1:
-                        import tkMessageBox
-                        tkMessageBox.showinfo('Error', 'Please Select a Chain for Residue 4')
-                        interior.mainloop()
-
-                    if len(ent5.get()) > 1 and len(chainent4.get()) < 1:
-                        import tkMessageBox
-                        tkMessageBox.showinfo('Error', 'Please Select a Chain for Residue 5')
-                        interior.mainloop()
-
-                    else:
-                        cmd.remove('resn HOH')
-                        import tkFileDialog
-                        Q = tkFileDialog.asksaveasfilename(defaultextension=".py", initialdir="./modules/pmg_tk/startup/Motifs")
-                        f=open(Q, 'w')
-                        f.write("######################################################################\n")
-                        f.write("### This motif uses shortened selection algebra and property selectors\n")
-                        f.write("### + = and\n")
-                        f.write("### w. = within\n")
-                        f.write("### br. = byres\n")
-                        f.write("### r. = resn\n")
-                        f.write("### n. = name\n")
-                        f.write("### e. = elem\n")
-                        f.write("######################################################################\n")
-                        ### backbone off
-                        atomlist = ['C','CA','CB','CD','CD1','CD2','CE','CE1','CE2','CE3','CH2','CG','CG1','CG2','CZ','CZ2','CZ3','N','ND1','ND2','NE','NE1','NE2','NH1','NH2','NZ','O','OD1','OD2','OE1','OE2','OG','OG1','OH','SG','SD']
-                        ### backbone on
-                        atomlist2 = ['CB','CD','CD1','CD2','CE','CE1','CE2','CE3','CH2','CG','CG1','CG2','CZ','CZ2','CZ3','ND1','ND2','NE','NE1','NE2','NH1','NH2','NZ','OD1','OD2','OE1','OE2','OG','OG1','OH','SG','SD']
-                        resnlist=['']### residue list
-                        resnlistf=['']### residue list with appended names, making them unique
-                        resilist=['']### residue id list. Based on sequence number.
-
-                        if len(ent1B.get()) >0:
-                            resnlist.append(ent1B.get())
-                            resilist.append(ent1.get())
-                            resnlistf.append(ent1B.get())
-                        if len(ent2B.get())>0:      
-                            resnlist.append(ent2B.get())
-                            resilist.append(ent2.get())
-                            resnlistf.append(ent1F.get())
-                        if len(ent3B.get()) >0:
-                            resnlist.append(ent3B.get())
-                            resilist.append(ent3.get())
-                            resnlistf.append(ent2F.get())
-                        if len(ent4B.get()) >0:
-                            resnlist.append(ent4B.get())
-                            resilist.append(ent4.get())
-                            resnlistf.append(ent3F.get())
-                        if len(ent5B.get()) >0:
-                            resnlist.append(ent5B.get())
-                            resilist.append(ent5.get())
-                            resnlistf.append(ent4F.get())
-                        
-                        ### This loop will increment through the amino acids. The amino acid we are looking 
-                        ### at right now is specified by the e variable. The a variable will count the
-                        ### number of times it is compared to the carbons in the other amino acids. And is
-                        ### used later on to print the "byres" and select line, and delete line below.
-                        ### Then we will come back here.
-                        e = 0
-                        while e < 5:
-                            try:
-                                a = 0
-                                e += 1
-
-                                if e == 1:
-                                    if int(bonent1.get())==1:
-                                        list=atomlist2
-                                    else:
-                                        list=atomlist
-
-                                if e == 2:
-                                    if int(bonent2.get())==1:
-                                        list=atomlist2
-                                    else:
-                                        list=atomlist
-
-                                if e == 3:
-                                    if int(bonent3.get())==1:
-                                        list=atomlist2
-                                    else:
-                                        list=atomlist
-
-                                if e == 4:
-                                    if int(bonent4.get())==1:
-                                        list=atomlist2
-                                    else:
-                                        list=atomlist
-
-                                if e == 5:
-                                    if int(bonent5.get())==1:
-                                        list=atomlist2
-                                    else:
-                                        list=atomlist
-                                
-                                ### This loop will increment through the amino acids that we want
-                                ### to compare to the amino acid we want to find. The amino acid
-                                ### being compared is specified by the d variable.
-                                d = 0
-                                while d < 5:
+                            ### This loop will increment through the amino acids. The amino acid we are looking
+                            ### at right now is specified by the e variable. The a variable will count the
+                            ### number of times it is compared to the carbons in the other amino acids. And is
+                            ### used later on to print the "byres" and select line, and delete line below.
+                            ### NOTE:
+                            ### Because we are able to skip a whole block, mRN is not used beyond this point,
+                            ### instead resnlen is used as it gives a more accurate picture of the motif.
+                            resnlen = (len(resnlist)-1)
+                            e = 0
+                            while e < resnlen:
+                                try:
                                     try:
+                                        a = 0
+                                        e += 1
+                                        ### select stuff explained later on
+                                        selectlimit = 200
+                                        selectstart = 1 ### where to start selection
+                                        selectlimiter = 1 ### limit defined as a/200
+                                        selectextra = '' ### add to selection at the end
+                                        deleteextra = '' ### add to deletion at the end
 
-                                        d += 1
-                                        ### The following line: compare amino acids
-                                        ### If they are the same, then lets increment one.
-                                        if resnlistf[e] == resnlistf[d]:
-                                            d += 1
+                                        if bonelist[e] == 'Off':###just sidechains
+                                            bList=atomlist[0][resnlist[e]]
+                                        else:### sidechain with backbone
+                                            bList=atomlist[0][resnlist[e]]+atomlist[1]
 
-                                        if d == 1:
-                                            if int(bonent1.get())==1:
-                                                list1=atomlist2
-                                            else:
-                                                list1=atomlist
-
-                                        if d == 2:
-                                            if int(bonent2.get())==1:
-                                                list1=atomlist2
-                                            else:
-                                                list1=atomlist
-
-                                        if d == 3:
-                                            if int(bonent3.get())==1:
-                                                list1=atomlist2
-                                            else:
-                                                list1=atomlist
-
-                                        if d == 4:
-                                            if int(bonent4.get())==1:
-                                                list1=atomlist2
-                                            else:
-                                                list1=atomlist
-
-                                        if d == 5:
-                                            if int(bonent5.get())==1:
-                                                list1=atomlist2
-                                            else:
-                                                list1=atomlist
-                                                                            
-                                        
-                                        ### This loop increments through all the carbons
-                                        ### in the amino acid we want to find.
-                                        c = -1
-                                        while c < len(list):
+                                        ### This loop will increment through the amino acids that we want
+                                        ### to compare to the amino acid we want to find. The amino acid
+                                        ### being compared is specified by the d variable.
+                                        d = 0
+                                        while d < resnlen:
                                             try:
-                                                
-                                                c += 1
-                                                
-                                                ### This loop increments through all the carbons
-                                                ### in the other amino acids that we are want to 
-                                                ### compare with.
-                                                b = -1
-                                                while b < len(list1):
-                                                    
-                                                    b += 1
-                                                    
-                                                    try:
-                                                        if resnlist[e] == ent1B.get():
-                                                             chain = chainent.get()
-                                                        if resnlist[e] == ent2B.get():
-                                                             chain = chainent1.get()
-                                                        if resnlist[e] == ent3B.get():
-                                                             chain = chainent2.get()
-                                                        if resnlist[e] == ent4B.get():
-                                                             chain = chainent3.get()
-                                                        if resnlist[e] == ent5B.get():
-                                                             chain = chainent4.get()
-                                                        if resnlist[d] == ent1B.get():
-                                                            chain2 = chainent.get()
-                                                        if resnlist[d] == ent2B.get():
-                                                             chain2 = chainent1.get()                                                   
-                                                        if resnlist[d] == ent3B.get():
-                                                             chain2 = chainent2.get()                                                   
-                                                        if resnlist[d] == ent4B.get():
-                                                             chain2 = chainent3.get()                                                   
-                                                        if resnlist[d] == ent5B.get():
-                                                             chain2 = chainent4.get()
+                                                d += 1
+                                                ### The following line: compare amino acids
+                                                ### If they are the same, then lets increment one.
+                                                if resnlistf[e] == resnlistf[d]:
+                                                    d += 1
+                                                    if d > resnlen:
+                                                        continue
 
-                                                            
-                                                        get_distance((chain+' and resi '+resilist[e]+' and name '+list[b]), (chain2+' and resi '+resilist[d]+' and name '+list1[c]))
-                                                        
-                                                        if entnum.get() != '-1':
+                                                if bonelist[d] == 'Off':###just sidechains
+                                                    cList=atomlist[0][resnlist[d]]
+                                                else:### sidechain with backbone
+                                                    cList=atomlist[0][resnlist[d]]+atomlist[1]
+
+                                                ### This loop increments through all the carbons
+                                                ### in the amino acid we want to find.
+                                                blen = (len(bList)-1)
+                                                clen = (len(cList)-1)
+                                                b = -1
+                                                while b < blen:
+                                                    b += 1
+                                                    ### This loop increments through all the carbons
+                                                    ### in the other amino acids that we are want to
+                                                    ### compare with.
+                                                    c = -1
+                                                    while c < clen:
+                                                        try:
+                                                            c += 1
+
+                                                            ### Okay lets get the distance between our atoms in our selected amino acids.
+                                                            r = cmd.get_distance(chainlist[e]+'/'+resilist[e]+'/'+bList[b],chainlist[d]+'/'+resilist[d]+'/'+cList[c])
                                                             ### The precision factor
                                                             ### The ranger is the slider that is moved.
-                                                            ### entnum is set by that get_distance above.
-                                                            g = float(entnum.get()) + float(ranger1.get())
-                                                            entnum.delete(0,1000)
-                                                            entnum.insert(0,g)
+                                                            ### r is set by the get_distance above.
+                                                            g = '%.2f' %(float(r) + float(ranger1.get()))
 
                                                             a += 1
 
-                                                            if e == 2 and d ==1:
-                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and '+resnlistf[e-1]+')"%('+entnum.get()+'))\n')
+                                                            ### apparently pymol cannot handle over a number
+                                                            ### between 248 and 264 selections at one time.
+                                                            ### This fixes that by making sure we do not pass
+                                                            ### "selectlimit" selections at one time.
+                                                            if float(selectlimiter) < (float(a)/float(selectlimit)):
+                                                                f.write("cmd.select('"+resnlistf[e]+str(selectlimiter*selectlimit)+"','")
+                                                                for i in range(selectstart,a):
+                                                                    if i==(a-1):
+                                                                        f.write("br. "+resnlistf[e]+str(i)+"')\n")
+                                                                    else:
+                                                                        f.write("br. "+resnlistf[e]+str(i)+" and ")
+                                                                f.write("cmd.delete('")
+                                                                for i in range(selectstart,a):
+                                                                    if i==(a-1):
+                                                                        pass
+                                                                    elif i==(a-2):
+                                                                        f.write(resnlistf[e]+str(i)+"')\n")
+                                                                    else:
+                                                                        f.write(resnlistf[e]+str(i)+"+")
+                                                                selectextra += ''+resnlistf[e]+str(selectlimiter*selectlimit)+' and '
+                                                                deleteextra += ''+resnlistf[e]+str(selectlimiter*selectlimit)+'+'
+                                                                selectlimiter += 1
+                                                                selectstart += selectlimit
+
+                                                            ### e > d is all the combinations of residues
+                                                            ### that would already have one of the residues
+                                                            ### found in the motif, therefore the second
+                                                            ### amino acid does not need an r. (resn)
+                                                            ### property selection, as it is already a selection.
+                                                            if e > d:
+                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+bList[b]+' and r. '+resnlist[e]+' w. %s of n. '+cList[c]+' and '+resnlistf[d]+'"%('+g+'))\n')
                                                                 continue
-                                                            if e == 3 and d ==1:
-                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and '+resnlistf[e-2]+')"%('+entnum.get()+'))\n')
-                                                                continue
-                                                            if e == 3 and d ==2:
-                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and '+resnlistf[e-1]+')"%('+entnum.get()+'))\n')
-                                                                continue
-                                                            if e == 4 and d ==1:
-                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and '+resnlistf[e-3]+')"%('+entnum.get()+'))\n')
-                                                                continue
-                                                            if e == 4 and d ==2:
-                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and '+resnlistf[e-2]+')"%('+entnum.get()+'))\n')
-                                                                continue
-                                                            if e == 4 and d ==3:
-                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and '+resnlistf[e-1]+')"%('+entnum.get()+'))\n')
-                                                                continue
-                                                            if e == 5 and d ==1:
-                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and '+resnlistf[e-4]+')"%('+entnum.get()+'))\n')
-                                                                continue
-                                                            if e == 5 and d ==2:
-                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and '+resnlistf[e-3]+')"%('+entnum.get()+'))\n')
-                                                                continue
-                                                            if e == 5 and d ==3:
-                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and '+resnlistf[e-2]+')"%('+entnum.get()+'))\n')
-                                                                continue
-                                                            if e == 5 and d ==4:
-                                                                f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and '+resnlistf[e-1]+')"%('+entnum.get()+'))\n')
-                                                                continue    
                                                             else:
-                                                               f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+list[b]+' and r. '+resnlist[e]+' w. %s of (n. '+list1[c]+' and r. '+resnlist[d]+')"%('+entnum.get()+'))\n')
+                                                               f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+bList[b]+' and r. '+resnlist[e]+' w. %s of n. '+cList[c]+' and r. '+resnlist[d]+'"%('+g+'))\n')
                                                                continue
-                                                    except:
-                                                        break
+                                                        except:
+                                                            pass
                                             except:
-                                                break
+                                                pass
                                     except:
-                                        f.write('cmd.select("'+resnlistf[e]+'","')
-                                        for i in range(1,a+1):
-                                            if i==a:
-                                                f.write('br. '+resnlistf[e]+str(i)+'")\n')
-                                            else:
-                                                f.write('br. '+resnlistf[e]+''+str(i)+' and ')
-                                        f.write('cmd.delete("')
-                                        for i in range(1,a+1):
-                                            if i==a:
-                                                f.write(resnlistf[e]+str(i)+'")\n')
-                                            else:
-                                                f.write(resnlistf[e]+str(i)+'+')
-                                        break
+                                        pass
+                                finally:
+                                    f.write('cmd.select("'+resnlistf[e]+'","')
+                                    if selectextra != '':
+                                        f.write(selectextra)
+                                    for i in range(selectstart,a+1):
+                                        if i==a:
+                                            f.write('br. '+resnlistf[e]+str(i)+'")\n')
+                                        else:
+                                            f.write('br. '+resnlistf[e]+str(i)+' and ')
+                                    f.write('cmd.delete("')
+                                    if deleteextra != '':
+                                        f.write(deleteextra)
+                                    for i in range(selectstart,a+1):
+                                        if i==a:
+                                            f.write(resnlistf[e]+str(i)+'")\n')
+                                        else:
+                                            f.write(resnlistf[e]+str(i)+'+')
 
-                            except:
-                                f.write('cmd.select("Motif","')
-                                if len(ent1B.get()) >0:
-                                     f.write(''+ent1B.get()+'')
-                                else:
-                                    break
-                                if len(ent1F.get())>0:      
-                                   f.write('('+ent1F.get()+'')
-                                else:
-                                    f.write('")\n')
-                                    break
-                                if len(ent2F.get()) >0:
-                                    f.write('('+ent2F.get()+'')
-                                else:
-                                    f.write(')")\n')
-                                    break
-                                if len(ent3F.get()) >0:
-                                    f.write('('+ent3F.get()+'')
-                                else:
-                                    f.write('))")\n')
-                                    break
-                                if len(ent4F.get()) >0:
-                                   f.write('('+ent4F.get()+'')
-                                   f.write('))))")\n')
-                                else:
-                                   f.write(')))")\n')
-                                break
+                        resnlistfstr = ""
+                        for i in range(1,resnlen+1):
+                            if i == resnlen:
+                                resnlistfstr += resnlistf[i]
+                            else:
+                                resnlistfstr += resnlistf[i]+'+'
 
-                    if ent1B.get()!='':
-                        f.write("cmd.delete('"+ent1B.get()+"')\n")
-                    if ent2B.get()!='':
-                        f.write("cmd.delete('"+ent1F.get()+"')\n")
-                    if ent3B.get()!='':
-                        f.write("cmd.delete('"+ent2F.get()+"')\n")
-                    if ent4B.get()!='':
-                        f.write("cmd.delete('"+ent3F.get()+"')\n")
-                    if ent5B.get()!='':
-                        f.write("cmd.delete('"+ent4F.get()+"')\n")
+                        f.write("cmd.select('Motif','"+resnlistfstr+"')\n")
+                        f.write("cmd.delete('"+resnlistfstr+"')\n")
+                        f.write('cmd.hide("everything","all")\n')
+                        f.write('cmd.show("cartoon", "all")\n')
+                        f.write('cmd.set("cartoon_transparency","0.5", "all")\n')
+                        f.write('cmd.show("sticks","Motif")\n')
+                        f.write('cmd.color("grey","all")\n')
+                        f.write('cmd.color("oxygen","(e. O+Motif)")\n')
+                        f.write('cmd.color("nitrogen","(e. N+Motif)")\n')
+                        f.write('cmd.color("sulfur","(e. S+Motif)")\n')
+                        f.write('cmd.color("hydrogen","(e. H+Motif)")\n')
+                        f.write('cmd.color("white","(e. C+Motif)")\n')
+                        f.write('cmd.deselect()\n')
+                        f.write('cmd.orient("Motif")\n')
 
-                    f.write('cmd.hide("everything","all")\n')
-                    f.write('cmd.show("cartoon", "all")\n')
-                    f.write('cmd.set("cartoon_transparency","0.5", "all")\n')
-                    f.write('cmd.show("sticks","Motif")\n')
-                    f.write('cmd.color("grey","all")\n')
-                    f.write('cmd.color("oxygen","(e. O+Motif)")\n')
-                    f.write('cmd.color("nitrogen","(e. N+Motif)")\n')
-                    f.write('cmd.color("sulfur","(e. S+Motif)")\n')
-                    f.write('cmd.color("hydrogen","(e. H+Motif)")\n')
-                    f.write('cmd.color("white","(e. C+Motif)")\n')
-                    f.write('cmd.deselect()\n')
-                    f.write('cmd.orient("Motif")\n')
-                    
-                   
-                    print '\n\n\n\n\n\nMotif Maker\nBy: Brett Hanson and Charlie Westin\n2007\nImproved by: Mario Rosa\n2009\n'+str(int(len(resnlist))-1)+' Amino Acid Motif Written \n\n\n\n'
-                    f.close()
-                    interior.mainloop()
-                except:
-                    interior.mainloop()
-                    
-            but1.bind('<Button-1>', makemotif)
-            
-            selection1 = Pmw.OptionMenu(interior,label_text = 'Residue 1:',labelpos = 'w',
-                items = (' ','gly', 'ala', 'val','leu', 'ile', 'met','pro', 'phe', 'tyr', 'trp', 'ser', 'thr', 'cys', 'lys', 'arg', 'his', 'asp', 'glu', 'asn', 'gln'),
-                menubutton_width = 8, command= set_motif1)
-            selection1.grid(row = 0, column =0)
+                        print '\n\n\n\n\n\nMotif Maker\nBy: Brett Hanson and Charlie Westin\n2007\nImproved by: Mario Rosa\n2009\n%s Amino Acid Motif Written \n\n\n\n'%(len(resnlist)-1)
+                        f.close()
+                        interior.mainloop()
+                    except:
+                        pass
 
-            selection2 = Pmw.OptionMenu(interior,label_text = 'Residue 2:',labelpos = 'w',
-                items = (' ','gly', 'ala', 'val','leu', 'ile', 'met','pro', 'phe', 'tyr', 'trp', 'ser', 'thr', 'cys', 'lys', 'arg', 'his', 'asp', 'glu', 'asn', 'gln'),
-                menubutton_width = 8, command= set_motif2)
-            selection2.grid(row = 1, column =0)
-            
-            selection3 = Pmw.OptionMenu(interior,label_text = 'Residue 3:',labelpos = 'w',
-                items = (' ','gly', 'ala', 'val','leu', 'ile', 'met','pro', 'phe', 'tyr', 'trp', 'ser', 'thr', 'cys', 'lys', 'arg', 'his', 'asp', 'glu', 'asn', 'gln'),
-                menubutton_width = 8, command= set_motif3)
-            selection3.grid(row = 2, column =0)
+                root = Tk()
+                group = Pmw.Group(root, tag_text='Motif Maker')#And a new group
+                group.grid(row=0, column=0, padx=0, pady=0, sticky=NW)
+                interior = group.interior()
 
-            selection4 = Pmw.OptionMenu(interior,label_text = 'Residue 4:',labelpos = 'w',
-                items = (' ','gly', 'ala', 'val','leu', 'ile', 'met','pro', 'phe', 'tyr', 'trp', 'ser', 'thr', 'cys', 'lys', 'arg', 'his', 'asp', 'glu', 'asn', 'gln'),
-                menubutton_width = 8, command=set_motif4)
-            selection4.grid(row = 3, column =0)
-            
-            selection5 = Pmw.OptionMenu(interior,label_text = 'Residue 5:',labelpos = 'w',
-                items = (' ','gly', 'ala', 'val','leu', 'ile', 'met','pro', 'phe', 'tyr', 'trp', 'ser', 'thr', 'cys', 'lys', 'arg', 'his', 'asp', 'glu', 'asn', 'gln'),
-                menubutton_width = 8, command= set_motif5)
-            selection5.grid(row = 4, column =0) 
+                resn = {}
+                for i in range(1,mRN+1):
+                    resn[i] = Pmw.OptionMenu(interior,labelpos = 'w',
+                                                label_text = 'Residue %s:'%(i),
+                                                items = AminoMenuList,
+                                                menubutton_width = 8)
+                    resn[i].grid(row = (i-1), column =0)
 
-            selection = Pmw.OptionMenu(interior,labelpos = 'w',
-                label_text = 'Chain 1:',
-                items = (''),
-                menubutton_width = 8, command = set_sel1)                       
-            selection.grid(row=0, column=4)
+                lent = {}
+                for i in range(1,mRN+1):
+                    lent[i] = Label(interior, text = 'Number:')
+                    lent[i].grid(row = (i-1), column =1)
 
-            selectiond = Pmw.OptionMenu(interior,labelpos = 'w',
-                label_text = 'Chain 2:',
-                items = (''),
-                menubutton_width = 8, command = set_sel2)                       
-            selectiond.grid(row=1, column=4)
+                resi = {}
+                for i in range(1,mRN+1):
+                    resi[i] = Entry(interior, width = 8)
+                    resi[i].grid(row = (i-1), column =2)
 
-            selectionc = Pmw.OptionMenu(interior,labelpos = 'w',
-                label_text = 'Chain 3:',
-                items = (''),
-                menubutton_width = 8, command = set_sel3)                       
-            selectionc.grid(row=2, column=4)
+                backbone = {}
+                for i in range(1,mRN+1):
+                    backbone[i] = Pmw.OptionMenu(interior,labelpos = 'w',
+                                                 label_text = 'BackBone:',
+                                                 items = ('Off', 'On'),
+                                                 menubutton_width = 8)
+                    backbone[i].grid(row = (i-1), column =3)
 
-            selectionb = Pmw.OptionMenu(interior,labelpos = 'w',
-                label_text = 'Chain 4:',
-                items = (''),
-                menubutton_width = 8, command = set_sel4)                       
-            selectionb.grid(row=3, column=4)
+                chain = {}
+                for i in range(1,mRN+1):
+                    chain[i] = Pmw.OptionMenu(interior,labelpos = 'w',
+                                                  label_text = 'Chain %s:'%(i),
+                                                  items = (''),
+                                                  menubutton_width = 8)
+                    chain[i].grid(row=(i-1), column=4)
 
-            selectiona = Pmw.OptionMenu(interior,labelpos = 'w',
-                label_text = 'Chain 5:',
-                items = (''),
-                menubutton_width = 8, command = set_sel5)                       
-            selectiona.grid(row=4, column=4)
+                but1 = Button(interior, text = 'Make Motif', width = 10, command = makemotif)
+                but1.grid(row =mRN, column =3, sticky = 'se')
 
+                popbtn = Button(interior, text = 'Chain Info', width = 10, command = populate_chain_list)
+                popbtn.grid(row = mRN, column = 4, sticky = 'se')
 
-            selection11 = Pmw.OptionMenu(interior,label_text = 'BackBone:',labelpos = 'w',
-                items = ('Off', 'On'),
-                menubutton_width = 8, command= bone1)
-            selection11.grid(row = 0, column =3)
-            
-            selection12 = Pmw.OptionMenu(interior,label_text = 'BackBone:',labelpos = 'w',
-                items = ('Off', 'On'),
-                menubutton_width = 8, command= bone2)
-            selection12.grid(row = 1, column =3)
-            
-            selection13 = Pmw.OptionMenu(interior,label_text = 'BackBone:',labelpos = 'w',
-                items = ('Off', 'On'),
-                menubutton_width = 8, command= bone3)
-            selection13.grid(row = 2, column =3)
-            
-            selection14 = Pmw.OptionMenu(interior,label_text = 'BackBone:',labelpos = 'w',
-                items = ('Off', 'On'),
-                menubutton_width = 8, command= bone4)
-            selection14.grid(row = 3, column =3)
-            
-            selection15 = Pmw.OptionMenu(interior,label_text = 'BackBone:',labelpos = 'w',
-                items = ('Off', 'On'),
-                menubutton_width = 8, command= bone5)
-            selection15.grid(row =4, column =3)
+                framerange = Frame(interior)
+                framerange.grid(row=mRN, column=0,columnspan = 3, sticky = 'e')
+                ballrange = Pmw.Balloon(interior)
+                ballrange.bind(framerange, 'Changes Precision of Motif Definition\nDefault = 2')
+                ranger1 = Scale(framerange, width =8,
+                                troughcolor="#ffffff",
+                                length="160",
+                                orient="horizontal",
+                                resolution="0.1",
+                                to="4.0")
+                ranger1.grid(row=5, column=1,columnspan = 4, sticky = 'e')
+                ranger1.set(2)
 
-            framerange = Frame(interior)
-            framerange.grid(row=5, column=0,columnspan = 3, sticky = 'e')
-            ballrange = Pmw.Balloon(interior)
-            ballrange.bind(framerange, 'Changes Precision of Motif Definition\nDefault = 2')
-            ranger1 = Scale(framerange, width =8)
-            ranger1.configure(troughcolor="#ffffff")
-            ranger1.configure(length="160")
-            ranger1.configure(orient="horizontal")
-            ranger1.configure(resolution="0.1")
-            ranger1.configure(to="4.0")    
-            ranger1.grid(row=5, column=1,columnspan = 4, sticky = 'e')
-            ranger1.set(2)
+                labrange = Label(interior, text='Precision Factor:')
+                labrange.grid(row=mRN, column=0, sticky='sw')
 
-        
-            labrange = Label(interior, text='Precision Factor:')
-            labrange.grid(row=5, column=0, sticky='sw')
+                group = Pmw.Group(root, tag_text = 'Run Motif')
+                group.grid(row=1, column=0, padx=190, pady=0, sticky = 'NE')
+                interior = group.interior()
 
+                def getmotif():
+                    import tkFileDialog
+                    f = tkFileDialog.askopenfilename(defaultextension=".py", initialdir="./modules/pmg_tk/startup/Motifs")
+                    if f == None:
+                        interior.mainloop()
+                    else:
+                        cmd.do('run '+f+'')
+                        interior.mainloop()
+                openbtn = Button(interior, text= 'Open Motif', command = getmotif)
+                openbtn.grid()
 
+            #---------------------Show residues around active site---------------#
+                def motifoption(tag):
+                        if tag=='Surface Pocket':
+                            objects = cmd.get_names('all')
+                            cmd.set('transparency', '0.5', 'all')
+                            if 'Motif' in objects:
+                                cmd.show('surface', 'all')
+                                cmd.hide('cartoon', 'all')
+                                cmd.color('white', '!Motif ')
+                        elif tag=='Polar Contacts':
+                                try:
+                                    objects = cmd.get_names('all')
+                                    cmd.dist("Motif_polar_conts","Motif","Motif",quiet=1,mode=2,label=0,reset=1)
+                                    cmd.enable(self.mot+"_polar_conts")
+                                except:
+                                    pass
 
-##            #Next Tab
-##            page = notebook.add('Run Motifs')
-##            notebook.tab('Run Motifs').focus_set()
-            group = Pmw.Group(root, tag_text = 'Run Motif')
-            group.grid(row=1, column=0, padx=190, pady=0, sticky = 'NE')
-            interior = group.interior()
-
-            def getmotif(ranger):
-                import tkFileDialog
-                f = tkFileDialog.askopenfilename(defaultextension=".py", initialdir="./modules/pmg_tk/startup/Motifs")
-                try:
-                    cmd.do('run '+f+'')
-                    interior.mainloop()
-                except:
-                    interior.mainloop()
-            openbtn = Button(interior, text= 'Open Motif')
-            openbtn.grid()
-            openbtn.bind('<Button-1>', getmotif)
-            
-            
-
-            
-                
-        #---------------------Show residues around active site---------------#
-            def motifoption(tag):
-                
-                    if tag=='Surface Pocket':
-                        objects = cmd.get_names('all')
-                        cmd.set('transparency', '0.5', 'all')
-                        if 'Motif' in objects:
-                            cmd.show('surface', 'all')
-                            cmd.hide('cartoon', 'all')
-                            cmd.color('white', '!Motif ')
-                            
-                    elif tag=='Polar Contacts':
+                                if 'Adjacent' in objects:
+                                    cmd.dist('Adjacent_polar_conts','Adjacent','Adjacent',quiet=1,mode=2,label=0,reset=1)
+                                if 'substrate' in objects:
+                                    cmd.dist("Motif_around_polar_conts","Motif","(byobj (Motif)) and (not (Motif))",quiet=1,mode=2,label=0,reset=1)
+                                    cmd.enable("Motif_around_polar_conts")
+                        elif tag=='Hide Contacts':
+                            objects = cmd.get_names('all')
                             try:
-                                objects = cmd.get_names('all')                       
-                                cmd.dist("Motif_polar_conts","Motif","Motif",quiet=1,mode=2,label=0,reset=1)
-                                cmd.enable(self.mot+"_polar_conts")
-                            except:
-                                pass
-
-                            if 'Adjacent' in objects:
-                                cmd.dist('Adjacent_polar_conts','Adjacent','Adjacent',quiet=1,mode=2,label=0,reset=1)
-                            if 'substrate' in objects:
-                                cmd.dist("Motif_around_polar_conts","Motif","(byobj (Motif)) and (not (Motif))",quiet=1,mode=2,label=0,reset=1)
-                                cmd.enable("Motif_around_polar_conts")
-
-                        
-                    elif tag=='Hide Contacts':
-                        objects = cmd.get_names('all')
-                        try:
-                              try:
-                                cmd.delete("Motif_polar_conts")
-                              except:
-                                pass
-                              if 'Adjacent' in objects:
-                                cmd.delete('Adjacent_polar_conts')
-                              if 'substrate' in objects:
-                                cmd.delete("substrate_polar_conts")
-                        except:
-                              import tkMessageBox
-                              tkMessageBox.showinfo('Alert', "No motif polar contacts to hide")
-
-                        
-                    elif tag=='Show Substrate':
-                        try:
-                          cmd.select('substrate', 'byres het within 7 of  Motif')
-                          objects = cmd.get_names('all')
-                          xp = cmd.index('substrate')
-                          np  = len(xp)
-                          if(np < 1):
-                              cmd.delete('substrate')
-                          if 'substrate' in objects:
-                              cmd.show('sticks', 'substrate')
-                              cmd.deselect()
-                              cmd.color("oxygen","(elem O and substrate)")
-                              cmd.color("nitrogen","(elem N and substrate)")
-                              cmd.color("sulfur","(elem S and substrate)")
-                              cmd.color("hydrogen","(elem H and substrate)")
-                              cmd.color("white","(elem C and substrate)")
-
-                        except:
-                            import tkMessageBox
-                            tkMessageBox.showinfo('Alert', "No substrate found")
-                        
-                    elif tag=='Show label':
-
-                     objects = cmd.get_names('all')
-                     try:
-                                  cmd.label('''(name ca+C1*+C1' and (byres(Motif)))''','''"%s-%s"%(resn,resi)''')
+                                  try:
+                                    cmd.delete("Motif_polar_conts")
+                                  except:
+                                    pass
                                   if 'Adjacent' in objects:
-                                         cmd.label('''(name ca+C1*+C1' and (byres(Adjacent)))''','''"%s-%s"%(resn,resi)''')
-                     except:
+                                    cmd.delete('Adjacent_polar_conts')
+                                  if 'substrate' in objects:
+                                    cmd.delete("substrate_polar_conts")
+                            except:
+                                  import tkMessageBox
+                                  tkMessageBox.showinfo('Alert', "No motif polar contacts to hide")
+                        elif tag=='Show Substrate':
+                            try:
+                              cmd.select('substrate', 'byres het within 7 of  Motif')
+                              objects = cmd.get_names('all')
+                              xp = cmd.index('substrate')
+                              np  = len(xp)
+                              if(np < 1):
+                                  cmd.delete('substrate')
+                              if 'substrate' in objects:
+                                  cmd.show('sticks', 'substrate')
+                                  cmd.deselect()
+                                  cmd.color("oxygen","(elem O and substrate)")
+                                  cmd.color("nitrogen","(elem N and substrate)")
+                                  cmd.color("sulfur","(elem S and substrate)")
+                                  cmd.color("hydrogen","(elem H and substrate)")
+                                  cmd.color("white","(elem C and substrate)")
+                            except:
                                 import tkMessageBox
-                                tkMessageBox.showinfo('Alert', "Select a motif first")
+                                tkMessageBox.showinfo('Alert', "No substrate found")
+                        elif tag=='Show label':
+                         objects = cmd.get_names('all')
+                         try:
+                                      cmd.label('''(name ca+C1*+C1' and (byres(Motif)))''','''"%s-%s"%(resn,resi)''')
+                                      if 'Adjacent' in objects:
+                                             cmd.label('''(name ca+C1*+C1' and (byres(Adjacent)))''','''"%s-%s"%(resn,resi)''')
+                         except:
+                                    import tkMessageBox
+                                    tkMessageBox.showinfo('Alert', "Select a motif first")
+                        elif tag=='Hide Label':
+                            objects = cmd.get_names('all')
+                            try:
+                                  cmd.label("Motif","''")
+                                  if 'Adjacent' in objects:
+                                      cmd.label('byres Adjacent',"''")
+                            except:
+                                    import tkMessageBox
+                                    tkMessageBox.showinfo('Alert', "No motif labels to hide")
+                        elif tag=='Hide Substrate':
+                                          try:
+                                            cmd.hide('sticks', 'substrate')
+                                          except:
+                                            import tkMessageBox
+                                            tkMessageBox.showinfo('Alert', "No substrate selected")
+                stereo = Pmw.OptionMenu(interior,label_text = 'Options:',labelpos = 'w',
+                            items = ('','Surface Pocket','Polar Contacts', 'Hide Contacts', 'Show Substrate', 'Hide Substrate', 'Show label', 'Hide Label'),
+                            menubutton_width = 8, command=motifoption)
+                stereo.grid(row=0,column=3,sticky=NW)
 
-                        
-                    elif tag=='Hide Label':
+                group = Pmw.Group(root, tag_text='Adjacent')
+                group.grid(row=1, column=0, columnspan=1, padx=2, pady=2, sticky=W)
+
+                interior = group.interior()
+                framesela = Frame(interior)
+                framesela.grid(row=0, column=0, columnspan = 2, padx=0, pady=0, sticky=N)
+                ballsela = Pmw.Balloon(interior)
+                ballsela.bind(framesela, 'Within # Angstroms')
+                selA = Scale(framesela, width =8)
+                selA.configure(troughcolor="#ffffff")
+                selA.configure(length="130")
+                selA.configure(orient="horizontal")
+                selA.configure(resolution="0.2")
+                selA.configure(to="10.0")
+                selA.grid(row=0, column=0, columnspan= 2, padx=0, pady=0, sticky=N)
+                selA.set(5.0)
+                frameadj = Frame(interior)
+                frameadj.grid(row=1, column=0, padx=1, pady=1, sticky=NW)
+                balladj = Pmw.Balloon(interior)
+                balladj.bind(frameadj, 'Display residues adjacent to motif')
+
+                def roundres():
+                    try:
+                        cmd.hide('sticks', '!Motif')
+                        cmd.color('white', '!Motif')
+                        cmd.select('Adjacent', 'byres Motif around %s'%(selA.get()))
+                        cmd.show('sticks', 'Adjacent')
+                        cmd.color('orange', 'Adjacent')
+                        util.cnc('Adjacent')
+                        cmd.remove('hydro')
+                        cmd.deselect()
+                    except:
+                        import tkMessageBox
+                        tkMessageBox.showinfo('Alert', 'You must load a motif first')
+                        interior.mainloop()
+                showround = Button(frameadj, width = 12, text = 'Adjacent', command = roundres)
+                showround.grid(row=1, column=0, padx=1, pady=1, sticky=NW)
+
+                def resdel():
+                    try:
                         objects = cmd.get_names('all')
-                        try:
-                              cmd.label("Motif","''")
-                              if 'Adjacent' in objects:
-                                  cmd.label('byres Adjacent',"''")
-                        except:
-                                import tkMessageBox
-                                tkMessageBox.showinfo('Alert', "No motif labels to hide")
+                        cmd.hide('sticks', '!Motif')
+                        cmd.color('white', '!Motif')
+                        if 'Adjacent' in objects:
+                            cmd.delete('Adjacent_polar_conts')
+                        if 'Adjacent' in objects:
+                            cmd.label('byres Adjacent',"''")
+                        cmd.delete('Adjacent')
+                    except:
+                        import tkMessageBox
+                        tkMessageBox.showinfo('Alert', 'You must load a motif first')
+                        interior.mainloop()
+                delres = Button(interior, width = 14, text = 'Delete Adjacent', command = resdel)
+                delres.grid(row=1, column=1, padx=1, pady=1, sticky=NW)
 
-                                
-                    elif tag=='Hide Substrate':
-                                      try:
-                                        cmd.hide('sticks', 'substrate')
-                                      except:
-                                        import tkMessageBox
-                                        tkMessageBox.showinfo('Alert', "No substrate selected")
-                                                
+            except ValueError:
+                import tkMessageBox
+                tkMessageBox.showinfo('Error', 'Please enter a number greater than or equal to 2.\n'
+                                                                +'Please enter a number less than or equal to 10.')
+                loadmotifer()
+            except:
+                pass
 
-            stereo = Pmw.OptionMenu(interior,label_text = 'Options:',labelpos = 'w',
-                        items = ('','Surface Pocket','Polar Contacts', 'Hide Contacts', 'Show Substrate', 'Hide Substrate', 'Show label', 'Hide Label'),
-                        menubutton_width = 8, command=motifoption)
-            stereo.grid(row=0,column=3,sticky=NW)
+        nmlab = Label(interior, text = 'Motif Name')
+        nmlab.grid(row=1, column =0, sticky = 'n')
+        runbtn1 = Button(interior, text = 'Run all Motifs', command = runum)
+        runbtn1.grid(row = 0, column =0, sticky = 'W')
+        mobtn = Button(interior, text = 'Motif maker', command = loadmotifer)
+        mobtn.grid(row = 0, column = 0, sticky = 'E')
 
-            group = Pmw.Group(root, tag_text='Adjacent')
-            group.grid(row=1, column=0, columnspan=1, padx=2, pady=2, sticky=W)
-
-            interior = group.interior()
-            framesela = Frame(interior)
-            framesela.grid(row=0, column=0, columnspan = 2, padx=0, pady=0, sticky=N)
-            ballsela = Pmw.Balloon(interior)
-            ballsela.bind(framesela, 'Within # Angstroms')
-            selA = Scale(framesela, width =8)
-            selA.configure(troughcolor="#ffffff")
-            selA.configure(length="130")
-            selA.configure(orient="horizontal")
-            selA.configure(resolution="0.2")
-            selA.configure(to="10.0")    
-            selA.grid(row=0, column=0, columnspan= 2, padx=0, pady=0, sticky=N)
-            selA.set(5.0)
-            frameadj = Frame(interior)
-            frameadj.grid(row=1, column=0, padx=1, pady=1, sticky=NW)
-            balladj = Pmw.Balloon(interior)
-            balladj.bind(frameadj, 'Display residues adjacent to motif')
-            
-                           
-            showround = Button(frameadj, width = 12, text = 'Adjacent')
-            showround.grid(row=1, column=0, padx=1, pady=1, sticky=NW)
-            
-            def roundres(event):
-                try:
-                    cmd.hide('sticks', '!Motif')
-                    cmd.color('white', '!Motif')
-                    cmd.select('Adjacent', 'byres Motif around %s'%(selA.get()))
-                    cmd.show('sticks', 'Adjacent')
-                    cmd.color('orange', 'Adjacent')
-                    util.cnc('Adjacent')
-                    cmd.remove('hydro')
-                    cmd.deselect()
-                except:
-                    import tkMessageBox
-                    tkMessageBox.showinfo('Alert', 'You must load a motif first')
-                    interior.mainloop()
-            showround.bind('<Button-1>', roundres)
-            delres = Button(interior, width = 14, text = 'Delete Adjacent')
-            delres.grid(row=1, column=1, padx=1, pady=1, sticky=NW)
-            def resdel(event):
-                try:
-                    objects = cmd.get_names('all')
-                    cmd.hide('sticks', '!Motif')
-                    cmd.color('white', '!Motif')
-                    if 'Adjacent' in objects:
-                        cmd.delete('Adjacent_polar_conts')
-                    if 'Adjacent' in objects:
-                        cmd.label('byres Adjacent',"''")
-                    cmd.delete('Adjacent')
-                except:
-                    import tkMessageBox
-                    tkMessageBox.showinfo('Alert', 'You must load a motif first')
-                    interior.mainloop()
-                
-            delres.bind('<Button-1>', resdel)
-            def runcusmotif(self):
-              a = ['']
-              for object in os.listdir('./modules/pmg_tk/startup/Motifs'):
-                  a.append(object)
-              motif = self.motifdrop.getcurselection()
-              for item in motif:
-                  tag = item
-              try:
-                 for i in range(1, 100, 1):
-                      if a[i] in tag:
-                          cmd.do('run ./modules/pmg_tk/startup/Motifs/'+a[i])
-              except:
-                  pass
-              
-           
-
-           
-    
-
-                      
-       
-
-                     
-            
-
-
-        mobtn.bind('<Button-1>', loadmotifer)
+        button333 =Button(interior, text = 'Get Random PDB', width =25, command = randomized)
+        button333.grid(row = 3, column = 0, padx = 10, sticky = 'N')
 
         #--------------------------------------#
         #			                    #
@@ -15354,19 +13908,19 @@ cmd.show('spheres', '(resn HOH)')\n''')
 
 
 
-            
+
         popbtn=Button(page, text='Update Selection')
         popbtn.grid(row = 0, column = 0, sticky='E')
         popbtn.bind('<Button-1>', populater)
 
-	
+
   	#-------------- Selection Dropdown -----------------
         self.advancedSelection = Pmw.OptionMenu(page,label_text = 'Select:',labelpos = 'w',
                     items = (''),
                     menubutton_width = 10, command = self.set_sel1)
-                       
+
         self.advancedSelection.grid(row=0, column=0,sticky=NW)
- 	
+
  	#--------------- Setting Defaults -----------------
  	defaults = Pmw.OptionMenu(page,label_text = 'Reset:',labelpos = 'w',
                     items = ('Cartoon', 'Spheres', 'Sticks','Surface', 'Ambient'),
@@ -15377,12 +13931,12 @@ cmd.show('spheres', '(resn HOH)')\n''')
  	group = Pmw.Group(page, tag_text='Cartoon:')
  	group.grid(row=1, column=0, padx=1, pady=0, sticky='NW')
  	interior = group.interior()
- 	        
 
- 
+
+
  	#----------------Version 2------------#
 
- 	
+
  	# Cartoon Width Slider
         label3 = Label(interior, text = 'Width')
         label3.grid(row=0, column=0, padx=0, pady=0, sticky = W)
@@ -15396,7 +13950,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         self.toonWidth.grid(row=0, column=1, padx=0, pady=0, sticky=W)
         self.buttonAdd(interior,'Update',10,self.cartoon_width,0,2,SW)
 
-	
+
 	# Cartoon Thickness Slider
         label4 = Label(interior, text = 'Thickness')
         label4.grid(row=1, column=0, padx=0, pady=0, sticky = W)
@@ -15409,7 +13963,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         self.toonThickness.set(0.3)
         self.toonThickness.grid(row=1, column=1, padx=0, pady=0, sticky = W)
         self.buttonAdd(interior,'Update',10,self.cartoon_thickness,1,2,SW)
-	
+
 	# Cartoon Transparency Slider
         label5 = Label(interior, text = 'Transparency')
         label5.grid(row=2, column=0, padx=0, pady=0, sticky = W)
@@ -15418,10 +13972,10 @@ cmd.show('spheres', '(resn HOH)')\n''')
         self.cartoonTransparency.configure(troughcolor="#ffffff")
         self.cartoonTransparency.configure(orient="horizontal")
         self.cartoonTransparency.configure(resolution="0.05")
-        self.cartoonTransparency.configure(to="1.0")    
+        self.cartoonTransparency.configure(to="1.0")
         self.cartoonTransparency.grid(row=2, column=1, padx=0, pady=0, sticky = W)
         self.buttonAdd(interior,'Update',10,self.cartoon_transparency,2,2,SW)
-	
+
     	# Cartoon Tube Radius Slider
         label6 = Label(interior, text = 'Tube Radius')
         label6.grid(row=3, column=0, padx=0, pady=0, sticky=W)
@@ -15444,8 +13998,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
         #-------------- Sphere Group--------------------
         group = Pmw.Group(page, tag_text='Spheres:')
         group.grid(row=1, column=1, padx=1, pady=0, sticky=NW)
-        interior = group.interior()     
-        
+        interior = group.interior()
+
         # Sphere Size Slider
         label1 = Label(interior, text = 'Size')
         label1.grid(row=0, column=0, padx=0, pady=0, sticky=E)
@@ -15458,7 +14012,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         self.sphereScale.set(0.7)
         self.sphereScale.grid(row=0, column=1, padx=0, pady=0, sticky='W')
         self.buttonAdd(interior,'Update',10,self.sphereSize,0,2,'SW')
-        
+
         # Sphere Transparency Slider
         label2 = Label(interior, text = 'Transparency')
         label2.grid(row=1, column=0, padx=0, pady=0, sticky=E)
@@ -15467,15 +14021,15 @@ cmd.show('spheres', '(resn HOH)')\n''')
         self.sphereTransparency.configure(length="65")
         self.sphereTransparency.configure(orient="horizontal")
         self.sphereTransparency.configure(resolution="0.05")
-        self.sphereTransparency.configure(to="1.0")    
+        self.sphereTransparency.configure(to="1.0")
         self.sphereTransparency.grid(row=1, column=1, padx=0, pady=0, sticky='W')
         self.buttonAdd(interior,'Update',10,self.sphere_transparency,1,2,'SW')
-    	
+
         #--------------- Stick Group --------------------
         group = Pmw.Group(page, tag_text='Sticks:')
         group.grid(row=1, column=1, padx=1, pady=0, sticky=SW)
         interior = group.interior()
-    	
+
     	# Stick Radius Slider
         label7 = Label(interior, text = 'Radius')
         label7.grid(row=0, column=0, padx=0, pady=0, sticky=E)
@@ -15488,8 +14042,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
         self.stickRadius.set(0.2)
         self.stickRadius.grid(row=0, column=1, padx=0, pady=0, sticky='W')
         self.buttonAdd(interior,'Update',10,self.stickRad,0,2,'SW')
-    	
-               
+
+
         # Stick Transparency Slider
         label8 = Label(interior, text = 'Transparency')
         label8.grid(row=1, column=0, padx=0, pady=0, sticky=E)
@@ -15498,16 +14052,16 @@ cmd.show('spheres', '(resn HOH)')\n''')
         self.stickTransparency.configure(length="65")
         self.stickTransparency.configure(orient="horizontal")
         self.stickTransparency.configure(resolution="0.05")
-        self.stickTransparency.configure(to="1.0")    
+        self.stickTransparency.configure(to="1.0")
         self.stickTransparency.grid(row=1, column=1, padx=0, pady=0, sticky='W')
         self.buttonAdd(interior,'Update',10,self.stick_transparency,1,2,'SW')
 
-        
+
         #-------------- Surface Group -------------------
         group = Pmw.Group(page, tag_text='Surface:')
         group.grid(row=2, column=1, padx=1, pady=0, sticky=SW)
         interior = group.interior()
-	
+
         # Surface Transparency Slider
         label9 = Label(interior, text = 'Transparency')
         label9.grid(row=2, column=0, padx=0, pady=0, sticky=E)
@@ -15516,7 +14070,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         self.surfaceTransparency.configure(length="65")
         self.surfaceTransparency.configure(orient="horizontal")
         self.surfaceTransparency.configure(resolution="0.05")
-        self.surfaceTransparency.configure(to="1.0")    
+        self.surfaceTransparency.configure(to="1.0")
         self.surfaceTransparency.grid(row=2, column=1, padx=0, pady=0, sticky='W')
         self.buttonAdd(interior,'Update',10,self.surface_transparency,2,2,'SW')
 
@@ -15537,7 +14091,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         self.asca.configure(length="65")
         self.asca.configure(orient="horizontal")
         self.asca.configure(resolution="0.01")
-        self.asca.configure(to="2.0")    
+        self.asca.configure(to="2.0")
         self.asca.grid(row=0, column=1, padx=0, pady=0, sticky=W)
         self.asca.set(.25)
         stupid = Button(interior, text = 'Update')
@@ -15549,7 +14103,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
             if script=='1':
                 f.write(''' cmd.set("ambient", '''+str(self.asca.get())+''')\n''')
         stupid.bind('<Button-1>', finickystuff)
-        
+
 
         #--------------------------------------#
         #			               #
@@ -15593,7 +14147,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         rcsb.bind('<Button-1>', gotorcsb)
 
 	  #--------------Electrostatics-------------#
-       
+
         group = Pmw.Group(page, tag_text='Electrostatics')
         group.grid(row=2, column=0, columnspan=3, padx=2, pady=2, sticky=NW)
         interior = group.interior()
@@ -15601,7 +14155,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         frameelec = Frame(interior, width=16)
         frameelec.grid(row=0, column=2, padx=1, pady=1, sticky=NW)
         ballelec = Pmw.Balloon(interior)
-        ballelec.bind(frameelec, "Enter PDB Code: of Loaded Protein.\nCase Sensitive.") 
+        ballelec.bind(frameelec, "Enter PDB Code: of Loaded Protein.\nCase Sensitive.")
         elecbtn = Button(frameelec, text =  'Electrostatics', width=16)
         elecbtn.grid(row=0, column=2, padx=1, pady=1, sticky=NW)
         entelc = Entry(interior, width =6)
@@ -15634,18 +14188,18 @@ cmd.show('spheres', '(resn HOH)')\n''')
                 cmd.delete('goodbye')
                 cmd.delete(entelc.get()+'_e_pot')
                 cmd.delete(entelc.get()+'_e_map')
-               
+
                 import tkMessageBox
                 tkMessageBox.showinfo("Error", 'That PDB is not loaded or entry is not capitalized')
                 interior.mainloop()
 
-                
+
         elecdel.bind('<Button-1>', delelectro)
 
-                
+
         #---------Orthoscopic view and View distance-----#
         group = Pmw.Group(page, tag_text='Perspective')
-        group.grid(row=1, column=1, padx=0, pady=0, sticky=NW)         
+        group.grid(row=1, column=1, padx=0, pady=0, sticky=NW)
         interior = group.interior()
         frameorthoon = Frame(interior, width = 16)
         frameorthoon.grid(row=0, column=0, padx=2, pady=2, sticky=NW)
@@ -15659,7 +14213,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         orthoon.grid(row=0, column=0, padx=2, pady=2, sticky=NW)
         viewsetter = Label(interior, text = 'Set Field of View')
         viewsetter.grid(row=2, column=0, padx=0, pady=0, sticky=N)
-        
+
         def turnorthon(event):
             cmd.set("orthoscopic", "on")
             if script=='1':
@@ -15681,7 +14235,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         setfieldofview.configure(length="65")
         setfieldofview.configure(orient="horizontal")
         setfieldofview.configure(resolution="5")
-        setfieldofview.configure(to="100")    
+        setfieldofview.configure(to="100")
         setfieldofview.grid(row=3, column=0, padx=0, pady=0, sticky='N')
         setfieldofview.set(20)
         def setfield(event):
@@ -15714,11 +14268,11 @@ cmd.show('spheres', '(resn HOH)')\n''')
             if script=='1':
                 f.write('''cmd.orient('all')\n''')
         orientbutt.bind('<Button-1>', orient)
-	
+
 
         #-------------------Alternate Ray Tracing----------------------
         group = Pmw.Group(page, tag_text='Ray Trace Options')
- 	group.grid(row=0, column=0,columnspan=2, padx=0, pady=5, sticky=NW)         
+ 	group.grid(row=0, column=0,columnspan=2, padx=0, pady=5, sticky=NW)
  	interior = group.interior()
         def setray0(event):
             cmd.set("ray_trace_mode", "0")
@@ -15746,7 +14300,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         raythree = Button(interior, text = 'Cartoon Ray')
         raythree.grid(row=0, column=3, padx=2, pady=2, sticky=E)
         raythree.bind('<Button-1>', setray3)
-        
+
 	#------------------Amino Acid Reference Group-----------------
         group = Pmw.Group(page, tag_text='Amino Acid Reference:')
         group.grid(row=1, column=0,  padx=0, pady=0, sticky=NW)
@@ -15772,7 +14326,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         msg.grid(row=1, column=0, padx=0, pady=0, sticky=NE)
 
         diment = Entry(interior)
-   
+
         # 2D/3D interface, shows amino acid as specified
         def dim_dim(tag):
             if tag == '2D':
@@ -15781,8 +14335,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
             else:
               diment.delete(0,2)
               diment.insert(0,'2')
-              
-        labels = ('2D', '3D')    
+
+        labels = ('2D', '3D')
 	self.radioAdd(interior, 'w', 'vertical', dim_dim,
 		      ' ', labels, 2, 2, 1, 1, 'NW')
 
@@ -15799,7 +14353,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     else:
                         name6.delete(0,30)
                         name6.insert(0, 'glycine')
-                        canvas79.create_image(0,0,image=GLYGUM,anchor=NW)                                            
+                        canvas79.create_image(0,0,image=GLYGUM,anchor=NW)
                 if name5.get() == 'gly':
                     if diment.get() == '2':
                         name6.delete(0,30)
@@ -15871,7 +14425,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     else:
                       name6.delete(0,30)
                       name6.insert(0, 'isoleucine')
-                      canvas79.create_image(0,0,image=ILEGUM,anchor=NW)  
+                      canvas79.create_image(0,0,image=ILEGUM,anchor=NW)
                 if name5.get() == 'ile':
                     if diment.get() == '2':
                       name6.delete(0,30)
@@ -15880,7 +14434,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     else:
                       name6.delete(0,30)
                       name6.insert(0, 'isoleucine')
-                      canvas79.create_image(0,0,image=ILEGUM,anchor=NW)  
+                      canvas79.create_image(0,0,image=ILEGUM,anchor=NW)
                 if name5.get() == 'm':
                     if diment.get() == '2':
                       name6.delete(0,30)
@@ -15889,7 +14443,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     else:
                       name6.delete(0,30)
                       name6.insert(0, 'methionine')
-                      canvas79.create_image(0,0,image=METGUM,anchor=NW)             
+                      canvas79.create_image(0,0,image=METGUM,anchor=NW)
                 if name5.get() == 'met':
                     if diment.get() == '2':
                       name6.delete(0,30)
@@ -15898,7 +14452,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     else:
                       name6.delete(0,30)
                       name6.insert(0, 'methionine')
-                      canvas79.create_image(0,0,image=METGUM,anchor=NW)  
+                      canvas79.create_image(0,0,image=METGUM,anchor=NW)
                 if name5.get() == 'r':
                     if diment.get() == '2':
                       name6.delete(0,30)
@@ -15907,7 +14461,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     else:
                       name6.delete(0,30)
                       name6.insert(0, 'arginine')
-                      canvas79.create_image(0,0,image=ARGGUM,anchor=NW)                     
+                      canvas79.create_image(0,0,image=ARGGUM,anchor=NW)
                 if name5.get() == 'arg':
                     if diment.get() == '2':
                       name6.delete(0,30)
@@ -15916,7 +14470,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     else:
                       name6.delete(0,30)
                       name6.insert(0, 'arginine')
-                      canvas79.create_image(0,0,image=ARGGUM,anchor=NW)   
+                      canvas79.create_image(0,0,image=ARGGUM,anchor=NW)
                 if name5.get() == 'd':
                     if diment.get() == '2':
                       name6.delete(0,30)
@@ -15925,7 +14479,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     else:
                       name6.delete(0,30)
                       name6.insert(0, 'aspartate')
-                      canvas79.create_image(0,0,image=ASPGUM,anchor=NW)                                            
+                      canvas79.create_image(0,0,image=ASPGUM,anchor=NW)
                 if name5.get() == 'asp':
                     if diment.get() == '2':
                       name6.delete(0,30)
@@ -15934,7 +14488,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     else:
                       name6.delete(0,30)
                       name6.insert(0, 'aspartate')
-                      canvas79.create_image(0,0,image=ASPGUM,anchor=NW) 
+                      canvas79.create_image(0,0,image=ASPGUM,anchor=NW)
                 if name5.get() == 'c':
                     if diment.get() == '2':
                       name6.delete(0,30)
@@ -15943,7 +14497,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     else:
                       name6.delete(0,30)
                       name6.insert(0, 'cysteine')
-                      canvas79.create_image(0,0,image=CYSGUM,anchor=NW) 
+                      canvas79.create_image(0,0,image=CYSGUM,anchor=NW)
                 if name5.get() == 'c':
                     if diment.get() == '2':
                       name6.delete(0,30)
@@ -16015,7 +14569,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     else:
                       name6.delete(0,30)
                       name6.insert(0, 'lysine')
-                      canvas79.create_image(0,0,image=LYSGUM,anchor=NW)                      
+                      canvas79.create_image(0,0,image=LYSGUM,anchor=NW)
                 if name5.get() == 'lys':
                     if diment.get() == '2':
                       name6.delete(0,30)
@@ -16024,7 +14578,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     else:
                       name6.delete(0,30)
                       name6.insert(0, 'lysine')
-                      canvas79.create_image(0,0,image=LYSGUM,anchor=NW) 
+                      canvas79.create_image(0,0,image=LYSGUM,anchor=NW)
                 if name5.get() == 'f':
                     if diment.get() == '2':
                       name6.delete(0,30)
@@ -16051,7 +14605,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     else:
                       name6.delete(0,30)
                       name6.insert(0, 'proline')
-                      canvas79.create_image(0,0,image=PROGUM,anchor=NW)                      
+                      canvas79.create_image(0,0,image=PROGUM,anchor=NW)
                 if name5.get() == 'pro' :
                     if diment.get() == '2':
                       name6.delete(0,30)
@@ -16060,7 +14614,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     else:
                       name6.delete(0,30)
                       name6.insert(0, 'proline')
-                      canvas79.create_image(0,0,image=PROGUM,anchor=NW) 
+                      canvas79.create_image(0,0,image=PROGUM,anchor=NW)
                 if name5.get() == 's':
                     if diment.get() == '2':
                       name6.delete(0,30)
@@ -16069,7 +14623,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     else:
                       name6.delete(0,30)
                       name6.insert(0, 'serine')
-                      canvas79.create_image(0,0,image=SERGUM,anchor=NW)                       
+                      canvas79.create_image(0,0,image=SERGUM,anchor=NW)
                 if name5.get() == 'ser':
                     if diment.get() == '2':
                       name6.delete(0,30)
@@ -16078,7 +14632,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     else:
                       name6.delete(0,30)
                       name6.insert(0, 'serine')
-                      canvas79.create_image(0,0,image=SERGUM,anchor=NW)  
+                      canvas79.create_image(0,0,image=SERGUM,anchor=NW)
                 if name5.get() == 't':
                     if diment.get() == '2':
                       name6.delete(0,30)
@@ -16087,7 +14641,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     else:
                       name6.delete(0,30)
                       name6.insert(0, 'threonine')
-                      canvas79.create_image(0,0,image=THRGUM,anchor=NW)                        
+                      canvas79.create_image(0,0,image=THRGUM,anchor=NW)
                 if name5.get() == 'thr':
                     if diment.get() == '2':
                       name6.delete(0,30)
@@ -16096,7 +14650,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     else:
                       name6.delete(0,30)
                       name6.insert(0, 'threonine')
-                      canvas79.create_image(0,0,image=THRGUM,anchor=NW)  
+                      canvas79.create_image(0,0,image=THRGUM,anchor=NW)
                 if name5.get() == 'w':
                     if diment.get() == '2':
                       name6.delete(0,30)
@@ -16105,7 +14659,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     else:
                       name6.delete(0,30)
                       name6.insert(0, 'tryptophan')
-                      canvas79.create_image(0,0,image=TRPGUM,anchor=NW) 
+                      canvas79.create_image(0,0,image=TRPGUM,anchor=NW)
                 if name5.get() == 'trp':
                     if diment.get() == '2':
                       name6.delete(0,30)
@@ -16114,7 +14668,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                     else:
                       name6.delete(0,30)
                       name6.insert(0, 'tryptophan')
-                      canvas79.create_image(0,0,image=TRPGUM,anchor=NW)                    
+                      canvas79.create_image(0,0,image=TRPGUM,anchor=NW)
                 if name5.get() == 'y':
                     if diment.get() == '2':
                       name6.delete(0,30)
@@ -16151,8 +14705,8 @@ cmd.show('spheres', '(resn HOH)')\n''')
                       name6.delete(0,30)
                       name6.insert(0, 'asparagine')
                       canvas79.create_image(0,0,image=ASNGUM,anchor=NW)
-          
-           
+
+
             except:
                 name6.delete(0,30)
                 name6.insert(0, '')
@@ -16168,7 +14722,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                   else:
                     name5.delete(0,30)
                     name5.insert(0, 'gly, g')
-                    canvas79.create_image(0,0,image=GLYGUM,anchor=NW)                    
+                    canvas79.create_image(0,0,image=GLYGUM,anchor=NW)
                 if name6.get() == 'alanine':
                   if diment.get() == '2':
                     name5.delete(0,30)
@@ -16177,9 +14731,9 @@ cmd.show('spheres', '(resn HOH)')\n''')
                   else:
                     name5.delete(0,30)
                     name5.insert(0, 'ala, a')
-                    canvas79.create_image(0,0,image=ALAGUM,anchor=NW)             
+                    canvas79.create_image(0,0,image=ALAGUM,anchor=NW)
                 if name6.get() == 'valine':
-                  if diment.get() == '2': 
+                  if diment.get() == '2':
                     name5.delete(0,30)
                     name5.insert(0,'val, v')
                     canvas79.create_image(0,0,image=VALTACO,anchor=NW)
@@ -16195,70 +14749,70 @@ cmd.show('spheres', '(resn HOH)')\n''')
                   else:
                     name5.delete(0,30)
                     name5.insert(0, 'leu, l')
-                    canvas79.create_image(0,0,image=LEUGUM,anchor=NW)                  
+                    canvas79.create_image(0,0,image=LEUGUM,anchor=NW)
                 if name6.get() == 'isoleucine':
-                  if diment.get() == '2': 
+                  if diment.get() == '2':
                     name5.delete(0,30)
                     name5.insert(0,'ile, i')
                     canvas79.create_image(0,0,image=ILETACO,anchor=NW)
                   else:
                     name5.delete(0,30)
                     name5.insert(0, 'ile, i')
-                    canvas79.create_image(0,0,image=ILEGUM,anchor=NW)                     
+                    canvas79.create_image(0,0,image=ILEGUM,anchor=NW)
                 if name6.get() == 'methionine':
-                  if diment.get() == '2': 
+                  if diment.get() == '2':
                     name5.delete(0,30)
                     name5.insert(0,'met, m')
                     canvas79.create_image(0,0,image=METTACO,anchor=NW)
                   else:
                     name5.delete(0,30)
                     name5.insert(0, 'met, m')
-                    canvas79.create_image(0,0,image=METGUM,anchor=NW)                       
+                    canvas79.create_image(0,0,image=METGUM,anchor=NW)
                 if name6.get() == 'arginine':
-                  if diment.get() == '2': 
+                  if diment.get() == '2':
                     name5.delete(0,30)
                     name5.insert(0, 'arg, r')
                     canvas79.create_image(0,0,image=ARGTACO,anchor=NW)
                   else:
                     name5.delete(0,30)
                     name5.insert(0, 'arg, r')
-                    canvas79.create_image(0,0,image=ARGGUM,anchor=NW)                       
+                    canvas79.create_image(0,0,image=ARGGUM,anchor=NW)
                 if name6.get() == 'aspartate':
-                  if diment.get() == '2': 
+                  if diment.get() == '2':
                     name5.delete(0,30)
                     name5.insert(0,'asp, d')
                     canvas79.create_image(0,0,image=ASPTACO,anchor=NW)
                   else:
                     name5.delete(0,30)
                     name5.insert(0, 'asp, d')
-                    canvas79.create_image(0,0,image=ASPGUM,anchor=NW)                     
+                    canvas79.create_image(0,0,image=ASPGUM,anchor=NW)
                 if name6.get() == 'cysteine':
-                  if diment.get() == '2': 
+                  if diment.get() == '2':
                     name5.delete(0,30)
                     name5.insert(0, 'cys, c')
                     canvas79.create_image(0,0,image=CYSTACO,anchor=NW)
                   else:
                     name5.delete(0,30)
                     name5.insert(0, 'cys, c')
-                    canvas79.create_image(0,0,image=CYSGUM,anchor=NW)                      
+                    canvas79.create_image(0,0,image=CYSGUM,anchor=NW)
                 if name6.get() == 'glutamate':
-                  if diment.get() == '2': 
+                  if diment.get() == '2':
                     name5.delete(0,30)
                     name5.insert(0, 'glu, e')
                     canvas79.create_image(0,0,image=GLUTACO,anchor=NW)
                   else:
                     name5.delete(0,30)
                     name5.insert(0, 'glu, e')
-                    canvas79.create_image(0,0,image=GLUGUM,anchor=NW)                     
+                    canvas79.create_image(0,0,image=GLUGUM,anchor=NW)
                 if name6.get() == 'glutamine':
-                  if diment.get() == '2': 
+                  if diment.get() == '2':
                     name5.delete(0,30)
                     name5.insert(0,'gln, q')
                     canvas79.create_image(0,0,image=GLNTACO,anchor=NW)
                   else:
                     name5.delete(0,30)
                     name5.insert(0, 'gln, q')
-                    canvas79.create_image(0,0,image=GLNGUM,anchor=NW)                     
+                    canvas79.create_image(0,0,image=GLNGUM,anchor=NW)
                 if name6.get() == 'histidine':
                   if diment.get() == '2':
                     name5.delete(0,30)
@@ -16267,7 +14821,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                   else:
                     name5.delete(0,30)
                     name5.insert(0, 'his, h')
-                    canvas79.create_image(0,0,image=HISGUM,anchor=NW)                     
+                    canvas79.create_image(0,0,image=HISGUM,anchor=NW)
                 if name6.get() == 'lysine':
                   if diment.get() == '2':
                     name5.delete(0,30)
@@ -16276,7 +14830,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                   else:
                     name5.delete(0,30)
                     name5.insert(0, 'lys, k')
-                    canvas79.create_image(0,0,image=LYSGUM,anchor=NW)                      
+                    canvas79.create_image(0,0,image=LYSGUM,anchor=NW)
                 if name6.get() == 'phenylalanine':
                   if diment.get() == '2':
                     name5.delete(0,30)
@@ -16285,7 +14839,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                   else:
                     name5.delete(0,30)
                     name5.insert(0, 'phe, f')
-                    canvas79.create_image(0,0,image=PHEGUM,anchor=NW)                      
+                    canvas79.create_image(0,0,image=PHEGUM,anchor=NW)
                 if name6.get() == 'proline':
                   if diment.get() == '2':
                     name5.delete(0,30)
@@ -16294,7 +14848,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                   else:
                     name5.delete(0,30)
                     name5.insert(0, 'pro, p')
-                    canvas79.create_image(0,0,image=PROGUM,anchor=NW)                    
+                    canvas79.create_image(0,0,image=PROGUM,anchor=NW)
                 if name6.get() == 'serine':
                   if diment.get() == '2':
                     name5.delete(0,30)
@@ -16303,7 +14857,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                   else:
                     name5.delete(0,30)
                     name5.insert(0, 'ser, s')
-                    canvas79.create_image(0,0,image=SERGUM,anchor=NW)                     
+                    canvas79.create_image(0,0,image=SERGUM,anchor=NW)
                 if name6.get() == 'threonine':
                   if diment.get() == '2':
                     name5.delete(0,30)
@@ -16312,7 +14866,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                   else:
                     name5.delete(0,30)
                     name5.insert(0, 'thr, t')
-                    canvas79.create_image(0,0,image=THRGUM,anchor=NW)                    
+                    canvas79.create_image(0,0,image=THRGUM,anchor=NW)
                 if name6.get() == 'tryptophan':
                   if diment.get() == '2':
                     name5.delete(0,30)
@@ -16321,7 +14875,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                   else:
                     name5.delete(0,30)
                     name5.insert(0, 'trp, w')
-                    canvas79.create_image(0,0,image=TRPGUM,anchor=NW)                     
+                    canvas79.create_image(0,0,image=TRPGUM,anchor=NW)
                 if name6.get() == 'tyrosine':
                   if diment.get() == '2':
                     name5.delete(0,30)
@@ -16330,7 +14884,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
                   else:
                     name5.delete(0,30)
                     name5.insert(0, 'tyr, y')
-                    canvas79.create_image(0,0,image=TYRGUM,anchor=NW) 
+                    canvas79.create_image(0,0,image=TYRGUM,anchor=NW)
                 if name6.get() == 'asparagine':
                   if diment.get() == '2':
                     name5.delete(0,30)
@@ -16339,12 +14893,12 @@ cmd.show('spheres', '(resn HOH)')\n''')
                   else:
                     name5.delete(0,30)
                     name5.insert(0, 'asn, n')
-                    canvas79.create_image(0,0,image=ASNGUM,anchor=NW) 
+                    canvas79.create_image(0,0,image=ASNGUM,anchor=NW)
             except:
                 name5.delete(0,30)
                 name5.insert(0, '')
         but49.bind('<Button-1>', aagive)
-        
+
 
 
         #-------------------------------------------------------------#
@@ -16356,7 +14910,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
        #------------------Electron Density Group--------------------
         #--------Making more frames, and thusly balloon helps
         #--------Then functions and buttons for all diff. density commands
-        
+
 
 
         page = notebook.add('Advanced\n Toolbox')#Making a new tab
@@ -16376,7 +14930,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
         def sculpt(*args):
             cmd.hide('everything')
             cmd.set('sphere_transparency',0.60)
-            cmd.set('sphere_color','white') 
+            cmd.set('sphere_color','white')
             cmd.set('auto_sculpt',1)
             cmd.mouse('three_button_editing')
             cmd.show('sticks')
@@ -16385,7 +14939,7 @@ cmd.show('spheres', '(resn HOH)')\n''')
             if script=='1':
                 f.write('''cmd.hide('everything')
 cmd.set('sphere_transparency',0.60)
-cmd.set('sphere_color','white') 
+cmd.set('sphere_color','white')
 cmd.set('auto_sculpt',1)
 cmd.mouse('three_button_editing')
 cmd.show('sticks')
@@ -16405,7 +14959,7 @@ cmd.zoom('all',4)'''/n)
         disbtn = Button(framedis, text = 'Measurement Tool', width=16)
         disbtn.grid(row=1, column=0, padx=1, pady=1, sticky=NW)
         disbtn.bind('<Button-1>', dis)
-  
+
         #Defines Sequence View Open and close
         #Defines Sequence View Open and close
         #opens Pymol sequence viewer, and can switch
@@ -16425,7 +14979,7 @@ cmd.zoom('all',4)'''/n)
         seqbtn1.bind('<Button-1>', seqviewon)
         seqbtn0.bind('<Button-1>', seqviewoff)
         seqformat = Entry(interior)
-        
+
         labels = ("One letter", "Three letter", "AA atoms", "Chains")
         def seqviewformat(tag):
             if tag == 'One letter':
@@ -16436,11 +14990,11 @@ cmd.zoom('all',4)'''/n)
                 cmd.set('seq_view_format', '2')
             elif tag == 'Chains':
                 cmd.set('seq_view_format', '3')
-	self.radioAdd(interior, 'w', 'vertical', seqviewformat, 
+	self.radioAdd(interior, 'w', 'vertical', seqviewformat,
 	              ' ', labels, 4, 0, 1, 1, 'NW')
 
 
-        
+
         #------------Amino Acid Select------------------------------
         group = Pmw.Group(page, tag_text='Amino Acid Selector:')
  	group.grid(row=1, column=0, padx=2, pady=2, sticky=SW)
@@ -16465,7 +15019,7 @@ cmd.zoom('all',4)'''/n)
             except:
                 print 'Invalid selection'
         selectr.bind('<Button-1>', selectresi)
-        
+
         #----------Selection function for individual amino acids----------
         #-----Experienced people just use Sequence viewer, which is recommended----
         def selres(*args):
@@ -16476,7 +15030,7 @@ cmd.zoom('all',4)'''/n)
           if x.get() == 'val' :
               cmd.select('valine', 'resn val')
           if x.get() == 'leu' :
-              cmd.select('leucine', 'resn leu')      
+              cmd.select('leucine', 'resn leu')
           if x.get() == 'ile' :
               cmd.select('isoleucine', 'resn ile')
           if x.get() == 'met' :
@@ -16514,7 +15068,7 @@ cmd.zoom('all',4)'''/n)
           if x.get() == 'v' :
               cmd.select('valine', 'resn val')
           if x.get() == 'l' :
-              cmd.select('leucine', 'resn leu')      
+              cmd.select('leucine', 'resn leu')
           if x.get() == 'i' :
               cmd.select('isoleucine', 'resn ile')
           if x.get() == 'm' :
@@ -16546,14 +15100,14 @@ cmd.zoom('all',4)'''/n)
           if x.get() == 'q' :
               cmd.select('glutamine', 'resn gln')
 
-        x.bind('<Return>', selres)    
+        x.bind('<Return>', selres)
         selecta.bind('<Button-1>', selres)
         cmd.extend('selres',selres)
 
 
         #----------Set up scales for controlling how much of protein is roved----------
 
-        
+
         group = Pmw.Group(page, tag_text='Electron Density Mapping')#And a new group
         group.grid(row=0, column=0, padx=2, pady=2, sticky=NW)
         interior = group.interior()
@@ -16582,25 +15136,25 @@ cmd.zoom('all',4)'''/n)
         contour1.configure(length="100")
         contour1.configure(orient="horizontal")
         contour1.configure(resolution="0.05")
-        contour1.configure(to="4.0")    
+        contour1.configure(to="4.0")
         contour1.grid(row=4, column=1, padx=1, pady=0, sticky=W)
         contour1.set(1.0)
         frameradii = Frame(interior)
         frameradii.grid(row=6, column=1, padx=0, pady=0, sticky=N)
         ballradii = Pmw.Balloon(interior)
-        ballradii.bind(frameradii, 'After changing detail, re-click on roving option') 
+        ballradii.bind(frameradii, 'After changing detail, re-click on roving option')
         rovingradius1 = Scale(frameradii, width =8)
         rovingradius1.configure(troughcolor="#ffffff")
         rovingradius1.configure(length="100")
         rovingradius1.configure(orient="horizontal")
         rovingradius1.configure(resolution="0.1")
-        rovingradius1.configure(to="15.0")    
+        rovingradius1.configure(to="15.0")
         rovingradius1.grid(row=6, column=1, padx=0, pady=0, sticky=N)
         rovingradius1.set(8.0)
         labrovrad = Label(interior, text = 'Roving Detail')
         labrovrad.grid(row=6, column=0, padx=5, pady=0, sticky=SE)
-    
-    	
+
+
          #---isomesh function
         def emesh(*args):
             delcrea()
@@ -16611,7 +15165,7 @@ cmd.zoom('all',4)'''/n)
             except:
                 try:
                     cmd.set("suspend_updates",1,quiet=1)
-                    cmd.remove("hydro")      
+                    cmd.remove("hydro")
                     cmd.enable('all')
                     cmd.map_new('map',"gaussian","0.75", 'all')
                     cmd.isomesh("map1", "map", 9999.0, 'all')
@@ -16620,7 +15174,7 @@ cmd.zoom('all',4)'''/n)
                     cmd.refresh()
                     if script=='1':
                         f.write('''cmd.set("suspend_updates",1,quiet=1)
-cmd.remove("hydro")      
+cmd.remove("hydro")
 cmd.enable('all')
 cmd.map_new('map',"gaussian","0.75", 'all')
 cmd.isomesh("map1", "map", 9999.0, 'all')
@@ -16631,7 +15185,7 @@ cmd.isomesh('map1','map','''+str(contour1.get())+''')\n''')
                     import tkMessageBox
                     tkMessageBox.showinfo("Error", 'No PDB is present')
                     interior.mainloop()
-                
+
         cmd.extend('emesh',emesh)
         imesh.bind('<Button-1>', emesh)
         idot = Button (framedots)
@@ -16648,7 +15202,7 @@ cmd.isomesh('map1','map','''+str(contour1.get())+''')\n''')
             except:
                try:
                     cmd.set("suspend_updates",1,quiet=1)
-                    cmd.remove("hydro")      
+                    cmd.remove("hydro")
                     cmd.enable('all')
                     cmd.map_new('map',"gaussian","0.75", 'all')
                     cmd.isodot("map1", "map", 9999.0, 'all')
@@ -16657,7 +15211,7 @@ cmd.isomesh('map1','map','''+str(contour1.get())+''')\n''')
                     cmd.isodot('map1','map', contour1.get())
                     if script=='1':
                         f.write('''cmd.set("suspend_updates",1,quiet=1)
-cmd.remove("hydro")      
+cmd.remove("hydro")
 cmd.enable('all')
 cmd.map_new('map',"gaussian","0.75", 'all')
 cmd.isodot("map1", "map", 9999.0, 'all')
@@ -16687,7 +15241,7 @@ cmd.isodot('map1','map', '''+str(contour1.get())+''')\n''')
             except:
                 try:
                     cmd.set("suspend_updates",1,quiet=1)
-                    cmd.remove("hydro")      
+                    cmd.remove("hydro")
                     cmd.enable('all')
                     cmd.map_new('map',"gaussian","0.75", 'all')
                     cmd.isosurface("map1", "map", 9999.0, 'all')
@@ -16696,7 +15250,7 @@ cmd.isodot('map1','map', '''+str(contour1.get())+''')\n''')
                     cmd.isosurface('map1','map', contour1.get())
                     if script=='1':
                         f.write('''cmd.set("suspend_updates",1,quiet=1)
-cmd.remove("hydro")      
+cmd.remove("hydro")
 cmd.enable('all')
 cmd.map_new('map',"gaussian","0.75", 'all')
 cmd.isosurface("map1", "map", 9999.0, 'all')
@@ -16710,9 +15264,9 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''')\n''')
                     interior.mainloop()
         cmd.extend('esurf',esurf)
         isurf.bind('<Button-1>', esurf)
-     
-       
-    
+
+
+
         rden = Button (framerov)
         rden.grid(row=3, column=0, padx=0, pady=2, sticky=W)
         rden.configure(text="Roving Mesh")
@@ -16721,7 +15275,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''')\n''')
         #From DeLano's code, need to cite
         def roving_density(self):
           delcrea()
-          try:                  
+          try:
             cmd.set("suspend_updates",1,quiet=1)
             cmd.remove("hydro")
             cmd.disable()
@@ -16767,14 +15321,14 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''')\n''')
             interior.mainloop()
         cmd.extend('roving_density',roving_density)
         rden.bind ('<Button-1>', roving_density)
-        
+
         def roving_surface(self):
             delcrea()
             try:
-               
+
                 cmd.remove("hydro")
                 cmd.disable()
-                cmd.enable('all')                
+                cmd.enable('all')
                 cmd.map_new('map',"gaussian","0.75", 'all')
                 cmd.set("roving_detail",1)
                 cmd.set("roving_origin",1)
@@ -16791,7 +15345,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''')\n''')
                 if script=='1':
                         f.write('''cmd.remove("hydro")
 cmd.disable()
-cmd.enable('all')                
+cmd.enable('all')
 cmd.map_new('map',"gaussian","0.75", 'all')
 cmd.set("roving_detail",1)
 cmd.set("roving_origin",1)
@@ -16805,7 +15359,7 @@ cmd.set('roving_isomesh', '0')
 cmd.set('transparency', '0.15')
 cmd.delete('rov_1')
 cmd.delete('rov_m1')\n''')
-               
+
             except:
                 import tkFileDialog
                 import tkMessageBox
@@ -16834,25 +15388,25 @@ cmd.delete('rov_m1')\n''')
                         f.write(''' cmd.isomesh('map1','map', '''+contour1.get()+''', 'sele')\n''')
             except:
                 try:
-                    
-                    cmd.remove("hydro")      
+
+                    cmd.remove("hydro")
                     cmd.enable('all')
                     cmd.map_new('map',"gaussian","0.75", 'all')
                     cmd.isomesh('map1','map', contour1.get(), 'sele')
                     if script=='1':
-                        f.write('''cmd.remove("hydro")      
+                        f.write('''cmd.remove("hydro")
 cmd.enable('all')
 cmd.map_new('map',"gaussian","0.75", 'all')
 cmd.isomesh('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
-                    
+
                 except:
                     if script=='1':
                         f.write('''cmd.orient('all')\n''')
                     cmd.orient('all')
-                    
+
                     import tkMessageBox
                     tkMessageBox.showinfo("Error", 'No PDB is present\nOr there is no selection ('"sele"')')
-                    
+
                     interior.mainloop()
 
         imesh1.bind('<Button-1>', emesh1)
@@ -16863,14 +15417,14 @@ cmd.isomesh('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
         #isodot on only selection
         def edot1(event):
             delcrea()
-            try: 
+            try:
                 cmd.isodot('map1','map', contour1.get(), 'sele')
                 if script=='1':
                         f.write('''cmd.isodot('map1','map', '''+contour1.get()+''', 'sele')\n''')
             except:
-                try: 
+                try:
                     cmd.set("suspend_updates",1,quiet=1)
-                    cmd.remove("hydro")      
+                    cmd.remove("hydro")
                     cmd.enable('all')
                     cmd.map_new('map',"gaussian","0.75", 'all')
                     cmd.isodot("map1", "map", 9999.0, 'all')
@@ -16880,7 +15434,7 @@ cmd.isomesh('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
                     cmd.get_names('all')
                     if script=='1':
                         f.write('''cmd.set("suspend_updates",1,quiet=1)
-cmd.remove("hydro")      
+cmd.remove("hydro")
 cmd.enable('all')
 cmd.map_new('map',"gaussian","0.75", 'all')
 cmd.isodot("map1", "map", 9999.0, 'all')
@@ -16896,7 +15450,7 @@ cmd.get_names('all')\n''')
                     import tkMessageBox
                     tkMessageBox.showinfo("Error", 'No PDB is present\nOr there is no selection ('"sele"')')
                     interior.mainloop()
-                          
+
         idot1.bind('<Button-1>', edot1)
         isurf1 = Button(framesurfsel)
         isurf1.grid(row=2, column=1, padx=0, pady=2, sticky=W)
@@ -16912,7 +15466,7 @@ cmd.get_names('all')\n''')
             except:
                 try:
                     cmd.set("suspend_updates",1,quiet=1)
-                    cmd.remove("hydro")      
+                    cmd.remove("hydro")
                     cmd.enable('all')
                     cmd.map_new('map',"gaussian","0.75", 'all')
                     cmd.isosurface("map1", "map", 9999.0, 'all')
@@ -16921,7 +15475,7 @@ cmd.get_names('all')\n''')
                     cmd.isosurface('map1','map', contour1.get(), 'sele')
                     if script=='1':
                         f.write('''cmd.set("suspend_updates",1,quiet=1)
-cmd.remove("hydro")      
+cmd.remove("hydro")
 cmd.enable('all')
 cmd.map_new('map',"gaussian","0.75", 'all')
 cmd.isosurface("map1", "map", 9999.0, 'all')
@@ -16938,16 +15492,16 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
                     interior.mainloop()
 
         isurf1.bind('<Button-1>', esurf1)
-        
-        
+
+
         frame = Frame(interior)
         frame.grid(row=3, column=1, padx=0, pady=0, sticky=SW)
         doublemapbtn = Button(frame, text = 'Double resolution')
         doublemapbtn.grid(row=3, column=1, padx=0, pady=0, sticky=SW)
-        
+
         balloon = Pmw.Balloon(interior)
         balloon.bind(frame, "Please be patient.\nButton can only be used once.\nPyMol will close if used twice.")
-        
+
         #doubles map resolution (permanent because Pymol has errors associated
         #with halving the map resolution)
         def doublemapres(event):
@@ -16963,7 +15517,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
         doublemapbtn.bind('<Button-1>', doublemapres)#workspot
 
         # 99 red balloons, floating in a summer sky
-        
+
         balloon1 = Pmw.Balloon(interior)
         balloon1.bind(framemesh, '''Display entire map as a mesh.''')
         balloon2 = Pmw.Balloon(interior)
@@ -17040,7 +15594,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
             mapper.grid(row=4, column=2, padx=0, pady=5, sticky=W)
             mapper.configure(text="Get Map")
             mapper.configure(width="10")
-            
+
             labelcon = Label(interior, text = 'Input PDB code')
             labelcon.grid(row=2, column=2, padx=0, pady=2, sticky=SW)
             framecontour1 = Frame(interior)
@@ -17050,13 +15604,13 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
             contour1.configure(length="65")
             contour1.configure(orient="horizontal")
             contour1.configure(resolution="0.05")
-            contour1.configure(to="4.0")    
+            contour1.configure(to="4.0")
             contour1.grid(row=1, column=2, padx=0, pady=0, sticky=NW)
             contour1.set(1.0)
-                 
+
             mapper.bind('<Button-1>', getmap)
-            
-         
+
+
             def elhelp(event):
                 import webbrowser
                 webbrowser.open('./modules/pmg_tk/startup/EDMHelp.htm')
@@ -17084,8 +15638,8 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
                     tkMessageBox.showinfo("Error", 'No map is present')
                     interior.mainloop()
 
-                    
-                   
+
+
             imesh.bind('<Button-1>', emesh)
             idot = Button (framedots)
             idot.grid(row=3, column=0, padx=0, pady=5, sticky=W)
@@ -17139,11 +15693,11 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
                     import tkMessageBox
                     tkMessageBox.showinfo("Error", 'No map is present')
                     interior.mainloop()
-                    
+
             isurf.bind('<Button-1>', esurf)
-         
-           
-            
+
+
+
     #----------Electron Density Map on only Selection------------------------
             labelcon = Label(interior, text = '  Contour')
             labelcon.grid(row=0, column=2, padx=0, pady=2, sticky=SW)
@@ -17152,7 +15706,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
             imesh1.configure(text="Mesh Select")
             imesh1.configure(width="10")
             #isomesh on only selection
-            
+
             def emesh1(*args):
                 delcrea()
                 try:
@@ -17204,7 +15758,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
                     tkMessageBox.showinfo("Error", 'No map is present\n Or there is no selection ("sele")')
                     interior.mainloop()
 
-                   
+
             idot1.bind('<Button-1>', edot1)
             isurf1 = Button(framesurfsel)
             isurf1.grid(row=4, column=1, padx=0, pady=2, sticky=W)
@@ -17224,7 +15778,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
                         import tkMessageBox
                         tkMessageBox.showinfo('Error', "Enter the Map Filename")
                         interior.mainloop()
-                    
+
                     else:
                         cmd.isosurface(nameit.get(), pdbname.get(), contour1.get(), ('sele'))
                 except:
@@ -17235,22 +15789,22 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
                     interior.mainloop()
 
             isurf1.bind('<Button-1>', esurf1)
-            
-            
+
+
             frame = Frame(interior)
             frame.grid(row=5, column=1, padx=0, pady=0, sticky=SW)
             doublemapbtn = Button(frame, text = 'Double resolution')
             doublemapbtn.grid(row=5, column=1, padx=0, pady=3, sticky=SW)
-            
+
             balloon = Pmw.Balloon(interior)
             balloon.bind(frame, "Please be patient.\nButton should only be used once.\nPyMol will close if used twice.")
-            
+
             #doubles map resolution (permanent because Pymol has errors associated
             #with halving the map resolution)
             def doublemapres(*args):
                 try:
                     cmd.map_double(pdbname.get(), '1')
-                    
+
                 except:
                     import tkFileDialog
                     import tkMessageBox
@@ -17287,7 +15841,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
         loadmapbtn =  Button(framemapdoer, text = 'External map')
         loadmapbtn.grid(row=4, column=1, padx=0, pady=5, sticky=NW)
         loadmapbtn.bind('<Button-1>', loadmapps)
- 
+
         #------------Fetch Ramachandran Plot --------------------
         group = Pmw.Group(page, tag_text='Ramachandran Plot:')
  	group.grid(row=1, column=1, padx=2, pady=2, sticky=SW)
@@ -17305,11 +15859,11 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
         def fetchurl(self):
             import webbrowser
             webbrowser.open('http://eds.bmc.uu.se/cgi-bin/eds/rama?pdbCode='+enterpdb.get())
-          
-              
+
+
         btn1.bind('<Button-1>', fetchurl)
 
-        
+
 
       #-----------------------------------------------------#
       #                                                     #
@@ -17359,13 +15913,13 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
 
 
         #----------Load and Save Frame Group------------------#
-	
-        from pymol import movie 
+
+        from pymol import movie
 	group = Pmw.Group(page, tag_text='Load and Save:')
  	group.grid(row=0, column=0, padx=0, pady=0, sticky="NE")
         interior = group.interior()
         #------------File extension Selector---------------#
-        
+
         filexlab = Label(interior, text = "File Extension:")
         filexlab.grid(row=4, column=0, padx=5, pady=5, sticky=NE)
         entfilex = Entry(interior, width = 5)
@@ -17373,8 +15927,8 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
         entfilex.insert(0, ".pdb")
 
         #---------------Load Button and Function---------------------#
-        
-	 
+
+
 	loadbtn1 = Button(interior, text = 'Load frame')
         loadbtn1.grid(row=2, column=0, padx=5, pady=5, sticky=NE)
         framelab = Label(interior, text = 'Frame:')
@@ -17388,7 +15942,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
           a = int(entl.get()) + 1
           entl.delete(0,100000)
           entl.insert(0,a)
-          
+
           import tkMessageBox
           if int(entl.get())<2:
             if tkMessageBox.askyesno('Load Frames', 'Click yes to load in discrete mode'):
@@ -17407,10 +15961,10 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
             if len(file)>0:
               cmd.load(file, "mov", entl.get())
           page.mainloop()
-            
+
         loadbtn1.bind('<Button-1>', loadframe)
         #---------------Save Button------------------#
-        
+
         savebtn = Button(interior, text = 'Save Frame')
         savebtn.grid(row=2, column=1, padx=5, pady=5, sticky=NW)
 
@@ -17431,7 +15985,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
                 tkMessageBox.showinfo('Alert!', 'You need to enter the frame number')
                 interior.mainloop()
         gotobtn.bind('<Button-1>', gotoframe)
-                    
+
         #---------Save Function--------------------------#
 
         def molSave(self):
@@ -17465,7 +16019,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
         #-----------Ray Trace Frames-----------
         #Self explanatory, and can save ray traced frames# as png images
         labels = ("Ray Trace Frames")
-    	self.ray = Pmw.RadioSelect(interior, labelpos='w', labelmargin=0, 
+    	self.ray = Pmw.RadioSelect(interior, labelpos='w', labelmargin=0,
     		                   buttontype='checkbutton',orient='vertical',
     		                   command=self.ray)
     	self.ray.add("Ray Trace Frames")
@@ -17488,9 +16042,9 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
         clearbtn.bind('<Button-1>', clearram)
 
         #-----Cache off button and Function-----------
-              
+
         labels = ("Frame Cache Off")
-    	self.cache = Pmw.RadioSelect(interior, labelpos='w', labelmargin=0, 
+    	self.cache = Pmw.RadioSelect(interior, labelpos='w', labelmargin=0,
     		                   buttontype='checkbutton',orient='vertical',
     		                   command=self.cacheframe)
     	self.cache.add("Frame Cache Off")
@@ -17499,7 +16053,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
         #------------Scripted Animation GUI ----------#
     	#Used for easier creation of movies, utilizing buttons
     	#instead of the necessity to input Pymol commands constantly
-    	
+
         group = Pmw.Group(page, tag_text='Scripted Animation:')
  	group.grid(row=0, column=1, padx=0, pady=0, sticky="NW")
         interior = group.interior()
@@ -17555,49 +16109,49 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
         enttz.grid(row = 5, column=2, padx=5, pady=5, sticky = NW)
          #-----Movie translation functions, providing specification
         #of xyz coordinate translation of proteins and/or molecules
-        def movsetx(event):         
+        def movsetx(event):
             a = int(scriptent.get()) +1
             scriptent.delete(0,100000)
             scriptent.insert(0,a)
             cmd.mdo( scriptent.get(),  "move x," + entmx.get())
         labmx.bind('<Button-1>', movsetx)
-        def movsety(event):         
+        def movsety(event):
             a = int(scriptent.get()) +1
             scriptent.delete(0,100000)
             scriptent.insert(0,a)
             cmd.mdo( scriptent.get(),  "move y," + entmy.get())
         labmy.bind('<Button-1>', movsety)
-        def movsetz(event):         
+        def movsetz(event):
             a = int(scriptent.get()) +1
             scriptent.delete(0,100000)
             scriptent.insert(0,a)
             cmd.mdo( scriptent.get(),  "move z," + entmz.get())
         labmz.bind('<Button-1>', movsetz)
-        def tursetx(event):         
+        def tursetx(event):
             a = int(scriptent.get()) +1
             scriptent.delete(0,100000)
             scriptent.insert(0,a)
             cmd.mdo( scriptent.get(),  "turn x," + enttx.get())
         labtx.bind('<Button-1>', tursetx)
-        def tursety(event):         
+        def tursety(event):
             a = int(scriptent.get()) +1
             scriptent.delete(0,100000)
             scriptent.insert(0,a)
             cmd.mdo( scriptent.get(),  "turn y," + entty.get())
         labty.bind('<Button-1>', tursety)
-        def tursetz(event):         
+        def tursetz(event):
             a = int(scriptent.get()) +1
             scriptent.delete(0,100000)
             scriptent.insert(0,a)
             cmd.mdo( scriptent.get(),  "turn z," + enttz.get())
         labtz.bind('<Button-1>', tursetz)
-        def tursetz(event):         
+        def tursetz(event):
             a = int(scriptent.get()) +1
             scriptent.delete(0,100000)
             scriptent.insert(0,a)
             cmd.mdo( scriptent.get(),  "turn z," + enttz.get())
         labtz.bind('<Button-1>', tursetz)
-        def movsetxyz(event):         
+        def movsetxyz(event):
             a = int(scriptent.get()) +1
             scriptent.delete(0,100000)
             scriptent.insert(0,a)
@@ -17605,7 +16159,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
         labmxyz = Button(interior, text = "Move All:")
         labmxyz.grid(row = 6, column=0, padx=5, pady=5, sticky = NE)
         labmxyz.bind('<Button-1>', movsetxyz)
-        def tursetxyz(event):         
+        def tursetxyz(event):
             a = int(scriptent.get()) +1
             scriptent.delete(0,100000)
             scriptent.insert(0,a)
@@ -17613,7 +16167,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
         labtxyz = Button(interior, text = "Turn All:")
         labtxyz.grid(row = 6, column=1, padx=5, pady=5, sticky = NW)
         labtxyz.bind('<Button-1>', tursetxyz)
-        def tursetxyzmovsetxyz(event):         
+        def tursetxyzmovsetxyz(event):
             a = int(scriptent.get()) +1
             scriptent.delete(0,100000)
             scriptent.insert(0,a)
@@ -17764,12 +16318,12 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
         maskaebtn.bind('<Button-1>', maskallexcept)
         protectbtn.bind('<Button-1>', protectme)
         deprotectbtn.bind('<Button-1>', deprotectme)
-        
+
         #auto adjust notebook size
  	notebook.setnaturalsize()
- 	
+
         #------Version 1---#
- 	
+
  	#checks to see if there is a file loaded in the viewer prior to the GUI being opened
  	#-----only update() really does anything, not sure why the rest is here---
         self.fileLoaded = ' '
@@ -17779,19 +16333,19 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
                 self.p=PDBParser()
                 update()
         self.fileLoaded = ' '
- 
 
- 	
- 	
+
+
+
 
     #--------------------------------------#
     #      		                   #
     #   HANDLE BUTTONS AT BOTTOM OF GUI    #
     #    (open, fetch.., help, exit)       #
-    #--------------------------------------#         
+    #--------------------------------------#
     def execute(self, result):
         import tkFileDialog
-    
+
         if result == 'Open':
             file=tkFileDialog.askopenfilename(initialdir='./PyMol')
             if file:
@@ -17818,7 +16372,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
 # Update all Labels on Information Tab
     def update(self):
         chainList=['All','Ligands','Not Selected','Hydrophobic','Hydrophilic']
-        cmd.disable('protein')	
+        cmd.disable('protein')
         cmd.select('nucleic_acid', 'resn a+g+c+t+u')
         cmd.disable('nucleic_acid')
         cmd.select('ligands', 'het')
@@ -17826,7 +16380,7 @@ cmd.isosurface('map1','map', '''+str(contour1.get())+''', 'sele')\n''')
         cmd.remove('resn HOH')
         if script=='1':
             f.write('''cmd.select('protein', 'resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
-cmd.disable('protein')	
+cmd.disable('protein')
 cmd.select('nucleic_acid', 'resn a+g+c+t+u')
 cmd.disable('nucleic_acid')
 cmd.select('ligands', 'het')
@@ -17858,12 +16412,12 @@ cmd.remove('resn HOH')\n''')
     #        "ADVANED" TAB METHODS  #
     #                                                                        #
     #-------------------------------------------#
-    
+
     #------------------------------------------#
     #              Cartoon Functions                    #
     #------------------------------------------#
-    
-    # Set Cartoon Thickness 
+
+    # Set Cartoon Thickness
     def cartoon_thickness(self):
         self.populate()
         sel1 = ''
@@ -17874,9 +16428,9 @@ cmd.remove('resn HOH')\n''')
             f.write('''value = '''+str(self.toonThickness.get())+'''
 cmd.set('cartoon_rect_width', value, 'all')
 cmd.set('cartoon_oval_width', value, 'all')\n''')
-        
 
-    # Set Cartoon Width 
+
+    # Set Cartoon Width
     def cartoon_width(self):
         self.populate()
         sel1 = ''
@@ -17887,7 +16441,7 @@ cmd.set('cartoon_oval_width', value, 'all')\n''')
             f.write('''value = '''+str(self.toonWidth.get())+'''
 cmd.set('cartoon_rect_length', value, 'all')
 cmd.set('cartoon_oval_length', value, 'all')\n''')
-            
+
     # Set Cartoon Transparency
     def cartoon_transparency(self):
         self.populate()
@@ -17897,8 +16451,8 @@ cmd.set('cartoon_oval_length', value, 'all')\n''')
         if script=='1':
             f.write('''amount='''+str(self.cartoonTransparency.get())+'''
 cmd.set('cartoon_transparency', amount, 'all')\n''')
-       
-    # Set Cartoon Tube Radius 
+
+    # Set Cartoon Tube Radius
     def cartoon_tube_radius(self):
         self.populate()
         sel1 = ''
@@ -17907,7 +16461,7 @@ cmd.set('cartoon_transparency', amount, 'all')\n''')
         if script=='1':
             f.write('''value = '''+str(self.toonTubeRadius.get())+'''
 cmd.set('cartoon_tube_radius', value, 'all')\n''')
-        
+
     #Set Ribbon Type
     def ribType(self,tag):
         try:
@@ -17989,7 +16543,7 @@ cmd.set('cartoon_tube_radius', value, 'all')\n''')
         except:
             import tkMessageBox
             tkMessageBox.showinfo('Error', 'Drop down menu is set to an invalid selection\nYou may need to update selections')
-                
+
     #------------------------------------------#
     #               Sphere Functions           #
     #------------------------------------------#
@@ -18002,7 +16556,7 @@ cmd.set('cartoon_tube_radius', value, 'all')\n''')
         if script=='1':
             f.write('''amount='''+str(self.sphereTransparency.get())+'''
 cmd.set('sphere_transparency', amount, 'all')\n''')
-                
+
     # Set Sphere Size
     def sphereSize(self):
         self.populate()
@@ -18012,10 +16566,10 @@ cmd.set('sphere_transparency', amount, 'all')\n''')
         if script=='1':
             f.write('''size='''+str(self.sphereScale.get())+'''
 cmd.set('sphere_scale', size, 'all')\n''')
-      
+
     #------------------------------------------#
     #              Surface  Functions          #
-    #------------------------------------------#       
+    #------------------------------------------#
     # Set Surface Transparency
     def surface_transparency(self):
         self.populate()
@@ -18025,10 +16579,10 @@ cmd.set('sphere_scale', size, 'all')\n''')
         if script=='1':
             f.write('''amount='''+str(self.surfaceTransparency.get())+'''
 cmd.set('transparency', amount, 'all')\n''')
-       
+
     #------------------------------------------#
     #              Stick  Functions            #
-    #------------------------------------------#       
+    #------------------------------------------#
     # Set Stick Transparency
     def stick_transparency(self):
         self.populate()
@@ -18038,7 +16592,7 @@ cmd.set('transparency', amount, 'all')\n''')
         if script=='1':
             f.write('''amount='''+str(self.stickTransparency.get())+'''
 cmd.set('stick_transparency', amount, 'all')\n''')
-        
+
      # Set Stick Radius
     def stickRad(self):
         self.populate()
@@ -18048,20 +16602,20 @@ cmd.set('stick_transparency', amount, 'all')\n''')
         if script=='1':
             f.write('''size='''+str(self.stickRadius.get())+'''
 cmd.set('stick_radius',size, 'all')\n''')
-       
+
 
 
          #------------------------------------------#
         #             Set Default Values                      #
-        #------------------------------------------#       
+        #------------------------------------------#
     def set_advanced_defaults(self, tag):
       if tag == 'cartoon':
-        
+
         # apply the changes
-        cmd.set('cartoon_rect_length', '1.4', 'all') 
+        cmd.set('cartoon_rect_length', '1.4', 'all')
         cmd.set('cartoon_oval_length', '1.4', 'all')
-        cmd.set('cartoon_rect_width', '0.3', 'all') 
-        cmd.set('cartoon_oval_width', '0.3', 'all') 
+        cmd.set('cartoon_rect_width', '0.3', 'all')
+        cmd.set('cartoon_oval_width', '0.3', 'all')
         cmd.set('cartoon_tube_radius','0.5','all')
         cmd.set('cartoon_transparency','0.0','all')
         cmd.cartoon('automatic',sel1)
@@ -18071,10 +16625,10 @@ cmd.set('stick_radius',size, 'all')\n''')
         self.toonTubeRadius.set('0.5')
         self.ribbonTypes.invoke(0)
         if script=='1':
-          f.write('''cmd.set('cartoon_rect_length', '1.4', 'all') 
+          f.write('''cmd.set('cartoon_rect_length', '1.4', 'all')
 cmd.set('cartoon_oval_length', '1.4', 'all')
-cmd.set('cartoon_rect_width', '0.3', 'all') 
-cmd.set('cartoon_oval_width', '0.3', 'all') 
+cmd.set('cartoon_rect_width', '0.3', 'all')
+cmd.set('cartoon_oval_width', '0.3', 'all')
 cmd.set('cartoon_tube_radius','0.5','all')
 cmd.set('cartoon_transparency','0.0','all')
 cmd.cartoon('automatic','''+sel1+''')
@@ -18083,7 +16637,7 @@ self.toonThickness.set('0.3')
 self.cartoonTransparency.set('0.0')
 self.toonTubeRadius.set('0.5')
 self.ribbonTypes.invoke(0)\n''')
-                
+
       elif tag == 'spheres':
 
         cmd.set('sphere_scale','0.7','all')
@@ -18095,7 +16649,7 @@ self.ribbonTypes.invoke(0)\n''')
 cmd.set('sphere_transparency','0.0','all')
 self.sphereScale.set('0.7')
 self.sphereTransparency.set('0.0')\n''')
-                
+
       elif tag == 'sticks':
 
         cmd.set('stick_radius','0.2','all')
@@ -18107,8 +16661,8 @@ self.sphereTransparency.set('0.0')\n''')
 cmd.set('stick_transparency','0.0','all')
 self.stickRadius.set('0.2')
 self.stickTransparency.set('0.0')\n''')
-                
-      elif tag == 'surface':	
+
+      elif tag == 'surface':
         # apply the changes
         cmd.set('transparency','0.0','all')
         self.surfaceTransparency.set('0.0')
@@ -18159,9 +16713,9 @@ self.asca.set('0.25')\n''')
 #             cmd.set('roving_lines',0)
 #             cmd.delete('rov_1')
 #             cmd.set('roving_isosurface',0)
-            
-    
-          #populates the selection list      
+
+
+          #populates the selection list
     def populate(self):
       letters = ['A', 'B', 'C', 'D', 'E',
                  'F', 'G', 'H', 'I', 'J',
@@ -18235,7 +16789,7 @@ cmd.select("Chain-W", "chain W")
 cmd.select("Chain-X", "chain X")
 cmd.select("Chain-Y", "chain Y")
 cmd.select("Chain-Z", "chain Z")\n''')
-        checkforchain()            
+        checkforchain()
         items=[]
         objects = cmd.get_names('all')
         items.append('All')
@@ -18255,7 +16809,7 @@ cmd.select("Chain-Z", "chain Z")\n''')
         if 'ligands' in objects:
           items.append('ligands')
         if 'heme' in objects:
-          items.append('heme') 
+          items.append('heme')
 	#Checks to see if there are chains in objects
 
 
@@ -18266,20 +16820,20 @@ cmd.select("Chain-Z", "chain Z")\n''')
         sel1 = 'All'
         sel = 'All'
         items.sort()
-        selection.setitems(items) 
+        selection.setitems(items)
         self.advancedSelection.setitems(items)
 
-    #-------The End------for now.... 
+    #-------The End------for now....
 def write_script(tag):
   if tag == 'Off':
     script ='0'
-    
+
   if tag=='On': #write a scritp
     try:
       script = '1'
       import tkFileDialog
       Q = tkFileDialog.asksaveasfilename(defaultextension=".py", initialdir="./modules/pmg_tk/startup/Scripts")
-      cmd.do('log_open %s,a' %(Q))            
+      cmd.do('log_open %s,a' %(Q))
       self.f=open(Q, 'w')
     except:
       pass
@@ -18332,7 +16886,7 @@ def set_defaults():
   cmd.cartoon('automatic', 'all')
   cmd.set('stick_radius','0.2','all')
   if script == '1':
-    f.write('''cmd.hide("everything","all") 
+    f.write('''cmd.hide("everything","all")
 cmd.set("transparency","0.0","all")
 cmd.set("cartoon_transparency","0.0","all")
 cmd.set("transparency","0","all")
@@ -19054,7 +17608,7 @@ def color_by_chain():
     cmd.hide('all')
     cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
     cmd.show('sticks','resn a+g+c+t+u')
-    cmd.set('sphere_scale','0.4','resn u')   
+    cmd.set('sphere_scale','0.4','resn u')
     cmd.color("blue","chain A")
     cmd.color("orange","chain B" )
     cmd.color("silver","chain C")
@@ -19085,7 +17639,7 @@ def color_by_chain():
         f.write('''cmd.hide('all')
 cmd.show('cartoon','resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
 cmd.show('sticks','resn a+g+c+t+u')
-cmd.set('sphere_scale','0.4','resn u')   
+cmd.set('sphere_scale','0.4','resn u')
 cmd.color("blue","chain A")
 cmd.color("orange","chain B" )
 cmd.color("silver","chain C")
@@ -19219,7 +17773,7 @@ cmd.select("Chain-W", "chain W")
 cmd.select("Chain-X", "chain X")
 cmd.select("Chain-Y", "chain Y")
 cmd.select("Chain-Z", "chain Z")\n''')
-  checkforchain()            
+  checkforchain()
   items=[]
   objects = cmd.get_names('all')
   items.append('All')
@@ -19239,7 +17793,7 @@ cmd.select("Chain-Z", "chain Z")\n''')
   if 'ligands' in objects:
     items.append('ligands')
   if 'heme' in objects:
-    items.append('heme') 
+    items.append('heme')
   #Checks to see if there are chains in objects
 
 
@@ -19250,14 +17804,14 @@ cmd.select("Chain-Z", "chain Z")\n''')
   sel1 = 'All'
   sel = 'All'
   items.sort()
-  #selection.setitems(items) 
+  #selection.setitems(items)
   #self.advancedSelection.setitems(items)
 cmd.extend('populate',populate)
 
 
 def update():
   chainList=['All','Ligands','Not Selected','Hydrophobic','Hydrophilic']
-  cmd.disable('protein')	
+  cmd.disable('protein')
   cmd.select('nucleic_acid', 'resn a+g+c+t+u')
   cmd.disable('nucleic_acid')
   cmd.select('ligands', 'het')
@@ -19265,7 +17819,7 @@ def update():
   cmd.remove('resn HOH')
   if script=='1':
     f.write('''cmd.select('protein', 'resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
-cmd.disable('protein')	
+cmd.disable('protein')
 cmd.select('nucleic_acid', 'resn a+g+c+t+u')
 cmd.disable('nucleic_acid')
 cmd.select('ligands', 'het')
