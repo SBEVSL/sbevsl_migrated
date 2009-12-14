@@ -8,6 +8,7 @@ from tkMessageBox import *
 import Pmw
 import re
 import os
+import urllib
 import urllib2
 import StringIO
 import gzip
@@ -15,7 +16,6 @@ import time
 import types
 import random
 import linecache
-import urllib
 
 global PYMOL_PATH
 global PROMOL_PATH
