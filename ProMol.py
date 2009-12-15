@@ -30,7 +30,7 @@ try:
 	PYMOL_PATH=os.environ['PYMOL_PATH']
 except KeyError:
 	PYMOL_PATH='./'
-PROMOL_PATH="%smodules/pmg_tk/startup/" % (PYMOL_PATH)
+PROMOL_PATH="%smodules/pmg_tk/startup/"%(PYMOL_PATH)
 
 Pmw.initialise()
 
@@ -41,12 +41,12 @@ AminoList = ('ala','arg','asn','asp','cys','gln','glu','gly','his','ile','leu','
 
 for x in AminoList:
 	for y in ('3D','2D'):
-		Photos["%s%s" % (x,y)] = PhotoImage(file="%sAminoPics/%s%s.gif" % (PROMOL_PATH,x,y))
+		Photos["%s%s"%(x,y)] = PhotoImage(file="%sAminoPics/%s%s.gif"%(PROMOL_PATH,x,y))
 
 #A - Z
-AlphaSequence = [ "%c" % (x) for x in range(ord('A'), ord('Z')+1)]
+AlphaSequence = [ "%c"%(x) for x in range(ord('A'), ord('Z')+1)]
 #a - z
-alphaSequence = [ "%c" % (x) for x in range(ord('a'), ord('z')+1)]
+alphaSequence = [ "%c"%(x) for x in range(ord('a'), ord('z')+1)]
 
 
 def ProMol(pymol,userClick):
@@ -213,15 +213,10 @@ class ChimeConverter:
 		cmd.do(self.individuals[self.command])
 		self.results.appendtext(pymShow)
 
-#---------------------------------------------------------------#
-#											#
-#							 GUI Class							 #
-#											#
-#										#
-#											#
-#				 The look of the interface					#
-#											#
-#---------------------------------------------------------------#
+'''
+	PGUI CLASS
+	The look and feel of the Gui.
+'''
 class PGUI:
 	
 	
@@ -1348,30 +1343,44 @@ class PGUI:
 	def motifCaller(self,motif,camera): pass
 	
 	def byResidue(self,selection,num):
-		byres = ''
+		byres, delete = '', ''
 		numbers = range(1,num)
 		for number in numbers:
 			if number == num:
 				byres = str.join((byres,'byres ',selection,number))
+				delete = str.join((delete,selection,number))
 			else:
 				byres = str.join((byres,'byres ',selection,number,' and '))
-		cmd.do('select %s, %s' % (selection, byres))
+				delete = str.join((delete,selection,number,', '))
+		cmd.do('select %s, %s'%(selection, byres))
+		cmd.do('delete %s'%(delete))
 
-	def serineprotease(self):
-		motifRange = self.range.get()
+	def delSelections(self,*selections):
+		delete = ''
+		i = 1
+		selecLen = len(selections)
+		for selection in selections:
+			if i = selecLen:
+				delete = str.join((delete,selection,number))
+			else:
+				delete = str.join((delete,selection,number,', '))
+			i+=1
+		cmd.do('delete %s'%(delete))
+
+	def serineprotease(self,motifRange):
 		update()#updates list of molecular groups
 		checkitforthese()#sees if objects are in objects
 		set_defaults()#sets defaults
 		delcrea()#deletes created objects
 		deletemotif()#deletes previous motif
-		cmd.select('asp1', 'resn asp within %s of resn his' %(motifRange*3)) #selects aspartate within 3 of histidine
+		cmd.select('asp1', 'resn asp within %s of resn his'%(motifRange*3)) #selects aspartate within 3 of histidine
 		cmd.select('asp2', 'resn asp within %s of resn ser'%(motifRange*7))
 		cmd.select('asp', 'byres asp1 and byres asp2')
-		cmd.select('his1', 'resn his within %s of asp' %(motifRange*4))
-		cmd.select('his2', 'resn his within %s of resn ser' %(motifRange*4))
+		cmd.select('his1', 'resn his within %s of asp'%(motifRange*4))
+		cmd.select('his2', 'resn his within %s of resn ser'%(motifRange*4))
 		cmd.select('his', 'byres his1 and byres his2')
-		cmd.select('ser1', 'name og within %s of name ne2' %(motifRange*3.5))
-		cmd.select('ser2', 'resn ser within %s of asp' %(motifRange*7))
+		cmd.select('ser1', 'name og within %s of name ne2'%(motifRange*3.5))
+		cmd.select('ser2', 'resn ser within %s of asp'%(motifRange*7))
 		cmd.select('ser', 'byres ser1 and byres ser2')
 		cmd.select('serineprotease', 'ser(his(asp))')
 		cmd.hide('everything')
@@ -1384,73 +1393,66 @@ class PGUI:
 		cmd.deselect()#deselects
 	
 	
-	def Blactamase(self):
-		cmd.select('lys1', 'name nz and resn lys within %s of (name oh and resn tyr)' %(motifRange*5))
-		cmd.select('lys2', 'name nz and resn lys within %s of (name cz and resn tyr)' %(motifRange*5.5))
-		cmd.select('lys3', 'name nz and resn lys within %s of (name ce1 and resn tyr)' %(motifRange*6.5))
-		cmd.select('lys4', 'name nz and resn lys within %s of (name ce2 and resn tyr)' %(motifRange*6.5))
-		cmd.select('lys5', 'name ce and resn lys within %s of (name oh and resn tyr)' %(motifRange*5))
-		cmd.select('lys6', 'name ce and resn lys within %s of (name cz and resn tyr)' %(motifRange*6))
-		cmd.select('lys7', 'name nz and resn lys within %s of (name og and resn ser)' %(motifRange*6))
-		cmd.select('lys8', 'name nz and resn lys within %s of (name cb and resn ser)' %(motifRange*5.2))
-		cmd.select('lys9', 'name cb and resn lys within %s of (name cb and resn ser)' %(motifRange*9.2))
-		cmd.select('lys10', 'name ce and resn lys within %s of (name oe1 and resn glu)' %(motifRange*11))
-		cmd.select('lys11', 'name nz and resn lys within %s of (name oe1 and resn glu)' %(motifRange*11))
-		cmd.select('lys12', 'name nz and resn lys within %s of (name oe2 and resn glu)' %(motifRange*12.5))
-		cmd.select('lys13', 'name ce and resn lys within %s of (name cd and resn glu)' %(motifRange*11))
+	def Blactamase(self,motifRange):
+		cmd.select('lys1', 'name nz and resn lys within %s of (name oh and resn tyr)'%(motifRange*5))
+		cmd.select('lys2', 'name nz and resn lys within %s of (name cz and resn tyr)'%(motifRange*5.5))
+		cmd.select('lys3', 'name nz and resn lys within %s of (name ce1 and resn tyr)'%(motifRange*6.5))
+		cmd.select('lys4', 'name nz and resn lys within %s of (name ce2 and resn tyr)'%(motifRange*6.5))
+		cmd.select('lys5', 'name ce and resn lys within %s of (name oh and resn tyr)'%(motifRange*5))
+		cmd.select('lys6', 'name ce and resn lys within %s of (name cz and resn tyr)'%(motifRange*6))
+		cmd.select('lys7', 'name nz and resn lys within %s of (name og and resn ser)'%(motifRange*6))
+		cmd.select('lys8', 'name nz and resn lys within %s of (name cb and resn ser)'%(motifRange*5.2))
+		cmd.select('lys9', 'name cb and resn lys within %s of (name cb and resn ser)'%(motifRange*9.2))
+		cmd.select('lys10', 'name ce and resn lys within %s of (name oe1 and resn glu)'%(motifRange*11))
+		cmd.select('lys11', 'name nz and resn lys within %s of (name oe1 and resn glu)'%(motifRange*11))
+		cmd.select('lys12', 'name nz and resn lys within %s of (name oe2 and resn glu)'%(motifRange*12.5))
+		cmd.select('lys13', 'name ce and resn lys within %s of (name cd and resn glu)'%(motifRange*11))
 		cmd.select('lys', 'byres lys1 and byres lys2 and byres lys3 and byres lys4 and byres lys5 and byres lys6 and byres lys7 and byres lys8 and byres lys9 and byres lys10 and byres lys11 and byres lys12 and byres lys13')
-		cmd.select('tyr1', 'name oh and resn tyr within %s of (name nz and resn lys)' %(motifRange*5))
-		cmd.select('tyr2', 'name cz and resn tyr within %s of (name nz and resn lys)' %(motifRange*5.5))
-		cmd.select('tyr3', 'name ce1 and resn tyr within %s of (name nz and resn lys)' %(motifRange*6.5))
-		cmd.select('tyr4', 'name ce2 and resn tyr within %s of (name nz and lys)' %(motifRange*6.5))
-		cmd.select('tyr5', 'name oh and resn tyr within %s of (name ce and resn lys)' %(motifRange*5))
-		cmd.select('tyr6', 'name cz and resn tyr within %s of (name ce and resn lys)' %(motifRange*6))
-		cmd.select('tyr7', 'name oh and resn tyr within %s of (name og and resn ser)' %(motifRange*6))
-		cmd.select('tyr8', 'name cz and resn tyr within %s of (name og and resn ser)' %(motifRange*6.5))
-		cmd.select('tyr9', 'name oh and resn tyr within %s of (name cb and resn ser)' %(motifRange*6))
-		cmd.select('tyr10', 'name oh and resn tyr within %s of (name oe1 and resn glu)' %(motifRange*10))
-		cmd.select('tyr11', 'name oh and resn tyr within %s of (name oe2 and resn glu)' %(motifRange*10))
-		cmd.select('tyr12', 'name oh and resn tyr within %s of (name cd and resn glu)' %(motifRange*10))
+		cmd.select('tyr1', 'name oh and resn tyr within %s of (name nz and resn lys)'%(motifRange*5))
+		cmd.select('tyr2', 'name cz and resn tyr within %s of (name nz and resn lys)'%(motifRange*5.5))
+		cmd.select('tyr3', 'name ce1 and resn tyr within %s of (name nz and resn lys)'%(motifRange*6.5))
+		cmd.select('tyr4', 'name ce2 and resn tyr within %s of (name nz and lys)'%(motifRange*6.5))
+		cmd.select('tyr5', 'name oh and resn tyr within %s of (name ce and resn lys)'%(motifRange*5))
+		cmd.select('tyr6', 'name cz and resn tyr within %s of (name ce and resn lys)'%(motifRange*6))
+		cmd.select('tyr7', 'name oh and resn tyr within %s of (name og and resn ser)'%(motifRange*6))
+		cmd.select('tyr8', 'name cz and resn tyr within %s of (name og and resn ser)'%(motifRange*6.5))
+		cmd.select('tyr9', 'name oh and resn tyr within %s of (name cb and resn ser)'%(motifRange*6))
+		cmd.select('tyr10', 'name oh and resn tyr within %s of (name oe1 and resn glu)'%(motifRange*10))
+		cmd.select('tyr11', 'name oh and resn tyr within %s of (name oe2 and resn glu)'%(motifRange*10))
+		cmd.select('tyr12', 'name oh and resn tyr within %s of (name cd and resn glu)'%(motifRange*10))
 		cmd.select('tyr', 'byres tyr1 and byres tyr2 and byres tyr3 and byres tyr4 and byres tyr5 and byres tyr6 and byres tyr7 and byres tyr8 and byres tyr9 and byres tyr10 and byres tyr11 and byres tyr12')
-		cmd.select('ser1', 'name cb and resn ser within %s of (name nz and resn lys)' %(motifRange*6))
-		cmd.select('ser2', 'name og and resn ser within %s of (name nz and resn lys)' %(motifRange*6))
-		cmd.select('ser3', 'name cb and resn ser within %s of (name cb and lys)' %(motifRange*8.2))
-		cmd.select('ser4', 'name og and resn ser within %s of (name cz and resn tyr)' %(motifRange*6.5))
-		cmd.select('ser5', 'name cb and resn ser within %s of (name oh and resn tyr)' %(motifRange*6.5))
-		cmd.select('ser6', 'name og and resn ser within %s of (name oh and tyr)' %(motifRange*6))
-		cmd.select('ser7', 'name og and resn ser within %s of (name oe1 and resn glu)' %(motifRange*12))
-		cmd.select('ser8', 'name og and resn ser within %s of (name oe2 and resn glu)' %(motifRange*12))
-		cmd.select('ser9', 'name cb and resn ser within %s of (name oe1 and resn glu)' %(motifRange*11))
-		cmd.select('ser10', 'name cb and resn ser within %s of (name oe2 and resn glu)' %(motifRange*12.5))
-		cmd.select('ser11', 'name og and resn ser within %s of (name cd and resn glu)' %(motifRange*12.5))
-		cmd.select('ser12', 'name cb and resn ser within %s of (name cd and resn glu)' %(motifRange*11.5))
+		cmd.select('ser1', 'name cb and resn ser within %s of (name nz and resn lys)'%(motifRange*6))
+		cmd.select('ser2', 'name og and resn ser within %s of (name nz and resn lys)'%(motifRange*6))
+		cmd.select('ser3', 'name cb and resn ser within %s of (name cb and lys)'%(motifRange*8.2))
+		cmd.select('ser4', 'name og and resn ser within %s of (name cz and resn tyr)'%(motifRange*6.5))
+		cmd.select('ser5', 'name cb and resn ser within %s of (name oh and resn tyr)'%(motifRange*6.5))
+		cmd.select('ser6', 'name og and resn ser within %s of (name oh and tyr)'%(motifRange*6))
+		cmd.select('ser7', 'name og and resn ser within %s of (name oe1 and resn glu)'%(motifRange*12))
+		cmd.select('ser8', 'name og and resn ser within %s of (name oe2 and resn glu)'%(motifRange*12))
+		cmd.select('ser9', 'name cb and resn ser within %s of (name oe1 and resn glu)'%(motifRange*11))
+		cmd.select('ser10', 'name cb and resn ser within %s of (name oe2 and resn glu)'%(motifRange*12.5))
+		cmd.select('ser11', 'name og and resn ser within %s of (name cd and resn glu)'%(motifRange*12.5))
+		cmd.select('ser12', 'name cb and resn ser within %s of (name cd and resn glu)'%(motifRange*11.5))
 		cmd.select('ser', 'byres ser1 and byres ser2 and byres ser3 and byres ser4 and byres ser5 and byres ser6 and byres ser7 and byres ser8 and byres ser9 and byres ser10 and byres ser11 and byres ser12')
-		cmd.select('glu1', 'name oe1 and resn glu within %s of (name ce and resn lys)' %(motifRange*8.5))
-		cmd.select('glu2', 'name oe1 and resn glu within %s of (name nz and resn lys)' %(motifRange*9.5))
-		cmd.select('glu3', 'name oe2 and resn glu within %s of (name nz and lys)' %(motifRange*11.2))
-		cmd.select('glu4', 'name cd and resn glu within %s of (name ce and resn lys)' %(motifRange*10.6))
-		cmd.select('glu5', 'name oe1 and resn glu within %s of (name oh and resn tyr)' %(motifRange*8.7))
-		cmd.select('glu6', 'name oe2 and resn glu within %s of (name oh and resn tyr)' %(motifRange*9.7))
-		cmd.select('glu7', 'name cd and resn glu within %s of (name oh and resn tyr)' %(motifRange*9.6))
-		cmd.select('glu8', 'name oe1 and resn glu within %s of (name og and resn ser)' %(motifRange*10.5))
-		cmd.select('glu9', 'name oe2 and resn glu within %s of (name og and resn ser)' %(motifRange*10.5))
-		cmd.select('glu10', 'name oe1 and resn glu within %s of (name cb and resn ser)' %(motifRange*10))
-		cmd.select('glu11', 'name oe2 and resn glu within %s of (name cb and resn ser)' %(motifRange*11.8))
-		cmd.select('glu12', 'name cd and resn glu within %s of (name og and resn ser)' %(motifRange*11.8))
-		cmd.select('glu13', 'name cd and resn glu within %s of (name cb and ser)' %(motifRange*11))
-		cmd.select('glu14', 'name oe1 and resn glu within %s of (name cg and tyr)' %(motifRange*7.4))
+		cmd.select('glu1', 'name oe1 and resn glu within %s of (name ce and resn lys)'%(motifRange*8.5))
+		cmd.select('glu2', 'name oe1 and resn glu within %s of (name nz and resn lys)'%(motifRange*9.5))
+		cmd.select('glu3', 'name oe2 and resn glu within %s of (name nz and lys)'%(motifRange*11.2))
+		cmd.select('glu4', 'name cd and resn glu within %s of (name ce and resn lys)'%(motifRange*10.6))
+		cmd.select('glu5', 'name oe1 and resn glu within %s of (name oh and resn tyr)'%(motifRange*8.7))
+		cmd.select('glu6', 'name oe2 and resn glu within %s of (name oh and resn tyr)'%(motifRange*9.7))
+		cmd.select('glu7', 'name cd and resn glu within %s of (name oh and resn tyr)'%(motifRange*9.6))
+		cmd.select('glu8', 'name oe1 and resn glu within %s of (name og and resn ser)'%(motifRange*10.5))
+		cmd.select('glu9', 'name oe2 and resn glu within %s of (name og and resn ser)'%(motifRange*10.5))
+		cmd.select('glu10', 'name oe1 and resn glu within %s of (name cb and resn ser)'%(motifRange*10))
+		cmd.select('glu11', 'name oe2 and resn glu within %s of (name cb and resn ser)'%(motifRange*11.8))
+		cmd.select('glu12', 'name cd and resn glu within %s of (name og and resn ser)'%(motifRange*11.8))
+		cmd.select('glu13', 'name cd and resn glu within %s of (name cb and ser)'%(motifRange*11))
+		cmd.select('glu14', 'name oe1 and resn glu within %s of (name cg and tyr)'%(motifRange*7.4))
 		cmd.select('glu', 'byres glu1 and byres glu2 and byres glu3 and byres glu4 and byres glu5 and byres glu6 and byres glu7 and byres glu8 and byres glu9 and byres glu10 and byres glu11 and byres glu12 and byres glu13 and byres glu14')
 		cmd.select('lactamase', 'ser(tyr(glu(lys)))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.set('cartoon_transparency', '0.8', 'all')
 		cmd.show('sticks', 'lactamase')
-		cmd.set('stick_radius','0.5')
-		cpkBlactamase()
-		cmd.orient('lactamase')
-		cmd.deselect()
 	
-	def superoxide(self):
+	def superoxide(self,motifRange):
 		cmd.select('his1', 'byres resn his within %s of elem cu'%(motifRange*4))
 		cmd.select('arg1', 'byres resn arg within %s of elem cu'%(motifRange*6))
 		cmd.select('stuff', 'his1 and (byres elem zn around %s)'%(motifRange*4))
@@ -1459,33 +1461,18 @@ class PGUI:
 		cmd.select('stuff3', 'byres elem cu around %s and arg1'%(motifRange*6))
 		cmd.select('stuff4', 'stuff and stuff1 and stuff2 and stuff3')
 		cmd.select('superoxide', 'byres his1(arg1(stuff4))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
 		cmd.show('sticks', 'superoxide')
-		cmd.color('copper', 'elem cu')
-		cmd.color('grey40', 'elem zn')
 		cmd.show('spheres', 'elem cu')
 		cmd.show('spheres', 'elem zn')
-		cmd.set('cartoon_transparency', '0.7', 'all')
-		cpkreductase()
-		cmd.deselect()
-		cmd.orient('superoxide')
 	
-	def metalloprotease(self):
-		cmd.hide('everything')
+	def metalloprotease(self,motifRange):
 		cmd.select('zn', 'elem zn')
-		cmd.show('sphere', 'zn')
 		cmd.select('metalloprotease', 'zn(byres zn around %s)'%(motifRange*5))
-		cmd.show('cartoon', 'all')
-		cmd.set('cartoon_transparency', '0.5', 'all')
 		cmd.show('sticks', 'metalloprotease')
-		cpkmetalloprotease()
+		cmd.show('sphere', 'zn')
 		cmd.delete('zn')
-		cmd.orient('metalloprotease')
-		cmd.deselect()
 	
-	def tyrophos(self):
+	def tyrophos(self,motifRange):
 		cmd.select('arg1', 'name nh1 and resn arg within %s of (name od1 and resn asp)'%(motifRange*7))
 		cmd.select('arg2', 'name nh2 and resn arg within %s of (name od2 and resn asp)'%(motifRange*7))
 		cmd.select('arg3', 'name ne and resn arg within %s of (name cb and resn asp)'%(motifRange*6.5))
@@ -1530,7 +1517,6 @@ class PGUI:
 		tycount = cmd.index('tyrophos')
 		atcount	= len(tycount)
 		if(atcount < 1):
-			cmd.hide('everything')
 			cmd.select('arg1', 'name nh1 and resn arg within %s of (name od1 and resn asp)'%(motifRange*7))
 			cmd.select('arg2', 'name nh2 and resn arg within %s of (name od2 and resn asp)'%(motifRange*7))
 			cmd.select('arg3', 'name ne and resn arg within %s of (name cb and resn asp)'%(motifRange*6.5))
@@ -1553,37 +1539,18 @@ class PGUI:
 			cmd.select('cys9', 'name sg and resn cys within %s of (name ne and resn arg)'%(motifRange*6.5))
 			cmd.select('cys', 'byres cys4 and byres cys5 and byres cys6 and byres cys7 and byres cys8 and byres cys9')
 			cmd.select('tyrophos', '(asp(arg(cys)))')
-			cmd.show('cartoon', 'all')
-			cmd.set('cartoon_transparency', '0.5', 'all')
 			cmd.show('sticks', 'tyrophos')
-			cmd.hide('cartoon', 'tyrophos')
-			cpktyrophos()
-			cmd.orient('tyrophos')
-			cmd.deselect()
 		else:
-			cmd.show('cartoon', 'all')
-			cmd.set('cartoon_transparency', '0.5', 'all')
 			cmd.show('sticks', 'tyrophos')
-			cmd.hide('cartoon', 'tyrophos')
-			cpktyrophos()
-			cmd.orient('tyrophos')
-			cmd.deselect()
 	
-	def carbanhyd(self):
+	def carbanhyd(self,motifRange):
 		cmd.select('zn', 'elem zn')
 		cmd.select('his', 'resn his within %s of zn'%(motifRange*5))
 		cmd.select('carbonicanhydrase', 'byres his or zn')
-		cmd.show('cartoon', 'all')
-		cmd.set('cartoon_transparency', '0.5', 'all')
-		cmd.show('sticks', 'carbonicanhydrase')
-		cmd.show('spheres', 'zn')
-		cpkcarbanhyd()
 		cmd.delete('zn')
 		cmd.delete('his')
-		cmd.orient('carbonicanhydrase')
-		cmd.deselect()
 	
-	def paplike(self):
+	def paplike(self,motifRange):
 		cmd.select('gln1', 'name ne2 and resn gln within %s of (name ne2 and resn his)'%(motifRange*7))
 		cmd.select('gln2', 'name cd and resn gln within %s of (name ce1 and resn his)'%(motifRange*6.7))
 		cmd.select('gln3', 'name oe1 and resn gln within %s of (name nd1 and resn his)'%(motifRange*7))
@@ -1602,14 +1569,8 @@ class PGUI:
 		cmd.select('cys4', 'name sg and resn cys within %s of (name oe1 and gln)'%(motifRange*6.7))
 		cmd.select('cys', 'byres cys1 and byres cys2 and byres cys3 and byres cys4')
 		cmd.select('paplike', 'gln(his(cys))')
-		cmd.show('cartoon', 'all')
-		cmd.set('cartoon_transparency', '0.5', 'all')
-		cmd.show('sticks', 'paplike')
-		cpkpaplike()
-		cmd.orient('paplike')
-		cmd.deselect()
 	
-	def zincfinger(self):
+	def zincfinger(self,motifRange):
 		cmd.select('zn1', 'elem zn')
 		xm = cmd.index('zn1')
 		nm	= len(xm)
@@ -1622,25 +1583,8 @@ class PGUI:
 			cmd.select('cys', 'resn cys')
 			cmd.select('cys1', 'resn cys around %s'%(motifRange*4))
 			cmd.select('Zinc_finger', '(resn cys or resn his(and byres cys1))')
-			cmd.show('cartoon', 'all')
-			cmd.set('cartoon_transparency', '0.6', 'all')
-			cmd.color('white', 'all')
-			cmd.show('sticks', 'Zinc_finger')
-			cmd.show('spheres', 'elem zn')
-			cmd.color('grey40', 'elem zn')
-			cpkzincfinger()
-			cmd.delete('zn1')
-			cmd.delete('his')
-			cmd.delete('cys')
-			cmd.delete('cys1')
-			cmd.orient('Zinc_finger')
-			cmd.deselect()
-		else:
-			 cmd.show('cartoon', 'all')
-			 cmd.color('white', 'all')
-			 cmd.set('cartoon_transparency', '0.6', 'all')
-	
-	def aminotransferase(self):
+
+	def aminotransferase(self,motifRange):
 		cmd.select('asp1', 'name od1 and resn asp within %s of (name cb and resn his)'%(motifRange*5))
 		cmd.select('asp2', 'name od1 and resn asp within %s of (name cg and resn his)'%(motifRange*6))
 		cmd.select('asp3', 'name od1 and resn asp within %s of (name nd1 and resn his)'%(motifRange*7))
@@ -1667,28 +1611,12 @@ class PGUI:
 		cmd.select('lys5', 'name nz and resn lys within %s of (name ce1 and his)'%(motifRange*7))
 		cmd.select('lys', 'byres lys1 and byres lys2 and byres lys3 and byres lys4 and byres lys5')
 		cmd.select('Aminotransferase', 'asp(his(lys))')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.show('sticks', 'Aminotransferase')
-		cpkaminotransferase()
-		cmd.orient('Aminotransferase')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.deselect()
 	
-	def fisomerase(self):
+	def fisomerase(self,motifRange):
 		cmd.select('his', 'elem mn around %s(elem mn)'%(motifRange*5))
 		cmd.select('fucoseisomerase', 'byres resn asp and his(byres resn glu and his(elem mn))')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.show('sticks', 'fucoseisomerase')
-		cmd.show('spheres', 'elem mn')
-		cmd.orient('fucoseisomerase')
-		cpkfucoisomerase()
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.deselect()
-		cmd.delete('his')
 	
-	def glutamine_amidotransferase(self):
+	def glutamine_amidotransferase(self,motifRange):
 		cmd.select('his1', 'name ND1 within %s of name OE2'%(motifRange*3))
 		cmd.select('his2', 'name NE2 within %s of name SG'%(motifRange*3.5))
 		cmd.select('his', 'byres his1 and byres his2')
@@ -1699,78 +1627,37 @@ class PGUI:
 		cmd.select('cys2', 'resn cys within %s of glu'%(motifRange*7))
 		cmd.select('cys', 'byres cys1 and byres cys2')
 		cmd.select('glu_amidotransferase', 'cys(his(glu))')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.show('sticks', 'glu_amidotransferase')
-		cmd.orient('glu_amidotransferase')
-		cpkglu_amidotransferase()
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.deselect()
 	
-	def dnaligase(self):
-		cmd.select('amp1', 'resn amp')
-		cmd.select('atp1', 'resn atp')
-		xp = cmd.index('amp1')
-		np	= len(xp)
-		if(np < 1):
-			cmd.delete('amp1')
-		xtp = cmd.index('atp1')
-		ntp	= len(xtp)
-		if(ntp < 1):
-			cmd.delete('atp1')
-		objects = cmd.get_names('all')
-		if 'amp1' in objects:
-			cmd.select('ramp1', 'byres resn amp around %s'%(motifRange*7.4))
-			cmd.select('lys1', 'byres resn lys and ramp1')
-			cmd.select('ramp2', 'byres resn amp around %s'%(motifRange*7))
-			
-			cmd.select('ramp3', 'byres resn amp around %s'%(motifRange*5.3))
-			cmd.select('asp1', 'ramp3 and(byres resn asp within %s of lys1)'%(motifRange*3))
-			cmd.select('arg1', 'ramp2 and(byres resn arg within %s of asp1)'%(motifRange*5))
-			cmd.select('Ligase', 'byres lys1(amp1(byres arg1(byres asp1)))')
-			cmd.hide('everything')
-			cmd.show('cartoon', 'all')
-			cmd.color('white', 'all')
-			cmd.set('cartoon_transparency', '0.6', 'all')
-			cmd.show('sticks', 'Ligase')
-			cpkdnaligase()
-			cmd.deselect()
-		elif 'atp1' in objects:
-			cmd.select('ratp1', 'byres resn atp around %s'%(motifRange*7.4))
-			cmd.select('lys1', 'byres resn lys and ratp1')
-			cmd.select('ratp2', 'byres resn atp around %s'%(motifRange*7))
-			
-			cmd.select('ratp3', 'byres resn atp around %s'%(motifRange*5.3))
-			cmd.select('asp1', 'ratp3 and(byres resn asp within %s of lys1)'%(motifRange*3))
-			cmd.select('arg1', 'ratp2 and(byres resn arg within %s of asp1)'%(motifRange*5))
-			cmd.select('Ligase', 'byres lys1(atp1(byres arg1(byres asp1)))')
-			cmd.hide('everything')
-			cmd.show('cartoon', 'all')
-			cmd.color('white', 'all')
-			cmd.set('cartoon_transparency', '0.6', 'all')
-			cmd.show('sticks', 'Ligase')
-			cpkdnaligase()
-			cmd.deselect()
-		
-		elif 'amp1' or 'atp1' not in objects:
-			
+	def dnaligase(self,motifRange):
+		cmd.select('amp', 'resn amp')
+		cmd.select('atp', 'resn atp')
+		if(len(cmd.index('amp')) >= 1):
+			cmd.select('amp1', 'resn amp around %s'%(motifRange*7.4))
+			cmd.select('lys', 'resn lys and amp1')
+			cmd.select('amp2', 'resn amp around %s'%(motifRange*7))	
+			cmd.select('amp3', 'resn amp around %s'%(motifRange*5.3))
+			cmd.select('asp', 'amp3 and(resn asp within %s of lys)'%(motifRange*3))
+			cmd.select('arg', 'amp2 and(resn arg within %s of asp)'%(motifRange*5))
+			cmd.select('Ligase', 'byres lys(amp(arg(asp)))')
+		elif(len(cmd.index('atp')) >= 1):
+			cmd.select('atp1', 'resn atp around %s'%(motifRange*7.4))
+			cmd.select('lys', 'resn lys and atp1')
+			cmd.select('atp2', 'resn atp around %s'%(motifRange*7))
+			cmd.select('atp3', 'resn atp around %s'%(motifRange*5.3))
+			cmd.select('asp', 'atp3 and(resn asp within %s of lys)'%(motifRange*3))
+			cmd.select('arg', 'atp2 and(resn arg within %s of asp)'%(motifRange*5))
+			cmd.select('Ligase', 'byres lys(atp(arg(asp)))')
+		elif(len(cmd.index('amp')) < 1 and len(cmd.index('atp')) < 1):
 			cmd.select('asp1', 'name OD2 within %s of name NE'%(motifRange*5.5))
 			cmd.select('arg1', 'name NE within %s of name OD2'%(motifRange*5.5))
 			cmd.select('lys1', 'name NZ within %s of name OD2'%(motifRange*9))
-			cmd.select('lys4', 'name NZ within %s of name NH2'%(motifRange*10))
-			cmd.select('arg', 'byres resn arg and arg1')
-			cmd.select('asp', 'byres resn asp and asp1')
-			cmd.select('lys3', 'byres resn lys and lys1 and lys4')
-			cmd.select('Ligase', 'byres arg(asp(lys3))')
-			cmd.hide('everything')
-			cmd.show('cartoon', 'all')
-			cmd.color('white', 'all')
-			cmd.set('cartoon_transparency', '0.6', 'all')
-			cmd.show('sticks', 'Ligase')
-			cpkdnaligase()
-			cmd.deselect()
+			cmd.select('lys2', 'name NZ within %s of name NH2'%(motifRange*10))
+			cmd.select('arg', 'resn arg and arg1')
+			cmd.select('asp', 'resn asp and asp1')
+			cmd.select('lys', 'resn lys and lys1 and lys2')
+			cmd.select('Ligase', 'byres arg(asp(lys))')
 	
-	def thymidinekinase(self):
+	def thymidinekinase(self,motifRange):
 		cmd.select('glu1', 'name OE1 and resn glu within %s of name NH2 and resn arg'%(motifRange*5))
 		cmd.select('glu2', 'resn glu and name OE2 within %s of name NE and resn arg'%(motifRange*5))
 		cmd.select('glu3', 'resn glu and name OE1 within %s of name NH1 and resn arg'%(motifRange*6))
@@ -1793,15 +1680,8 @@ class PGUI:
 		cmd.select('glu10', 'byres glu within 10 of gly')
 		cmd.select('arg10', 'byres arg within 9 of gly')
 		cmd.select('Tkinase', 'glu10(arg10(gly))')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'Tkinase')
-		cpkkinase()
-		cmd.deselect()
-		cmd.orient('Tkinase')
 	
-	def oglycosyl(self):
+	def oglycosyl(self,motifRange):
 		cmd.select('asp1', 'name od1 and resn asp within %s of (name oe1 and resn glu)'%(motifRange*9.5))
 		cmd.select('notasp', 'resn asp within %s of resn glu'%(4.5/motifRange))
 		cmd.select('asp', 'asp1 and (byres not notasp)')
@@ -1809,16 +1689,8 @@ class PGUI:
 		cmd.select('glu0', 'resn glu within %s of resn asp'%(4.5/motifRange))
 		cmd.select('glu', 'byres glu1 and (not glu0)')
 		cmd.select('o-glycosyl', 'byres asp | byres glu')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'o-glycosyl')
-		cmd.orient('o-glycosyl')
-		cpkoglycosyl()
-		cmd.deselect()
 	
-	def carboncarbon(self):
+	def carboncarbon(self,motifRange):
 		cmd.select('asp1', 'name od1 within %s of name nz'%(motifRange*3.5))
 		cmd.select('asp2', 'resn asp within %s of name ne2'%(motifRange*6))
 		cmd.select('asp', 'byres asp1 and byres asp2')
@@ -1830,17 +1702,8 @@ class PGUI:
 		cmd.select('his3', 'resn his within %s of asp'%(motifRange*9))
 		cmd.select('his', 'byres his1 and byres his2 and byres his3')
 		cmd.select('carboncarbon', 'asp(lys(his))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'carboncarbon')
-		cmd.orient('carboncarbon')
-		cpkcarboncarbon()
-		cmd.deselect()
 	
-	
-	def peroxidase(self):
+	def peroxidase(self,motifRange):
 		cmd.select('asn1', 'name od1 within %s of name nd1'%(motifRange*8))
 		cmd.select('asn2', 'name od1 within %s of name ne2'%(motifRange*6))
 		cmd.select('asn3', 'name nd2 within %s of name nd1'%(motifRange*10))
@@ -1877,16 +1740,8 @@ class PGUI:
 		cmd.select('arg12', 'name ne within %s of name nd1'%(motifRange*6))
 		cmd.select('arg', 'byres arg1 and byres arg2 and byres arg3 and byres arg4 and byres arg5 and byres arg6 and byres arg7 and byres arg8 and byres arg9 and byres arg10 and byres arg11 and byres arg12')
 		cmd.select('Peroxidase', 'asn(his(arg))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'Peroxidase')
-		cpkperoxidase()
-		cmd.orient('Peroxidase')
-		cmd.deselect()
 	
-	def trioseisomerase(self):
+	def trioseisomerase(self,motifRange):
 		cmd.select('lys1', 'name nz and resn lys within %s of (name od1 and resn asn)'%(motifRange*7.5))
 		cmd.select('lys2', 'name nz and resn lys within %s of (name nd2 and resn asn)'%(motifRange*7.5))
 		cmd.select('lys3', 'name nz and resn lys within %s of (name cg and resn asn)'%(motifRange*7.5))
@@ -2000,16 +1855,8 @@ class PGUI:
 		cmd.select('his30', 'name cg and resn his within %s of (name oe1 and resn glu)'%(motifRange*6.6))
 		cmd.select('his', 'byres his1 and byres his2 and byres his3 and byres his4 and byres his5 and byres his6 and byres his7 and byres his8 and byres his9 and byres his10 and byres his11 and byres his12 and byres his13 and byres his14 and byres his15 and byres his16 and byres his17 and byres his18 and byres his19 and byres his20 and byres his21 and byres his22 and byres his23 and byres his24 and byres his25 and byres his26 and byres his27 and byres his28 and byres his29 and byres his30')
 		cmd.select('TrioseIsomerase', 'glu(his(asn(lys)))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'TrioseIsomerase')
-		cpktriose()
-		cmd.orient('TrioseIsomerase')
-		cmd.deselect()
 	
-	def alcoholdehyd(self):
+	def alcoholdehyd(self,motifRange):
 		cmd.select('tyr1', 'name cd1 and resn tyr within %s of (name nd2 and resn asn)'%(motifRange*5))
 		cmd.select('tyr2', 'name oh and resn tyr within %s of (name od1 and resn asn)'%(motifRange*8))
 		cmd.select('tyr3', 'name oh and resn tyr within %s of (name nz and resn lys)'%(motifRange*6))
@@ -2046,16 +1893,8 @@ class PGUI:
 		cmd.select('ser7', 'name ca and resn ser within %s of (name nd2 and asn)'%(motifRange*10))
 		cmd.select('ser', 'byres ser1 and byres ser2 and byres ser3 and byres ser4 and byres ser5 and byres ser6 and byres ser7')
 		cmd.select('alcoholdehyd','ser(tyr(lys(asn)))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'alcoholdehyd')
-		cpkalcoholdehyd()
-		cmd.orient('alcoholdehyd')
-		cmd.deselect()
 	
-	def aldoreductase(self):
+	def aldoreductase(self,motifRange):
 		cmd.select('lys1', 'name cd and resn lys within %s of (name cg and resn his)'%(motifRange*6))
 		cmd.select('lys2', 'name ce and resn lys within %s of (name ne2 and resn his)'%(motifRange*8))
 		cmd.select('lys3', 'name cd and resn lys within %s of (name nd1 and resn his)'%(motifRange*7))
@@ -2097,16 +1936,8 @@ class PGUI:
 		cmd.select('asp9', 'name ca and resn asp within %s of (name ce2 and resn tyr)'%(motifRange*8))
 		cmd.select('asp', 'byres asp1 and byres asp2 and byres asp3 and byres asp4 and byres asp5 and byres asp6 and byres asp7 and byres asp8 and byres asp9')
 		cmd.select('aldoreductase', 'asp(his(lys(tyr)))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'aldoreductase')
-		cmd.orient('aldoreductase')
-		cpkaldoreductase()
-		cmd.deselect()
 	
-	def cistransisomerase(self):
+	def cistransisomerase(self,motifRange):
 		cmd.select('tyr1', 'name oh and resn tyr within %s of (name od2 and resn asp)'%(motifRange*9))
 		cmd.select('tyr2', 'name oh and resn tyr within %s of (name od1 and resn asp)'%(motifRange*11))
 		cmd.select('tyr3', 'name oh and resn tyr within %s of (name cg and resn asp)'%(motifRange*9.8))
@@ -2153,16 +1984,8 @@ class PGUI:
 		cmd.select('ile15', 'name cg1 and resn ile within %s of (name cb and resn asp)'%(motifRange*11.5))
 		cmd.select('ile', 'byres ile1 and byres ile2 and byres ile3 and byres ile4 and byres ile5 and byres ile6 and byres ile7 and byres ile8 and byres ile9 and byres ile10 and byres ile11 and byres ile12 and byres ile13 and byres ile14 and byres ile15')
 		cmd.select('Cis-trans', 'ile(asp(tyr))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'Cis-trans')
-		cpkcistrans()
-		cmd.deselect()
-		cmd.orient('Cis-trans')
 	
-	def nadhbinder(self):
+	def nadhbinder(self,motifRange):
 		cmd.select('asp1', 'name od2 and resn asp within %s of (name sg and resn cys)'%(motifRange*5))
 		cmd.select('asp2', 'name od2 and resn asp within %s of (name cb and resn cys)'%(motifRange*5.5))
 		cmd.select('asp3', 'name od1 and resn asp within %s of (name sg and resn cys)'%(motifRange*6.4))
@@ -2197,16 +2020,8 @@ class PGUI:
 		cmd.select('ser10', 'name cb and resn ser within %s of (name cb and resn cys)'%(motifRange*8.5))
 		cmd.select('ser', 'byres ser1 and byres ser2 and byres ser3 and byres ser4 and byres ser5 and byres ser6 and byres ser7 and byres ser8 and byres ser9 and byres ser10')
 		cmd.select('NAD-reductase', 'ser(asp(cys))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'NAD-reductase')
-		cpknadreductase()
-		cmd.deselect()
-		cmd.orient('NAD-reductase')
-	
-	def nadhbinder2(self):
+
+	def nadhbinder2(self,motifRange):
 		cmd.select('glu1', 'name oe2 and resn glu within %s of (name sg and resn cys)'%(motifRange*6.5))
 		cmd.select('glu2', 'name oe2 and resn glu within %s of (name cb and resn cys)'%(motifRange*5.5))
 		cmd.select('glu3', 'name oe1 and resn glu within %s of (name sg and resn cys)'%(motifRange*6.5))
@@ -2241,16 +2056,8 @@ class PGUI:
 		cmd.select('ser10', 'name cb and resn ser within %s of (name cb and resn cys)'%(motifRange*8.5))
 		cmd.select('ser', 'byres ser1 and byres ser2 and byres ser3 and byres ser4 and byres ser5 and byres ser6 and byres ser7 and byres ser8 and byres ser9 and byres ser10')
 		cmd.select('NAD-reductase2', 'ser(glu(cys))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'NAD-reductase2')
-		cpknadreductase2()
-		cmd.deselect()
-		cmd.orient('NAD-reductase2')
 	
-	def cephdeacetylase(self):
+	def cephdeacetylase(self,motifRange):
 		cmd.select('his1', 'name nd1 and resn his within %s of (name od2 and resn asp)'%(motifRange*4.5))
 		cmd.select('his2', 'name nd1 and resn his within %s of (name od1 and resn asp)'%(motifRange*5))
 		cmd.select('his3', 'name nd1 and resn his within %s of (name cg and resn asp)'%(motifRange*5.5))
@@ -2286,17 +2093,9 @@ class PGUI:
 		cmd.select('gln3', 'byres resn gln within %s of ala'%(motifRange*3))
 		cmd.select('gln', 'byres gln1 and byres gln2 and byres gln3')
 		cmd.select('deacetylase', 'his(asp(ala(gln)))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'deacetylase')
-		cpkdeacetylase()
-		cmd.deselect()
-		cmd.orient('deacetylase')
 	#hyaluronate/chondroitin lyase
 	
-	def chondrolyase(self):
+	def chondrolyase(self,motifRange):
 		cmd.select('tyr1', 'name oh and resn tyr within %s of (name nh2 and resn arg)'%(motifRange*6))
 		cmd.select('tyr2', 'name oh and resn tyr within %s	of (name nh1 and resn arg)'%(motifRange*5))
 		cmd.select('tyr3', 'name oh and resn tyr within %s	of (name cz and resn arg)'%(motifRange*6))
@@ -2350,16 +2149,8 @@ class PGUI:
 		cmd.select('asn11', 'name nd2 and resn asn within %s	of (name ce1 and resn tyr)'%(motifRange*6.5))
 		cmd.select('asn', 'byres asn1 and byres asn2 and byres asn3 and byres asn4 and byres asn5 and byres asn6 and byres asn7 and byres asn8 and byres asn9 and byres asn10 and byres asn11')
 		cmd.select('chondroitinase', 'asn(his(arg(tyr)))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'chondroitinase')
-		cmd.deselect()
-		cpkchondro()
-		cmd.orient('chondroitinase')
 	
-	def hyaluronlyase(self):
+	def hyaluronlyase(self,motifRange):
 		cmd.select('tyr1', 'name oh and resn tyr within %s of (name nh2 and resn arg)'%(motifRange*6))
 		cmd.select('tyr2', 'name oh and resn tyr within %s	of (name nh1 and resn arg)'%(motifRange*5))
 		cmd.select('tyr3', 'name oh and resn tyr within %s	of (name cz and resn arg)'%(motifRange*6))
@@ -2413,16 +2204,8 @@ class PGUI:
 		cmd.select('asn11', 'name nd2 and resn asn within %s	of (name ce1 and resn tyr)'%(motifRange*6.5))
 		cmd.select('asn', 'byres asn1 and byres asn2 and byres asn3 and byres asn4 and byres asn5 and byres asn6 and byres asn7 and byres asn8 and byres asn9 and byres asn10 and byres asn11')
 		cmd.select('Hyaluronate_Lyase', 'asn(his(arg(tyr)))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'Hyaluronate_Lyase')
-		cmd.deselect()
-		cpkhyaluron()
-		cmd.orient('Hyaluronate_Lyase')
 	
-	def ACTase(self):
+	def ACTase(self,motifRange):
 		showinfo('Info', 'This motif is based on sequence not position')
 		cmd.select('gln', 'resi 231 and resn gln')
 		cmd.select('arg', 'resi 167 and resn arg(resi 229 and resn arg)')
@@ -2431,16 +2214,8 @@ class PGUI:
 		cmd.select('lys', 'resi 84 and resn lys')
 		cmd.select('ser', 'resi 80 and resn ser')
 		cmd.select('actase', 'gln(arg(thr(his(lys(ser)))))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'actase')
-		cpkactase()
-		cmd.deselect()
-		cmd.orient('actase')
 	
-	def ACTase2(self):
+	def ACTase2(self,motifRange):
 		cmd.select('gln', 'resi 231 and resn gln')
 		cmd.select('arg', 'resi 167 and resn arg(resi 229 and resn arg)')
 		cmd.select('thr', 'resi 55 and resn thr(resi 53 and resn thr)')
@@ -2448,16 +2223,8 @@ class PGUI:
 		cmd.select('lys', 'resi 84 and resn lys')
 		cmd.select('ser', 'resi 80 and resn ser')
 		cmd.select('actase', 'gln(arg(thr(his(lys(ser)))))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'actase')
-		cpkactase()
-		cmd.deselect()
-		cmd.orient('actase')
 	
-	def exonucleaseiii(self):
+	def exonucleaseiii(self,motifRange):
 		cmd.select('his1', 'name ne2 and resn his within %s of (name nd2 and resn asn)'%(motifRange*5.5))
 		cmd.select('his2', 'name ne2 and resn his within %s of (name od1 and resn asn)'%(motifRange*6.5))
 		cmd.select('his3', 'name ne2 and resn his within %s of (name cg and resn asn)'%(motifRange*5.5))
@@ -2493,16 +2260,8 @@ class PGUI:
 		cmd.select('asn12', 'byres resn asn within %s of asp8'%(motifRange*6))
 		cmd.select('asn', 'byres asn9 or (byres asn10 and byres asn11 and byres asn12)')
 		cmd.select('Exonuclease3', 'his(asp(asn))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'Exonuclease3')
-		cpknuclease()
-		cmd.orient('Exonuclease3')
-		cmd.deselect()
 	
-	def cyclinkinase(self):
+	def cyclinkinase(self,motifRange):
 		cmd.select('glu1', 'name oe2 and resn glu within %s of (name nz and resn lys)'%(motifRange*6.5))
 		cmd.select('glu2', 'name oe1 and resn glu within %s of (name nz and resn lys)'%(motifRange*7))
 		cmd.select('glu3', 'name cd and resn glu within %s of (name nz and resn lys)'%(motifRange*7))
@@ -2540,16 +2299,8 @@ class PGUI:
 		cmd.select('asp9', 'name cg and resn asp within %s of (name cd and resn lys)'%(motifRange*7))
 		cmd.select('asp', 'byres asp1 and byres asp2 and byres asp3 and byres asp4 and byres asp5 and byres asp6 and byres asp7 and byres asp8 and byres asp9')
 		cmd.select('Cyclin_Kinase', 'lys(asp(glu))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'Cyclin_Kinase')
-		cpkcyclinkinase()
-		cmd.orient('Cyclin_Kinase')
-		cmd.deselect()
 	
-	def adenylatekinase(self):
+	def adenylatekinase(self,motifRange):
 		#p-loop first
 		cmd.select('lys1', 'name nz and resn lys within %s of (name n and resn gly)'%(motifRange*7.5))
 		cmd.select('lys2', 'name cg and resn lys within %s of (name c and resn gly)'%(motifRange*6))
@@ -2583,16 +2334,8 @@ class PGUI:
 		cmd.select('arg2', 'name nh2 and resn arg within %s of (name od1 and asp or name od2 and asp)'%(motifRange*4.9))
 		cmd.select('arg', 'byres arg1 or byres arg2')
 		cmd.select('adenylatekinase', 'p-loop(asp(aspa(arg)))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'adenylatekinase')
-		cpkadenylatekinase()
-		cmd.deselect()
-		cmd.orient('adenylatekinase')
 	
-	def citratesynth(self):
+	def citratesynth(self,motifRange):
 		cmd.select('his1', 'name ne2 and resn his within %s of (name og and resn ser)'%(motifRange*5))
 		cmd.select('his2', 'name ne2 and resn his within %s of (name cb and resn ser)'%(motifRange*5.5))
 		cmd.select('his3', 'name ce1 and resn his within %s of (name og and resn ser)'%(motifRange*5.5))
@@ -2625,16 +2368,8 @@ class PGUI:
 		cmd.select('his13', 'byres resn his within %s of asp'%(motifRange*8.5))
 		cmd.select('his', 'byres his10 or (byres his11 and byres his12 and byres his13)')
 		cmd.select('Citrate_Synth', 'his(asp(ser))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'Citrate_Synth')
-		cpkcitrate()
-		cmd.orient('Citrate_Synth')
-		cmd.deselect()
 	
-	def tyrosinekinase(self):
+	def tyrosinekinase(self,motifRange):
 		cmd.select('arg1', 'name nh1 and resn arg within %s of (name cb and resn ala)'%(motifRange*5))
 		cmd.select('arg2', 'name nh2 and resn arg within %s of (name cb and resn ala)'%(motifRange*5.5))
 		cmd.select('arg3', 'name cz and resn arg within %s of (name cb and resn ala)'%(motifRange*5.5))
@@ -2665,16 +2400,8 @@ class PGUI:
 		cmd.select('ala7', 'name cb and resn ala within %s of (name cg and asp)'%(motifRange*8))
 		cmd.select('ala', 'byres ala1 and byres ala2 and byres ala3 and byres ala4 and byres ala5 and byres ala6 and byres ala7')
 		cmd.select('SRC-Kinase', 'ala(asp(arg))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'SRC-Kinase')
-		cpktyrokinase()
-		cmd.orient('SRC-Kinase')
-		cmd.deselect()
 	
-	def hhal(self):
+	def hhal(self,motifRange):
 		cmd.select('glu1', 'name oe2 and resn glu within %s of (name sg and resn cys)'%(motifRange*10))
 		cmd.select('glu2', 'name cd and resn glu within %s of (name cb and resn cys)'%(motifRange*10))
 		cmd.select('glu3', 'name oe1 and resn glu within %s of (name ca and resn cys)'%(motifRange*10))
@@ -2716,15 +2443,8 @@ class PGUI:
 		cmd.select('phe9', 'name cd1 and resn phe within %s of (name sg and cys)'%(motifRange*12))
 		cmd.select('phe', 'byres phe1 and byres phe2 and byres phe3 and byres phe4 and byres phe5 and byres phe6 and byres phe7 and byres phe8 and byres phe9')
 		cmd.select('hhal', 'glu(arg(phe(cys)))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'hhal')
-		cpkhhal()
-		cmd.deselect()
 	
-	def betainedehydrogenase(self):
+	def betainedehydrogenase(self,motifRange):
 		cmd.select('cys1', 'name sg and resn cys within %s of (name od1 and resn asn)'%(motifRange*8.5))
 		cmd.select('cys2', 'name cb and resn cys within %s of (name cg and resn asn)'%(motifRange*8.5))
 		cmd.select('cys3', 'name ca and resn cys within %s of (name nd2 and resn asn)'%(motifRange*7.5))
@@ -2743,15 +2463,8 @@ class PGUI:
 		cmd.select('asn5', 'name nd2 and resn asn within %s of (name ca and cys)'%(motifRange*8.5))
 		cmd.select('asn', 'byres asn1 and byres asn2 and byres asn3 and byres asn4 and byres asn5')
 		cmd.select('betaine_dehydrogenase', 'cys(asn(glu))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'betaine_dehydrogenase')
-		cpkbetaine()
-		cmd.deselect()
 	
-	def serotoninacetyl(self):
+	def serotoninacetyl(self,motifRange):
 		cmd.select('his1', 'name ne2 and resn his within %s of (name og and resn ser)'%(motifRange*4.5))
 		cmd.select('his2', 'name ne2 and resn his within %s of (name cb and resn ser)'%(motifRange*5.5))
 		cmd.select('his3', 'name cd2 and resn his within %s of (name og and resn ser)'%(motifRange*5.5))
@@ -2799,13 +2512,6 @@ class PGUI:
 		cmd.select('tyr7', 'name ce1 and resn tyr within %s of (name o and ser)'%(motifRange*16))
 		cmd.select('tyr', 'byres tyr1 and byres tyr2 and byres tyr3 and byres tyr4 and byres tyr5 and byres tyr6 and byres tyr7')
 		cmd.select('Serotonin_transferase', 'his(ser(leu8(leu16(tyr))))')
-		cmd.hide('everything')
-		cmd.show('cartoon', 'all')
-		cmd.color('white', 'all')
-		cmd.set('cartoon_transparency', '0.6', 'all')
-		cmd.show('sticks', 'Serotonin_transferase')
-		cpkseracetyl()
-		cmd.deselect()
 
 #motif options
 	def motifoption(self, tag):
@@ -3935,8 +3641,8 @@ class PGUI:
 			cmd.hide('everything')
 			mA = self.mA
 			mB = self.mB
-			cmd.do('sel AA, resn %s within %s of resn %s' % (mA, selA.get(), mB))
-			cmd.do('sel BB, resn %s within %s of resn %s' % (mB, selA.get(), mA))
+			cmd.do('sel AA, resn %s within %s of resn %s'%(mA, selA.get(), mB))
+			cmd.do('sel BB, resn %s within %s of resn %s'%(mB, selA.get(), mA))
 			cmd.select('motif', 'byres AA | byres BB')
 			cmd.show('cartoon', 'all')
 			cmd.set('cartoon_transparency', '0.5', 'all')
@@ -3963,9 +3669,9 @@ class PGUI:
 			mA = self.mA
 			mB = self.mB
 			mC = self.mC
-			cmd.do('sel AA, resn %s within %s of resn %s' % (mA, selA.get(), mB))
-			cmd.do('sel BB, resn %s within %s of resn %s' % (mB, selA.get(), mA))
-			cmd.do('sel CC, resn %s within %s of resn %s' % (mC, selB.get(), mB))
+			cmd.do('sel AA, resn %s within %s of resn %s'%(mA, selA.get(), mB))
+			cmd.do('sel BB, resn %s within %s of resn %s'%(mB, selA.get(), mA))
+			cmd.do('sel CC, resn %s within %s of resn %s'%(mC, selB.get(), mB))
 			cmd.select('motif', 'byres AA | byres BB | byres CC')
 			cmd.show('cartoon', 'all')
 			cmd.set('cartoon_transparency', '0.5', 'all')
@@ -3995,10 +3701,10 @@ class PGUI:
 			mB = self.mB
 			mC = self.mC
 			mD = self.mD
-			cmd.do('sel AA, resn %s within %s of resn %s' % (mA, selA.get(), mB))
-			cmd.do('sel BB, resn %s within %s of resn %s' % (mB, selA.get(), mA))
-			cmd.do('sel CC, resn %s within %s of resn %s' % (mC, selB.get(), mB))
-			cmd.do('sel DD, resn %s within %s of resn %s' % (mD, selC.get(), mC))
+			cmd.do('sel AA, resn %s within %s of resn %s'%(mA, selA.get(), mB))
+			cmd.do('sel BB, resn %s within %s of resn %s'%(mB, selA.get(), mA))
+			cmd.do('sel CC, resn %s within %s of resn %s'%(mC, selB.get(), mB))
+			cmd.do('sel DD, resn %s within %s of resn %s'%(mD, selC.get(), mC))
 			cmd.select('motif', 'byres AA | byres BB | byres CC')
 			cmd.show('cartoon', 'all')
 			cmd.set('cartoon_transparency', '0.5', 'all')
@@ -4026,8 +3732,8 @@ class PGUI:
 			cmd.hide('everything')
 			mAA = self.mAA
 			mAB = self.mAB
-			cmd.do('sel AA, resn %s within %s of resn %s' % (mAA, selAB.get(), mAB))
-			cmd.do('sel BB, resn %s within %s of resn %s' % (mAB, selAB.get(), mAA))
+			cmd.do('sel AA, resn %s within %s of resn %s'%(mAA, selAB.get(), mAB))
+			cmd.do('sel BB, resn %s within %s of resn %s'%(mAB, selAB.get(), mAA))
 			cmd.select('motif', 'byres AA | byres BB')
 			cmd.show('cartoon', 'all')
 			cmd.set('cartoon_transparency', '0.5', 'all')
@@ -4054,14 +3760,14 @@ class PGUI:
 			mAA = self.mAA
 			mAB = self.mAB
 			mAC = self.mAC
-			cmd.do('sel AA1, resn %s within %s of resn %s' % (mAA, selAB.get(), mAB))
-			cmd.select('AA2', 'resn %s within %s of resn %s' % (mAA, selAC.get(), mAC))
+			cmd.do('sel AA1, resn %s within %s of resn %s'%(mAA, selAB.get(), mAB))
+			cmd.select('AA2', 'resn %s within %s of resn %s'%(mAA, selAC.get(), mAC))
 			cmd.select('AA', 'byres AA1 and byres AA2')
-			cmd.do('sel BB1, resn %s within %s of resn %s' % (mAB, selAB.get(), mAA))
-			cmd.select('BB2', 'resn %s within %s of resn %s' % (mAB, selBC.get(), mAC))
+			cmd.do('sel BB1, resn %s within %s of resn %s'%(mAB, selAB.get(), mAA))
+			cmd.select('BB2', 'resn %s within %s of resn %s'%(mAB, selBC.get(), mAC))
 			cmd.select('BB', 'byres BB1 and byres BB2')
-			cmd.do('sel CC1, resn %s within %s of resn %s' % (mAC, selBC.get(), mAB))
-			cmd.select('CC2', 'resn %s within %s of resn %s' % (mAC, selAC.get(), mAA))
+			cmd.do('sel CC1, resn %s within %s of resn %s'%(mAC, selBC.get(), mAB))
+			cmd.select('CC2', 'resn %s within %s of resn %s'%(mAC, selAC.get(), mAA))
 			cmd.select('CC', 'byres CC1 and byres CC2')
 			cmd.select('motif', 'byres AA | byres BB | byres CC')
 			cmd.show('cartoon', 'all')
@@ -4092,21 +3798,21 @@ class PGUI:
 			mAB = self.mAB
 			mAC = self.mAC
 			mAD = self.mAD
-			cmd.do('sel AA1, resn %s within %s of resn %s' % (mAA, selAB.get(), mAB))
-			cmd.select('AA2', 'resn %s within %s of resn %s' % (mAA, selAC.get(), mAC))
-			cmd.select('AA3', 'resn %s within %s of resn %s' % (mAA, selAD.get(), mAD))
+			cmd.do('sel AA1, resn %s within %s of resn %s'%(mAA, selAB.get(), mAB))
+			cmd.select('AA2', 'resn %s within %s of resn %s'%(mAA, selAC.get(), mAC))
+			cmd.select('AA3', 'resn %s within %s of resn %s'%(mAA, selAD.get(), mAD))
 			cmd.select('AA', 'byres AA1 and byres AA2 and byres AA3')
-			cmd.do('sel BB1, resn %s within %s of resn %s' % (mAB, selAB.get(), mAA))
-			cmd.select('BB2', 'resn %s within %s of resn %s' % (mAB, selBC.get(), mAC))
-			cmd.select('BB3', 'resn %s within %s of resn %s' % (mAB, selBD.get(), mAD))
+			cmd.do('sel BB1, resn %s within %s of resn %s'%(mAB, selAB.get(), mAA))
+			cmd.select('BB2', 'resn %s within %s of resn %s'%(mAB, selBC.get(), mAC))
+			cmd.select('BB3', 'resn %s within %s of resn %s'%(mAB, selBD.get(), mAD))
 			cmd.select('BB', 'byres BB1 and byres BB2 and byres BB3')
-			cmd.do('sel CC1, resn %s within %s of resn %s' % (mAC, selBC.get(), mAB))
-			cmd.select('CC2', 'resn %s within %s of resn %s' % (mAC, selAC.get(), mAA))
-			cmd.select('CC3', 'resn %s within %s of resn %s' % (mAC, selCD.get(), mAD))
+			cmd.do('sel CC1, resn %s within %s of resn %s'%(mAC, selBC.get(), mAB))
+			cmd.select('CC2', 'resn %s within %s of resn %s'%(mAC, selAC.get(), mAA))
+			cmd.select('CC3', 'resn %s within %s of resn %s'%(mAC, selCD.get(), mAD))
 			cmd.select('CC', 'byres CC1 and byres CC2 and byres CC3')
-			cmd.do('sel DD1, resn %s within %s of resn %s' % (mAD, selAD.get(), mAA))
-			cmd.select('DD2', 'resn %s within %s of resn %s' % (mAD, selBD.get(), mAB))
-			cmd.select('DD3', 'resn %s within %s of resn %s' % (mAD, selCD.get(), mAC))
+			cmd.do('sel DD1, resn %s within %s of resn %s'%(mAD, selAD.get(), mAA))
+			cmd.select('DD2', 'resn %s within %s of resn %s'%(mAD, selBD.get(), mAB))
+			cmd.select('DD3', 'resn %s within %s of resn %s'%(mAD, selCD.get(), mAC))
 			cmd.select('DD', 'byres DD1 and byres DD2 and byres DD3')
 			cmd.select('motif', 'byres AA | byres BB | byres CC | byres DD')
 			cmd.show('cartoon', 'all')
@@ -6387,7 +6093,7 @@ def write_script(tag):
 	try:
 		script = '1'
 		Q = asksaveasfilename(defaultextension=".py", initialdir="./modules/pmg_tk/startup/Scripts")
-		cmd.do('log_open %s,a' %(Q))
+		cmd.do('log_open %s,a'%(Q))
 		self.f=open(Q, 'w')
 	except:
 		pass
