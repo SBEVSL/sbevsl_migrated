@@ -1,7 +1,7 @@
-splash = PhotoImage(file="%ssplashmol.gif" % (PROMOL_PATH))
+import Tkinter as tk
+from pmg_tk.startup.ProMol_dir import promolglobals as pglob
 
-page = notebook.add('Welcome')
-notebook.tab('Welcome').focus_set()
-canvas=Canvas(page)
-canvas.pack(fill='both', expand=1)
-canvas.create_image(0,0,image=splash,anchor=NW)
+def initialise():
+    canvas = tk.Canvas(pglob.Tabs['welcome'])
+    canvas.pack(fill = 'both', expand = 1)
+    canvas.create_image(0, 0, image = pglob.splash, anchor = tk.NW)
