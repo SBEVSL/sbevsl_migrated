@@ -661,7 +661,7 @@ def loadframe(event):
         file = askopenfilename(defaultextension=entfilex.get(), initialdir=('./modules/pmg_tk/startup/Movies/ ' + name_mov.get()))
         if len(file)>0:
             cmd.load(file, "mov", entl.get())
-    pglob.Tabs['movie_maker'].mainloop()
+    pglob.Tabs['movie_maker']['tab'].mainloop()
     
 def gotoframe(event):
     try:

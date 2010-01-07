@@ -8,30 +8,29 @@ from pmg_tk.startup.ProMol_dir.Methods.visual import *
 Pmw.initialise()
 
 def initialise():
-    group = Pmw.Group(pglob.Tabs['view'], tag_text = 'Automated Commands')
+    group = Pmw.Group(pglob.Tabs['view']['tab'], tag_text = 'Automated Commands')
     group.grid(row=2, column=0, padx=0, pady=0)
     interior = group.interior()
 
-    popbtn = tk.Button(pglob.Tabs['view'], text='Update Selection')
+    popbtn = tk.Button(pglob.Tabs['view']['tab'], text='Update Selection')
     popbtn.grid(row = 0, column = 0, sticky = tk.E)
     popbtn.bind('<Button-1>', pglob.populate)
 
 
     #-------------- Selection Dropdown -----------------
-    advancedSelection = Pmw.OptionMenu(pglob.Tabs['view'],label_text = 'Select:',labelpos = tk.W,
-                items = (''),
-                menubutton_width = 10, command = set_sel1)
+    pglob.Tabs['view'].update({'advanced_selection':Pmw.OptionMenu(pglob.Tabs['view']['tab'],label_text = 'Select:',labelpos = tk.W,
+                items = (''), menubutton_width = 10, command = set_sel1)})
 
-    advancedSelection.grid(row=0, column=0,sticky = tk.NW)
+    pglob.Tabs['view']['advanced_selection'].grid(row=0, column=0,sticky = tk.NW)
 
     #--------------- Setting Defaults -----------------
-    defaults = Pmw.OptionMenu(pglob.Tabs['view'],label_text = 'Reset:',labelpos = tk.W,
+    defaults = Pmw.OptionMenu(pglob.Tabs['view']['tab'],label_text = 'Reset:',labelpos = tk.W,
                 items = ('Cartoon', 'Spheres', 'Sticks','Surface', 'Ambient'),
                 menubutton_width = 10, command=pglob.defaults)
     defaults.grid(row=0,column=1,sticky = tk.NW)
 
     #--------------- Cartoon Group----------------
-    group = Pmw.Group(pglob.Tabs['view'], tag_text='Cartoon:')
+    group = Pmw.Group(pglob.Tabs['view']['tab'], tag_text='Cartoon:')
     group.grid(row=1, column=0, padx=1, pady=0, sticky = tk.NW)
     interior = group.interior()
 
@@ -99,7 +98,7 @@ def initialise():
     ribbonTypes.grid(row=4,column=0,sticky= tk.SW)
 
     #-------------- Sphere Group--------------------
-    group = Pmw.Group(pglob.Tabs['view'], tag_text='Spheres:')
+    group = Pmw.Group(pglob.Tabs['view']['tab'], tag_text='Spheres:')
     group.grid(row=1, column=1, padx=1, pady=0, sticky = tk.NW)
     interior = group.interior()
 
@@ -129,7 +128,7 @@ def initialise():
     buttonAdd(interior,'Update',10,sphere_transparency,1,2, tk.SW)
 
     #--------------- Stick Group --------------------
-    group = Pmw.Group(pglob.Tabs['view'], tag_text='Sticks:')
+    group = Pmw.Group(pglob.Tabs['view']['tab'], tag_text='Sticks:')
     group.grid(row=1, column=1, padx=1, pady=0, sticky = tk.SW)
     interior = group.interior()
 
@@ -161,7 +160,7 @@ def initialise():
 
 
     #-------------- Surface Group -------------------
-    group = Pmw.Group(pglob.Tabs['view'], tag_text='Surface:')
+    group = Pmw.Group(pglob.Tabs['view']['tab'], tag_text='Surface:')
     group.grid(row=2, column=1, padx=1, pady=0, sticky = tk.SW)
     interior = group.interior()
 
@@ -179,7 +178,7 @@ def initialise():
 
 
     #----------Ambient Light Group----------------------
-    group = Pmw.Group(pglob.Tabs['view'], tag_text='Ambient Light')
+    group = Pmw.Group(pglob.Tabs['view']['tab'], tag_text='Ambient Light')
     group.grid(row=2, column=0, padx=0, pady=0, sticky = tk.SW)
     interior = group.interior()
      #-----------------Ambient Light------------------------#

@@ -1,149 +1,70 @@
-from pymol import cmd
+from pymol import cmd, util
+from pmg_tk.startup.ProMol_dir import promolglobals as pglob
 
-def show_dna_rna(*args):
-    
-    points = 0
-    try:
-        self = args[0]
-        update()
-    except:
-        pass
+def show_dna_rna():
+    pglob.update()
     objects = cmd.get_names('all')
-    
-    try:
-        cmd.set('cartoon_ring_mode' , '1')
-        if 'nucleic_acid' in objects:
-            
-            if 'protein' in objects:
-                cmd.show('cartoon', 'protein')
-                cmd.color('gray60', 'protein')
-            if 'ligands' in objects:
-                cmd.show('spheres', 'ligands')
-                cmd.set('sphere_transparency', '0.4', 'ligands')
-                cmd.set('sphere_scale', '0.4', 'ligands')
-                cmd.color('orange', 'ligands')
-            if 'nucleic_acid' in objects:
-                cmd.show('cartoon', 'nucleic_acid')
-                cmd.color('lightblue', 'resn a')
-                cmd.color('orange', 'resn c')
-                cmd.color('salmon', 'resn g')
-                cmd.color('palegreen', 'resn t')
-                cmd.color('paleyellow', 'resn u')
-                points = points + 3
-        if points == 3:
-            showinfo('Nucleic Acid Key',
-                'Adenine = light blue\nCytosine = orange\n'+
-                'Guanine = salmon red\nThymine = light green\n'+
-                'Uracil = light yellow')
-        else:
-            showinfo("Error", "There is no DNA or RNA in this molecule.")
-    except:
-        if 'nucleic_acid' in objects:
-            
-            if 'protein' in objects:
-                cmd.show('cartoon', 'protein')
-                cmd.color('gray60', 'protein')
-            if 'ligands' in objects:
-                cmd.show('spheres', 'ligands')
-                cmd.set('sphere_transparency', '0.4', 'ligands')
-                cmd.set('sphere_scale', '0.4', 'ligands')
-                cmd.color('orange', 'ligands')
-            if 'nucleic_acid' in objects:
-                cmd.show('cartoon', 'nucleic_acid')
-                cmd.color('lightblue', 'resn a')
-                cmd.color('orange', 'resn c')
-                cmd.color('salmon', 'resn g')
-                cmd.color('palegreen', 'resn t')
-                cmd.color('paleyellow', 'resn u')
-                points = points + 3
-        if points == 3:
-            showinfo('Nucleic Acid Key',
-                'Adenine = light blue\nCytosine = orange\n'+
-                'Guanine = salmon red\nThymine = light green\n'+
-                'Uracil = light yellow')
-        else:
-            showinfo("Error", "There is no DNA or RNA in this molecule.")
+    cmd.set('cartoon_ring_mode' , '1')
+    if 'nucleic_acid' in objects:
+        if 'protein' in objects:
+            cmd.show('cartoon', 'protein')
+            cmd.color('gray60', 'protein')
+        if 'ligands' in objects:
+            cmd.show('spheres', 'ligands')
+            cmd.set('sphere_transparency', '0.4', 'ligands')
+            cmd.set('sphere_scale', '0.4', 'ligands')
+            cmd.color('orange', 'ligands')
+        cmd.show('cartoon', 'nucleic_acid')
+        cmd.color('lightblue', 'resn a')
+        cmd.color('orange', 'resn c')
+        cmd.color('salmon', 'resn g')
+        cmd.color('palegreen', 'resn t')
+        cmd.color('paleyellow', 'resn u')
+        showinfo('Nucleic Acid Key',
+        'Adenine = light blue\nCytosine = orange\n'+
+        'Guanine = salmon red\nThymine = light green\n'+
+        'Uracil = light yellow')
+    else:
+        showinfo("Error", "There is no DNA or RNA in this molecule.")
 cmd.extend('show_dna_rna', show_dna_rna)
 
 
 # default view
-def std_view(self):
-    try:
-        update()
-        self.populate()
-        cmd.show('cartoon', 'resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+'+
-            'TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
-        cmd.color("red", "ss h")
-        cmd.color("yellow", "ss s")
-        cmd.color("cyan", "ss l+\'\'")
+def cartoon_view(cartoon=None):
+    pglob.update()
+    cmd.hide('all')
+    if cartoon == 'putty':
+        try:
+            cmd.show('spheres', 'ligands')
+            cmd.color('orange', 'ligands')
+            cmd.show('cartoon', 'protein')
+            cmd.cartoon('putty', 'protein')
+            cmd.color("red", "ss h")
+            cmd.color("yellow", "ss s")
+            cmd.color("cyan", "ss l+\'\'")
+            cmd.show('sticks', 'nucleic_acid')
+            cpknucleic()
+        except:
+            showinfo('Error', 'Putty is not supported by this version of PyMol')
+    else:
         cmd.set('cartoon_ring_mode' , '1')
-        cmd.show('spheres', 'het')
-        cpkligands()
-        cmd.show('cartoon', 'resn a+t+g+c+u')
-        cmd.color('limegreen', 'resn a+t+g+c+u')
-    except:
-        update()
-        
-        
-        
-        self.populate()
-        cmd.show('cartoon', 'resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+'+
-            'TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
+        cmd.show('cartoon', 'all')
+        cmd.hide('ligands')
+        cmd.show('spheres', 'ligands')
         cmd.color("red", "ss h")
         cmd.color("yellow", "ss s")
         cmd.color("cyan", "ss l+\'\'")
-        cmd.show('spheres', 'het')
-        cpkligands()
-        cmd.show('cartoon', 'resn a+t+g+c+u')
-        cmd.color('limegreen', 'resn a+t+g+c+u')
 
 # show hetero atoms
-def show_hetero(*args):
-    try:
-        self = args[0]
-    except:
-        pass
-    try:
-        
-        
-        cmd.remove('resn HOH')
-        update()
-        objects = cmd.get_names('all')
-        
-        if 'ligands' in objects:
-            pass
+def show_hetero():
+    pglob.update()
+    objects = cmd.get_names('all')
+    if 'ligands' in objects:
         if 'protein' in objects:
             cmd.show('cartoon', 'protein')
             cmd.set('cartoon_transparency', '0.7', 'protein')
         if 'nucleic_acid' in objects:
             cmd.set('cartoon_ring_mode', '1')
-            cmd.show('cartoon', 'nucleic_acid')
-            cmd.set('cartoon_transparency', '0.7', 'nucleic_acid')
-            cmd.color('cyan', 'nucleic_acid')
-            cmd.show('spheres', 'ligands')
-            cmd.set('sphere_transparency', '0.1', 'ligands')
-            cmd.show("sticks", "ligands around 6'")
-            cmd.set('stick_radius', '0.3', 'ligands around 6')
-            cmd.color('orange', 'ligands')
-            cmd.select("interaction", "ligands around 6'")
-            cpkinteraction()
-            cmd.set('stick_transparency', '0.1', 'interaction')
-            cmd.disable('interaction')
-        else:
-            showinfo("Error", "There are no hetero atoms in this molecule.")
-    except:
-        
-        
-        cmd.remove('resn HOH')
-        update()
-        objects = cmd.get_names('all')
-        
-        if 'ligands' in objects:
-             
-            if 'protein' in objects:
-                cmd.show('cartoon', 'protein')
-                cmd.set('cartoon_transparency', '0.7', 'protein')
-        if 'nucleic_acid' in objects:
             cmd.show('cartoon', 'nucleic_acid')
             cmd.set('cartoon_transparency', '0.7', 'nucleic_acid')
             cmd.color('cyan', 'nucleic_acid')
@@ -161,16 +82,9 @@ def show_hetero(*args):
 cmd.extend('show_hetero', show_hetero)
 
 # ball and stick view
-def ball_and_stick(*args):
-    try:
-        self = args[0]
-    except:
-        pass
-    update()
+def ball_and_stick():
+    pglob.update()
     objects = cmd.get_names('all')
-    
-    
-    
     cmd.set("stick_radius", "0.1", "all")
     cmd.set("sphere_scale", "0.3", "all")
     if 'protein' in objects:
@@ -178,38 +92,52 @@ def ball_and_stick(*args):
         cmd.show('sticks', 'protein')
         cpkprotein()
     if 'nucleic_acid' in objects:
-        try:
-            cmd.set('cartoon_ring_mode', '1')
-            cmd.show('cartoon', 'resn a+g+c+t+u')
-            cmd.show('spheres', 'resn a+g+c+t+u')
-            cmd.show('sticks', 'resn a+g+c+t+u')
-            cpknucleic()
-        except:
-            cmd.show('cartoon', 'resn a+g+c+t+u')
-            cpknucleic()
+        cmd.set('cartoon_ring_mode', '1')
+        cmd.show('cartoon', 'resn a+g+c+t+u')
+        cmd.show('spheres', 'resn a+g+c+t+u')
+        cmd.show('sticks', 'resn a+g+c+t+u')
+        cpknucleic()
     if 'ligands' in objects:
         cmd.show('spheres', 'ligands')
         cmd.color('orange', 'ligands')
 cmd.extend('ball_and_stick', ball_and_stick)
 
-# show the surface of the molecule
-def surface_view(*args):
-    
-    update()
-    objects = cmd.get_names('all')
-    
-    
-    cmd.show('surface', 'all')
-    cpkprotein()
+def surface_view(surface = None):
+    '''
+    Show the surface of the molecule in different representations
+    '''
+    pglob.update()
+    util.cbc()
+    cmd.do('hide all')
+    if surface == 'dot':
+        cmd.do('set dot_density, 3')
+        cmd.do('show lines, all')
+        cmd.do('show dots, all')
+    elif surface == 'mesh':
+        cmd.do('set mesh_quality, 3')
+        cmd.do("show stick, all")
+        cmd.do("show mesh, all")
+    elif surface == 'sphere':
+        cmd.do('set sphere_scale, 0.5, all')
+        cmd.do('show spheres, all')
+        cmd.do('show surface, all')
+        cmd.do('set transparency, 0.5, all')
+    elif surface == 'stick':
+        cmd.do('show stick, all')
+        cmd.do('show surface, all')
+        cmd.do('set transparency, 0.5, all')
+    elif surface == 'toon':
+        cmd.do('set cartoon_smooth_loops, 0')
+        cmd.do('show cartoon, all')
+        cmd.do('show surface, all')
+        cmd.do('set transparency, 0.5, all')
+    else:
+        cmd.do('show surface, all')
 cmd.extend('surface_view', surface_view)
 
-
 # show the polarities of the molecule
-def view_polarity(*args):
-    
-    update()
-    
-    
+def view_polarity():
+    pglob.update()
     objects = cmd.get_names('all')
     if 'protein' in objects:
         cmd.show('surface', 'protein')
@@ -217,44 +145,15 @@ def view_polarity(*args):
     cmd.color('blue', 'resn THR+SER+ARG+ASN+ASP+GLN+GLU+HIS+LYS')
     cmd.show('spheres', 'het')
     cmd.color('green', 'het')
-    try:
-        cmd.set('cartoon_ring_mode' , '1')
-    except:
-        cmd.color('green', 'het')
+    cmd.set('cartoon_ring_mode' , '1')
     cmd.show('cartoon', 'resn a+g+c+t+u')
     cpknucleic()
-    
     showinfo('Info', 'Red = Hydrophobic\nBlue = Hydrophilic')
-
 cmd.extend('solubility', view_polarity)
 
-# putty representation
-def show_putty(*args):
-    try:
-        try:
-            self = args[0]
-            update()
-        except:
-            pass
-        cmd.hide('all')
-        cmd.show('spheres', 'het')
-        cmd.color('orange', 'het')
-        cmd.show('cartoon', 'resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+'+
-            'TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
-        cmd.color("red", "ss h")
-        cmd.color("yellow", "ss s")
-        cmd.color("cyan", "ss l+\'\'")
-        cmd.cartoon('putty', 'resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+'+
-            'TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
-        cmd.show('sticks', 'resn t+g+c+a+u')
-        cpknucleic()
-    except:
-        showinfo('Error', 'Putty is not supported by this version of PyMol')
-cmd.extend('putty', show_putty)
-
 # aromatics view
-def color_aromatics(*args):
-    update()
+def color_aromatics():
+    pglob.update()
     cmd.hide('all')
     cmd.show('cartoon', 'resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+'+
         'HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
@@ -270,18 +169,12 @@ def color_aromatics(*args):
     cmd.show('sticks', 'aromatics and (!name c+n+o)')
     cmd.set('stick_radius', '0.4', 'all')
     cmd.delete('aromatics')
-    cmd.deselect()
 cmd.extend('color_aromatics', color_aromatics)
 
-def show_charged(*args):
-    try:
-        self = args[0]
-        update()
-    except:
-        pass
-    
+def show_charged():
+    pglob.update()
     objects = cmd.get_names('all')
-    cmd.hide('everything')
+    cmd.hide('all')
     cmd.show('cartoon', 'all')
     cmd.color('gray', 'all')
     cmd.select('pos', 'resn arg+lys+his')
@@ -298,64 +191,15 @@ def show_charged(*args):
             'Red = Negatively charged Amino Acids')
 cmd.extend('show_charged', show_charged)
 
-def surf_toon(*args):
-    
-    color_by_chain()
-    cmd.hide('everything')
-    cmd.show('cartoon', 'all')
-    cmd.select('surface', 'all')
-    cmd.do('show surface, all')
-    cmd.do('set transparency, 0.5, surface')
-    cmd.set('cartoon_smooth_loops', '0')
-    cmd.delete('surface')
-cmd.extend('surf_over_toon', surf_toon)
-
-def surf_stick(*args):
-    
-    update()
-    
-    cmd.hide('everything')
-    cmd.show('stick', 'all')
-    cmd.select('surface', 'all')
-    cmd.do('show surface, all')
-    cmd.do('set transparency, 0.5, surface')
-    cmd.delete('surface')
-    cpkprotein()
-    cpknucleic()
-    cpkligands()
-cmd.extend('surf_over_stick', surf_stick)
-
-def mesh_stick(*args):
-    
-    cmd.hide('everything')
-    cmd.do("show stick, all")
-    cmd.do("color white, all")
-    cmd.do("create mesh1, all")
-    cmd.set('mesh_quality', '3')
-    cmd.do("show mesh, mesh1")
-    cmd.color('tv_blue', 'mesh1')
-    cmd.hide("stick", "mesh1")
-cmd.extend('mesh_over_stick', mesh_stick)
-
 def stick_toon(*args):
-    
-    cmd.hide('everything')
+    pglob.update()
+    cmd.hide('all')
     cmd.show('lines')
     cmd.create('cartoon', 'all')
     cmd.show('cartoon', 'cartoon')
     cmd.color('salmon', 'cartoon')
     cmd.color('cyan', 'resn a+t+u+g+c')
 cmd.extend('stick_and_cartoon', stick_toon)
-
-def dot_line(*args):
-    
-    cmd.set('dot_density', '3')
-    cmd.hide('everything')
-    cmd.remove('resn HOH')
-    cmd.hide('everything')
-    cmd.show('lines')
-    cmd.show('dots', 'all')
-cmd.extend('dot_line', dot_line)
 
 def rovingstickers(*args):
     cmdRovStick = ' '
@@ -369,7 +213,7 @@ def rovingstickers(*args):
     except:
         print 'Usage: roving_stick # (# is value between 0 and 20)'
     
-    update()
+    pglob.update()
     
     
     cmd.hide('everything')
@@ -379,7 +223,7 @@ def rovingstickers(*args):
     cmd.set("stick_radius", 0.3)
     
     try:
-        cmd.set("roving_sticks", self.rovingradius2.get())
+        cmd.set("roving_sticks", rovingradius2.get())
     except:
         cmd.set("roving_sticks", cmdRovStick)
     cmd.set("roving_polar_contacts", 8)
@@ -403,7 +247,7 @@ def rovinglines(*args):
     except:
         print 'Usage: roving_line # (# is value between 0 and 20)'
     
-    update()
+    pglob.update()
     
     
     cmd.hide('everything')
@@ -412,7 +256,7 @@ def rovinglines(*args):
     cmd.set("roving_origin", 1)
     cmd.set("roving_sticks", 0)
     try:
-        cmd.set('roving_lines', self.rovingradius2.get())
+        cmd.set('roving_lines', rovingradius2.get())
     except:
         cmd.set('roving_lines', cmdRovLine)
         cmd.set("roving_polar_contacts", 8)
@@ -432,18 +276,18 @@ def rovingballstick(*args):
         self = args[0]
     except:
         print 'Usage: roving_ballstick # (# is value between 0 and 20)'
-    update()
+    pglob.update()
     cmd.hide('everything')
     cmd.remove("hydro")
     cmd.set("roving_detail", 1)
     cmd.set("roving_origin", 1)
     try:
-        cmd.set('roving_sticks', self.rovingradius2.get())
+        cmd.set('roving_sticks', rovingradius2.get())
     except:
         cmd.set('roving_sticks', cmdRovBall)
         cmd.set("roving_polar_contacts", 8)
     try:
-        cmd.set('roving_spheres', self.rovingradius2.get())
+        cmd.set('roving_spheres', rovingradius2.get())
     except:
         cmd.set('roving_spheres', cmdRovBall)
         cmd.set('sphere_transparency', '0.2')
@@ -467,14 +311,14 @@ def rovingspheres(*args):
     except:
         print 'Usage: roving_sphere # (# is value between 0 and 20)'
     
-    update()
+    pglob.update()
     
     cmd.hide('everything')
     cmd.remove("hydro")
     cmd.set("roving_detail", 1)
     cmd.set("roving_origin", 1)
     try:
-        cmd.set('roving_spheres', self.rovingradius2.get())
+        cmd.set('roving_spheres', rovingradius2.get())
     except:
         cmd.set('roving_spheres', cmdRovSphere)
         cmd.set("roving_polar_contacts", 8)
@@ -544,7 +388,7 @@ cmd.extend('chain_contact', chain_contact)
 def show_cpk(*args):
     try:
         self = args[0]
-        update()
+        pglob.update()
     except:
         pass
     objects = cmd.get_names('all')
@@ -555,26 +399,6 @@ def show_cpk(*args):
     cmd.show('spheres', 'all')
 cmd.extend('show_cpk', show_cpk)
 
-def spheresurf(*args):
-    try:
-        self = args[0]
-        update()
-    except:
-        pass
-    
-    
-    
-    
-    cmd.show('spheres', 'all')
-    cmd.create('surface', 'all')
-    cmd.show('surface', 'surface')
-    cmd.color('white', 'surface')
-    cmd.set('sphere_scale', '0.5', 'all')
-    cmd.set('transparency', '0.4')
-    cpkprotein()
-    cpknucleic()
-    cpkligands()
-cmd.extend('surf_over_spheres', spheresurf)
     #-----------Electron Density Presets----------------#
 
 def mesh_ribbon(self):
@@ -627,7 +451,7 @@ def surfinglines(*args):
     
     try:
         cmd.hide('everything')
-        update()
+        pglob.update()
         
         
         
@@ -651,7 +475,7 @@ def surfinglines(*args):
         showinfo('Alert', 'Protein must be present')
 cmd.extend('surfinglines', surfinglines)
 
-def color_cpk(self, str ):
+def color_cpk(str ):
     color_cpk()
 
 # Attempt to simulate the default PyMOL colorings
@@ -674,33 +498,33 @@ def space_fill_ligand(self):
     cmd.deselect()
 
 # Show/Hide ALL representations
-def show_all(self, tag):
-    list = self.rep1.getvalue()
-    list2 = self.rep2.getvalue()
+def show_all(tag):
+    list = rep1.getvalue()
+    list2 = rep2.getvalue()
     if tag == 'Show all':
-        self.rep1.invoke('Lines')
-        self.rep1.invoke('Sticks')
-        self.rep1.invoke('Ribbons')
-        self.rep1.invoke('Cartoon')
-        self.rep2.invoke('Dots')
-        self.rep2.invoke('Spheres')
-        self.rep2.invoke('Mesh')
-        self.rep2.invoke('Surface')
+        rep1.invoke('Lines')
+        rep1.invoke('Sticks')
+        rep1.invoke('Ribbons')
+        rep1.invoke('Cartoon')
+        rep2.invoke('Dots')
+        rep2.invoke('Spheres')
+        rep2.invoke('Mesh')
+        rep2.invoke('Surface')
         
         for item in list:
-            self.rep1.invoke(item)
+            rep1.invoke(item)
         for item in list2:
-            self.rep2.invoke(item)
+            rep2.invoke(item)
         cmd.do('show everything')
     else:
         cmd.do('hide everything')
         for item in list:
-            self.rep1.invoke(item)
+            rep1.invoke(item)
         for item in list2:
-            self.rep2.invoke(item)
+            rep2.invoke(item)
 
 # Show individual representations
-def show_rep(self, tag):
+def show_rep(tag):
     try:
         sel = sel
         if tag == 'Lines':
@@ -735,7 +559,7 @@ def show_rep(self, tag):
 
 
 # Hide individual representations
-def hide_rep(self, tag):
+def hide_rep(tag):
     try:
         sel = sel
         if tag == 'Lines':
@@ -771,7 +595,7 @@ def hide_rep(self, tag):
 
 # Set selection of atoms
 #     - initial selection is 'all'
-def set_sel(self, tag):
+def set_sel(tag):
     cmd.deselect()
     c = re.compile("^Chain")
     if tag == 'All':
@@ -857,7 +681,7 @@ def set_sel(self, tag):
 # Set selection of atoms
 #     - initial selection is 'all'
 
-def set_sel1(self, tag):
+def set_sel1(tag):
     cmd.deselect()
     c = re.compile("^Chain")
     if tag == 'All':
@@ -939,118 +763,120 @@ def set_sel1(self, tag):
 
 #preset menubar link functions
 
-def presurf(self, tag):
+def pre_surface_view(tag):
     if tag == 'Surface':
-        self.surface_view()
+        surface_view()
     elif tag == 'Surface on Cartoon':
-        self.surf_toon()
+        surface_view('toon')
     elif tag == 'Surface on Sticks':
-        self.surf_stick()
+        surface_view('stick')
     elif tag == 'Surface on Spheres':
-        self.spheresurf()
+        surface_view('sphere')
     elif tag == 'Mesh on Sticks':
-        self.mesh_stick()
+        surface_view('mesh')
     elif tag == 'Dots on Lines':
-        self.dot_line()
+        surface_view('dot')
 
-def pretoon(self, tag):
+def pre_cartoon_view(tag):
     if tag == 'Cartoon':
-        self.std_view()
+        cartoon_view()
     elif tag == 'Putty':
-        self.show_putty()
+        cartoon_view('putty')
     elif tag == 'Lines on Cartoon':
-        self.stick_toon()
+        stick_toon()
     elif tag == 'Color by Chain':
         color_by_chain()
 
-def preres(self, tag):
+def preres(tag):
     if tag == 'Aromatics':
-        self.color_aromatics()
+        color_aromatics()
     elif tag == 'Show Charged':
-        self.show_charged()
+        show_charged()
     elif tag == 'Solubility':
-        self.view_polarity()
+        view_polarity()
 
-def prerov(self, tag):
+def prerov(tag):
     if tag == 'Roving Sticks':
-        self.rovingstickers()
+        rovingstickers()
     elif tag == 'Roving Ball&Sticks':
-        self.rovingballstick()
+        rovingballstick()
     elif tag == 'Roving Spheres':
-        self.rovingspheres()
+        rovingspheres()
     elif tag == 'Roving Lines':
-        self.rovinglines()
+        rovinglines()
 
-def preele(self, tag):
+def preele(tag):
     if tag == 'Mesh on Ribbon':
-        self.mesh_ribbon()
+        mesh_ribbon()
     elif tag == 'Dots on Sticks':
-        self.dot_sticks()
+        dot_sticks()
     elif tag == 'Surface on Lines':
-        self.surfinglines()
+        surfinglines()
 
-def premisc(self, tag):
+def premisc(tag):
     if tag == 'Hetero Atoms':
-        self.show_hetero()
+        show_hetero()
     elif tag == 'Chain Contacts':
-        self.chain_contact()
+        chain_contact()
     elif tag == 'DNA & RNA':
-        self.show_dna_rna()
+        show_dna_rna()
     elif tag == 'CPK':
-        self.show_cpk()
+        show_cpk()
     elif tag == 'Ball & Stick':
-        self.ball_and_stick()
+        ball_and_stick()
 
-def premovie(self, tag):
+def premovie(tag):
     if tag == 'Ligand Zoom':
-        self.ligandZoom()
+        ligandZoom()
     elif tag == 'Build Protein':
-        self.growProtein()
+        growProtein()
     elif tag == 'Highlight Chains':
-        self.highlight_chains()
+        highlight_chains()
     elif tag == 'Rotate':
-        self.rotate_y()
+        rotate_y()
     elif tag == 'Chain Pull':
-        self.chain_pull()
+        chain_pull()
     elif tag == 'Ligand Pull':
-        self.Ligand_Pull()
+        Ligand_Pull()
     elif tag == 'Surface to Stick':
-        self.surface_stick()
+        surface_stick()
     elif tag == 'Surface to Cartoon':
-        self.surface_cartoon()
+        surface_cartoon()
     elif tag == 'Play':
-        self.play()
+        play()
     elif tag == 'Stop':
-        self.stop()
+        stop()
     elif tag == 'Rewind':
-        self.rewind()
+        rewind()
 
-
-#------------------Version 1--------------#
-# Tell our command line what type of commands to read
-def set_cmd_type(self, tag):
+def set_cmd_type(tag):
+    '''
+    Tell our command line what type of commands to read
+    '''
     if tag == 'PyMOL':
-        self.commandLine.setvalue('Enter PyMOL Commands Here')
-        self.cmdType = 'PyMOL'
+        commandLine.setvalue('Enter PyMOL Commands Here')
+        cmdType = 'PyMOL'
     else:
-        self.commandLine.setvalue('Enter Chime Commands Here')
-        self.cmdType = 'Chime'
+        commandLine.setvalue('Enter Chime Commands Here')
+        cmdType = 'Chime'
 
-# Read commands from command line
 def command_line(self):
+    '''
+    Read commands from command line
+    '''
     try:
-        command = self.commandLine.getvalue()
-        if self.cmdType == 'PyMOL':
+        command = commandLine.getvalue()
+        if cmdType == 'PyMOL':
             cmd.do(command)
-            self.commandLine.clear()
+            commandLine.clear()
         else:
-            self.converter.parseIt(command, self.commandLine, self.output)
+            converter.parseIt(command, commandLine, output)
     except:
         showinfo('Error',
             'Invalid command or you must load the PDB through Pro-MOL')
 
 # Coloring on Selection
-def color_sel(self, tag):
+def color_sel(tag):
     try:
         sel = sel
         if tag == 'Red':
@@ -1072,7 +898,7 @@ def color_sel(self, tag):
                 cmd.color("hydrogen", "(elem H and "+sel+")")
                 cmd.color("gray", "(elem C and "+sel+")")
         elif tag == 'Other':
-                color = askcolor(parent = self.int,
+                color = askcolor(parent = int,
                     title = "Selection Color Chooser")
                 colorArray = []
                 if color[0] != None:
@@ -1087,7 +913,7 @@ def color_sel(self, tag):
     except:
         showinfo('Error', 'Update Selection!')
         
-def stereo_switch(self, tag):
+def stereo_switch(tag):
     if tag == 'Off':
         cmd.stereo('off')
     elif tag == 'Quad':
@@ -1105,7 +931,7 @@ def stereo_switch(self, tag):
         cmd.stereo('on')
 
 # change background colors
-def bgcolor_switch(self, tag):
+def bgcolor_switch(tag):
     if tag == 'Black':
         cmd.do('bg_color black')
     elif tag == 'White':
@@ -1113,7 +939,7 @@ def bgcolor_switch(self, tag):
     elif tag == 'Grey':
         cmd.do('bg_color grey')
     elif tag == 'Other':
-        color = askcolor(parent = self.int, title = "Background Color Chooser")
+        color = askcolor(parent = int, title = "Background Color Chooser")
         colorArray = []
         if color[0] != None:
             list = color[0]
@@ -1125,10 +951,10 @@ def bgcolor_switch(self, tag):
             cmd.set_color('newcolor', colorArray)
             cmd.do('bg_color newcolor')
     else:
-             self.do_nothing()
+             do_nothing()
 
 # change the color space
-def cspace_switch(self, tag):
+def cspace_switch(tag):
     if tag == 'PyMOL':
         cmd.space('pymol')
     elif tag == 'Publications':
@@ -1137,13 +963,13 @@ def cspace_switch(self, tag):
         cmd.space('cmyk')
 
 # hide/show interface
-def hide_interface(self, tag):
+def hide_interface(tag):
     if tag == 'Show':
         cmd.set('internal_gui', '1')
     else:
         cmd.set('internal_gui', '0')
 # Show/Hide Water
-def show_hide_water(self, tag):
+def show_hide_water(tag):
     if tag == 'Show':
         cmd.show('(resn HOH)')
         cmd.show('spheres', '(resn HOH)')

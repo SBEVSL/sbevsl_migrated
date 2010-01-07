@@ -7,7 +7,7 @@ Pmw.initialise()
 
 def initialise():
 
-    group = Pmw.Group(pglob.Tabs['motif_maker'], tag_text = 'Motif Database')
+    group = Pmw.Group(pglob.Tabs['motif_maker']['tab'], tag_text = 'Motif Database')
     group.grid(row=3, column=0, padx=0, pady=0)
     interior = group.interior()
     atlab = tk.Label(interior, text = "Atoms")

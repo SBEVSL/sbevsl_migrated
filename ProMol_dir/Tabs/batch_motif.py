@@ -8,7 +8,7 @@ from pmg_tk.startup.ProMol_dir.Methods.utility import *
 Pmw.initialise()
 
 def initialise():
-    group = Pmw.Group(pglob.Tabs['batch_motif'], tag_text='Enter Location of List')
+    group = Pmw.Group(pglob.Tabs['batch_motif']['tab'], tag_text='Enter Location of List')
     group.grid(row=0, column=0, padx=0, pady=0)
     interior = group.interior()
     

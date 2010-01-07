@@ -9,7 +9,7 @@ Pmw.initialise()
 
 def initialise():
     #------------------External Resources------------------#
-    group = Pmw.Group(pglob.Tabs['toolbox'], tag_text='Resources')
+    group = Pmw.Group(pglob.Tabs['toolbox']['tab'], tag_text='Resources')
     group.grid(row=2, column=1, columnspan=2, padx=2, pady=2, sticky=NE)
     interior = group.interior()
     pdber = Entry(interior, width = 4)
@@ -32,7 +32,7 @@ def initialise():
 
     #--------------Electrostatics-------------#
 
-    group = Pmw.Group(pglob.Tabs['toolbox'], tag_text='Electrostatics')
+    group = Pmw.Group(pglob.Tabs['toolbox']['tab'], tag_text='Electrostatics')
     group.grid(row=2, column=0, columnspan=3, padx=2, pady=2, sticky=NW)
     interior = group.interior()
     labelaa = Label(interior, text = 'Code:')
@@ -57,7 +57,7 @@ def initialise():
 
 
     #---------Orthoscopic view and View distance-----#
-    group = Pmw.Group(pglob.Tabs['toolbox'], tag_text='Perspective')
+    group = Pmw.Group(pglob.Tabs['toolbox']['tab'], tag_text='Perspective')
     group.grid(row=1, column=1, padx=0, pady=0, sticky=NW)
     interior = group.interior()
     frameorthoon = Frame(interior, width = 16)
@@ -113,7 +113,7 @@ def initialise():
 
 
     #-------------------Alternate Ray Tracing----------------------
-    group = Pmw.Group(pglob.Tabs['toolbox'], tag_text='Ray Trace Options')
+    group = Pmw.Group(pglob.Tabs['toolbox']['tab'], tag_text='Ray Trace Options')
     group.grid(row=0, column=0,columnspan=2, padx=0, pady=5, sticky=NW)
     interior = group.interior()
     rayzero = Button(interior, text = 'Default Ray')
@@ -130,7 +130,7 @@ def initialise():
     raythree.bind('<Button-1>', setray3)
 
     #------------------Amino Acid Reference Group-----------------
-    group = Pmw.Group(pglob.Tabs['toolbox'], tag_text='Amino Acid Reference:')
+    group = Pmw.Group(pglob.Tabs['toolbox']['tab'], tag_text='Amino Acid Reference:')
     group.grid(row=1, column=0,  padx=0, pady=0, sticky=NW)
     interior = group.interior()
     canvas79=Canvas(interior, width=200, height=150)

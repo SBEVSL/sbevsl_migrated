@@ -8,7 +8,7 @@ Pmw.initialise()
 
 def initialise():
     #custom group
-    group = Pmw.Group(pglob.Tabs['custom_motifs'], tag_text = 'Custom Motifs')
+    group = Pmw.Group(pglob.Tabs['custom_motifs']['tab'], tag_text = 'Custom Motifs')
     group.grid(row=0, column=0,columnspan =4, padx=0, pady=0)
     interior = group.interior()
     #menu bars
@@ -84,7 +84,7 @@ def initialise():
     #--------------------------------------#
 
     #custom group
-    group = Pmw.Group(pglob.Tabs['custom_motifs'], tag_text = 'Advanced Custom Motifs')
+    group = Pmw.Group(pglob.Tabs['custom_motifs']['tab'], tag_text = 'Advanced Custom Motifs')
     group.grid(row=1, column=0,columnspan =4, padx=0, pady=0)
     interior = group.interior()
     #menu bars

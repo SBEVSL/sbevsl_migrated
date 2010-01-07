@@ -46,7 +46,7 @@ def loadlog(event):
     log = askopenfilename(defaultextension=".pml")
     loaderent.insert(0, log)
     cmd.do('@'+loaderent.get())
-    pglob.Tabs['ez_viz'].mainloop()
+    pglob.Tabs['ez_viz']['tab'].mainloop()
 
 def write_script(tag):
     if tag == 'Off':

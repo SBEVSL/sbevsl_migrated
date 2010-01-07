@@ -9,7 +9,7 @@ Pmw.initialise()
 
 def initialise():
     #-----------Mouse Mode--------------
-    group = Pmw.Group(pglob.Tabs['movie_maker'], tag_text='Mouse Mode:')
+    group = Pmw.Group(pglob.Tabs['movie_maker']['tab'], tag_text='Mouse Mode:')
     group.grid(row=1, column=0, padx=0, pady=0, sticky = tk.NW)
     interior = group.interior()
     ddddd = tk.Button(interior, width = 15, text = '3 Button Viewing')
@@ -37,7 +37,7 @@ def initialise():
     #----------Load and Save Frame Group------------------#
 
 
-    group = Pmw.Group(pglob.Tabs['movie_maker'], tag_text='Load and Save:')
+    group = Pmw.Group(pglob.Tabs['movie_maker']['tab'], tag_text='Load and Save:')
     group.grid(row=0, column=0, padx=0, pady=0, sticky = tk.NE)
     interior = group.interior()
     #------------File extension Selector---------------#
@@ -121,7 +121,7 @@ def initialise():
     #Used for easier creation of movies, utilizing buttons
     #instead of the necessity to input Pymol commands constantly
 
-    group = Pmw.Group(pglob.Tabs['movie_maker'], tag_text='Scripted Animation:')
+    group = Pmw.Group(pglob.Tabs['movie_maker']['tab'], tag_text='Scripted Animation:')
     group.grid(row=0, column=1, padx=0, pady=0, sticky = tk.NW)
     interior = group.interior()
     labscrp = tk.Label(interior, text = "Frames in Movie:")
@@ -190,7 +190,7 @@ def initialise():
     #--------------Selection Controls--------------------
     #---This creates frames, and thusly the ability to add
     #---Balloon pop up help for mask/protect buttons-----
-    group = Pmw.Group(pglob.Tabs['movie_maker'], tag_text='Selection Controls')
+    group = Pmw.Group(pglob.Tabs['movie_maker']['tab'], tag_text='Selection Controls')
     group.grid(row=1, column=1, padx=0, pady=0, sticky = tk.SW)
     interior = group.interior()
     framemaskbtn = tk.Frame(interior)
