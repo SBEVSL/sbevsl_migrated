@@ -5,6 +5,7 @@ from pymol import cmd
 import Tkinter as tk
 from tkFileDialog import askopenfilename
 import Pmw
+from pmg_tk.startup.remote_pdb_load import fetchPDBDialog
 from pmg_tk.startup.ProMol_dir import promolglobals as pglob
 
 Pmw.initialise()
@@ -20,10 +21,10 @@ def __init__(self):
     self.menuBar.addmenuitem('Plugin', 'command',
                              'Easy GUI',
                              label = 'ProMol 3.03',
-                             command = lambda s = self : promol(s, 1))
+                             command = lambda s = self : promol(s))
     promol(self, 0)
 
-def promol(pymol, user_click):
+def promol(pymol, user_click = 1):
     '''
     This starts promol. As well as setup the GUI.
     '''
@@ -55,7 +56,8 @@ def promol(pymol, user_click):
         elif result == 'Help':
             promol_help()
         elif result == 'Fetch PDB':
-            getPdb()
+            fetchPDBDialog(pymol)
+            pglob.update()
         elif result == 'Clear':
             cmd.reinitialize()
         elif result == 'Thanks':
@@ -76,45 +78,40 @@ def promol(pymol, user_click):
 
     notebook = Pmw.NoteBook(interior)
     notebook.pack(fill = 'both', expand = 1, padx = 10, pady = 10)
-
-    pglob.Tabs['welcome'] = notebook.add('Welcome')
-    from pmg_tk.startup.ProMol_dir.Tabs import welcome
+    from pmg_tk.startup.ProMol_dir.Tabs import welcome, batch_motif, ez_viz,\
+        motifs, custom_motifs, motif_maker, view, toolbox, advanced_toolbox,\
+        movie_maker
+    
+    pglob.Tabs['welcome'] = {'tab':notebook.add('Welcome')}
     welcome.initialise()
 
-    pglob.Tabs['batch_motif'] = notebook.add('Batch Motif')
-    from pmg_tk.startup.ProMol_dir.Tabs import batch_motif
+    pglob.Tabs['batch_motif'] = {'tab':notebook.add('Batch Motif')}
     batch_motif.initialise()
     
-    pglob.Tabs['ez_viz'] = notebook.add('EZ-Viz')
-    from pmg_tk.startup.ProMol_dir.Tabs import ez_viz
+    pglob.Tabs['ez_viz'] = {'tab':notebook.add('EZ-Viz')}
     ez_viz.initialise()
     
-    pglob.Tabs['motifs'] = notebook.add('Motifs')
-    from pmg_tk.startup.ProMol_dir.Tabs import motifs
+    pglob.Tabs['motifs'] = {'tab':notebook.add('Motifs')}
     motifs.initialise()
     
-    pglob.Tabs['custom_motifs'] = notebook.add('Custom\nMotifs')
-    from pmg_tk.startup.ProMol_dir.Tabs import custom_motifs
+    pglob.Tabs['custom_motifs'] = {'tab':notebook.add('Custom\nMotifs')}
     custom_motifs.initialise()
     
-    pglob.Tabs['motif_maker'] = notebook.add('Motif Database')
-    from pmg_tk.startup.ProMol_dir.Tabs import motif_maker
+    pglob.Tabs['motif_maker'] = {'tab':notebook.add('Motif Database')}
     motif_maker.initialise()
     
-    pglob.Tabs['view'] = notebook.add('View\nOptions')
-    from pmg_tk.startup.ProMol_dir.Tabs import view
+    pglob.Tabs['view'] = {'tab':notebook.add('View\nOptions')}
     view.initialise()
     
-    pglob.Tabs['toolbox'] = notebook.add('Toolbox')
-    from pmg_tk.startup.ProMol_dir.Tabs import toolbox
+    pglob.Tabs['toolbox'] = {'tab':notebook.add('Toolbox')}
     toolbox.initialise()
     
-    pglob.Tabs['advanced_toolbox'] = notebook.add('Advanced\n Toolbox')
-    from pmg_tk.startup.ProMol_dir.Tabs import advanced_toolbox
+    pglob.Tabs['advanced_toolbox'] = {'tab':notebook.add('Advanced\n Toolbox')}
     advanced_toolbox.initialise()
     
-    pglob.Tabs['movie_maker'] = notebook.add('Movie\n Maker')
-    from pmg_tk.startup.ProMol_dir.Tabs import movie_maker
+    pglob.Tabs['movie_maker'] = {'tab':notebook.add('Movie\n Maker')}
     movie_maker.initialise()
 
     notebook.setnaturalsize()
+    
+    pglob.update()

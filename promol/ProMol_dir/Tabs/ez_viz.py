@@ -8,12 +8,12 @@ from pmg_tk.startup.ProMol_dir.Methods.utility import *
 Pmw.initialise()
 def initialise():
 
-    scriptwrite = Pmw.OptionMenu(pglob.Tabs['ez_viz'], label_text = 'Script Writing:', labelpos = 'n',
+    scriptwrite = Pmw.OptionMenu(pglob.Tabs['ez_viz']['tab'], label_text = 'Script Writing:', labelpos = 'n',
             items = ("Off", "On"),
             menubutton_width = 11, command=write_script)
     scriptwrite.grid(row=5, column=0, sticky=NW)
 
-    group = Pmw.Group(pglob.Tabs['ez_viz'], tag_text='Run Script')
+    group = Pmw.Group(pglob.Tabs['ez_viz']['tab'], tag_text='Run Script')
     group.grid(row=5, column=0, padx=8, pady=0, sticky = N)
     interior = group.interior()
     scriptbutton = Button(interior, width = 10, text = 'Run Script')
@@ -23,7 +23,7 @@ def initialise():
     loaderent = Entry(interior, width = 7)
 
     #------------ Presets Group  ---------------
-    group = Pmw.Group(pglob.Tabs['ez_viz'], tag_text='Preset Views')
+    group = Pmw.Group(pglob.Tabs['ez_viz']['tab'], tag_text='Preset Views')
     group.grid(row=0, column=0, padx=0, pady=0)
 
     interior=group.interior()
@@ -33,12 +33,12 @@ def initialise():
     surface = Pmw.OptionMenu(interior, label_text = 'Surfaces:', labelpos = 'n',
                              items = ('', 'Surface', 'Surface on Cartoon', 'Surface on Sticks',
                                       'Surface on Spheres', 'Mesh on Sticks', 'Dots on Lines'),
-                             menubutton_width = 10, command=presurf)
+                             menubutton_width = 10, command=pre_surface_view)
     surface.grid(row=0, column=0, sticky=NW)
 
     cartoon = Pmw.OptionMenu(interior, label_text = 'Cartoons:', labelpos = 'n',
                 items = ('', 'Cartoon', 'Putty', 'Lines on Cartoon', 'Color by Chain'),
-                menubutton_width = 10, command=pretoon)
+                menubutton_width = 10, command=pre_cartoon_view)
     cartoon.grid(row=0, column=1, sticky=NW)
 
     residue = Pmw.OptionMenu(interior, label_text = 'By Residue:', labelpos = 'n',
@@ -82,7 +82,7 @@ def initialise():
                 menubutton_width = 10, command=premovie)
     movies.grid(row=0, column=3, sticky=NW)
 
-    group = Pmw.Group(pglob.Tabs['ez_viz'], tag_text='Display Options')
+    group = Pmw.Group(pglob.Tabs['ez_viz']['tab'], tag_text='Display Options')
     group.grid(row=4, column=0, columnspan=2, padx=0, pady=0)
     int=group.interior()
 
@@ -112,7 +112,7 @@ def initialise():
                 menubutton_width = 11, command=hide_interface)
     stereo.grid(row=0, column=3, sticky=NW)
 
-    group = Pmw.Group(pglob.Tabs['ez_viz'], tag_text = 'Automated Commands')
+    group = Pmw.Group(pglob.Tabs['ez_viz']['tab'], tag_text = 'Automated Commands')
     group.grid(row=2, column=0, padx=0, pady=0)
     interior = group.interior()
     popbtn=Button(interior, text='Update Selection', width=15)
@@ -150,7 +150,7 @@ def initialise():
     selection.grid(row=0, column=2, padx=0, pady=0)
  
      # MANUAL COMMANDS SECTION
-    group = Pmw.Group(pglob.Tabs['ez_viz'], tag_text='Manual Commands')
+    group = Pmw.Group(pglob.Tabs['ez_viz']['tab'], tag_text='Manual Commands')
     group.grid(row=3, column=0, padx=0, pady=0)
     interior = group.interior()
 

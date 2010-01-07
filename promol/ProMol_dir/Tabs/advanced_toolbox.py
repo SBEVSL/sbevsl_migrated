@@ -8,7 +8,7 @@ Pmw.initialise()
 
 def initialise():
     #--------------Mode---------------------
-    group = Pmw.Group(pglob.Tabs['advanced_toolbox'], tag_text='Mode:')
+    group = Pmw.Group(pglob.Tabs['advanced_toolbox']['tab'], tag_text='Mode:')
     group.grid(row=0, column=1, padx=2, pady=2, sticky = tk.NW)
     interior = group.interior()
     framesculbtn = tk.Frame(interior, width=16)
@@ -20,7 +20,6 @@ def initialise():
     sculbtn.bind('<Button-1>',sculpt)
 
     #-------------Measurment-------------------#
-      #Measures distance between two atoms
 
     framedis = tk.Frame(interior, width=16)
     framedis.grid(row=1, column=0, padx=1, pady=1, sticky = tk.NW)
@@ -50,10 +49,8 @@ def initialise():
     radioAdd(interior, 'w', 'vertical', seqviewformat,
               ' ', labels, 4, 0, 1, 1, 'NW')
 
-
-
     #------------Amino Acid Select------------------------------
-    group = Pmw.Group(pglob.Tabs['advanced_toolbox'], tag_text='Amino Acid Selector:')
+    group = Pmw.Group(pglob.Tabs['advanced_toolbox']['tab'], tag_text='Amino Acid Selector:')
     group.grid(row=1, column=0, padx=2, pady=2, sticky = tk.SW)
     interior = group.interior()
     labelaa = tk.Label(interior, text = 'Code:')
@@ -81,7 +78,7 @@ def initialise():
     #----------Set up scales for controlling how much of protein is roved----------
 
 
-    group = Pmw.Group(pglob.Tabs['advanced_toolbox'], tag_text='Electron Density Mapping')#And a new group
+    group = Pmw.Group(pglob.Tabs['advanced_toolbox']['tab'], tag_text='Electron Density Mapping')#And a new group
     group.grid(row=0, column=0, padx=2, pady=2, sticky = tk.NW)
     interior = group.interior()
     framemesh = tk.Frame(interior)
@@ -191,15 +188,15 @@ def initialise():
     balloon = Pmw.Balloon(interior)
     balloon.bind(frame, "Please be patient.\nButton can only be used once.\nPyMol will close if used twice.")
 
-    doublemapbtn.bind('<Button-1>', doublemapres)#workspot
+    doublemapbtn.bind('<Button-1>', doublemapres)
 
 
     balloon1 = Pmw.Balloon(interior)
-    balloon1.bind(framemesh, '''Display entire map as a mesh.''')
+    balloon1.bind(framemesh, 'Display entire map as a mesh.')
     balloon2 = Pmw.Balloon(interior)
-    balloon2.bind(framedots, '''Display entire map as dots.''')
+    balloon2.bind(framedots, 'Display entire map as dots.')
     balloon3 = Pmw.Balloon(interior)
-    balloon3.bind(framesurf, '''Display entire map as surface.''')
+    balloon3.bind(framesurf, 'Display entire map as surface.')
     balloon4 = Pmw.Balloon(interior)
     balloon4.bind(framerov, "View small portions of map at a time\n using middle mouse button to scan across.")
     balloon45 = Pmw.Balloon(interior)
@@ -222,7 +219,7 @@ def initialise():
     loadmapbtn.bind('<Button-1>', loadmapps)
 
     #------------Fetch Ramachandran Plot --------------------
-    group = Pmw.Group(pglob.Tabs['advanced_toolbox'], tag_text='Ramachandran Plot:')
+    group = Pmw.Group(pglob.Tabs['advanced_toolbox']['tab'], tag_text='Ramachandran Plot:')
     group.grid(row=1, column=1, padx=2, pady=2, sticky = tk.SW)
     interior = group.interior()
     framebtn1 = tk.Frame(interior)

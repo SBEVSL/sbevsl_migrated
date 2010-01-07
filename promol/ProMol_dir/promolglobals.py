@@ -8,7 +8,6 @@ AminoMenuList = None
 AminoList = None
 AlphaSequence = None
 alphaSequence = None
-welcome = None
 Tabs = {}
 
 try:
@@ -38,7 +37,7 @@ for x in AminoList:
 #A - Z
 AlphaSequence = [ "%c" % (x) for x in range(ord('A'), ord('Z')+1)]
 #a - z
-AlphaSequence = [ "%c" % (x) for x in range(ord('a'), ord('z')+1)]
+alphasequence = [ "%c" % (x) for x in range(ord('a'), ord('z')+1)]
 
 def defaults(tag = ''):
     if tag == 'cartoon':
@@ -49,28 +48,27 @@ def defaults(tag = ''):
         cmd.set('cartoon_tube_radius', '0.5', 'all')
         cmd.set('cartoon_transparency', '0.0', 'all')
         cmd.cartoon('automatic', sel1)
-        ProMol.toonWidth.set('1.4')
-        ProMol.toonThickness.set('0.3')
-        ProMol.cartoonTransparency.set('0.0')
-        ProMol.toonTubeRadius.set('0.5')
-        ProMol.ribbonTypes.invoke(0)
+        toonWidth.set('1.4')
+        toonThickness.set('0.3')
+        cartoonTransparency.set('0.0')
+        toonTubeRadius.set('0.5')
+        ribbonTypes.invoke(0)
     elif tag == 'spheres':
         cmd.set('sphere_scale', '0.7', 'all')
         cmd.set('sphere_transparency', '0.0', 'all')
-        ProMol.sphereScale.set('0.7')
-        ProMol.sphereTransparency.set('0.0')
+        sphereScale.set('0.7')
+        sphereTransparency.set('0.0')
     elif tag == 'sticks':
         cmd.set('stick_radius', '0.2', 'all')
         cmd.set('stick_transparency', '0.0', 'all')
-        ProMol.stickRadius.set('0.2')
-        ProMol.stickTransparency.set('0.0')
+        stickRadius.set('0.2')
+        stickTransparency.set('0.0')
     elif tag == 'surface':
         cmd.set('transparency', '0.0', 'all')
-        ProMol.surfaceTransparency.set('0.0')
+        surfaceTransparency.set('0.0')
     elif tag == 'ambient':
         cmd.set('ambient', '0.25', 'all')
-        ProMol.asca.set('0.25')
-    cmd.hide('everything', 'all')
+        asca.set('0.25')
     cmd.delete('surface')
     cmd.delete('mesh1')
     cmd.delete('cartoon')
@@ -101,12 +99,14 @@ cmd.extend('defaults', defaults)
 
 def checkforchain():
     objects = cmd.get_names('all')
-    if 'Chain-A' in objects:
-        if(len(cmd.index('Chain-A')) < 1):
-            cmd.delete('Chain-A')
-    if 'Chain-' '' in objects:
-        if(len(cmd.index('Chain-' '')) < 1):
-            cmd.delete('Chain-' '')
+    for letter in AlphaSequence:
+        chain = 'Chain-'+letter
+        if chain in objects:
+            if(len(cmd.index(chain)) < 1):
+                cmd.delete(chain)
+    # if 'Chain-' '' in objects:
+    #         if(len(cmd.index('Chain-' '')) < 1):
+    #             cmd.delete('Chain-' '')
 cmd.extend('checkforchain', checkforchain)
 
 def deletemotif():
@@ -214,7 +214,7 @@ def populate():
     cmd.disable('protein')
     for letter in AlphaSequence:
         cmd.select("Chain-" + letter, "chain " + letter)
-    cmd.select("Chain-' '", "chain ' '")
+    #cmd.select("Chain-' '", "chain ' '")
     checkforchain()
     items = []
     objects = cmd.get_names('all')
@@ -241,7 +241,7 @@ def populate():
             items.append('Chain-' + letter)
     items.sort()
     #selection.setitems(items)
-    ProMol.advancedSelection.setitems(items)
+    Tabs['view']['advanced_selection'].setitems(items)
 cmd.extend('populate', populate)
 
 def update():
