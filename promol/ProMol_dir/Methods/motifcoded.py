@@ -4,96 +4,97 @@ from tkMessageBox import showerror
 from pmg_tk.startup.ProMol_dir import promolglobals as pglob
 
 motifs = {
-    'P-Phosphorylase_Kinase':{'function':'P_2phk_00','upper':'35','exact':'26','lower':'17'},
-    'P-Betaine_Aldehyde_Dehydrogenase':{'function':'P_1a4s_00','upper':32,'exact':23,'lower':14},
-    'P-Serotonin_N-acetyltransferase':{'function':'P_1cjw_00','upper':56,'exact':44,'lower':32},
-    'P-Zinc_Finger':{'function':'P_2k1p_00','upper':42,'exact':32,'lower':22},
-    'P-DNA_Ligase':{'function':'P_x0x0_00','upper':None,'exact':None,'lower':None},
-    'P-Fucose_Isomerase':{'function':'P_1fui_00','upper':27,'exact':18,'lower':9},
-    'P-Triose_Phosphate_Isomerase':{'function':'P_1tph_00','upper':50,'exact':40,'lower':30},
-    'P-Fk506-Binding_Protein':{'function':'P_1d6o_00','upper':48,'exact':36,'lower':24},
-    'P-Carbonic_Anhydrase_II':{'function':'P_1ca2_00','upper':42,'exact':32,'lower':22},
-    'P-Phenylalanine_Ammonia_Lyase':{'function':'P_1w27_00','upper':37,'exact':27,'lower':17},
-    'P-Chondroitinase':{'function':'P_1cb8_00','upper':51,'exact':41,'lower':31},
-    'P-Hyaluronate_Lyase':{'function':'P_1c82_00','upper':51,'exact':41,'lower':31},
-    'P-Exonuclease_III':{'function':'P_1ako_00','upper':52,'exact':42,'lower':32},
-    'P-Citrate_Synthase':{'function':'P_1aL6_00','upper':44,'exact':34,'lower':24},
-    'P-Serine_Protease':{'function':'P_1n8o_00','upper':34,'exact':24,'lower':14},
-    'P-Cysteine_Protease':{'function':'P_1nln_00','upper':35,'exact':25,'lower':15},
-    'P-Metalloprotease':{'function':'P_x1x1_00','upper':None,'exact':None,'lower':None},
-    'P-Protein_Tyrosine_Phosphatase':{'function':'P_1bzc_00','upper':42,'exact':31,'lower':20},
-    'P-Beta-Lactamase':{'function':'P_2blt_00','upper':55,'exact':45,'lower':35},
-    'P-O-Glycosyl':{'function':'P_x2x2_00','upper':None,'exact':None,'lower':None},
-    'P-Cephalosporin_c Deacetylase':{'function':'P_1odt_00','upper':42,'exact':32,'lower':22},
-    'P-Aminotransferase':{'function':'P_1ecx_00','upper':37,'exact':27,'lower':17},
-    'P-Anthranilate_Synthase':{'function':'P_1i7q_00','upper':35,'exact':25,'lower':15},
-    'P-Thymidine_Kinase':{'function':'P_x3x3_00','upper':None,'exact':None,'lower':None},
-    'P-Adenylate_Kinase':{'function':'P_1zio_00','upper':77,'exact':66,'lower':55},
-    'P-Insulin_Receptor_Tyrosine_Kinase':{'function':'P_1ir3_00','upper':35,'exact':24,'lower':13},
-    'P-Hhai_DNA_Methyltransferase':{'function':'P_2uyc_00','upper':48,'exact':37,'lower':26},
-    'P-Cu_Zn-Superoxide_Dismutase':{'function':'P_1eso_00','upper':51,'exact':41,'lower':31},
-    'P-Peroxidase':{'function':'P_1apx_00','upper':40,'exact':29,'lower':18},
-    'P-Alcohol_Dehdydrogenase':{'function':'P_1mg5_00','upper':47,'exact':35,'lower':23},
-    'P-Aldose_Reductase':{'function':'P_1mrq_00','upper':51,'exact':39,'lower':27},
-    'P-NADPH_Cytochrome_p450_Reductase':{'function':'P_1amo_00','upper':28,'exact':20,'lower':12},
-    'P-Ferredoxin_NADP_Reductase':{'function':'P_1fnb_00','upper':30,'exact':21,'lower':12},
-    'Jaa-Citrate_Synthase':{'function':'Jaa_1csi_00','upper':38,'exact':28,'lower':18},
-    'Jaa-Ascorbate_Peroxidase':{'function':'Jaa_1a2f_00','upper':40,'exact':29,'lower':18},
-    'Jaa-Aspartate_Carbamoyltransferase':{'function':'Jaa_1rab_00','upper':50,'exact':39,'lower':28},
-    'Jaa-Haloalkane_Dehalogenase':{'function':'Jaa_2had_00','upper':36,'exact':26,'lower':16},
-    'Jaa-Beta-Glucuronidase':{'function':'Jaa_1jz6_00','upper':42,'exact':30,'lower':18},
-    'Jaa-Beta-Lactamase':{'function':'Jaa_1pzp_00','upper':39,'exact':30,'lower':21},
-    'Jaa-Hyaluronidase':{'function':'Jaa_1n7n_00','upper':45,'exact':33,'lower':21},
-    'Jaa-Ferredoxin_Reductase':{'function':'Jaa_1que_00','upper':30,'exact':21,'lower':12},
-    'Jaa-Galacosytransferase':{'function':'Jaa_1ga8_00','upper':34,'exact':25,'lower':16},
-    'Jaa-20Alpha-Hydroxysteroid_Dehydrogenase':{'function':'Jaa_1j96_00','upper':51,'exact':39,'lower':27},
-    'Jaa-Thiamin_Diphosphate_Dependent_Enzyme_Pyruvate_Decarboxylase':{'function':'Jaa_1pyd_00','upper':47,'exact':37,'lower':27},
-    'Jaa-D-Ribulose-5-Phosphate_3-Epimerase':{'function':'Jaa_1h1y_00','upper':46,'exact':36,'lower':26},
-    'Jaa-Trimethylamine_Dehydrogenase':{'function':'Jaa_1djq_00','upper':42,'exact':30,'lower':18},
-    'Jaa-Chorismate_Mutase':{'function':'Jaa_5csm_00','upper':51,'exact':40,'lower':29},
-    'Jaa-Carboxypeptidase_A':{'function':'Jaa_2ctb_00','upper':42,'exact':31,'lower':20},
-    'Jaa-Aaparagine_Synthetase':{'function':'Jaa_12as_00','upper':39,'exact':28,'lower':17},
-    'Jaa-Carboxylesterase':{'function':'Jaa_1aur_00','upper':51,'exact':41,'lower':31},
-    'Jaa-Histidine_Ammonia-Lyase':{'function':'Jaa_1gk2_00','upper':48,'exact':36,'lower':24},
-    'Jaa-Seryl-TRNA_Synthetase':{'function':'Jaa_1sry_00','upper':56,'exact':45,'lower':34},
-    'Jaa-Serotonin_N-Acetyltransferase':{'function':'Jaa_1kuv_00','upper':56,'exact':44,'lower':32},
-    'Jaa-Phosphofructokinase':{'function':'Jaa_1pfk_00','upper':52,'exact':41,'lower':30},
-    'Jaa-Aspartate_Semialdehyde_Dehydrogenase':{'function':'Jaa_1nwc_00','upper':35,'exact':25,'lower':15},
-    'Jaa-Aldose_Reductase':{'function':'Jaa_aldosereductase_00','upper':None,'exact':None,'lower':None},
-    'Jaa-Chondroitinase':{'function':'Jaa_chondroitinase_00','upper':None,'exact':None,'lower':None},
-    'Jaa-Serine_Protease':{'function':'Jaa_serineprotease_00','upper':None,'exact':None,'lower':None},
-    'Jab-Citrate_Synthase':{'function':'Jab_1csc_00','upper':38,'exact':28,'lower':18},
-    'Jab-Ascorbate_Peroxidase':{'function':'Jab_1a2f_00','upper':40,'exact':29,'lower':18},
-    'Jab-Aspartate_Carbamoyltransferase':{'function':'Jab_1raf_00','upper':50,'exact':39,'lower':28},
-    'Jab-Carboxylesterase':{'function':'Jab_1aur_00','upper':51,'exact':41,'lower':31},
-    'Jab-Serotonin_N-Acetyltransferase':{'function':'Jab_1cjw_00','upper':56,'exact':44,'lower':32},
-    'Jab-Haloalkane_Dehalogenase':{'function':'Jab_1edd_00','upper':36,'exact':26,'lower':16},
-    'Jab-Histidine_Ammonia-Lyase':{'function':'Jab_1b8f_00','upper':48,'exact':36,'lower':24},
-    'Jab-Beta-Glucuronidase':{'function':'Jab_1jz7_00','upper':42,'exact':30,'lower':18},
-    'Jab-Beta-Lactamase':{'function':'Jab_1nyy_00','upper':39,'exact':30,'lower':21},
-    'Jab-Hyaluronidase':{'function':'Jab_1n7n_00','upper':45,'exact':33,'lower':21},
-    'Jab-Ferredoxin_Reductase':{'function':'Jab_1qgy_00','upper':30,'exact':21,'lower':12},
-    'Jab-Galacosytransferase':{'function':'Jab_1g9r_00','upper':34,'exact':25,'lower':16},
-    'Jab-20Alpha-Hydroxysteroid_Dehydrogenase':{'function':'Jab_1ah3_00','upper':51,'exact':39,'lower':27},
-    'Jab-Phosphofructokinase':{'function':'Jab_4pfk_00','upper':52,'exact':41,'lower':30},
-    'Jab-Thiamin_Diphosphate_Dependent_Enzyme_Pyruvate_Decarboxylase':{'function':'Jab_1pyd_00','upper':47,'exact':37,'lower':27},
-    'Jab-D-Ribulose-5-Phosphate_3-Epimerase':{'function':'Jab_1h1y_00','upper':46,'exact':36,'lower':26},
-    'Jab-Seryl-TRNA_Synthetase':{'function':'Jab_1sry_00','upper':56,'exact':45,'lower':34},
-    'Jab-Trimethylamine_Dehydrogenase':{'function':'Jab_1djq_00','upper':42,'exact':30,'lower':18},
-    'Jab-Chorismate_Mutase':{'function':'Jab_5csm_00','upper':51,'exact':40,'lower':29},
-    'Jab-Aaparagine_Synthetase':{'function':'Jab_12as_00','upper':39,'exact':28,'lower':17},
-    'Jab-Aspartate_Semialdehyde_Dehydrogenase':{'function':'Jab_1nwc_00','upper':35,'exact':25,'lower':15},
-    'Jab-Aldose_Reductase':{'function':'Jab_aldosereductase_00','upper':None,'exact':None,'lower':None},
-    'Jab-Chondroitinase':{'function':'Jab_chondroitinase_00','upper':None,'exact':None,'lower':None},
-    'Jab-Serine_Protease':{'function':'Jab_serineprotease_00','upper':None,'exact':None,'lower':None}
+    'P_2phk_00_Phosphorylase_Kinase':{'function':'P_2phk_00','upper':35,'exact':26,'lower':17},
+    'P_1a4s_00_Betaine_Aldehyde_Dehydrogenase':{'function':'P_1a4s_00','upper':32,'exact':23,'lower':14},
+    'P_1cjw_00_Serotonin_N-acetyltransferase':{'function':'P_1cjw_00','upper':56,'exact':44,'lower':32},
+    'P_2k1p_00_Zinc_Finger':{'function':'P_2k1p_00','upper':42,'exact':32,'lower':22},
+    'P_x0x0_00_DNA_Ligase':{'function':'P_x0x0_00','upper':None,'exact':None,'lower':None},
+    'P_1fui_00_Fucose_Isomerase':{'function':'P_1fui_00','upper':27,'exact':18,'lower':9},
+    'P_1tph_00_Triose_Phosphate_Isomerase':{'function':'P_1tph_00','upper':50,'exact':40,'lower':30},
+    'P_1d6o_00_Fk506-Binding_Protein':{'function':'P_1d6o_00','upper':48,'exact':36,'lower':24},
+    'P_1ca2_00_Carbonic_Anhydrase_II':{'function':'P_1ca2_00','upper':42,'exact':32,'lower':22},
+    'P_1w27_00_Phenylalanine_Ammonia_Lyase':{'function':'P_1w27_00','upper':37,'exact':27,'lower':17},
+    'P_1cb8_00_Chondroitinase':{'function':'P_1cb8_00','upper':51,'exact':41,'lower':31},
+    'P_1c82_00_Hyaluronate_Lyase':{'function':'P_1c82_00','upper':51,'exact':41,'lower':31},
+    'P_1ako_00_Exonuclease_III':{'function':'P_1ako_00','upper':52,'exact':42,'lower':32},
+    'P_1al6_00_Citrate_Synthase':{'function':'P_1al6_00','upper':44,'exact':34,'lower':24},
+    'P_1n8o_00_Serine_Protease':{'function':'P_1n8o_00','upper':34,'exact':24,'lower':14},
+    'P_1nln_00_Cysteine_Protease':{'function':'P_1nln_00','upper':35,'exact':25,'lower':15},
+    'P_x1x1_00_Metalloprotease':{'function':'P_x1x1_00','upper':None,'exact':None,'lower':None},
+    'P_1bzc_00_Protein_Tyrosine_Phosphatase':{'function':'P_1bzc_00','upper':42,'exact':31,'lower':20},
+    'P_2blt_00_Beta-Lactamase':{'function':'P_2blt_00','upper':55,'exact':45,'lower':35},
+    'P_x2x2_00_O-Glycosyl':{'function':'P_x2x2_00','upper':None,'exact':None,'lower':None},
+    'P_1odt_00_Cephalosporin_c Deacetylase':{'function':'P_1odt_00','upper':42,'exact':32,'lower':22},
+    'P_1ecx_00_Aminotransferase':{'function':'P_1ecx_00','upper':37,'exact':27,'lower':17},
+    'P_1i7q_00_Anthranilate_Synthase':{'function':'P_1i7q_00','upper':35,'exact':25,'lower':15},
+    'P_x3x3_00_Thymidine_Kinase':{'function':'P_x3x3_00','upper':None,'exact':None,'lower':None},
+    'P_1zio_00_Adenylate_Kinase':{'function':'P_1zio_00','upper':77,'exact':66,'lower':55},
+    'P_1ir3_00_Insulin_Receptor_Tyrosine_Kinase':{'function':'P_1ir3_00','upper':35,'exact':24,'lower':13},
+    'P_2uyc_00_Hhai_DNA_Methyltransferase':{'function':'P_2uyc_00','upper':48,'exact':37,'lower':26},
+    'P_1eso_00_Cu_Zn-Superoxide_Dismutase':{'function':'P_1eso_00','upper':51,'exact':41,'lower':31},
+    'P_1apx_00_Peroxidase':{'function':'P_1apx_00','upper':40,'exact':29,'lower':18},
+    'P_1mg5_00_Alcohol_Dehdydrogenase':{'function':'P_1mg5_00','upper':47,'exact':35,'lower':23},
+    'P_1mrq_00_Aldose_Reductase':{'function':'P_1mrq_00','upper':51,'exact':39,'lower':27},
+    'P_1amo_00_NADPH_Cytochrome_p450_Reductase':{'function':'P_1amo_00','upper':28,'exact':20,'lower':12},
+    'P_1fnb_00_Ferredoxin_NADP_Reductase':{'function':'P_1fnb_00','upper':30,'exact':21,'lower':12},
+    'Jaa_1csi_00_Citrate_Synthase':{'function':'Jaa_1csi_00','upper':38,'exact':28,'lower':18},
+    'Jaa_1a2f_00_Ascorbate_Peroxidase':{'function':'Jaa_1a2f_00','upper':40,'exact':29,'lower':18},
+    'Jaa_1rab_00_Aspartate_Carbamoyltransferase':{'function':'Jaa_1rab_00','upper':50,'exact':39,'lower':28},
+    'Jaa_2had_00_Haloalkane_Dehalogenase':{'function':'Jaa_2had_00','upper':36,'exact':26,'lower':16},
+    'Jaa_1jz6_04_Beta-Glucuronidase':{'function':'Jaa_1jz6_04','upper':42,'exact':30,'lower':18},
+    'Jaa_1pzp_00_Beta-Lactamase':{'function':'Jaa_1pzp_00','upper':39,'exact':30,'lower':21},
+    'Jaa_1n7n_01_Hyaluronidase':{'function':'Jaa_1n7n_01','upper':45,'exact':33,'lower':21},
+    'Jaa_1que_00_Ferredoxin_Reductase':{'function':'Jaa_1que_00','upper':30,'exact':21,'lower':12},
+    'Jaa_1ga8_00_Galacosytransferase':{'function':'Jaa_1ga8_00','upper':34,'exact':25,'lower':16},
+    'Jaa_1j96_00_20Alpha-Hydroxysteroid_Dehydrogenase':{'function':'Jaa_1j96_00','upper':51,'exact':39,'lower':27},
+    'Jaa_1pyd_00_Thiamin_Diphosphate_Dependent_Enzyme_Pyruvate_Decarboxylase':{'function':'Jaa_1pyd_00','upper':47,'exact':37,'lower':27},
+    'Jaa_1h1y_00_D-Ribulose-5-Phosphate_3-Epimerase':{'function':'Jaa_1h1y_00','upper':46,'exact':36,'lower':26},
+    'Jaa_1djq_00_Trimethylamine_Dehydrogenase':{'function':'Jaa_1djq_00','upper':42,'exact':30,'lower':18},
+    'Jaa_5csm_00_Chorismate_Mutase':{'function':'Jaa_5csm_00','upper':51,'exact':40,'lower':29},
+    'Jaa_2ctb_01_Carboxypeptidase_A':{'function':'Jaa_2ctb_01','upper':42,'exact':31,'lower':20},
+    'Jaa_12as_00_Aaparagine_Synthetase':{'function':'Jaa_12as_00','upper':39,'exact':28,'lower':17},
+    'Jaa_1aur_00_Carboxylesterase':{'function':'Jaa_1aur_00','upper':51,'exact':41,'lower':31},
+    'Jaa_1gk2_00_Histidine_Ammonia-Lyase':{'function':'Jaa_1gk2_00','upper':48,'exact':36,'lower':24},
+    'Jaa_1sry_00_Seryl-TRNA_Synthetase':{'function':'Jaa_1sry_00','upper':56,'exact':45,'lower':34},
+    'Jaa_1kuv_00_Serotonin_N-Acetyltransferase':{'function':'Jaa_1kuv_00','upper':56,'exact':44,'lower':32},
+    'Jaa_1pfk_00_Phosphofructokinase':{'function':'Jaa_1pfk_00','upper':52,'exact':41,'lower':30},
+    'Jaa_1nwc_00_Aspartate_Semialdehyde_Dehydrogenase':{'function':'Jaa_1nwc_00','upper':35,'exact':25,'lower':15},
+    'Jaa_aldosereductase_00_Aldose_Reductase':{'function':'Jaa_aldosereductase_00','upper':None,'exact':None,'lower':None},
+    'Jaa_chondroitinase_00_Chondroitinase':{'function':'Jaa_chondroitinase_00','upper':None,'exact':None,'lower':None},
+    'Jaa_serineprotease_00_Serine_Protease':{'function':'Jaa_serineprotease_00','upper':None,'exact':None,'lower':None},
+    'Jab_1csc_00_Citrate_Synthase':{'function':'Jab_1csc_00','upper':38,'exact':28,'lower':18},
+    'Jab_1a2f_00_Ascorbate_Peroxidase':{'function':'Jab_1a2f_00','upper':40,'exact':29,'lower':18},
+    'Jab_1raf_00_Aspartate_Carbamoyltransferase':{'function':'Jab_1raf_00','upper':50,'exact':39,'lower':28},
+    'Jab_1aur_00_Carboxylesterase':{'function':'Jab_1aur_00','upper':51,'exact':41,'lower':31},
+    'Jab_1cjw_00_Serotonin_N-Acetyltransferase':{'function':'Jab_1cjw_00','upper':56,'exact':44,'lower':32},
+    'Jab_1edd_00_Haloalkane_Dehalogenase':{'function':'Jab_1edd_00','upper':36,'exact':26,'lower':16},
+    'Jab_1b8f_00_Histidine_Ammonia-Lyase':{'function':'Jab_1b8f_00','upper':48,'exact':36,'lower':24},
+    'Jab_1jz7_04_Beta-Glucuronidase':{'function':'Jab_1jz7_04','upper':42,'exact':30,'lower':18},
+    'Jab_1nyy_00_Beta-Lactamase':{'function':'Jab_1nyy_00','upper':39,'exact':30,'lower':21},
+    'Jab_1n7n_01_Hyaluronidase':{'function':'Jab_1n7n_01','upper':45,'exact':33,'lower':21},
+    'Jab_1qgy_00_Ferredoxin_Reductase':{'function':'Jab_1qgy_00','upper':30,'exact':21,'lower':12},
+    'Jab_1g9r_00_Galacosytransferase':{'function':'Jab_1g9r_00','upper':34,'exact':25,'lower':16},
+    'Jab_1ah3_00_20Alpha-Hydroxysteroid_Dehydrogenase':{'function':'Jab_1ah3_00','upper':51,'exact':39,'lower':27},
+    'Jab_4pfk_00_Phosphofructokinase':{'function':'Jab_4pfk_00','upper':52,'exact':41,'lower':30},
+    'Jab_1pyd_00_Thiamin_Diphosphate_Dependent_Enzyme_Pyruvate_Decarboxylase':{'function':'Jab_1pyd_00','upper':47,'exact':37,'lower':27},
+    'Jab_1h1y_00_D-Ribulose-5-Phosphate_3-Epimerase':{'function':'Jab_1h1y_00','upper':46,'exact':36,'lower':26},
+    'Jab_1sry_00_Seryl-TRNA_Synthetase':{'function':'Jab_1sry_00','upper':56,'exact':45,'lower':34},
+    'Jab_1djq_00_Trimethylamine_Dehydrogenase':{'function':'Jab_1djq_00','upper':42,'exact':30,'lower':18},
+    'Jab_5csm_00_Chorismate_Mutase':{'function':'Jab_5csm_00','upper':51,'exact':40,'lower':29},
+    'Jab_12as_00_Aaparagine_Synthetase':{'function':'Jab_12as_00','upper':39,'exact':28,'lower':17},
+    'Jab_1nwc_00_Aspartate_Semialdehyde_Dehydrogenase':{'function':'Jab_1nwc_00','upper':35,'exact':25,'lower':15},
+    'Jab_1hdq_01_Carboxypeptidase_A':{'function':'Jab_1hdq_01','upper':42,'exact':31,'lower':20},
+    'Jab_aldosereductase_00_Aldose_Reductase':{'function':'Jab_aldosereductase_00','upper':None,'exact':None,'lower':None},
+    'Jab_chondroitinase_00_Chondroitinase':{'function':'Jab_chondroitinase_00','upper':None,'exact':None,'lower':None},
+    'Jab_serineprotease_00_Serine_Protease':{'function':'Jab_serineprotease_00','upper':None,'exact':None,'lower':None}
 }
 
 def MotifCaller(motif_function, camera = True):
     delta = pglob.Tabs['motifs']['delta'].get()
     pglob.deletemotif()
     pglob.update()
-    objects = cmd.get_names('all')
     motif = globals()[motif_function](delta)
+    objects = cmd.get_names('all')
     try:
         if motif != False:
             if type(motif).__name__ != 'dict':
@@ -529,15 +530,12 @@ def P_1nln_00(delta):
     return {'motif':'P_1nln_00'}
 
 def P_2k1p_00(delta):
-    if(len(cmd.index('elem zn')) >= 1):
-        cmd.do('select his, resn his')
-        cmd.do('select cys, resn cys')
-        cmd.do('select cys1, cys around %s'%(delta*4))
-        cmd.do('select P_2k1p_00, cys|his|byres cys1')
-        cmd.do('delete cys+his+cys1')
-        return {'motif':'P_2k1p_00','extra':{'spheres':'zn'}}
-    else:
-        return False
+    cmd.do('select his, resn his')
+    cmd.do('select cys, resn cys')
+    cmd.do('select cys1, cys around %s'%(delta*4))
+    cmd.do('select P_2k1p_00, cys|his|byres cys1')
+    cmd.do('delete cys+his+cys1')
+    return {'motif':'P_2k1p_00','extra':{'spheres':'zn'}}
 
 def P_1ecx_00(delta):
     cmd.do('select asp1, name od1 and resn asp within %s of (name cb and resn his)'%(delta*5))
@@ -606,17 +604,14 @@ def P_x0x0_00(delta):
         cmd.do('select P_x0x0_00, byres lys|byres atp|byres arg|byres asp')
         cmd.do('delete lys+atp+amp+arg+asp')
         return {'motif':'P_x0x0_00','extra':{'spheres':'atp','sticks':'atp'}}
-    elif(len(cmd.index('amp')) < 1 and len(cmd.index('atp')) < 1):
-        cmd.do('select lys1, name NZ within %s of name OD2'%(delta*9))
-        cmd.do('select lys2, name NZ within %s of name NH2'%(delta*10))
-        cmd.do('select arg, resn arg and name NE within %s of name OD2'%(delta*5.5))
-        cmd.do('select asp, resn asp and name OD2 within %s of name NE'%(delta*5.5))
-        cmd.od('select lys, resn lys and lys1 and lys2')
-        cmd.do('select P_x0x0_00, byres arg|byres asp|byres lys')
-        cmd.do('delete atp+amp+arg+asp+lys')
-        return {'motif':'P_x0x0_00'}
-    cmd.do('delete amp+atp')
-    return False
+    cmd.do('select lys1, name NZ within %s of name OD2'%(delta*9))
+    cmd.do('select lys2, name NZ within %s of name NH2'%(delta*10))
+    cmd.do('select arg, resn arg and name NE within %s of name OD2'%(delta*5.5))
+    cmd.do('select asp, resn asp and name OD2 within %s of name NE'%(delta*5.5))
+    cmd.od('select lys, resn lys and lys1 and lys2')
+    cmd.do('select P_x0x0_00, byres arg|byres asp|byres lys')
+    cmd.do('delete atp+amp+arg+asp+lys')
+    return {'motif':'P_x0x0_00'}
 
 def P_x3x3_00(delta):
     cmd.do('select glu1, name OE1 and resn glu within %s of name NH2 and resn arg'%(delta*5))
@@ -1308,7 +1303,7 @@ def P_1zio_00(delta):
     cmd.do('delete p-loop+asp+aspi+arg+lys+glya+glyb')
     return {'motif':'P_1zio_00'}
 
-def P_1aL6_00(delta):
+def P_1al6_00(delta):
     cmd.do('select his1, name ne2 and resn his within %s of (name og and resn ser)'%(delta*5))
     cmd.do('select his2, name ne2 and resn his within %s of (name cb and resn ser)'%(delta*5.5))
     cmd.do('select his3, name ce1 and resn his within %s of (name og and resn ser)'%(delta*5.5))
@@ -1340,9 +1335,9 @@ def P_1aL6_00(delta):
     byResidue('asp', 6)
     cmd.do('select his3, byres resn his within %s of asp'%(delta*8.5))
     cmd.do('select his, byres his or (byres his1 and byres his2 and byres his3)')
-    cmd.do('select P_1aL6_00, his|asp|ser')
+    cmd.do('select P_1al6_00, his|asp|ser')
     cmd.do('delete his+asp+ser')
-    return {'motif':'P_1aL6_00'}
+    return {'motif':'P_1al6_00'}
 
 def P_1ir3_00(delta):
     cmd.do('select arg1, name nh1 and resn arg within %s of (name cb and resn ala)'%(delta*5))
@@ -1989,7 +1984,7 @@ def Jaa_2had_00(delta):
     cmd.do('delete jessatom0+jessatom1+jessatom2+jessatom3+jessatom4+jessatom5+jessatom6+jessatom7+jessatom8+temp0+temp1+temp2+temp3+temp4+temp5+temp6+temp7+temp8+temp9+temp10+temp11+temp12+temp13+temp14+temp15+temp16+temp17+temp18+temp19+temp20+temp21+temp22+temp23+temp24+temp25+temp26+temp27+temp28+temp29+temp30+temp31+temp32+temp33+temp34+temp35+temp36+temp37+temp38+temp39+temp40+temp41+temp42+temp43+temp44+temp45+temp46+temp47+temp48+temp49+temp50+temp51+temp52+temp53+temp54+temp55')
     return {'motif':'Jaa_2had_00'}
 
-def Jaa_1jz6_00(delta):
+def Jaa_1jz6_04(delta):
     cmd.do('select temp0, name  cd ')
     cmd.do('select temp1, resn glu')
     cmd.do('select temp2, resn asp')
@@ -2091,9 +2086,9 @@ def Jaa_1jz6_00(delta):
     cmd.do('select jessatom5, jessatom5 within %s of (jessatom8)'%(delta*2.605800))
     cmd.do('select jessatom6, jessatom6 within %s of (jessatom8)'%(delta*1.292800))
     cmd.do('select jessatom7, jessatom7 within %s of (jessatom8)'%(delta*2.232100))
-    cmd.do('select Jaa_1jz6_00, byres jessatom0|byres jessatom1|byres jessatom2|byres jessatom3|byres jessatom4|byres jessatom5|byres jessatom6|byres jessatom7|byres jessatom8')
+    cmd.do('select Jaa_1jz6_04, byres jessatom0|byres jessatom1|byres jessatom2|byres jessatom3|byres jessatom4|byres jessatom5|byres jessatom6|byres jessatom7|byres jessatom8')
     cmd.do('delete jessatom0+jessatom1+jessatom2+jessatom3+jessatom4+jessatom5+jessatom6+jessatom7+jessatom8+temp0+temp1+temp2+temp3+temp4+temp5+temp6+temp7+temp8+temp9+temp10+temp11+temp12+temp13+temp14+temp15+temp16+temp17+temp18+temp19+temp20+temp21+temp22+temp23+temp24+temp25+temp26+temp27+temp28+temp29+temp30+temp31+temp32+temp33+temp34+temp35+temp36+temp37+temp38+temp39+temp40+temp41+temp42+temp43+temp44+temp45+temp46+temp47+temp48+temp49+temp50+temp51+temp52+temp53+temp54+temp55')
-    return {'motif':'Jaa_1jz6_00'}
+    return {'motif':'Jaa_1jz6_04'}
 
 def Jaa_1pzp_00(delta):
     cmd.do('select temp0, name  ca ')
@@ -2269,7 +2264,7 @@ def Jaa_1pzp_00(delta):
     cmd.do('delete jessatom0+jessatom1+jessatom2+jessatom3+jessatom4+jessatom5+jessatom6+jessatom7+jessatom8+jessatom9+jessatom10+jessatom11+temp0+temp1+temp2+temp3+temp4+temp5+temp6+temp7+temp8+temp9+temp10+temp11+temp12+temp13+temp14+temp15+temp16+temp17+temp18+temp19+temp20+temp21+temp22+temp23+temp24+temp25+temp26+temp27+temp28+temp29+temp30+temp31+temp32+temp33+temp34+temp35+temp36+temp37+temp38+temp39+temp40+temp41+temp42+temp43+temp44+temp45+temp46+temp47+temp48+temp49+temp50+temp51+temp52+temp53+temp54+temp55+temp56+temp57+temp58+temp59+temp60+temp61+temp62+temp63+temp64+temp65+temp66+temp67+temp68+temp69+temp70+temp71+temp72+temp73+temp74+temp75+temp76+temp77+temp78+temp79+temp80+temp81+temp82+temp83+temp84+temp85+temp86+temp87+temp88+temp89+temp90')
     return {'motif':'Jaa_1pzp_00'}
 
-def Jaa_1n7n_00(delta):
+def Jaa_1n7n_01(delta):
     cmd.do('select temp0, name  cg ')
     cmd.do('select temp1, resn his')
     cmd.do('select jessatom0, (temp0 and temp1)')
@@ -2372,9 +2367,9 @@ def Jaa_1n7n_00(delta):
     cmd.do('select jessatom5, jessatom5 within %s of (jessatom8)'%(delta*3.858200))
     cmd.do('select jessatom6, jessatom6 within %s of (jessatom8)'%(delta*2.323000))
     cmd.do('select jessatom7, jessatom7 within %s of (jessatom8)'%(delta*2.292700))
-    cmd.do('select Jaa_1n7n_00, byres jessatom0|byres jessatom1|byres jessatom2|byres jessatom3|byres jessatom4|byres jessatom5|byres jessatom6|byres jessatom7|byres jessatom8')
+    cmd.do('select Jaa_1n7n_01, byres jessatom0|byres jessatom1|byres jessatom2|byres jessatom3|byres jessatom4|byres jessatom5|byres jessatom6|byres jessatom7|byres jessatom8')
     cmd.do('delete jessatom0+jessatom1+jessatom2+jessatom3+jessatom4+jessatom5+jessatom6+jessatom7+jessatom8+temp0+temp1+temp2+temp3+temp4+temp5+temp6+temp7+temp8+temp9+temp10+temp11+temp12+temp13+temp14+temp15+temp16+temp17+temp18+temp19+temp20+temp21+temp22+temp23+temp24+temp25+temp26+temp27+temp28+temp29+temp30+temp31+temp32+temp33+temp34+temp35+temp36+temp37+temp38+temp39+temp40+temp41+temp42+temp43+temp44+temp45+temp46+temp47+temp48+temp49+temp50+temp51+temp52+temp53+temp54+temp55+temp56')
-    return {'motif':'Jaa_1n7n_00'}
+    return {'motif':'Jaa_1n7n_01'}
 
 def Jaa_1que_00(delta):
     cmd.do('select temp0, name  ca ')
@@ -3401,7 +3396,7 @@ def Jaa_5csm_00(delta):
     cmd.do('delete jessatom0+jessatom1+jessatom2+jessatom3+jessatom4+jessatom5+jessatom6+jessatom7+jessatom8+jessatom9+jessatom10+jessatom11+temp0+temp1+temp2+temp3+temp4+temp5+temp6+temp7+temp8+temp9+temp10+temp11+temp12+temp13+temp14+temp15+temp16+temp17+temp18+temp19+temp20+temp21+temp22+temp23+temp24+temp25+temp26+temp27+temp28+temp29+temp30+temp31+temp32+temp33+temp34+temp35+temp36+temp37+temp38+temp39+temp40+temp41+temp42+temp43+temp44+temp45+temp46+temp47+temp48+temp49+temp50+temp51+temp52+temp53+temp54+temp55+temp56+temp57+temp58+temp59+temp60+temp61+temp62+temp63+temp64+temp65+temp66+temp67+temp68+temp69+temp70+temp71+temp72+temp73+temp74+temp75+temp76+temp77+temp78+temp79+temp80+temp81+temp82+temp83+temp84+temp85+temp86+temp87+temp88+temp89+temp90+temp91+temp92')
     return {'motif':'Jaa_5csm_00'}
 
-def Jaa_2ctb_00(delta):
+def Jaa_2ctb_01(delta):
     cmd.do('select temp0, name  ne ')
     cmd.do('select temp1, resn arg')
     cmd.do('select jessatom0, (temp0 and temp1)')
@@ -3506,9 +3501,9 @@ def Jaa_2ctb_00(delta):
     cmd.do('select jessatom5, jessatom5 within %s of (jessatom8)'%(delta*7.120500))
     cmd.do('select jessatom6, jessatom6 within %s of (jessatom8)'%(delta*1.262500))
     cmd.do('select jessatom7, jessatom7 within %s of (jessatom8)'%(delta*2.252300))
-    cmd.do('select Jaa_2ctb_00, byres jessatom0|byres jessatom1|byres jessatom2|byres jessatom3|byres jessatom4|byres jessatom5|byres jessatom6|byres jessatom7|byres jessatom8')
+    cmd.do('select Jaa_2ctb_01, byres jessatom0|byres jessatom1|byres jessatom2|byres jessatom3|byres jessatom4|byres jessatom5|byres jessatom6|byres jessatom7|byres jessatom8')
     cmd.do('delete jessatom0+jessatom1+jessatom2+jessatom3+jessatom4+jessatom5+jessatom6+jessatom7+jessatom8+temp0+temp1+temp2+temp3+temp4+temp5+temp6+temp7+temp8+temp9+temp10+temp11+temp12+temp13+temp14+temp15+temp16+temp17+temp18+temp19+temp20+temp21+temp22+temp23+temp24+temp25+temp26+temp27+temp28+temp29+temp30+temp31+temp32+temp33+temp34+temp35+temp36+temp37+temp38+temp39+temp40+temp41+temp42+temp43+temp44+temp45+temp46+temp47+temp48+temp49+temp50+temp51+temp52+temp53+temp54+temp55+temp56+temp57+temp58')
-    return {'motif':'Jaa_2ctb_00'}
+    return {'motif':'Jaa_2ctb_01'}
 
 def Jaa_12as_00(delta):
     cmd.do('select temp0, name  cg ')
@@ -6171,7 +6166,7 @@ def Jab_1b8f_00(delta):
     cmd.do('delete jessatom0+jessatom1+jessatom2+jessatom3+jessatom4+jessatom5+jessatom6+jessatom7+jessatom8+jessatom9+temp0+temp1+temp2+temp3+temp4+temp5+temp6+temp7+temp8+temp9+temp10+temp11+temp12+temp13+temp14+temp15+temp16+temp17+temp18+temp19+temp20+temp21+temp22+temp23+temp24+temp25+temp26+temp27+temp28+temp29+temp30+temp31+temp32+temp33+temp34+temp35+temp36+temp37+temp38+temp39+temp40+temp41+temp42+temp43+temp44+temp45+temp46+temp47+temp48+temp49+temp50+temp51+temp52+temp53+temp54+temp55+temp56+temp57+temp58+temp59+temp60')
     return {'motif':'Jab_1b8f_00'}
 
-def Jab_1jz7_00(delta):
+def Jab_1jz7_04(delta):
     cmd.do('select temp0, name  ca ')
     cmd.do('select temp1, resn glu')
     cmd.do('select temp2, resn asp')
@@ -6216,9 +6211,9 @@ def Jab_1jz7_00(delta):
     cmd.do('select jessatom2, jessatom2 within %s of (jessatom5)'%(delta*5.928700))
     cmd.do('select jessatom3, jessatom3 within %s of (jessatom5)'%(delta*6.150900))
     cmd.do('select jessatom4, jessatom4 within %s of (jessatom5)'%(delta*1.575600))
-    cmd.do('select Jab_1jz7_00, byres jessatom0|byres jessatom1|byres jessatom2|byres jessatom3|byres jessatom4|byres jessatom5')
+    cmd.do('select Jab_1jz7_04, byres jessatom0|byres jessatom1|byres jessatom2|byres jessatom3|byres jessatom4|byres jessatom5')
     cmd.do('delete jessatom0+jessatom1+jessatom2+jessatom3+jessatom4+jessatom5+temp0+temp1+temp2+temp3+temp4+temp5+temp6+temp7+temp8+temp9+temp10+temp11+temp12+temp13+temp14+temp15+temp16+temp17+temp18+temp19+temp20+temp21+temp22')
-    return {'motif':'Jab_1jz7_00'}
+    return {'motif':'Jab_1jz7_04'}
 
 def Jab_1nyy_00(delta):
     cmd.do('select temp0, name  ca ')
@@ -6300,7 +6295,7 @@ def Jab_1nyy_00(delta):
     cmd.do('delete jessatom0+jessatom1+jessatom2+jessatom3+jessatom4+jessatom5+jessatom6+jessatom7+temp0+temp1+temp2+temp3+temp4+temp5+temp6+temp7+temp8+temp9+temp10+temp11+temp12+temp13+temp14+temp15+temp16+temp17+temp18+temp19+temp20+temp21+temp22+temp23+temp24+temp25+temp26+temp27+temp28+temp29+temp30+temp31+temp32+temp33+temp34+temp35+temp36+temp37+temp38')
     return {'motif':'Jab_1nyy_00'}
 
-def Jab_1n7n_00(delta):
+def Jab_1n7n_01(delta):
     cmd.do('select temp0, name  ca ')
     cmd.do('select temp1, resn his')
     cmd.do('select jessatom0, (temp0 and temp1)')
@@ -6346,9 +6341,9 @@ def Jab_1n7n_00(delta):
     cmd.do('select jessatom2, jessatom2 within %s of (jessatom5)'%(delta*10.877700))
     cmd.do('select jessatom3, jessatom3 within %s of (jessatom5)'%(delta*10.645400))
     cmd.do('select jessatom4, jessatom4 within %s of (jessatom5)'%(delta*1.565500))
-    cmd.do('select Jab_1n7n_00, byres jessatom0|byres jessatom1|byres jessatom2|byres jessatom3|byres jessatom4|byres jessatom5')
+    cmd.do('select Jab_1n7n_01, byres jessatom0|byres jessatom1|byres jessatom2|byres jessatom3|byres jessatom4|byres jessatom5')
     cmd.do('delete jessatom0+jessatom1+jessatom2+jessatom3+jessatom4+jessatom5+temp0+temp1+temp2+temp3+temp4+temp5+temp6+temp7+temp8+temp9+temp10+temp11+temp12+temp13+temp14+temp15+temp16+temp17+temp18+temp19+temp20+temp21+temp22+temp23')
-    return {'motif':'Jab_1n7n_00'}
+    return {'motif':'Jab_1n7n_01'}
 
 def Jab_1qgy_00(delta):
     cmd.do('select temp0, name  ca ')
@@ -7105,7 +7100,7 @@ def Jab_5csm_00(delta):
     cmd.do('delete jessatom0+jessatom1+jessatom2+jessatom3+jessatom4+jessatom5+jessatom6+jessatom7+temp0+temp1+temp2+temp3+temp4+temp5+temp6+temp7+temp8+temp9+temp10+temp11+temp12+temp13+temp14+temp15+temp16+temp17+temp18+temp19+temp20+temp21+temp22+temp23+temp24+temp25+temp26+temp27+temp28+temp29+temp30+temp31+temp32+temp33+temp34+temp35+temp36+temp37+temp38')
     return {'motif':'Jab_5csm_00'}
 
-def Jab_1hdq_00(delta):
+def Jab_1hdq_01(delta):
     cmd.do('select temp0, name  ca ')
     cmd.do('select temp1, resn arg')
     cmd.do('select jessatom0, (temp0 and temp1)')
@@ -7151,9 +7146,9 @@ def Jab_1hdq_00(delta):
     cmd.do('select jessatom2, jessatom2 within %s of (jessatom5)'%(delta*14.877300))
     cmd.do('select jessatom3, jessatom3 within %s of (jessatom5)'%(delta*13.837000))
     cmd.do('select jessatom4, jessatom4 within %s of (jessatom5)'%(delta*1.545300))
-    cmd.do('select Jab_1hdq_00, byres jessatom0|byres jessatom1|byres jessatom2|byres jessatom3|byres jessatom4|byres jessatom5')
+    cmd.do('select Jab_1hdq_01, byres jessatom0|byres jessatom1|byres jessatom2|byres jessatom3|byres jessatom4|byres jessatom5')
     cmd.do('delete jessatom0+jessatom1+jessatom2+jessatom3+jessatom4+jessatom5+temp0+temp1+temp2+temp3+temp4+temp5+temp6+temp7+temp8+temp9+temp10+temp11+temp12+temp13+temp14+temp15+temp16+temp17+temp18+temp19+temp20+temp21+temp22+temp23')
-    return {'motif':'Jab_1hdq_00'}
+    return {'motif':'Jab_1hdq_01'}
 
 def Jab_12as_00(delta):
     cmd.do('select temp0, name  ca ')

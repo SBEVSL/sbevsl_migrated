@@ -1,12 +1,19 @@
 from pymol import cmd
 import Tkinter as tk
 import Pmw
+import linecache
+import random
+import os
+import urllib2
+import time
 from tkFileDialog import askopenfilename
 from tkSimpleDialog import askstring
 from tkMessageBox import showinfo
 from tkMessageBox import showerror
 from pmg_tk.startup.ProMol_dir import promolglobals as pglob
 from pmg_tk.startup.ProMol_dir.Methods import motifcoded as motcod
+from pmg_tk.startup.remote_pdb_load import remote
+
 
 Pmw.initialise()
 
@@ -406,7 +413,7 @@ def runcusmotif():
                     cmd.do('run ./modules/pmg_tk/startup/Motifs/'+a[i])
         except:
             pass
-            
+
 def motifchecker():
     def ModBounds(x, exact, upper=None, lower=None):
         if x != 0 and x % exact == 0:
@@ -420,43 +427,67 @@ def motifchecker():
                 upper += upStatic
                 lower += lowStatic
         return '0'
+    def cancel():
+        pglob.Tabs['motifs']['cancel'] = True
+        group['tag_text'] = 'Cancelling Search. Please Wait.'
+        root.update()
 
-    cmd.hide('everything', 'all')
-    cmd.remove("all and hydro")
-    found=[]
-    keys = motcod.motifs.keys()
-    keysL = len(keys)
-    L = 0
-    last = 0
-    cmd.do('select Please_Wait, all')
-    cmd.do('select 0_Percent, all')
+    def start():
+        startbutton['state'] = DISABLED
+        cancelbutton['state'] = NORMAL
+        pglob.Tabs['motifs']['cancel'] = False
+        group['tag_text'] = 'Searching... 0 Percent Complete'
+        cmd.hide('everything', 'all')
+        cmd.remove("all and hydro")
+        found = []
+        keys = motcod.motifs.keys()
+        keysL = len(keys)
+        last = 0.0
     
-    for motif in keys:
-        exact = motcod.motifs[motif]['exact']
-        upper = motcod.motifs[motif]['upper']
-        lower = motcod.motifs[motif]['lower']
-        L += 1
-        if exact == None:
-            continue
-        function = motcod.motifs[motif]['function']
-        print function
-        if motcod.MotifCaller(function,False):
-            cmd.do('count_atoms %s'%(function))
-            x = ModBounds(cmd.count_atoms(function),exact,upper,lower)
-            found.append('%s-%s'%(x,motif))
-        cmd.do('delete %s'%(function))
-        next = '%.2f'%(float(1.0*L/keysL)*100)
-        cmd.do('set_name %s_Percent,%s_Percent'%(last,next))
-        last = next
+        for motif in keys:
+            exact = motcod.motifs[motif]['exact']
+            upper = motcod.motifs[motif]['upper']
+            lower = motcod.motifs[motif]['lower']
+            
+            last += 1
+            bar = (last/keysL)*100
+            if pglob.Tabs['motifs']['cancel'] == True:
+                print 'Motif Checker Cancelled by User at %.2s percent completion.'%(bar)
+                group['tag_text'] = 'Press Start to Begin Search'
+                root.update()
+                break
+            group['tag_text'] = 'Searching... %.2s Percent Complete'%(bar)
+            status.SetProgressPercent(bar)
+            root.update()
+            if exact == None:
+                continue
+            function = motcod.motifs[motif]['function']
+            if motcod.MotifCaller(function,False):
+                cmd.do('count_atoms %s'%(function))#need to sync pymol/promol threads
+                x = ModBounds(cmd.count_atoms(function),exact,upper,lower)
+                if x != '0':
+                    found.append('%s-%s'%(x,motif))
+            cmd.do('delete %s'%(function))
 
-    cmd.do('delete Please_Wait')
-    cmd.do('delete 100.00_Percent')
-    
-    cmd.orient('all')
-    found.sort()
-    pglob.Tabs['motifs']['motifbox'].setlist(found)
-    cmd.show('cartoon', 'all')
-    cmd.color('grey', 'all')
+        print 'Motif Finder completed with %s results.'%(len(found))
+        cmd.orient('all')
+        found.sort()
+        pglob.Tabs['motifs']['motifbox'].setlist(found)
+        cmd.show('cartoon', 'all')
+        cmd.color('white', 'all')
+        root.withdraw()
+
+    root = tk.Tk()
+    root.title('Motif Finder')
+    group = Pmw.Group(root, tag_text='Press Start to Begin Search')
+    group.grid(row=0, column=0, columnspan=2, padx=0, pady=0, sticky = tk.NW)
+    interior = group.interior()
+    status = pglob.ProgressBar(interior,10,200,0,0,2)
+    startbutton = tk.Button(interior, width = 12, text = 'Start', command=start)
+    startbutton.grid(row=1, column=0, padx=1, pady=1, sticky = tk.NW)
+    cancelbutton = tk.Button(interior, width = 12, text = 'Cancel', command=cancel)
+    cancelbutton.grid(row=1, column=1, padx=1, pady=1, sticky = tk.NW)
+    cancelbutton['state'] = DISABLED
     
 def resdel(event):
     try:
@@ -488,40 +519,25 @@ def roundres(event):
         showinfo('Alert', 'You must load a motif first')
         interior.mainloop()
 
-def randomized(*args):
+def randomized():
     cmd.delete('all')
-    pdbCode = linecache.getline('./modules/pmg_tk/startup/pdb_entry_type.txt',random.randint(1, 41258))
-    
-    pdbCode = string.upper(pdbCode)
-    try:
-        filename = urllib.urlretrieve('http://www.rcsb.org/pdb/cgi/export.cgi/' +
-                                                pdbCode + '.pdb.gz?format=PDB&pdbId=' +
-                                                pdbCode + '&compression=gz')[0]
-    except:
-        showerror('Connection Error',
-                               'Can not access to the PDB database.\n'+
-                               'Please check your Internet access.',
-                               parent=app.root)
-    else:
-        if (os.path.getsize(filename) > 0): # If 0, then pdb code was invalid
-            # Uncompress the file while reading
-            fpin = gzip.open(filename)
-            
-            # Form the pdb output name
-            outputname = os.path.dirname(filename) + os.sep + pdbCode + '.pdb'
-            fpout = open(outputname, 'w')
-            fpout.write(fpin.read()) # Write pdb file
-            
-            fpin.close()
-            fpout.close()
-            
-            cmd.load(outputname,quiet=0) # Load the fresh pdb
+    lineFile = os.path.join(pglob.PROMOL_DIR_PATH,'pdb_entry_type.txt')
+    while os.path.exists(lineFile):
+        expiration = (os.path.getmtime(lineFile)+864000)
+        if expiration <= time.time():
+            os.remove(lineFile)
         else:
-            showerror('Invalid Code',
-                                          'You entered an invalid pdb code:' + pdbCode,
-                                          parent=app.root)
-        
-        os.remove(filename) # Remove tmp file (leave the pdb)
+            lines = sum([1 for line in lineFile])
+            pdbCode = linecache.getline(lineFile,random.randint(1, lines))[0:4]
+            remote(pdbCode)
+            break
+    else:
+        InHandle = urllib2.urlopen('ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_entry_type.txt')
+        OutHandle = open(lineFile,'w')
+        for line in InHandle:
+            OutHandle.write(line)
+        OutHandle.close
+        randomized()
 
 cmd.extend('randomized',randomized)
 
@@ -831,7 +847,7 @@ def loadmotifer():
                 f.write('cmd.deselect()\n')
                 f.write('cmd.orient("Motif")\n')
                 
-                print '\n\n\n\n\n\nMotif Maker\nBy: Brett Hanson and Charlie Westin\n2007\nImproved by: Mario Rosa\n2009\n%s Amino Acid Motif Written \n\n\n\n'%(len(resnlist)-1)
+                print '%s Amino Acid Motif Written \n\n\n\n'%(len(resnlist)-1)
                 f.close()
                 interior.mainloop()
             except:

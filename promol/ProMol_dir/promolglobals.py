@@ -1,6 +1,7 @@
 from pymol import cmd
 import Tkinter as tk
 import os
+import math
 
 Photos = None
 script = 0
@@ -11,13 +12,13 @@ alphaSequence = None
 Tabs = {}
 
 try:
-    PYMOL_PATH = os.environ['PYMOL_PATH']+os.sep
+    PYMOL_PATH = os.environ['PYMOL_PATH']
 except KeyError:
-    PYMOL_PATH = '.'+os.sep
-PROMOL_PATH = "%smodules" % (PYMOL_PATH)+os.sep+"pmg_tk"+os.sep+"startup"+os.sep
-PROMOL_DIR_PATH = "%sProMol_dir%s" % (PROMOL_PATH, os.sep)
+    PYMOL_PATH = '.'
+PROMOL_PATH = os.path.join(PYMOL_PATH,'modules','pmg_tk','startup')
+PROMOL_DIR_PATH = os.path.join(PROMOL_PATH,'ProMol_dir')
 
-splash = tk.PhotoImage(file = "%ssplashmol.gif" % (PROMOL_DIR_PATH))
+splash = tk.PhotoImage(file = os.path.join(PROMOL_DIR_PATH,'splashmol.gif'))
 
 #Amino Acid Abbre List for Menus
 AminoMenuList = ('', 'ala', 'arg', 'asn', 'asp', 'cys', 'gln', 'glu', 
@@ -31,8 +32,8 @@ AminoList = ('ala', 'arg', 'asn', 'asp', 'cys', 'gln', 'glu', 'gly',
 Photos = {}
 for x in AminoList:
     for y in ('3D', '2D'):
-        Photos["%s%s" % (x, y)] = tk.PhotoImage(file = "%sAminoPics%s%s%s.gif"
-            % (PROMOL_DIR_PATH, os.sep, x, y))
+        Photos["%s%s" % (x, y)] = tk.PhotoImage(
+            file = os.path.join(PROMOL_DIR_PATH,'AminoPics',x+y+'.gif'))
 
 #A - Z
 AlphaSequence = [ "%c" % (x) for x in range(ord('A'), ord('Z')+1)]
@@ -251,3 +252,32 @@ def update():
     deleteEmpty()
     cmd.orient('all')
 cmd.extend('update', update)
+
+class ProgressBar:
+    def __init__(self, Parent, Height=10, Width=100, Row=0, Column=0, Span=1,
+                 ForegroundColor=None, BackgroundColor=None, Progress=0):
+        self.Height=Height
+        self.Width=Width
+        self.BarCanvas = tk.Canvas(Parent,
+            width=Width,height=Height,
+            background=BackgroundColor,borderwidth=1,
+            relief=tk.SUNKEN)
+        if (BackgroundColor):
+            self.BarCanvas["backgroundcolor"]=BackgroundColor
+        self.BarCanvas.grid(row=Row,column=Column,columnspan=Span,padx=5,pady=2)
+        self.RectangleID=self.BarCanvas.create_rectangle(0,0,0,Height)
+        if (ForegroundColor==None):
+            ForegroundColor="black"
+        self.BarCanvas.itemconfigure(self.RectangleID,fill=ForegroundColor)
+        self.SetProgressPercent(Progress)        
+    def SetProgressPercent(self,NewLevel):
+        self.Progress = math.floor(NewLevel)
+        self.Progress = min(100,self.Progress)
+        self.Progress = max(0,self.Progress) 
+        self.DrawProgress()
+    def DrawProgress(self):
+        ProgressPixel=(self.Progress/100.0)*self.Width
+        self.BarCanvas.coords(self.RectangleID,
+            0,0,ProgressPixel,self.Height)
+    def GetProgressPercent(self):
+        return self.Progress

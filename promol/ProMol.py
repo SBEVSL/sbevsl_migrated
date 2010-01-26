@@ -71,8 +71,8 @@ def promol(pymol, user_click = 1):
     if not user_click:
         bottom_buttons('Quit')
 
-    lab = tk.Label(interior, text = 'ProMol \nDeveloped By: '+
-            'The SBEVSL Team Version 3.03, 2009', background = '#000066',
+    lab = tk.Label(interior, text = 'ProMol Version 3.03\nDeveloped By: '+
+            'The SBEVSL Team', background = '#000066',
             foreground = 'white')
     lab.pack(expand = 0, fill = 'x', padx = 4, pady = 0)
 
