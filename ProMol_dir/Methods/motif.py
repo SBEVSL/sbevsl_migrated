@@ -157,13 +157,10 @@ def allmotif():
     motif = pglob.Tabs['motifs']['motifbox'].getcurselection()
     for item in motif:
         tag = item[2:]
-    try:
-        if len(tag) == 0:
-            print 'No selection for double click'
-        if tag in motcod.motifs.keys():
-            motcod.MotifCaller(motcod.motifs[tag]['function'])
-    except:
-        showinfo('Alert', 'There is no motif there')
+    if len(tag) == 0:
+        print 'No selection for double click'
+    if tag in motcod.motifs.keys():
+        motcod.MotifCaller(motcod.motifs[tag]['function'])
 
 #def custom motif dropdown selection
 
@@ -415,6 +412,7 @@ def runcusmotif():
             pass
 
 def motifchecker():
+    pglob.Tabs['motifs']['findmotif']['state'] = tk.DISABLED
     def ModBounds(x, exact, upper=None, lower=None):
         if x != 0 and x % exact == 0:
             return '1'
@@ -429,13 +427,10 @@ def motifchecker():
         return '0'
     def cancel():
         pglob.Tabs['motifs']['cancel'] = True
-        group['tag_text'] = 'Cancelling Search. Please Wait.'
-        cancelbutton['state'] = tk.DISABLED
         pglob.Tabs['motifs']['findmotif']['state'] = tk.NORMAL
-        root.update()
+        root.withdraw()
 
     def start():
-        pglob.Tabs['motifs']['findmotif']['state'] = tk.DISABLED
         startbutton['state'] = tk.DISABLED
         cancelbutton['state'] = tk.NORMAL
         pglob.Tabs['motifs']['cancel'] = False
@@ -472,13 +467,14 @@ def motifchecker():
                     found.append('%s-%s'%(x,motif))
             cmd.do('delete %s'%(function))
 
-        print 'Motif Finder completed with %s results.'%(len(found))
+        print 'Motif Finder finished with %s results.'%(len(found))
         cmd.orient('all')
         found.sort()
         pglob.Tabs['motifs']['motifbox'].setlist(found)
         cmd.show('cartoon', 'all')
         cmd.color('white', 'all')
         root.withdraw()
+        pglob.Tabs['motifs']['findmotif']['state'] = tk.NORMAL
 
     root = tk.Tk()
     root.title('Motif Finder')
