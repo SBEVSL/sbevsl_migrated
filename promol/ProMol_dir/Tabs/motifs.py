@@ -16,8 +16,8 @@ def initialise():
     ballmot = Pmw.Balloon(interior)
     ballmot.bind(framemot, 'Searches through all motifs\n0 = Motif not found, 1 = exact match, 2 = within range'+
         '\nDouble click on returns to show')
-    find_motif = Button(framemot, text ='Motif Finder', command=motifchecker)
-    find_motif.grid(row = 0, column = 0)
+    pglob.Tabs['motifs']['findmotif'] = Button(framemot, text ='Motif Finder', command=motifchecker)
+    pglob.Tabs['motifs']['findmotif'].grid(row = 0, column = 0)
 
     pglob.Tabs['motifs']['motifbox'] = Pmw.ScrolledListBox(interior,
         items=(),

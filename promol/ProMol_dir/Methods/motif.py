@@ -430,11 +430,14 @@ def motifchecker():
     def cancel():
         pglob.Tabs['motifs']['cancel'] = True
         group['tag_text'] = 'Cancelling Search. Please Wait.'
+        cancelbutton['state'] = tk.DISABLED
+        pglob.Tabs['motifs']['findmotif']['state'] = tk.NORMAL
         root.update()
 
     def start():
-        startbutton['state'] = DISABLED
-        cancelbutton['state'] = NORMAL
+        pglob.Tabs['motifs']['findmotif']['state'] = tk.DISABLED
+        startbutton['state'] = tk.DISABLED
+        cancelbutton['state'] = tk.NORMAL
         pglob.Tabs['motifs']['cancel'] = False
         group['tag_text'] = 'Searching... 0 Percent Complete'
         cmd.hide('everything', 'all')
@@ -452,7 +455,7 @@ def motifchecker():
             last += 1
             bar = (last/keysL)*100
             if pglob.Tabs['motifs']['cancel'] == True:
-                print 'Motif Checker Cancelled by User at %.2s percent completion.'%(bar)
+                print 'Motif Checker Cancelled by User at %.3s percent completion.'%(bar)
                 group['tag_text'] = 'Press Start to Begin Search'
                 root.update()
                 break
@@ -479,6 +482,7 @@ def motifchecker():
 
     root = tk.Tk()
     root.title('Motif Finder')
+    root.protocol('WM_DELETE_WINDOW', cancel)
     group = Pmw.Group(root, tag_text='Press Start to Begin Search')
     group.grid(row=0, column=0, columnspan=2, padx=0, pady=0, sticky = tk.NW)
     interior = group.interior()
@@ -487,7 +491,7 @@ def motifchecker():
     startbutton.grid(row=1, column=0, padx=1, pady=1, sticky = tk.NW)
     cancelbutton = tk.Button(interior, width = 12, text = 'Cancel', command=cancel)
     cancelbutton.grid(row=1, column=1, padx=1, pady=1, sticky = tk.NW)
-    cancelbutton['state'] = DISABLED
+    cancelbutton['state'] = tk.DISABLED
     
 def resdel(event):
     try:
@@ -712,9 +716,9 @@ def loadmotifer():
                                 a = 0
                                 e += 1
                                 ### select stuff explained later on
-                                selectlimit = 200
+                                selectlimit = 50
                                 selectstart = 1 ### where to start selection
-                                selectlimiter = 1 ### limit defined as a/200
+                                selectlimiter = 1 ### limit defined as a/selectlimit
                                 selectextra = '' ### add to selection at the end
                                 deleteextra = '' ### add to deletion at the end
                                 
