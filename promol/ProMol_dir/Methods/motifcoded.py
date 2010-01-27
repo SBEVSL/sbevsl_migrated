@@ -130,20 +130,22 @@ def MotifCaller(motif_function, camera = True):
                 raise TypeError
             if motif['motif'] not in objects:
                 raise Warning
+            if cmd.count_atoms(motif['motif']) == 0:
+                raise Warning
             cmd.hide('everything')
             if camera:
                 cmd.do('show cartoon, all')
                 cmd.do('set cartoon_transparency, 0.5, all')
                 cmd.do('set stick_radius, 0.5')
-                #pglob.cpk(motif['motif'])
+                pglob.color(motif['motif'], show_all='cartoon',
+                    color_all='gray')
                 if 'extra' in motif:
                     x = motif['extra']
                     xlen = range(len(x))
                     xkeys = x.keys()
                     xvals = x.values()
                     for l in xlen:
-                        pass
-                        #pglob.cpk(xvals[l],xkeys[l],0)
+                        pglob.color(xvals[l],xkeys[l],show_all=0)
                 cmd.orient(motif['motif'])
                 cmd.deselect()
         else:

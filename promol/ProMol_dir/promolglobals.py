@@ -177,22 +177,28 @@ def deleteEmpty():
             cmd.delete('heme')
 cmd.extend('deleteEmpty', deleteEmpty)
 
-def color_cpk(str):
-    cmd.color("carbgray", "(elem C)" + str )
-    cmd.color("red", "elem O" + str )
-    cmd.color("white", "elem H" + str )
-    cmd.color("nitblue", "elem N" + str )
-    cmd.color("sulfyellow", "elem S" + str )
-    cmd.color("phosorange", "elem P+Fe+Ba" + str )
-    cmd.color("green", "elem Cl+B" + str )
-    cmd.color("brown", "elem Br+Zn+Cu+Ni" + str )
-    cmd.color("blue", "elem Na" + str )
-    cmd.color("forest", "elem Mg" + str )
-    cmd.color("darkgray", "elem Ca+Mn+Al+Ti+Cr+Ag" + str )
-    cmd.color("goldenrod", "elem Au+F+Si" + str)
-    cmd.color("ipurple", "elem I" + str)
-    cmd.color("firebrick", "elem Li" + str)
-    cmd.color("helpink", "elem He" + str)
+def color(selection='',
+        show_selection='sticks',
+        color_selection='cpk',
+        show_all=('sticks','spheres'),
+        color_all='cpk',
+        cpknew=0):
+    def cpk(selection):
+        cmd.do('color red, %s'%(selection))#temporary
+    def show(selection,toshow,tocolor):
+        if type(toshow).__name__ == 'tuple':
+            for show in toshow:
+                cmd.do('show %s, %s'%(show,selection))
+        else:
+            cmd.do('show %s, %s'%(toshow,selection))
+        if tocolor == 'cpk':
+            cpk(selection)
+        else:
+            cmd.do('color %s, %s'%(tocolor,selection))
+    if show_all != 0:
+        show('all', show_all, color_all)
+    if selection != '':
+        show(selection, show_selection, color_selection)
 
 def populate():
     objects = cmd.get_names('all')
