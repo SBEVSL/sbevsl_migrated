@@ -172,7 +172,7 @@ def byResidue(selection, num, numtwo=None,lastselection=None):
             byres = ''.join([byres, 'byres ', selection, "%s"%(number)])
             delete = ''.join([delete, selection, "%s"%(number)])
         else:
-            byres = ''.join([byres, 'byres ', selection, "%s"%(number), '|'])
+            byres = ''.join([byres, 'byres ', selection, "%s"%(number), '&'])
             delete = ''.join([delete, selection, "%s"%(number), '+'])
     cmd.do('select %s, %s'%(selection, byres))
     cmd.do('delete %s'%(delete))
