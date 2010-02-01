@@ -34,28 +34,27 @@ from pymol import cmd
 import sys, urllib2, zlib
  
 def __init__(self):
-   self.menuBar.addmenuitem('Plugin', 'command',
-                            'PDB Loader Service',
-                            label = 'PDB Loader Service',
-                            command = lambda s=self : fetchPDBDialog(s))
- 
-def remote(pdbCode):
-   pdbCode = pdbCode.upper()
-   try:
-      pdbFile = urllib2.urlopen('http://www.rcsb.org/pdb/cgi/export.cgi/' +
-                                pdbCode + '.pdb.gz?format=PDB&pdbId=' +
-                                pdbCode + '&compression=gz')
-      cmd.read_pdbstr(zlib.decompress(pdbFile.read()[22:], -zlib.MAX_WBITS), pdbCode)
-   except:
-      print "Unexpected error:", sys.exc_info()[0]
-      tkMessageBox.showerror('Invalid Code',
-                             'You entered an invalid pdb code:' + pdbCode)
- 
-def fetchPDBDialog(app):
-   pdbCode = tkSimpleDialog.askstring('PDB Loader Service',
-                                      'Please enter a 4-digit pdb code:',
-                                      parent=app.root)
-   if pdbCode:
-      remote(pdbCode)
- 
-cmd.extend('remote', remote)
+    self.menuBar.addmenuitem('Plugin', 'command','PDB Loader Service',
+        label = 'PDB Loader Service',command = lambda s=self : PDBDialog(s))
+
+def fetch(pdbCode):
+    pdbCode = pdbCode.upper()
+    try:
+        if len(pdbCode) > 4:
+            raise Exception
+        url = pdbCode.join(('http://www.rcsb.org/pdb/cgi/export.cgi/',
+            '.pdb.gz?format=PDB&pdbId=','&compression=gz'))
+        pdbFile = urllib2.urlopen(url)
+        cmd.read_pdbstr(zlib.decompress(pdbFile.read()[22:], -zlib.MAX_WBITS),
+            pdbCode)
+    except:
+        print "Unexpected error:", sys.exc_info()[0]
+        tkMessageBox.showerror('Invalid Code',
+            'You entered an invalid pdb code:' + pdbCode)
+
+def PDBDialog(app):
+    pdbCode = tkSimpleDialog.askstring('PDB Loader Service',
+        'Please enter a 4-digit pdb code:',parent=app.root)
+    if pdbCode:
+        fetch(pdbCode)
+cmd.extend('fetch', fetch)
