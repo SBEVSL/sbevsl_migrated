@@ -1,4 +1,3 @@
-from pymol import cmd
 import Tkinter as tk
 import Pmw
 from pmg_tk.startup.ProMol_dir import promolglobals as pglob

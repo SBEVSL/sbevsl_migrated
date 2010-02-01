@@ -31,6 +31,7 @@ AminoList = ('ala', 'arg', 'asn', 'asp', 'cys', 'gln', 'glu', 'gly',
 
 Photos = {}
 for x in AminoList:
+    x = x.upper()
     for y in ('3D', '2D'):
         Photos["%s%s" % (x, y)] = tk.PhotoImage(
             file = os.path.join(PROMOL_DIR_PATH,'AminoPics',x+y+'.gif'))
@@ -39,6 +40,40 @@ for x in AminoList:
 AlphaSequence = [ "%c" % (x) for x in range(ord('A'), ord('Z')+1)]
 #a - z
 alphasequence = [ "%c" % (x) for x in range(ord('a'), ord('z')+1)]
+#the original CPK plastic models developed by Corey, Pauling and Kultun
+CPKDict = {
+      "H":"[1.000,1.000,1.000]","He":"[1.000, 0.753, .796]",
+     "Li":"[.698, .133, .133]",  "B":"[0, 1.000, 0]",
+     "Cl":"[0, 1.000, 0]",       "C":"[.784, .784, .784]",
+      "N":"[.561, .561, 1.000]", "O":"[1.000, 0, 0]",
+      "F":"[.855, .647, .125]", "Si":"[.855, .647, .125]",
+     "Au":"[.855, .647, .125]", "Na":"[0, 0, 1.000]",
+     "Mg":"[.133, 139, .133]",  "Al":"[.502, .502, .565]",
+     "Ca":"[.502, .502, .565]", "Ti":"[.502, .502, .565]",
+     "Cr":"[.502, .502, .565]", "Mn":"[.502, .502, .565]",
+     "Ag":"[.502, .502, .565]",  "P":"[1.000, .647, 0]",
+     "Fe":"[1.000, .647, 0]",   "Ba":"[1.000, .647, 0]",
+      "S":"[1.000, 1.000, 0]",  "Ni":"[.647, .165, .165]",
+     "Cu":"[.647, .165, .165]", "Zn":"[.647, .165, .165]",
+     "Br":"[.647, .165, .165]",  "I":"[.627, .125, .941]",
+    "UNK":"[1.000, .078, .576]"}
+#CPKNew Based off the original CPK plastic models
+CPKNewDict = {
+      "H":"[1.000,1.000,1.000]","He":"[1.000, 0.753, .796]",
+     "Li":"[.698, .129, .129]",  "B":"[0, 1.000, 0]",
+     "Cl":"[0, 1.000, 0]",       "C":"[.827, .827, .827]",
+      "N":"[.529, .808, .922]",  "O":"[1.000, 0, 0]",
+      "F":"[.855, .647, .125]", "Si":"[.855, .647, .125]",
+     "Au":"[.855, .647, .125]", "Na":"[0, 0, 1.000]",
+     "Mg":"[.133, 139, .133]",  "Al":"[.412, .412, .412]",
+     "Ca":"[.412, .412, .412]", "Ti":"[.412, .412, .412]",
+     "Cr":"[.412, .412, .412]", "Mn":"[.412, .412, .412]",
+     "Ag":"[.412, .412, .412]",  "P":"[1.000, .667, 0]",
+     "Fe":"[1.000, .667, 0]",   "Ba":"[1.000, .667, 0]",
+      "S":"[1.000, 1.000, 0]",  "Ni":"[.502, .157, .157]",
+     "Cu":"[.502, .157, .157]", "Zn":"[.502, .157, .157]",
+     "Br":"[.502, .157, .157]",  "I":"[.627, .125, .941]",
+    "UNK":"[1.000, .086, .569]"}
 
 def defaults(tag = ''):
     if tag == 'cartoon':
@@ -177,28 +212,51 @@ def deleteEmpty():
             cmd.delete('heme')
 cmd.extend('deleteEmpty', deleteEmpty)
 
-def color(selection='',
+def procolor(selection=None,
         show_selection='sticks',
         color_selection='cpk',
         show_all=('sticks','spheres'),
         color_all='cpk',
-        cpknew=0):
-    def cpk(selection):
-        cmd.do('color red, %s'%(selection))#temporary
-    def show(selection,toshow,tocolor):
+        cpknew=False):
+    cmd.do('hide everything, all')
+    def cpk(cpkkit,selection):
+        unk = 'not e. '
+        cpk,suffix = cpkkit
+        for k in cpk:
+            if k != 'UNK':
+                cmd.do('color '+k+suffix+',(e. '+k+' & '+selection+')')
+                unk += ''+k+'+'
+        cmd.do('color UNK'+suffix+',(('+unk[:-1]+') & '+selection+')')
+    def setcolors(cpknew):
+        colorIndex = {}
+        for i in cmd.get_color_indices():
+            k,v = i
+            colorIndex[k] = v
+        if cpknew:
+            cpk = CPKNewDict
+            suffix = 'cpknew'
+        else:
+            cpk = CPKDict
+            suffix = 'cpk'
+        for k in cpk:
+            if k+suffix not in colorIndex:
+                cmd.do('set_color '+k+suffix+','+cpk[k])
+        return cpk,suffix
+    def show(selection,toshow,tocolor,cpknew):
         if type(toshow).__name__ == 'tuple':
             for show in toshow:
                 cmd.do('show %s, %s'%(show,selection))
         else:
             cmd.do('show %s, %s'%(toshow,selection))
         if tocolor == 'cpk':
-            cpk(selection)
+            cpk(setcolors(cpknew),selection)
         else:
             cmd.do('color %s, %s'%(tocolor,selection))
-    if show_all != 0:
-        show('all', show_all, color_all)
-    if selection != '':
-        show(selection, show_selection, color_selection)
+    if show_all != None:
+        show('all', show_all, color_all, cpknew)
+    if selection != None:
+        show(selection, show_selection, color_selection, cpknew)
+cmd.extend('procolor', procolor)
 
 def populate():
     objects = cmd.get_names('all')
