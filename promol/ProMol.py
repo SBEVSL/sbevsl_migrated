@@ -5,7 +5,7 @@ from pymol import cmd
 import Tkinter as tk
 from tkFileDialog import askopenfilename
 import Pmw
-from pmg_tk.startup.remote_pdb_load import fetchPDBDialog
+from pmg_tk.startup.ProMol_dir.remote_pdb_load import PDBDialog
 from pmg_tk.startup.ProMol_dir import promolglobals as pglob
 
 Pmw.initialise()
@@ -56,7 +56,7 @@ def promol(pymol, user_click = 1):
         elif result == 'Help':
             promol_help()
         elif result == 'Fetch PDB':
-            fetchPDBDialog(pymol)
+            PDBDialog(pymol)
             pglob.update()
         elif result == 'Clear':
             cmd.reinitialize()

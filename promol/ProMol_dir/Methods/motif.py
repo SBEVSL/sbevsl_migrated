@@ -12,7 +12,7 @@ from tkMessageBox import showinfo
 from tkMessageBox import showerror
 from pmg_tk.startup.ProMol_dir import promolglobals as pglob
 from pmg_tk.startup.ProMol_dir.Methods import motifcoded as motcod
-from pmg_tk.startup.remote_pdb_load import remote
+from pmg_tk.startup.ProMol_dir.remote_pdb_load import fetch
 
 #print dir(motcod)
 Pmw.initialise()
@@ -454,25 +454,24 @@ def motifchecker():
                 group['tag_text'] = 'Press Start to Begin Search'
                 root.update()
                 break
-            group['tag_text'] = 'Searching... %.2s Percent Complete'%(bar)
+            group['tag_text'] = 'Searching... %.3s%% Complete'%(bar)
             status.SetProgressPercent(bar)
             root.update()
             if exact == None:
                 continue
             function = motcod.motifs[motif]['function']
             if motcod.MotifCaller(function,False):
-                cmd.do('count_atoms %s'%(function))#need to sync pymol/promol threads
                 x = ModBounds(cmd.count_atoms(function),exact,upper,lower)
                 if x != '0':
                     found.append('%s-%s'%(x,motif))
-            cmd.do('delete %s'%(function))
+            cmd.delete(function)
 
         print 'Motif Finder finished with %s results.'%(len(found))
         cmd.orient('all')
         found.sort()
         pglob.Tabs['motifs']['motifbox'].setlist(found)
         cmd.show('cartoon', 'all')
-        cmd.color('white', 'all')
+        cmd.color('gray', 'all')
         root.withdraw()
         pglob.Tabs['motifs']['findmotif']['state'] = tk.NORMAL
 
@@ -529,7 +528,7 @@ def randomized():
         else:
             lines = sum([1 for line in lineFile])
             pdbCode = linecache.getline(lineFile,random.randint(1, lines))[0:4]
-            remote(pdbCode)
+            fetch(pdbCode)
             break
     else:
         InHandle = urllib2.urlopen('ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_entry_type.txt')
