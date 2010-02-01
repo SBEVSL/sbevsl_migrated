@@ -14,7 +14,7 @@ from pmg_tk.startup.ProMol_dir import promolglobals as pglob
 from pmg_tk.startup.ProMol_dir.Methods import motifcoded as motcod
 from pmg_tk.startup.remote_pdb_load import remote
 
-
+#print dir(motcod)
 Pmw.initialise()
 
 #motif options
