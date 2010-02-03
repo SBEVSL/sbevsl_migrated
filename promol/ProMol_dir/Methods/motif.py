@@ -586,7 +586,7 @@ def loadmotifer():
     try:
         ###mRN = motif resn number aka number of residues in motif
         premRN = askstring('Motif Maker','How many residues are in your motif?\n'
-                                          +'Please enter a number >= 2 and <=10.\n')
+            +'Please enter a number >= 2 and <=10.\n')
         if premRN == None:
             raise Exception
         else:

@@ -85,8 +85,8 @@ def promol(pymol, user_click = 1):
     pglob.Tabs['welcome'] = {'tab':notebook.add('Welcome')}
     welcome.initialise()
 
-    pglob.Tabs['batch_motif'] = {'tab':notebook.add('Batch Motif')}
-    batch_motif.initialise()
+    #pglob.Tabs['batch_motif'] = {'tab':notebook.add('Batch Motif')}
+    #batch_motif.initialise()
     
     pglob.Tabs['ez_viz'] = {'tab':notebook.add('EZ-Viz')}
     ez_viz.initialise()
@@ -94,8 +94,8 @@ def promol(pymol, user_click = 1):
     pglob.Tabs['motifs'] = {'tab':notebook.add('Motifs')}
     motifs.initialise()
     
-    pglob.Tabs['custom_motifs'] = {'tab':notebook.add('Custom\nMotifs')}
-    custom_motifs.initialise()
+    #pglob.Tabs['custom_motifs'] = {'tab':notebook.add('Custom\nMotifs')}
+    #custom_motifs.initialise()
     
     pglob.Tabs['motif_maker'] = {'tab':notebook.add('Motif Database')}
     motif_maker.initialise()
@@ -103,14 +103,14 @@ def promol(pymol, user_click = 1):
     pglob.Tabs['view'] = {'tab':notebook.add('View\nOptions')}
     view.initialise()
     
-    pglob.Tabs['toolbox'] = {'tab':notebook.add('Toolbox')}
-    toolbox.initialise()
+    #pglob.Tabs['toolbox'] = {'tab':notebook.add('Toolbox')}
+    #toolbox.initialise()
     
-    pglob.Tabs['advanced_toolbox'] = {'tab':notebook.add('Advanced\n Toolbox')}
-    advanced_toolbox.initialise()
+    #pglob.Tabs['advanced_toolbox'] = {'tab':notebook.add('Advanced\n Toolbox')}
+    #advanced_toolbox.initialise()
     
-    pglob.Tabs['movie_maker'] = {'tab':notebook.add('Movie\n Maker')}
-    movie_maker.initialise()
+    #pglob.Tabs['movie_maker'] = {'tab':notebook.add('Movie\n Maker')}
+    #movie_maker.initialise()
 
     notebook.setnaturalsize()
     
