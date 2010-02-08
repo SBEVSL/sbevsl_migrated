@@ -59,66 +59,7 @@ def write_script(tag):
             f=open(Q, 'w')
         except:
             pass
-            
-def batchLoop(*args):
-    #f = ''
-    ranges = []
-    string = ""
-    #filename = savefilename(self)
-    if (len(args) == 1):
-        try:
-            f=open(entry123.get())
-        except:
-            showerror('No input file','You did not choose an input file yet')
-    else:
-        try:
-            f=open('./temp', 'w')
-        except:
-            showerror('Filewrite error',
-                             'Sorry, there was an error writing the file')
-        for each in args:
-            try:
-                float(each)
-                ranges.append(float(each))
-            except:
-                f.write(each + '\n')
-    f.close()
-    try:
-        f=open('./temp')
-    except:
-        pass
-    try:    
-        f=open(entry123.get())
-    except:
-        pass
-    try:
-        f=open(args[0])
-    except:
-        pass
-    for line in f.readlines():
-        if (len(args) == 1):
-            ranges = sensEntry.get().split(',')
-            for each in ranges:
-                try:
-                    float(each)
-                except ValueError:
-                    showerror('Incorrect Formatting',
-                        'Check the formatting of sensitivities')
-                        #sensEntry.delete(0,END)
-                else:
-                    self.range.set(each)
-                    line = line.strip()
-                    cmd.delete('all')
-                    myGetPdb(line)
-                    motifList = motifchecker(self)
-                    string += line
-                    string +='\t' + str(self.range.get()) + '\n'
-                    for i in motifList:
-                        string += '\t'*3 + str(i) + '\n'
-                    print string
-                    filename = savefilename(self)
-                    savefile(filename, string)
-cmd.extend('batchLoop',batchLoop)
+
 def dim_dim(tag):
     if tag == '2D':
       diment.delete(0,2)
