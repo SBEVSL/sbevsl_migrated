@@ -43,7 +43,7 @@ motifs = {
     'Jaa_2had_00_Haloalkane_Dehalogenase':{'function':'Jaa_2had_00','upper':36,'exact':26,'lower':16},
     'Jaa_1jz6_04_Beta-Glucuronidase':{'function':'Jaa_1jz6_04','upper':42,'exact':30,'lower':18},
     'Jaa_1pzp_00_Beta-Lactamase':{'function':'Jaa_1pzp_00','upper':39,'exact':30,'lower':21},
-    'Jaa_1n7n_01_Hyaluronidase':{'function':'Jaa_1n7n_01','upper':45,'exact':33,'lower':21},
+    'Jaa_1n7n_01_Hyaluronidase':{'function':'Jaa_1n7n_01','upper':49,'exact':36,'lower':23},
     'Jaa_1que_00_Ferredoxin_Reductase':{'function':'Jaa_1que_00','upper':30,'exact':21,'lower':12},
     'Jaa_1ga8_00_Galacosytransferase':{'function':'Jaa_1ga8_00','upper':34,'exact':25,'lower':16},
     'Jaa_1j96_00_20Alpha-Hydroxysteroid_Dehydrogenase':{'function':'Jaa_1j96_00','upper':51,'exact':39,'lower':27},

@@ -57,4 +57,4 @@ def PDBDialog(app):
         'Please enter a 4-digit pdb code:',parent=app.root)
     if pdbCode:
         fetch(pdbCode)
-cmd.extend('fetch', fetch)
+#cmd.extend('fetch', fetch)
