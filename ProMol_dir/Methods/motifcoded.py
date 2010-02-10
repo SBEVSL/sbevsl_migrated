@@ -37,29 +37,29 @@ motifs = {
     # 'P_1mrq_00_Aldose_Reductase':{'function':'P_1mrq_00','upper':51,'exact':39,'lower':27},
     # 'P_1amo_00_NADPH_Cytochrome_p450_Reductase':{'function':'P_1amo_00','upper':28,'exact':20,'lower':12},
     # 'P_1fnb_00_Ferredoxin_NADP_Reductase':{'function':'P_1fnb_00','upper':30,'exact':21,'lower':12},
-    'Jaa_1csi_00_Citrate_Synthase':{'function':'Jaa_1csi_00','upper':38,'exact':28,'lower':18},
-    'Jaa_1a2f_00_Ascorbate_Peroxidase':{'function':'Jaa_1a2f_00','upper':40,'exact':29,'lower':18},
-    'Jaa_1rab_00_Aspartate_Carbamoyltransferase':{'function':'Jaa_1rab_00','upper':50,'exact':39,'lower':28},
-    'Jaa_2had_00_Haloalkane_Dehalogenase':{'function':'Jaa_2had_00','upper':36,'exact':26,'lower':16},
-    'Jaa_1jz6_04_Beta-Glucuronidase':{'function':'Jaa_1jz6_04','upper':42,'exact':30,'lower':18},
-    'Jaa_1pzp_00_Beta-Lactamase':{'function':'Jaa_1pzp_00','upper':39,'exact':30,'lower':21},
-    'Jaa_1n7n_01_Hyaluronidase':{'function':'Jaa_1n7n_01','upper':45,'exact':33,'lower':21},
-    'Jaa_1que_00_Ferredoxin_Reductase':{'function':'Jaa_1que_00','upper':30,'exact':21,'lower':12},
-    'Jaa_1ga8_00_Galacosytransferase':{'function':'Jaa_1ga8_00','upper':34,'exact':25,'lower':16},
-    'Jaa_1j96_00_20Alpha-Hydroxysteroid_Dehydrogenase':{'function':'Jaa_1j96_00','upper':51,'exact':39,'lower':27},
-    'Jaa_1pyd_00_Thiamin_Diphosphate_Dependent_Enzyme_Pyruvate_Decarboxylase':{'function':'Jaa_1pyd_00','upper':47,'exact':37,'lower':27},
-    'Jaa_1h1y_00_D-Ribulose-5-Phosphate_3-Epimerase':{'function':'Jaa_1h1y_00','upper':46,'exact':36,'lower':26},
-    'Jaa_1djq_00_Trimethylamine_Dehydrogenase':{'function':'Jaa_1djq_00','upper':42,'exact':30,'lower':18},
-    'Jaa_5csm_00_Chorismate_Mutase':{'function':'Jaa_5csm_00','upper':51,'exact':40,'lower':29},
-    'Jaa_2ctb_01_Carboxypeptidase_A':{'function':'Jaa_2ctb_01','upper':42,'exact':31,'lower':20},
-    'Jaa_12as_00_Aaparagine_Synthetase':{'function':'Jaa_12as_00','upper':39,'exact':28,'lower':17},
-    'Jaa_1aur_00_Carboxylesterase':{'function':'Jaa_1aur_00','upper':51,'exact':41,'lower':31},
-    'Jaa_1gk2_00_Histidine_Ammonia-Lyase':{'function':'Jaa_1gk2_00','upper':48,'exact':36,'lower':24},
-    'Jaa_1sry_00_Seryl-TRNA_Synthetase':{'function':'Jaa_1sry_00','upper':56,'exact':45,'lower':34},
-    'Jaa_1kuv_00_Serotonin_N-Acetyltransferase':{'function':'Jaa_1kuv_00','upper':56,'exact':44,'lower':32},
-    'Jaa_1pfk_00_Phosphofructokinase':{'function':'Jaa_1pfk_00','upper':52,'exact':41,'lower':30},
-    'Jaa_1nwc_00_Aspartate_Semialdehyde_Dehydrogenase':{'function':'Jaa_1nwc_00','upper':35,'exact':25,'lower':15},
-    'Jaa_1bcs_00_Serine_Carboxypeptidase_ii':{'function':'Jaa_1bcs_00','upper':52,'exact':40,'lower':28},
+    'Jfa_1csi_00_Citrate_Synthase':{'function':'Jfa_1csi_00','upper':38,'exact':28,'lower':18},
+    'Jfa_1a2f_00_Ascorbate_Peroxidase':{'function':'Jfa_1a2f_00','upper':40,'exact':29,'lower':18},
+    'Jfa_1rab_00_Aspartate_Carbamoyltransferase':{'function':'Jfa_1rab_00','upper':50,'exact':39,'lower':28},
+    'Jfa_2had_00_Haloalkane_Dehalogenase':{'function':'Jfa_2had_00','upper':36,'exact':26,'lower':16},
+    'Jfa_1jz6_04_Beta-Glucuronidase':{'function':'Jfa_1jz6_04','upper':42,'exact':30,'lower':18},
+    'Jfa_1pzp_00_Beta-Lactamase':{'function':'Jfa_1pzp_00','upper':39,'exact':30,'lower':21},
+    'Jfa_1n7n_01_Hyaluronidase':{'function':'Jfa_1n7n_01','upper':45,'exact':33,'lower':21},
+    'Jfa_1que_00_Ferredoxin_Reductase':{'function':'Jfa_1que_00','upper':30,'exact':21,'lower':12},
+    'Jfa_1ga8_00_Galacosytransferase':{'function':'Jfa_1ga8_00','upper':34,'exact':25,'lower':16},
+    'Jfa_1j96_00_20Alpha-Hydroxysteroid_Dehydrogenase':{'function':'Jfa_1j96_00','upper':51,'exact':39,'lower':27},
+    'Jfa_1pyd_00_Thiamin_Diphosphate_Dependent_Enzyme_Pyruvate_Decarboxylase':{'function':'Jfa_1pyd_00','upper':47,'exact':37,'lower':27},
+    'Jfa_1h1y_00_D-Ribulose-5-Phosphate_3-Epimerase':{'function':'Jfa_1h1y_00','upper':46,'exact':36,'lower':26},
+    'Jfa_1djq_00_Trimethylamine_Dehydrogenase':{'function':'Jfa_1djq_00','upper':42,'exact':30,'lower':18},
+    'Jfa_5csm_00_Chorismate_Mutase':{'function':'Jfa_5csm_00','upper':51,'exact':40,'lower':29},
+    'Jfa_2ctb_01_Carboxypeptidase_A':{'function':'Jfa_2ctb_01','upper':42,'exact':31,'lower':20},
+    'Jfa_12as_00_Aaparagine_Synthetase':{'function':'Jfa_12as_00','upper':39,'exact':28,'lower':17},
+    'Jfa_1aur_00_Carboxylesterase':{'function':'Jfa_1aur_00','upper':51,'exact':41,'lower':31},
+    'Jfa_1gk2_00_Histidine_Ammonia-Lyase':{'function':'Jfa_1gk2_00','upper':48,'exact':36,'lower':24},
+    'Jfa_1sry_00_Seryl-TRNA_Synthetase':{'function':'Jfa_1sry_00','upper':56,'exact':45,'lower':34},
+    'Jfa_1kuv_00_Serotonin_N-Acetyltransferase':{'function':'Jfa_1kuv_00','upper':56,'exact':44,'lower':32},
+    'Jfa_1pfk_00_Phosphofructokinase':{'function':'Jfa_1pfk_00','upper':52,'exact':41,'lower':30},
+    'Jfa_1nwc_00_Aspartate_Semialdehyde_Dehydrogenase':{'function':'Jfa_1nwc_00','upper':35,'exact':25,'lower':15},
+    'Jfa_1bcs_00_Serine_Carboxypeptidase_ii':{'function':'Jfa_1bcs_00','upper':52,'exact':40,'lower':28},
     'Jab_1csc_00_Citrate_Synthase':{'function':'Jab_1csc_00','upper':38,'exact':28,'lower':18},
     'Jab_1a2f_00_Ascorbate_Peroxidase':{'function':'Jab_1a2f_00','upper':40,'exact':29,'lower':18},
     'Jab_1raf_00_Aspartate_Carbamoyltransferase':{'function':'Jab_1raf_00','upper':50,'exact':39,'lower':28},
@@ -1624,7 +1624,7 @@ def P_1cjw_00(d):
     cmd.delete('tyr')
     return {'motif':'P_1cjw_00'}
 
-def Jaa_1csi_00(d):
+def Jfa_1csi_00(d):
     cmd.select('temp0', 'n. cg')
     cmd.select('temp1', 'r. his')
     cmd.select('jessatom0', 'temp0&temp1')
@@ -1727,7 +1727,7 @@ def Jaa_1csi_00(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*7.645700))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*1.212000))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.232100))
-    cmd.select('Jaa_1csi_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_1csi_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -1794,9 +1794,9 @@ def Jaa_1csi_00(d):
     cmd.delete('temp54')
     cmd.delete('temp55')
     cmd.delete('temp56')
-    return {'motif':'Jaa_1csi_00'}
+    return {'motif':'Jfa_1csi_00'}
 
-def Jaa_1a2f_00(d):
+def Jfa_1a2f_00(d):
     cmd.select('temp0', 'n. ne')
     cmd.select('temp1', 'r. arg')
     cmd.select('jessatom0', 'temp0&temp1')
@@ -1899,7 +1899,7 @@ def Jaa_1a2f_00(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*7.029600))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*1.333200))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.171500))
-    cmd.select('Jaa_1a2f_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_1a2f_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -1966,9 +1966,9 @@ def Jaa_1a2f_00(d):
     cmd.delete('temp54')
     cmd.delete('temp55')
     cmd.delete('temp56')
-    return {'motif':'Jaa_1a2f_00'}
+    return {'motif':'Jfa_1a2f_00'}
 
-def Jaa_1rab_00(d):
+def Jfa_1rab_00(d):
     cmd.select('temp0', 'n. ne')
     cmd.select('temp1', 'r. arg')
     cmd.select('jessatom0', 'temp0&temp1')
@@ -2137,7 +2137,7 @@ def Jaa_1rab_00(d):
     cmd.select('jessatom8', 'jessatom8 w. %s of jessatom11'%(d*3.322900))
     cmd.select('jessatom9', 'jessatom9 w. %s of jessatom11'%(d*2.060400))
     cmd.select('jessatom10', 'jessatom10 w. %s of jessatom11'%(d*2.161400))
-    cmd.select('Jaa_1rab_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
+    cmd.select('Jfa_1rab_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -2240,9 +2240,9 @@ def Jaa_1rab_00(d):
     cmd.delete('temp87')
     cmd.delete('temp88')
     cmd.delete('temp89')
-    return {'motif':'Jaa_1rab_00'}
+    return {'motif':'Jfa_1rab_00'}
 
-def Jaa_2had_00(d):
+def Jfa_2had_00(d):
     cmd.select('temp0', 'n. cg')
     cmd.select('temp1', 'r. asp')
     cmd.select('temp2', 'r. glu')
@@ -2344,7 +2344,7 @@ def Jaa_2had_00(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*5.019700))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*2.191700))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.181600))
-    cmd.select('Jaa_2had_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_2had_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -2410,9 +2410,9 @@ def Jaa_2had_00(d):
     cmd.delete('temp53')
     cmd.delete('temp54')
     cmd.delete('temp55')
-    return {'motif':'Jaa_2had_00'}
+    return {'motif':'Jfa_2had_00'}
 
-def Jaa_1jz6_04(d):
+def Jfa_1jz6_04(d):
     cmd.select('temp0', 'n. cd')
     cmd.select('temp1', 'r. glu')
     cmd.select('temp2', 'r. asp')
@@ -2514,7 +2514,7 @@ def Jaa_1jz6_04(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*2.605800))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*1.292800))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.232100))
-    cmd.select('Jaa_1jz6_04', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_1jz6_04', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -2580,9 +2580,9 @@ def Jaa_1jz6_04(d):
     cmd.delete('temp53')
     cmd.delete('temp54')
     cmd.delete('temp55')
-    return {'motif':'Jaa_1jz6_04'}
+    return {'motif':'Jfa_1jz6_04'}
 
-def Jaa_1pzp_00(d):
+def Jfa_1pzp_00(d):
     cmd.select('temp0', 'n. ca')
     cmd.select('temp1', 'r. ser')
     cmd.select('temp2', 'r. thr')
@@ -2752,7 +2752,7 @@ def Jaa_1pzp_00(d):
     cmd.select('jessatom8', 'jessatom8 w. %s of jessatom11'%(d*6.393300))
     cmd.select('jessatom9', 'jessatom9 w. %s of jessatom11'%(d*1.252400))
     cmd.select('jessatom10', 'jessatom10 w. %s of jessatom11'%(d*2.181600))
-    cmd.select('Jaa_1pzp_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
+    cmd.select('Jfa_1pzp_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -2856,9 +2856,9 @@ def Jaa_1pzp_00(d):
     cmd.delete('temp88')
     cmd.delete('temp89')
     cmd.delete('temp90')
-    return {'motif':'Jaa_1pzp_00'}
+    return {'motif':'Jfa_1pzp_00'}
 
-def Jaa_1n7n_01(d):
+def Jfa_1n7n_01(d):
     cmd.select('temp0', 'n. cg')
     cmd.select('temp1', 'r. his')
     cmd.select('jessatom0', 'temp0&temp1')
@@ -2961,7 +2961,7 @@ def Jaa_1n7n_01(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*3.858200))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*2.323000))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.292700))
-    cmd.select('Jaa_1n7n_01', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_1n7n_01', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -3028,9 +3028,9 @@ def Jaa_1n7n_01(d):
     cmd.delete('temp54')
     cmd.delete('temp55')
     cmd.delete('temp56')
-    return {'motif':'Jaa_1n7n_01'}
+    return {'motif':'Jfa_1n7n_01'}
 
-def Jaa_1que_00(d):
+def Jfa_1que_00(d):
     cmd.select('temp0', 'n. ca')
     cmd.select('temp1', 'r. ser')
     cmd.select('temp2', 'r. thr')
@@ -3135,7 +3135,7 @@ def Jaa_1que_00(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*3.898600))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*1.262500))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.222000))
-    cmd.select('Jaa_1que_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_1que_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -3204,9 +3204,9 @@ def Jaa_1que_00(d):
     cmd.delete('temp56')
     cmd.delete('temp57')
     cmd.delete('temp58')
-    return {'motif':'Jaa_1que_00'}
+    return {'motif':'Jfa_1que_00'}
 
-def Jaa_1ga8_00(d):
+def Jfa_1ga8_00(d):
     cmd.select('temp0', 'n. cg')
     cmd.select('temp1', 'r. asp')
     cmd.select('temp2', 'r. glu')
@@ -3310,7 +3310,7 @@ def Jaa_1ga8_00(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*4.595500))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*1.353400))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.282600))
-    cmd.select('Jaa_1ga8_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_1ga8_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -3378,9 +3378,9 @@ def Jaa_1ga8_00(d):
     cmd.delete('temp55')
     cmd.delete('temp56')
     cmd.delete('temp57')
-    return {'motif':'Jaa_1ga8_00'}
+    return {'motif':'Jfa_1ga8_00'}
 
-def Jaa_1j96_00(d):
+def Jfa_1j96_00(d):
     cmd.select('temp0', 'n. cg')
     cmd.select('temp1', 'r. asp')
     cmd.select('temp2', 'r. glu')
@@ -3555,7 +3555,7 @@ def Jaa_1j96_00(d):
     cmd.select('jessatom8', 'jessatom8 w. %s of jessatom11'%(d*4.797500))
     cmd.select('jessatom9', 'jessatom9 w. %s of jessatom11'%(d*2.222000))
     cmd.select('jessatom10', 'jessatom10 w. %s of jessatom11'%(d*2.191700))
-    cmd.select('Jaa_1j96_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
+    cmd.select('Jfa_1j96_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -3664,9 +3664,9 @@ def Jaa_1j96_00(d):
     cmd.delete('temp93')
     cmd.delete('temp94')
     cmd.delete('temp95')
-    return {'motif':'Jaa_1j96_00'}
+    return {'motif':'Jfa_1j96_00'}
 
-def Jaa_1pyd_00(d):
+def Jfa_1pyd_00(d):
     cmd.select('temp0', 'n. cg')
     cmd.select('temp1', 'r. asp')
     cmd.select('temp2', 'r. glu')
@@ -3833,7 +3833,7 @@ def Jaa_1pyd_00(d):
     cmd.select('jessatom8', 'jessatom8 w. %s of jessatom11'%(d*33.966300))
     cmd.select('jessatom9', 'jessatom9 w. %s of jessatom11'%(d*1.262500))
     cmd.select('jessatom10', 'jessatom10 w. %s of jessatom11'%(d*2.232100))
-    cmd.select('Jaa_1pyd_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
+    cmd.select('Jfa_1pyd_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -3934,9 +3934,9 @@ def Jaa_1pyd_00(d):
     cmd.delete('temp85')
     cmd.delete('temp86')
     cmd.delete('temp87')
-    return {'motif':'Jaa_1pyd_00'}
+    return {'motif':'Jfa_1pyd_00'}
 
-def Jaa_1h1y_00(d):
+def Jfa_1h1y_00(d):
     cmd.select('temp0', 'n. cg')
     cmd.select('temp1', 'r. his')
     cmd.select('jessatom0', 'temp0&temp1')
@@ -4104,7 +4104,7 @@ def Jaa_1h1y_00(d):
     cmd.select('jessatom8', 'jessatom8 w. %s of jessatom11'%(d*6.221600))
     cmd.select('jessatom9', 'jessatom9 w. %s of jessatom11'%(d*1.252400))
     cmd.select('jessatom10', 'jessatom10 w. %s of jessatom11'%(d*2.201800))
-    cmd.select('Jaa_1h1y_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
+    cmd.select('Jfa_1h1y_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -4206,9 +4206,9 @@ def Jaa_1h1y_00(d):
     cmd.delete('temp86')
     cmd.delete('temp87')
     cmd.delete('temp88')
-    return {'motif':'Jaa_1h1y_00'}
+    return {'motif':'Jfa_1h1y_00'}
 
-def Jaa_1djq_00(d):
+def Jfa_1djq_00(d):
     cmd.select('temp0', 'n. ce1')
     cmd.select('temp1', 'r. tyr')
     cmd.select('jessatom0', 'temp0&temp1')
@@ -4314,7 +4314,7 @@ def Jaa_1djq_00(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*2.828000))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*1.262500))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.211900))
-    cmd.select('Jaa_1djq_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_1djq_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -4384,9 +4384,9 @@ def Jaa_1djq_00(d):
     cmd.delete('temp57')
     cmd.delete('temp58')
     cmd.delete('temp59')
-    return {'motif':'Jaa_1djq_00'}
+    return {'motif':'Jfa_1djq_00'}
 
-def Jaa_5csm_00(d):
+def Jfa_5csm_00(d):
     cmd.select('temp0', 'n. ne')
     cmd.select('temp1', 'r. arg')
     cmd.select('jessatom0', 'temp0&temp1')
@@ -4558,7 +4558,7 @@ def Jaa_5csm_00(d):
     cmd.select('jessatom8', 'jessatom8 w. %s of jessatom11'%(d*7.292200))
     cmd.select('jessatom9', 'jessatom9 w. %s of jessatom11'%(d*1.242300))
     cmd.select('jessatom10', 'jessatom10 w. %s of jessatom11'%(d*2.161400))
-    cmd.select('Jaa_5csm_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
+    cmd.select('Jfa_5csm_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -4664,9 +4664,9 @@ def Jaa_5csm_00(d):
     cmd.delete('temp90')
     cmd.delete('temp91')
     cmd.delete('temp92')
-    return {'motif':'Jaa_5csm_00'}
+    return {'motif':'Jfa_5csm_00'}
 
-def Jaa_2ctb_01(d):
+def Jfa_2ctb_01(d):
     cmd.select('temp0', 'n. ne')
     cmd.select('temp1', 'r. arg')
     cmd.select('jessatom0', 'temp0&temp1')
@@ -4771,7 +4771,7 @@ def Jaa_2ctb_01(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*7.120500))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*1.262500))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.252300))
-    cmd.select('Jaa_2ctb_01', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_2ctb_01', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -4840,9 +4840,9 @@ def Jaa_2ctb_01(d):
     cmd.delete('temp56')
     cmd.delete('temp57')
     cmd.delete('temp58')
-    return {'motif':'Jaa_2ctb_01'}
+    return {'motif':'Jfa_2ctb_01'}
 
-def Jaa_12as_00(d):
+def Jfa_12as_00(d):
     cmd.select('temp0', 'n. cg')
     cmd.select('temp1', 'r. asp')
     cmd.select('temp2', 'r. glu')
@@ -4950,7 +4950,7 @@ def Jaa_12as_00(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*5.403500))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*1.343300))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.262400))
-    cmd.select('Jaa_12as_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_12as_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -5022,9 +5022,9 @@ def Jaa_12as_00(d):
     cmd.delete('temp59')
     cmd.delete('temp60')
     cmd.delete('temp61')
-    return {'motif':'Jaa_12as_00'}
+    return {'motif':'Jfa_12as_00'}
 
-def Jaa_1aur_00(d):
+def Jfa_1aur_00(d):
     cmd.select('temp0', 'n. n')
     cmd.select('jessatom0', 'temp0')
     cmd.select('temp1', 'n. ca')
@@ -5283,7 +5283,7 @@ def Jaa_1aur_00(d):
     cmd.select('jessatom11', 'jessatom11 w. %s of jessatom14'%(d*4.817700))
     cmd.select('jessatom12', 'jessatom12 w. %s of jessatom14'%(d*2.211900))
     cmd.select('jessatom13', 'jessatom13 w. %s of jessatom14'%(d*2.151300))
-    cmd.select('Jaa_1aur_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
+    cmd.select('Jfa_1aur_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -5437,9 +5437,9 @@ def Jaa_1aur_00(d):
     cmd.delete('temp135')
     cmd.delete('temp136')
     cmd.delete('temp137')
-    return {'motif':'Jaa_1aur_00'}
+    return {'motif':'Jfa_1aur_00'}
 
-def Jaa_1gk2_00(d):
+def Jfa_1gk2_00(d):
     cmd.select('temp0', 'n. ca')
     cmd.select('temp1', 'r. ala')
     cmd.select('jessatom0', 'temp0&temp1')
@@ -5698,7 +5698,7 @@ def Jaa_1gk2_00(d):
     cmd.select('jessatom11', 'jessatom11 w. %s of jessatom14'%(d*50.550500))
     cmd.select('jessatom12', 'jessatom12 w. %s of jessatom14'%(d*1.262500))
     cmd.select('jessatom13', 'jessatom13 w. %s of jessatom14'%(d*2.232100))
-    cmd.select('Jaa_1gk2_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
+    cmd.select('Jfa_1gk2_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -5852,9 +5852,9 @@ def Jaa_1gk2_00(d):
     cmd.delete('temp135')
     cmd.delete('temp136')
     cmd.delete('temp137')
-    return {'motif':'Jaa_1gk2_00'}
+    return {'motif':'Jfa_1gk2_00'}
 
-def Jaa_1sry_00(d):
+def Jfa_1sry_00(d):
     cmd.select('temp0', 'n. ne')
     cmd.select('temp1', 'r. arg')
     cmd.select('jessatom0', 'temp0&temp1')
@@ -6112,7 +6112,7 @@ def Jaa_1sry_00(d):
     cmd.select('jessatom11', 'jessatom11 w. %s of jessatom14'%(d*13.422900))
     cmd.select('jessatom12', 'jessatom12 w. %s of jessatom14'%(d*2.363400))
     cmd.select('jessatom13', 'jessatom13 w. %s of jessatom14'%(d*2.292700))
-    cmd.select('Jaa_1sry_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
+    cmd.select('Jfa_1sry_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -6265,9 +6265,9 @@ def Jaa_1sry_00(d):
     cmd.delete('temp134')
     cmd.delete('temp135')
     cmd.delete('temp136')
-    return {'motif':'Jaa_1sry_00'}
+    return {'motif':'Jfa_1sry_00'}
 
-def Jaa_1kuv_00(d):
+def Jfa_1kuv_00(d):
     cmd.select('temp0', 'n. ca')
     cmd.select('temp1', 'r. ser')
     cmd.select('temp2', 'r. thr')
@@ -6519,7 +6519,7 @@ def Jaa_1kuv_00(d):
     cmd.select('jessatom11', 'jessatom11 w. %s of jessatom14'%(d*5.797400))
     cmd.select('jessatom12', 'jessatom12 w. %s of jessatom14'%(d*2.424000))
     cmd.select('jessatom13', 'jessatom13 w. %s of jessatom14'%(d*1.393800))
-    cmd.select('Jaa_1kuv_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
+    cmd.select('Jfa_1kuv_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -6666,9 +6666,9 @@ def Jaa_1kuv_00(d):
     cmd.delete('temp128')
     cmd.delete('temp129')
     cmd.delete('temp130')
-    return {'motif':'Jaa_1kuv_00'}
+    return {'motif':'Jfa_1kuv_00'}
 
-def Jaa_1pfk_00(d):
+def Jfa_1pfk_00(d):
     cmd.select('temp0', 'n. n')
     cmd.select('jessatom0', 'temp0')
     cmd.select('temp1', 'n. ca')
@@ -6928,7 +6928,7 @@ def Jaa_1pfk_00(d):
     cmd.select('jessatom11', 'jessatom11 w. %s of jessatom14'%(d*7.070000))
     cmd.select('jessatom12', 'jessatom12 w. %s of jessatom14'%(d*2.312900))
     cmd.select('jessatom13', 'jessatom13 w. %s of jessatom14'%(d*2.343200))
-    cmd.select('Jaa_1pfk_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
+    cmd.select('Jfa_1pfk_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -7083,9 +7083,9 @@ def Jaa_1pfk_00(d):
     cmd.delete('temp136')
     cmd.delete('temp137')
     cmd.delete('temp138')
-    return {'motif':'Jaa_1pfk_00'}
+    return {'motif':'Jfa_1pfk_00'}
 
-def Jaa_1nwc_00(d):
+def Jfa_1nwc_00(d):
     cmd.select('temp0', 'n. ca')
     cmd.select('temp1', 'r. cys')
     cmd.select('jessatom0', 'temp0&temp1')
@@ -7186,7 +7186,7 @@ def Jaa_1nwc_00(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*5.474200))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*2.211900))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.161400))
-    cmd.select('Jaa_1nwc_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_1nwc_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -7251,9 +7251,9 @@ def Jaa_1nwc_00(d):
     cmd.delete('temp52')
     cmd.delete('temp53')
     cmd.delete('temp54')
-    return {'motif':'Jaa_1nwc_00'}
+    return {'motif':'Jfa_1nwc_00'}
 
-def Jaa_1bcs_00(d):
+def Jfa_1bcs_00(d):
     cmd.select('temp0', 'n. n')
     cmd.select('jessatom0', 'temp0')
     cmd.select('temp1', 'n. ca')
@@ -7511,7 +7511,7 @@ def Jaa_1bcs_00(d):
     cmd.select('jessatom11', 'jessatom11 w. %s of jessatom14'%(d*5.029800))
     cmd.select('jessatom12', 'jessatom12 w. %s of jessatom14'%(d*2.201800))
     cmd.select('jessatom13', 'jessatom13 w. %s of jessatom14'%(d*2.201800))
-    cmd.select('Jaa_1bcs_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
+    cmd.select('Jfa_1bcs_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -7664,7 +7664,7 @@ def Jaa_1bcs_00(d):
     cmd.delete('temp134')
     cmd.delete('temp135')
     cmd.delete('temp136')
-    return {'motif':'Jaa_1bcs_00'}
+    return {'motif':'Jfa_1bcs_00'}
 
 def Jab_1csc_00(d):
     cmd.select('temp0', 'n. ca')

@@ -6,17 +6,23 @@ from pmg_tk.startup.ProMol_dir.Methods.utility import *
 Pmw.initialise()
 
 def initialise():
-    group = Pmw.Group(pglob.Tabs['motifs']['tab'], tag_text='Motif Search')
-    group.grid(row=0, column=0, columnspan=1, padx=2, pady=2, sticky=tk.W)
+    group = Pmw.Group(pglob.Tabs['motifs']['tab'], tag_text='Motif Finder')
+    group.grid(row=0, column=0, padx=2, pady=2, sticky=tk.W, rowspan=2)
     interior = group.interior()
 
-    framemot = Frame(interior)
+    framemot = tk.Frame(interior)
     framemot.grid(row = 0, column = 0)
     ballmot = Pmw.Balloon(interior)
-    ballmot.bind(framemot, 'Searches through all motifs\n0 = Motif not found, 1 = exact match, 2 = within range'+
-        '\nDouble click on returns to show')
-    pglob.Tabs['motifs']['findmotif'] = Button(framemot, text ='Motif Finder', command=motifchecker)
+    ballmot.bind(framemot, 'Searches through all coded motifs.\n'+
+        '1 = exact match, 2 = within range'+
+        '\nDouble click on returns to run motif.')
+    pglob.Tabs['motifs']['mode'] = IntVar()
+    pglob.Tabs['motifs']['findmotif'] = tk.Button(framemot, text ='Motif Finder', 
+        command=motifchecker)
     pglob.Tabs['motifs']['findmotif'].grid(row = 0, column = 0)
+    pglob.Tabs['motifs']['csv'] = tk.Button(framemot, text ='Export CSV', 
+        command=export2csv, state=tk.DISABLED)
+    pglob.Tabs['motifs']['csv'].grid(row = 0, column = 1)
 
     pglob.Tabs['motifs']['motifbox'] = Pmw.ScrolledListBox(interior,
         items=(),
@@ -27,23 +33,37 @@ def initialise():
         hull_height = 400)
     pglob.Tabs['motifs']['motifbox'].grid()
     
+    # group = Pmw.Group(pglob.Tabs['motifs']['tab'], tag_text='Batch Search')
+    # group.grid(row=0, column=1, padx=2, pady=2, sticky=tk.W)
+    # interior = group.interior()
+    # pglob.Tabs['motifs']['multimotif'] = tk.Checkbutton(interior, 
+    #     text="Run multiple PDB's?", variable=pglob.Tabs['motifs']['mode'],
+    #     padx=2, pady=0, command=toggleMultiState)
+    # pglob.Tabs['motifs']['multimotif'].grid(row=0, column=0, stick=tk.W)
+    # pglob.Tabs['motifs']['multipdb'] = tk.Text(interior, state=tk.NORMAL, 
+    #     width=35, height=2)
+    # pglob.Tabs['motifs']['multipdb'].grid(row=1, column=0)
+    # pglob.Tabs['motifs']['multipdbtxt'] = 'Enter a comma seperated list of PDB'
+    # pglob.Tabs['motifs']['multipdb'].insert(tk.END,
+    #     pglob.Tabs['motifs']['multipdbtxt'])
+    
     group = Pmw.Group(pglob.Tabs['motifs']['tab'], tag_text='Tools')
-    group.grid(row=0, column=1, columnspan=1, padx=2, pady=2, sticky=tk.W)
+    group.grid(row=1, column=1, padx=2, pady=2, sticky=tk.W)
     interior = group.interior()
     
-    labrange = Label(interior, text='Precision Factor:')
+    labrange = tk.Label(interior, text='Precision Factor:')
     labrange.grid(row=1, column=0, sticky=tk.SW)
         
-    rerange = Button(interior, text='Reset',highlightthickness=0, 
+    rerange = tk.Button(interior, text='Reset',highlightthickness=0, 
                   width=8,command=resetrange,padx=2,pady=0)
     rerange.grid(row=2, column=2, sticky=tk.SW, padx=2, pady=2)
 
-    framerange = Frame(interior)
+    framerange = tk.Frame(interior)
     framerange.grid(row=2, column=0,columnspan = 2, padx=0, pady=0, sticky=tk.N)
     ballrange = Pmw.Balloon(interior)
     ballrange.bind(framerange, 'Multiplier for default measured values\n'+
         'Re-click on desired motif to render change')
-    pglob.Tabs['motifs'].update({'delta':Scale(framerange, width =8)})
+    pglob.Tabs['motifs'].update({'delta':tk.Scale(framerange, width =8)})
     pglob.Tabs['motifs']['delta'].configure(troughcolor="#ffffff")
     pglob.Tabs['motifs']['delta'].configure(length="175")
     pglob.Tabs['motifs']['delta'].configure(orient="horizontal")
@@ -52,16 +72,16 @@ def initialise():
     pglob.Tabs['motifs']['delta'].grid(row=2, column=1,columnspan = 4, padx=0, pady=0, sticky=tk.N)
     pglob.Tabs['motifs']['delta'].set(1)
     
-    labadjacent = Label(interior, text='Adjacent:')
+    labadjacent = tk.Label(interior, text='Adjacent:')
     labadjacent.grid(row=3, column=0, sticky=tk.SW)
 
     #---------------------Show residues around active site---------------#
     
-    framesela = Frame(interior)
+    framesela = tk.Frame(interior)
     framesela.grid(row=4, column=0, columnspan = 2, padx=0, pady=0, sticky=tk.N)
     ballsela = Pmw.Balloon(interior)
     ballsela.bind(framesela, 'Within # Angstroms')
-    selA = Scale(framesela, width =8)
+    selA = tk.Scale(framesela, width =8)
     selA.configure(troughcolor="#ffffff")
     selA.configure(length="175")
     selA.configure(orient="horizontal")
@@ -70,12 +90,12 @@ def initialise():
     selA.grid(row=4, column=0, columnspan=2, padx=0, pady=0, sticky=tk.N)
     selA.set(5.0)
 
-    showround = Button(interior, width = 12, text = 'Adjacent', command=roundres)
+    showround = tk.Button(interior, width = 12, text = 'Adjacent', command=roundres)
     showround.grid(row=5, column=0, columnspan=2, padx=1, pady=1, sticky=tk.NW)
     balladj = Pmw.Balloon(interior)
     balladj.bind(showround, 'Display residues adjacent to motif')
 
-    delres = Button(interior, width = 14, text = 'Delete Adjacent', command=resdel)
+    delres = tk.Button(interior, width = 14, text = 'Delete Adjacent', command=resdel)
     delres.grid(row=5, column=1, columnspan=2, padx=1, pady=1, sticky=tk.NW)
     
     stereo = Pmw.OptionMenu(interior,label_text = 'Options:',labelpos =tk.W,

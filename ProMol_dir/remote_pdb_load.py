@@ -38,19 +38,27 @@ def __init__(self):
         label = 'PDB Loader Service',command = lambda s=self : PDBDialog(s))
 
 def fetch(pdbCode):
-    pdbCode = pdbCode.upper()
     try:
         if len(pdbCode) > 4:
-            raise Exception
+            raise SyntaxError
         url = pdbCode.join(('http://www.rcsb.org/pdb/cgi/export.cgi/',
             '.pdb.gz?format=PDB&pdbId=','&compression=gz'))
-        pdbFile = urllib2.urlopen(url)
-        cmd.read_pdbstr(zlib.decompress(pdbFile.read()[22:], -zlib.MAX_WBITS),
+        pdbUrl = urllib2.urlopen(url)
+        pdbFile = pdbUrl.read()
+        pdbUrl.close()
+        cutsite = pdbFile.find('.ent',0,30)+5
+        if cutsite == 4:
+            cutsite = 10
+        cmd.read_pdbstr(zlib.decompress(pdbFile[cutsite:], -zlib.MAX_WBITS),
             pdbCode)
-    except:
-        print "Unexpected error:", sys.exc_info()[0]
-        tkMessageBox.showerror('Invalid Code',
-            'You entered an invalid pdb code:' + pdbCode)
+    except (urllib2.HTTPError,SyntaxError):
+            tkMessageBox.showerror('Invalid Code',
+                'You entered an invalid pdb code:' + pdbCode)
+    except urllib2.URLError:
+        tkMessageBox.showerror('Connection Error',
+            'Please check your internet connection.')
+    #except:
+        #print "Unexpected error:", sys.exc_info()[0]
 
 def PDBDialog(app):
     pdbCode = tkSimpleDialog.askstring('PDB Loader Service',
