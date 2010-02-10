@@ -458,9 +458,10 @@ def export2csv():
             csv.append(',,,,%s,%s,%s'%(chain,resn,resi))
     csvfile = "\n".join(csv)
     csvhandle = asksaveasfile(initialfile='%s.csv'%(pdb),defaultextension='.csv',
-        filetypes=[('CSV','*.csv')])
-    csvhandle.write(csvfile)
-    csvhandle.close()
+        filetypes=[('CSV','*.csv')],title='Export Motif Finder Results As...')
+    if csvhandle != None:
+        csvhandle.write(csvfile)
+        csvhandle.close()
         
 def motifchecker():
     mode = pglob.Tabs['motifs']['mode'].get()
