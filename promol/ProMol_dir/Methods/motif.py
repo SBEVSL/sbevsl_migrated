@@ -1,4 +1,5 @@
 from pymol import cmd
+from pymol import stored
 import Tkinter as tk
 import Pmw
 import linecache
@@ -6,7 +7,7 @@ import random
 import os
 import urllib2
 import time
-from tkFileDialog import askopenfilename
+from tkFileDialog import askopenfilename, asksaveasfile
 from tkSimpleDialog import askstring
 from tkMessageBox import showinfo
 from tkMessageBox import showerror
@@ -411,8 +412,78 @@ def runcusmotif():
         except:
             pass
 
+def toggleMultiState():
+    mode = pglob.Tabs['motifs']['mode'].get()
+    text = pglob.Tabs['motifs']['multipdbtxt']
+    if mode == 0:
+        pglob.Tabs['motifs']['multipdb'].delete(1.0, tk.END)
+        pglob.Tabs['motifs']['multipdb'].insert(tk.END, text)
+        pglob.Tabs['motifs']['multipdb']['state'] = tk.DISABLED
+        return True
+    pglob.Tabs['motifs']['multipdb']['state'] = tk.NORMAL
+    pglob.Tabs['motifs']['multipdb'].delete(1.0, tk.END)
+    return True
+
+def export2csv():
+    csv = ['PDB Entry,PDB Homologue,Motifs,Rank,Residues',
+        ',,,,Chain,Name,Num']
+    motifs = pglob.Tabs['motifs']['motifbox'].get()
+    for motif in motifs:
+        x = pglob.Tabs['motifs']['csvprep'][motif]['x']
+        pf = pglob.Tabs['motifs']['csvprep'][motif]['pf']
+        if 'hom' in pglob.Tabs['motifs']['csvprep'][motif]:
+            hom = '%s@PF%s'%(pglob.Tabs['motifs']['csvprep'][motif]['hom'],pf)
+            pdb = ''
+        else:
+            hom = ''
+            pdb = '%s@PF%s'%(pglob.Tabs['motifs']['csvprep'][motif]['pdb'],pf)
+        residues = pglob.Tabs['motifs']['csvprep'][motif]['res']
+        same = {}
+        first = True
+        for residue in residues:
+            chain = residue[0]
+            resn = residue[1]
+            resi = residue[2]
+            key = '%s%s'%(resn,resi)
+            if key in same:
+                line = same[key]
+                s = csv[line].split(',')
+                csv[line] = '%s,%s,%s,%s,%s&%s,%s,%s'%(s[0],s[1],s[2],s[3],s[4],chain,s[5],s[6])
+                continue
+            same[key] = len(csv)
+            if first == True:
+                csv.append('%s,%s,%s,%s,%s,%s,%s'%(pdb,hom,motif[2:],x,chain,resn,resi))
+                first = False
+                continue
+            csv.append(',,,,%s,%s,%s'%(chain,resn,resi))
+    csvfile = "\n".join(csv)
+    csvhandle = asksaveasfile(initialfile='%s.csv'%(pdb),defaultextension='.csv',
+        filetypes=[('CSV','*.csv')])
+    csvhandle.write(csvfile)
+    csvhandle.close()
+        
 def motifchecker():
+    mode = pglob.Tabs['motifs']['mode'].get()
+    pglob.Tabs['motifs']['motifbox'].setlist(())
+    pglob.Tabs['motifs']['csvprep'] = {}
+    pglob.Tabs['motifs']['delta']['state'] = tk.DISABLED
+    pglob.Tabs['motifs']['csv']['state'] = tk.DISABLED
     pglob.Tabs['motifs']['findmotif']['state'] = tk.DISABLED
+    def iterate4export(function,x,motif):
+        last = None
+        export = []
+        stored.iterate = []
+        cmd.iterate(function, 'stored.iterate.append((chain,resn,resi))')
+        for iteration in stored.iterate:
+            if last != iteration:
+                export.append(iteration)
+            last = iteration
+        pglob.Tabs['motifs']['csvprep'][motif] = {}
+        pglob.Tabs['motifs']['csvprep'][motif]['x'] = x
+        pglob.Tabs['motifs']['csvprep'][motif]['pf'] = pglob.Tabs['motifs']['delta'].get()
+        pglob.Tabs['motifs']['csvprep'][motif]['pdb'] = cmd.get_names().pop()
+        pglob.Tabs['motifs']['csvprep'][motif]['res'] = export
+
     def ModBounds(x, exact, upper=None, lower=None):
         if x != 0 and x % exact == 0:
             return '1'
@@ -425,6 +496,7 @@ def motifchecker():
                 upper += upStatic
                 lower += lowStatic
         return '0'
+
     def cancel():
         pglob.Tabs['motifs']['cancel'] = True
         pglob.Tabs['motifs']['findmotif']['state'] = tk.NORMAL
@@ -463,7 +535,9 @@ def motifchecker():
             if motcod.MotifCaller(function,False):
                 x = ModBounds(cmd.count_atoms(function),exact,upper,lower)
                 if x != '0':
-                    found.append('%s-%s'%(x,motif))
+                    motifStr = '%s-%s'%(x,motif)
+                    found.append(motifStr)
+                    iterate4export(function,x,motifStr)
             cmd.delete(function)
 
         print 'Motif Finder finished with %s results.'%(len(found))
@@ -474,7 +548,9 @@ def motifchecker():
         cmd.color('gray', 'all')
         root.withdraw()
         pglob.Tabs['motifs']['findmotif']['state'] = tk.NORMAL
-
+        pglob.Tabs['motifs']['csv']['state'] = tk.NORMAL
+        pglob.Tabs['motifs']['delta']['state'] = tk.NORMAL
+    
     root = tk.Tk()
     root.title('Motif Finder')
     root.protocol('WM_DELETE_WINDOW', cancel)
