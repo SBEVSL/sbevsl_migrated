@@ -93,18 +93,18 @@ motifs = {
     'P_1h1y_00_Ribulose-Phosphate_Epimerase':{'function':'P_1h1y_00','upper':46,'exact':36,'lower':26},
     'P_1sry_00_Seryl-tRNA_Synthetase':{'function':'P_1sry_00','upper':56,'exact':45,'lower':34},
     'P_1djq_00_Trimethylamine_Dehydrogenase':{'function':'P_1djq_00','upper':42,'exact':30,'lower':18},
-    'Paa_1rab_00_Aspartate_Transcarbamoylase':{'function':'Paa_1rab_00','upper':50,'exact':39,'lower':28},
-    'Paa_1jz6_00_beta-Glucuronidase':{'function':'Paa_1jz6_00','upper':42,'exact':30,'lower':18},
-    'Paa_1pzp_00_beta-Lactamase':{'function':'Paa_1pzp_00','upper':39,'exact':30,'lower':21},
-    'Paa_2ctb_00_Carboxypeptidase-A':{'function':'Paa_2ctb_00','upper':42,'exact':31,'lower':20},
-    'Paa_1csi_00_Citrate_Synthase':{'function':'Paa_1csi_00','upper':38,'exact':28,'lower':18},
-    'Paa_1que_00_Ferredoxin_Reductase':{'function':'Paa_1que_00','upper':30,'exact':21,'lower':12},
-    'Paa_1ga8_00_Galactosyltransferase':{'function':'Paa_1ga8_00','upper':34,'exact':25,'lower':16},
-    'Paa_2had_00_Haloalkane_Dehydrogenase':{'function':'Paa_2had_00','upper':36,'exact':26,'lower':16},
-    'Paa_1gk2_00_Histidine_Ammonia_Lyase':{'function':'Paa_1gk2_00','upper':48,'exact':36,'lower':24},
-    'Paa_1j96_00_Hydroxysteroid_Dehydrogenase':{'function':'Paa_1j96_00','upper':51,'exact':39,'lower':27},
-    'Paa_1pfk_00_Phosphofructokinase':{'function':'Paa_1pfk_00','upper':52,'exact':41,'lower':30},
-    'Paa_1kuv_00_Serotonin_N-Acetyltransferase':{'function':'Paa_1kuv_00','upper':56,'exact':44,'lower':32},
+    'Pfa_1rab_00_Aspartate_Transcarbamoylase':{'function':'Pfa_1rab_00','upper':50,'exact':39,'lower':28},
+    'Pfa_1jz6_00_beta-Glucuronidase':{'function':'Pfa_1jz6_00','upper':42,'exact':30,'lower':18},
+    'Pfa_1pzp_00_beta-Lactamase':{'function':'Pfa_1pzp_00','upper':39,'exact':30,'lower':21},
+    'Pfa_2ctb_00_Carboxypeptidase-A':{'function':'Pfa_2ctb_00','upper':42,'exact':31,'lower':20},
+    'Pfa_1csi_00_Citrate_Synthase':{'function':'Pfa_1csi_00','upper':38,'exact':28,'lower':18},
+    'Pfa_1que_00_Ferredoxin_Reductase':{'function':'Pfa_1que_00','upper':30,'exact':21,'lower':12},
+    'Pfa_1ga8_00_Galactosyltransferase':{'function':'Pfa_1ga8_00','upper':34,'exact':25,'lower':16},
+    'Pfa_2had_00_Haloalkane_Dehydrogenase':{'function':'Pfa_2had_00','upper':36,'exact':26,'lower':16},
+    'Pfa_1gk2_00_Histidine_Ammonia_Lyase':{'function':'Pfa_1gk2_00','upper':48,'exact':36,'lower':24},
+    'Pfa_1j96_00_Hydroxysteroid_Dehydrogenase':{'function':'Pfa_1j96_00','upper':51,'exact':39,'lower':27},
+    'Pfa_1pfk_00_Phosphofructokinase':{'function':'Pfa_1pfk_00','upper':52,'exact':41,'lower':30},
+    'Pfa_1kuv_00_Serotonin_N-Acetyltransferase':{'function':'Pfa_1kuv_00','upper':56,'exact':44,'lower':32},
     'Pab_1jz7_00_beta-Glucuronidase':{'function':'Pab_1jz7_00','upper':42,'exact':30,'lower':18},
     'Pab_1nyy_00_beta_Lactamase':{'function':'Pab_1nyy_00','upper':39,'exact':30,'lower':21},
     'Pab_1hdq_00_Carboxypeptidase-A':{'function':'Pab_1hdq_00','upper':42,'exact':31,'lower':20},
@@ -17687,7 +17687,7 @@ def P_1djq_00(d):
     cmd.delete('aspii')
     return {'motif':'P_1djq_00'}
 
-def Paa_1rab_00(d):
+def Pfa_1rab_00(d):
     cmd.select('arg1', 'n. CB&r. arg w. %s of n. CB&r. thr'%(d*7.28))
     cmd.select('arg2', 'n. CB&r. arg w. %s of n. OG1&r. thr'%(d*6.92))
     cmd.select('arg3', 'n. CB&r. arg w. %s of n. CG2&r. thr'%(d*8.76))
@@ -18843,14 +18843,14 @@ def Paa_1rab_00(d):
     cmd.select('hisiii289', 'n. N&r. his w. %s of n. CA&argii'%(d*11.53))
     cmd.select('hisiii290', 'n. N&r. his w. %s of n. N&argii'%(d*12.36))
     byResidue('hisiii', 250, 290)
-    cmd.select('Paa_1rab_00', 'arg|thri|argii|hisiii')
+    cmd.select('Pfa_1rab_00', 'arg|thri|argii|hisiii')
     cmd.delete('arg')
     cmd.delete('thri')
     cmd.delete('argii')
     cmd.delete('hisiii')
-    return {'motif':'Paa_1rab_00'}
+    return {'motif':'Pfa_1rab_00'}
 
-def Paa_1jz6_00(d):
+def Pfa_1jz6_00(d):
     cmd.select('tyr1', 'n. CB&r. tyr w. %s of n. CB&r. glu'%(d*7.91))
     cmd.select('tyr2', 'n. CB&r. tyr w. %s of n. CG&r. glu'%(d*9.27))
     cmd.select('tyr3', 'n. CB&r. tyr w. %s of n. CD&r. glu'%(d*9.49))
@@ -19458,13 +19458,13 @@ def Paa_1jz6_00(d):
     cmd.select('gluii188', 'n. N&r. glu w. %s of n. CA&glui'%(d*12.99))
     cmd.select('gluii189', 'n. N&r. glu w. %s of n. N&glui'%(d*12.58))
     byResidue('gluii', 150, 189)
-    cmd.select('Paa_1jz6_00', 'tyr|glui|gluii')
+    cmd.select('Pfa_1jz6_00', 'tyr|glui|gluii')
     cmd.delete('tyr')
     cmd.delete('glui')
     cmd.delete('gluii')
-    return {'motif':'Paa_1jz6_00'}
+    return {'motif':'Pfa_1jz6_00'}
 
-def Paa_1pzp_00(d):
+def Pfa_1pzp_00(d):
     cmd.select('ser1', 'n. CB&r. ser w. %s of n. CB&r. lys'%(d*7.30))
     cmd.select('ser2', 'n. CB&r. ser w. %s of n. CG&r. lys'%(d*6.71))
     cmd.select('ser3', 'n. CB&r. ser w. %s of n. CD&r. lys'%(d*5.95))
@@ -19607,14 +19607,14 @@ def Paa_1pzp_00(d):
     cmd.select('gluiii44', 'n. OE2&r. glu w. %s of n. CB&serii'%(d*9.32))
     cmd.select('gluiii45', 'n. OE2&r. glu w. %s of n. OG&serii'%(d*8.33))
     byResidue('gluiii', 45)
-    cmd.select('Paa_1pzp_00', 'ser|lysi|serii|gluiii')
+    cmd.select('Pfa_1pzp_00', 'ser|lysi|serii|gluiii')
     cmd.delete('ser')
     cmd.delete('lysi')
     cmd.delete('serii')
     cmd.delete('gluiii')
-    return {'motif':'Paa_1pzp_00'}
+    return {'motif':'Pfa_1pzp_00'}
 
-def Paa_2ctb_00(d):
+def Pfa_2ctb_00(d):
     cmd.select('arg1', 'n. CB&r. arg w. %s of n. CB&r. arg'%(d*5.50))
     cmd.select('arg2', 'n. CB&r. arg w. %s of n. CG&r. arg'%(d*6.92))
     cmd.select('arg3', 'n. CB&r. arg w. %s of n. CD&r. arg'%(d*7.39))
@@ -20267,13 +20267,13 @@ def Paa_2ctb_00(d):
     cmd.select('gluii197', 'n. N&r. glu w. %s of n. CA&argi'%(d*16.02))
     cmd.select('gluii198', 'n. N&r. glu w. %s of n. N&argi'%(d*17.24))
     byResidue('gluii', 150, 198)
-    cmd.select('Paa_2ctb_00', 'arg|argi|gluii')
+    cmd.select('Pfa_2ctb_00', 'arg|argi|gluii')
     cmd.delete('arg')
     cmd.delete('argi')
     cmd.delete('gluii')
-    return {'motif':'Paa_2ctb_00'}
+    return {'motif':'Pfa_2ctb_00'}
 
-def Paa_1csi_00(d):
+def Pfa_1csi_00(d):
     cmd.select('his1', 'n. CB&r. his w. %s of n. CB&r. his'%(d*13.29))
     cmd.select('his2', 'n. CB&r. his w. %s of n. CG&r. his'%(d*12.45))
     cmd.select('his3', 'n. CB&r. his w. %s of n. ND1&r. his'%(d*12.66))
@@ -20806,13 +20806,13 @@ def Paa_1csi_00(d):
     cmd.select('aspii159', 'n. N&r. asp w. %s of n. CA&hisi'%(d*11.95))
     cmd.select('aspii160', 'n. N&r. asp w. %s of n. N&hisi'%(d*12.09))
     byResidue('aspii', 150, 160)
-    cmd.select('Paa_1csi_00', 'his|hisi|aspii')
+    cmd.select('Pfa_1csi_00', 'his|hisi|aspii')
     cmd.delete('his')
     cmd.delete('hisi')
     cmd.delete('aspii')
-    return {'motif':'Paa_1csi_00'}
+    return {'motif':'Pfa_1csi_00'}
 
-def Paa_1que_00(d):
+def Pfa_1que_00(d):
     cmd.select('ser1', 'n. CB&r. ser w. %s of n. CB&r. cys'%(d*8.91))
     cmd.select('ser2', 'n. CB&r. ser w. %s of n. SG&r. cys'%(d*7.36))
     cmd.select('ser3', 'n. OG&r. ser w. %s of n. CB&r. cys'%(d*8.06))
@@ -20864,13 +20864,13 @@ def Paa_1que_00(d):
     cmd.select('gluii19', 'n. OE2&r. glu w. %s of n. CB&cysi'%(d*7.34))
     cmd.select('gluii20', 'n. OE2&r. glu w. %s of n. SG&cysi'%(d*5.86))
     byResidue('gluii', 20)
-    cmd.select('Paa_1que_00', 'ser|cysi|gluii')
+    cmd.select('Pfa_1que_00', 'ser|cysi|gluii')
     cmd.delete('ser')
     cmd.delete('cysi')
     cmd.delete('gluii')
-    return {'motif':'Paa_1que_00'}
+    return {'motif':'Pfa_1que_00'}
 
-def Paa_1ga8_00(d):
+def Pfa_1ga8_00(d):
     cmd.select('asp1', 'n. CB&r. asp w. %s of n. CB&r. asn'%(d*6.05))
     cmd.select('asp2', 'n. CB&r. asp w. %s of n. CG&r. asn'%(d*7.03))
     cmd.select('asp3', 'n. CB&r. asp w. %s of n. OD1&r. asn'%(d*8.22))
@@ -20986,13 +20986,13 @@ def Paa_1ga8_00(d):
     cmd.select('glnii39', 'n. NE2&r. gln w. %s of n. OD1&asni'%(d*8.21))
     cmd.select('glnii40', 'n. NE2&r. gln w. %s of n. ND2&asni'%(d*6.55))
     byResidue('glnii', 40)
-    cmd.select('Paa_1ga8_00', 'asp|asni|glnii')
+    cmd.select('Pfa_1ga8_00', 'asp|asni|glnii')
     cmd.delete('asp')
     cmd.delete('asni')
     cmd.delete('glnii')
-    return {'motif':'Paa_1ga8_00'}
+    return {'motif':'Pfa_1ga8_00'}
 
-def Paa_2had_00(d):
+def Pfa_2had_00(d):
     cmd.select('asp1', 'n. CB&r. asp w. %s of n. CB&r. asp'%(d*11.20))
     cmd.select('asp2', 'n. CB&r. asp w. %s of n. CG&r. asp'%(d*10.01))
     cmd.select('asp3', 'n. CB&r. asp w. %s of n. OD1&r. asp'%(d*10.13))
@@ -21451,13 +21451,13 @@ def Paa_2had_00(d):
     cmd.select('hisii159', 'n. N&r. his w. %s of n. CA&aspi'%(d*5.64))
     cmd.select('hisii160', 'n. N&r. his w. %s of n. N&aspi'%(d*6.03))
     byResidue('hisii', 150, 160)
-    cmd.select('Paa_2had_00', 'asp|aspi|hisii')
+    cmd.select('Pfa_2had_00', 'asp|aspi|hisii')
     cmd.delete('asp')
     cmd.delete('aspi')
     cmd.delete('hisii')
-    return {'motif':'Paa_2had_00'}
+    return {'motif':'Pfa_2had_00'}
 
-def Paa_1gk2_00(d):
+def Pfa_1gk2_00(d):
     cmd.select('ala1', 'n. C&r. ala w. %s of n. CB&r. ser'%(d*4.97))
     cmd.select('ala2', 'n. C&r. ala w. %s of n. OG&r. ser'%(d*6.36))
     cmd.select('ala3', 'n. C&r. ala w. %s of n. O&r. gly'%(d*5.93))
@@ -21756,15 +21756,15 @@ def Paa_1gk2_00(d):
     cmd.select('gluiiii74', 'n. OE2&r. glu w. %s of n. CZ&tyriii'%(d*5.30))
     cmd.select('gluiiii75', 'n. OE2&r. glu w. %s of n. OH&tyriii'%(d*4.49))
     byResidue('gluiiii', 50, 75)
-    cmd.select('Paa_1gk2_00', 'ala|seri|glyii|tyriii|gluiiii')
+    cmd.select('Pfa_1gk2_00', 'ala|seri|glyii|tyriii|gluiiii')
     cmd.delete('ala')
     cmd.delete('seri')
     cmd.delete('glyii')
     cmd.delete('tyriii')
     cmd.delete('gluiiii')
-    return {'motif':'Paa_1gk2_00'}
+    return {'motif':'Pfa_1gk2_00'}
 
-def Paa_1j96_00(d):
+def Pfa_1j96_00(d):
     cmd.select('asp1', 'n. CB&r. asp w. %s of n. CB&r. tyr'%(d*11.16))
     cmd.select('asp2', 'n. CB&r. asp w. %s of n. CG&r. tyr'%(d*10.17))
     cmd.select('asp3', 'n. CB&r. asp w. %s of n. CD1&r. tyr'%(d*10.74))
@@ -22163,14 +22163,14 @@ def Paa_1j96_00(d):
     cmd.select('hisiii101', 'n. NE2&r. his w. %s of n. CE&lysii'%(d*6.52))
     cmd.select('hisiii102', 'n. NE2&r. his w. %s of n. NZ&lysii'%(d*6.75))
     byResidue('hisiii', 100, 102)
-    cmd.select('Paa_1j96_00', 'asp|tyri|lysii|hisiii')
+    cmd.select('Pfa_1j96_00', 'asp|tyri|lysii|hisiii')
     cmd.delete('asp')
     cmd.delete('tyri')
     cmd.delete('lysii')
     cmd.delete('hisiii')
-    return {'motif':'Paa_1j96_00'}
+    return {'motif':'Pfa_1j96_00'}
 
-def Paa_1pfk_00(d):
+def Pfa_1pfk_00(d):
     cmd.select('gly1', 'n. O&r. gly w. %s of n. CB&r. arg'%(d*12.39))
     cmd.select('gly2', 'n. O&r. gly w. %s of n. CG&r. arg'%(d*11.27))
     cmd.select('gly3', 'n. O&r. gly w. %s of n. CD&r. arg'%(d*11.41))
@@ -23509,15 +23509,15 @@ def Paa_1pfk_00(d):
     cmd.select('argiiii329', 'n. N&r. arg w. %s of n. CA&aspiii'%(d*8.32))
     cmd.select('argiiii330', 'n. N&r. arg w. %s of n. N&aspiii'%(d*9.25))
     byResidue('argiiii', 300, 330)
-    cmd.select('Paa_1pfk_00', 'gly|argi|thrii|aspiii|argiiii')
+    cmd.select('Pfa_1pfk_00', 'gly|argi|thrii|aspiii|argiiii')
     cmd.delete('gly')
     cmd.delete('argi')
     cmd.delete('thrii')
     cmd.delete('aspiii')
     cmd.delete('argiiii')
-    return {'motif':'Paa_1pfk_00'}
+    return {'motif':'Pfa_1pfk_00'}
 
-def Paa_1kuv_00(d):
+def Pfa_1kuv_00(d):
     cmd.select('ser1', 'n. CB&r. ser w. %s of n. CB&r. leu'%(d*8.54))
     cmd.select('ser2', 'n. CB&r. ser w. %s of n. CG&r. leu'%(d*10.04))
     cmd.select('ser3', 'n. CB&r. ser w. %s of n. CD1&r. leu'%(d*10.86))
@@ -24328,13 +24328,13 @@ def Paa_1kuv_00(d):
     cmd.select('tyriiii191', 'n. OH&r. tyr w. %s of n. CA&leuiii'%(d*6.95))
     cmd.select('tyriiii192', 'n. OH&r. tyr w. %s of n. N&leuiii'%(d*7.28))
     byResidue('tyriiii', 150, 192)
-    cmd.select('Paa_1kuv_00', 'ser|leui|hisii|leuiii|tyriiii')
+    cmd.select('Pfa_1kuv_00', 'ser|leui|hisii|leuiii|tyriiii')
     cmd.delete('ser')
     cmd.delete('leui')
     cmd.delete('hisii')
     cmd.delete('leuiii')
     cmd.delete('tyriiii')
-    return {'motif':'Paa_1kuv_00'}
+    return {'motif':'Pfa_1kuv_00'}
 
 def Pab_1jz7_00(d):
     cmd.select('tyr1', 'n. CB&r. tyr w. %s of n. CB&r. glu'%(d*8.09))
