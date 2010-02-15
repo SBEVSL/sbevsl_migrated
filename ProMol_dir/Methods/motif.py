@@ -468,6 +468,7 @@ def motifchecker():
     pglob.Tabs['motifs']['motifbox'].setlist(())
     pglob.Tabs['motifs']['csvprep'] = {}
     pglob.Tabs['motifs']['delta']['state'] = tk.DISABLED
+    pglob.Tabs['motifs']['resetrange']['state'] = tk.DISABLED
     pglob.Tabs['motifs']['csv']['state'] = tk.DISABLED
     pglob.Tabs['motifs']['findmotif']['state'] = tk.DISABLED
     def iterate4export(function,x,motif):
@@ -551,6 +552,7 @@ def motifchecker():
         pglob.Tabs['motifs']['findmotif']['state'] = tk.NORMAL
         pglob.Tabs['motifs']['csv']['state'] = tk.NORMAL
         pglob.Tabs['motifs']['delta']['state'] = tk.NORMAL
+        pglob.Tabs['motifs']['resetrange']['state'] = tk.NORMAL
     
     root = tk.Tk()
     root.title('Motif Finder')
@@ -763,15 +765,18 @@ def loadmotifer():
                     chainlist = ['']### chain list
                     bonelist = ['']### backbone list
                     
-                    numOfi = 0
+                    numOfi = {}
                     for i in range(1,mRN+1):
                         if skip[i] == False:
-                            resnlist.append(resn[i].getvalue())
+                            residue = resn[i].getvalue()
+                            if residue not in numOfi:
+                                numOfi[residue] = 0
+                            resnlist.append(residue)
                             resilist.append(resi[i].get())
-                            resnlistf.append(resn[i].getvalue()+('i'*(numOfi)))
+                            resnlistf.append(resn[i].getvalue()+('i'*(numOfi[residue])))
                             chainlist.append(chain[i].getvalue())
                             bonelist.append(backbone[i].getvalue())
-                            numOfi += 1
+                            numOfi[residue] += 1
                     
                     ### This loop will increment through the amino acids. The amino acid we are looking
                     ### at right now is specified by the e variable. The a variable will count the

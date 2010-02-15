@@ -54,9 +54,11 @@ def initialise():
     labrange = tk.Label(interior, text='Precision Factor:')
     labrange.grid(row=1, column=0, sticky=tk.SW)
         
-    rerange = tk.Button(interior, text='Reset',highlightthickness=0, 
-                  width=8,command=resetrange,padx=2,pady=0)
-    rerange.grid(row=2, column=2, sticky=tk.SW, padx=2, pady=2)
+    pglob.Tabs['motifs']['resetrange'] = tk.Button(interior, 
+        text='Reset', highlightthickness=0, width=8, command=resetrange,
+        padx=2,pady=0)
+    pglob.Tabs['motifs']['resetrange'].grid(row=2, column=2,
+        sticky=tk.SW, padx=2, pady=2)
 
     framerange = tk.Frame(interior)
     framerange.grid(row=2, column=0,columnspan = 2, padx=0, pady=0, sticky=tk.N)
