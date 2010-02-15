@@ -46,14 +46,15 @@ def fetch(pdbCode):
         pdbUrl = urllib2.urlopen(url)
         pdbFile = pdbUrl.read()
         pdbUrl.close()
-        cutsite = pdbFile.find('.ent',0,30)+5
-        if cutsite == 4:
+        if pdbFile.find('.ent',0,30) == 17:
+            cutsite = 22
+        else:
             cutsite = 10
         cmd.read_pdbstr(zlib.decompress(pdbFile[cutsite:], -zlib.MAX_WBITS),
             pdbCode)
     except (urllib2.HTTPError,SyntaxError):
             tkMessageBox.showerror('Invalid Code',
-                'You entered an invalid pdb code:' + pdbCode)
+                'You entered an invalid pdb code: ' + pdbCode)
     except urllib2.URLError:
         tkMessageBox.showerror('Connection Error',
             'Please check your internet connection.')
