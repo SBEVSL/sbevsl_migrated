@@ -24,7 +24,7 @@ def __init__(self):
                              command = lambda s = self : promol(s))
     promol(self, 0)
 
-def promol(pymol, user_click = 1):
+def promol(pymol, user_click=1):
     '''
     This starts promol. As well as setup the GUI.
     '''
@@ -78,16 +78,12 @@ def promol(pymol, user_click = 1):
 
     notebook = Pmw.NoteBook(interior)
     notebook.pack(fill = 'both', expand = 1, padx = 10, pady = 10)
-    from pmg_tk.startup.ProMol_dir.Tabs import welcome, batch_motif, ez_viz,\
-        motifs, custom_motifs, motif_maker, view, toolbox, advanced_toolbox,\
-        movie_maker
+    from pmg_tk.startup.ProMol_dir.Tabs import welcome, ez_viz, motifs,\
+        custom_motifs, motif_maker, view, toolbox, advanced_toolbox, movie_maker
     
     pglob.Tabs['welcome'] = {'tab':notebook.add('Welcome')}
     welcome.initialise()
 
-    #pglob.Tabs['batch_motif'] = {'tab':notebook.add('Batch Motif')}
-    #batch_motif.initialise()
-    
     pglob.Tabs['ez_viz'] = {'tab':notebook.add('EZ-Viz')}
     ez_viz.initialise()
     
