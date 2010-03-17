@@ -90,7 +90,7 @@ def MotifCaller(motif_function, camera=True):
     if camera:
         pglob.deletemotif()
         pglob.update()
-    motif = globals()[motif_function](delta)
+    motif = globals()[motif_function](float(delta))
     objects = cmd.get_names('all')
     try:
         if motif != False:
