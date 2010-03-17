@@ -54,7 +54,7 @@ def write_script(tag):
     if tag=='On': #write a scritp
         try:
             pglob.script = '1'
-            Q = asksaveasfilename(defaultextension=".py", initialdir="./modules/pmg_tk/startup/Scripts")
+            Q = asksaveasfilename(defaultextension=".py", initialdir=pglob.pathmaker('Scripts'))
             cmd.do('log_open %s, a'%(Q))
             f=open(Q, 'w')
         except:
@@ -767,7 +767,7 @@ def loadmapps(event):
     loadbtn = Button(interior, text = "Load Map")
     loadbtn.grid(row=5, column=2, padx=4, pady=2, sticky=W)
     def loadccp4(event):      
-        file = askopenfilename(defaultextension=".ccp4", initialdir="./PyMOL/")
+        file = askopenfilename(defaultextension=".ccp4", initialdir=pglob.pathmaker(''))
         if len(file)>0:
             cmd.load(file)
         interior.mainloop()
@@ -799,7 +799,7 @@ def loadmapps(event):
     
     def elhelp(event):
         import webbrowser
-        webbrowser.open('./modules/pmg_tk/startup/EDMHelp.htm')
+        webbrowser.open(pglob.pathmaker('EDMHelp.htm'))
     ehelp.bind('<Button-1>', elhelp)
      #---isomesh function
     def emesh(event):

@@ -37,7 +37,7 @@ def __init__(self):
     self.menuBar.addmenuitem('Plugin', 'command','PDB Loader Service',
         label = 'PDB Loader Service',command = lambda s=self : PDBDialog(s))
 
-def fetch(pdbCode):
+def fetch(pdbCode,passerrors=False):
     try:
         if len(pdbCode) > 4:
             raise SyntaxError
@@ -52,12 +52,19 @@ def fetch(pdbCode):
             cutsite = 10
         cmd.read_pdbstr(zlib.decompress(pdbFile[cutsite:], -zlib.MAX_WBITS),
             pdbCode)
+        return ''
     except (urllib2.HTTPError,SyntaxError):
+        if passerrors == False:
             tkMessageBox.showerror('Invalid Code',
-                'You entered an invalid pdb code: ' + pdbCode)
+                'You entered an invalid pdb code: %s'%(pdbCode))
+        else:
+            return 'You entered an invalid pdb code: %s\n'%(pdbCode)
     except urllib2.URLError:
-        tkMessageBox.showerror('Connection Error',
-            'Please check your internet connection.')
+        if passerrors == False:
+            tkMessageBox.showerror('Connection Error',
+                'Please check your internet connection.\n')
+        else:
+            return 'Please check your internet connection.'
     #except:
         #print "Unexpected error:", sys.exc_info()[0]
 

@@ -7,7 +7,7 @@ import random
 import os
 import urllib2
 import time
-from tkFileDialog import askopenfilename, asksaveasfile
+from tkFileDialog import askopenfilename, asksaveasfile, asksaveasfilename
 from tkSimpleDialog import askstring
 from tkMessageBox import showinfo
 from tkMessageBox import showerror
@@ -389,18 +389,15 @@ def resetmotif():
     selBD.set(4.0)
     selCD.set(4.0)
 
-def resetrange():
-    pglob.Tabs['motifs']['delta'].set(1)
-
 def setcusmotif():
     a = []
-    for object in os.listdir('./modules/pmg_tk/startup/Motifs'):
+    for object in os.listdir(pglob.pathmaker('Motifs')):
         a.append(object)
     motifdrop.setlist(a)
 
 def runcusmotif():
         a = ['']
-        for object in os.listdir('./modules/pmg_tk/startup/Motifs'):
+        for object in os.listdir(pglob.pathmaker('Motifs')):
             a.append(object)
         motif = motifdrop.getcurselection()
         for item in motif:
@@ -408,7 +405,7 @@ def runcusmotif():
         try:
              for i in range(1, 100, 1):
                 if a[i] in tag:
-                    cmd.do('run ./modules/pmg_tk/startup/Motifs/'+a[i])
+                    cmd.run(pglob.pathmaker('Motifs',a[i]))
         except:
             pass
 
@@ -428,18 +425,18 @@ def export2csv():
     csv = ['PDB Entry,PDB Homologue,Motifs,Rank,Residues',
         ',,,,Chain,Name,Num']
     motifs = pglob.Tabs['motifs']['motifbox'].get()
+    first = True
     for motif in motifs:
         x = pglob.Tabs['motifs']['csvprep'][motif]['x']
         pf = pglob.Tabs['motifs']['csvprep'][motif]['pf']
+        pdb = '%s@PF%s'%(pglob.Tabs['motifs']['csvprep'][motif]['pdb'],pf)
         if 'hom' in pglob.Tabs['motifs']['csvprep'][motif]:
             hom = '%s@PF%s'%(pglob.Tabs['motifs']['csvprep'][motif]['hom'],pf)
-            pdb = ''
         else:
             hom = ''
-            pdb = '%s@PF%s'%(pglob.Tabs['motifs']['csvprep'][motif]['pdb'],pf)
         residues = pglob.Tabs['motifs']['csvprep'][motif]['res']
         same = {}
-        first = True
+        motifline = True
         for residue in residues:
             chain = residue[0]
             resn = residue[1]
@@ -455,6 +452,10 @@ def export2csv():
                 csv.append('%s,%s,%s,%s,%s,%s,%s'%(pdb,hom,motif[2:],x,chain,resn,resi))
                 first = False
                 continue
+            if motifline == True:
+                csv.append(',,%s,%s,%s,%s,%s'%(motif[2:],x,chain,resn,resi))
+                motifline = False
+                continue
             csv.append(',,,,%s,%s,%s'%(chain,resn,resi))
     csvfile = "\n".join(csv)
     csvhandle = asksaveasfile(initialfile='%s.csv'%(pdb),defaultextension='.csv',
@@ -468,7 +469,6 @@ def motifchecker():
     pglob.Tabs['motifs']['motifbox'].setlist(())
     pglob.Tabs['motifs']['csvprep'] = {}
     pglob.Tabs['motifs']['delta']['state'] = tk.DISABLED
-    pglob.Tabs['motifs']['resetrange']['state'] = tk.DISABLED
     pglob.Tabs['motifs']['csv']['state'] = tk.DISABLED
     pglob.Tabs['motifs']['findmotif']['state'] = tk.DISABLED
     def iterate4export(function,x,motif):
@@ -544,27 +544,27 @@ def motifchecker():
 
         print 'Motif Finder finished with %s results.'%(len(found))
         cmd.orient('all')
-        found.sort()
-        pglob.Tabs['motifs']['motifbox'].setlist(found)
+        if len(found) != 0:
+            found.sort()
+            pglob.Tabs['motifs']['motifbox'].setlist(found)
+            pglob.Tabs['motifs']['csv']['state'] = tk.NORMAL
         cmd.show('cartoon', 'all')
         cmd.color('gray', 'all')
         root.withdraw()
         pglob.Tabs['motifs']['findmotif']['state'] = tk.NORMAL
-        pglob.Tabs['motifs']['csv']['state'] = tk.NORMAL
         pglob.Tabs['motifs']['delta']['state'] = tk.NORMAL
-        pglob.Tabs['motifs']['resetrange']['state'] = tk.NORMAL
     
     root = tk.Tk()
     root.title('Motif Finder')
     root.protocol('WM_DELETE_WINDOW', cancel)
     group = Pmw.Group(root, tag_text='Press Start to Begin Search')
-    group.grid(row=0, column=0, columnspan=2, padx=0, pady=0, sticky = tk.NW)
+    group.grid(row=0, column=0, columnspan=2, padx=0, pady=0, sticky=tk.NW)
     interior = group.interior()
     status = pglob.ProgressBar(interior,10,200,0,0,2)
-    startbutton = tk.Button(interior, width = 12, text = 'Start', command=start)
-    startbutton.grid(row=1, column=0, padx=1, pady=1, sticky = tk.NW)
-    cancelbutton = tk.Button(interior, width = 12, text = 'Cancel', command=cancel)
-    cancelbutton.grid(row=1, column=1, padx=1, pady=1, sticky = tk.NW)
+    startbutton = tk.Button(interior, width=12, text='Start', command=start)
+    startbutton.grid(row=1, column=0, padx=1, pady=1, sticky=tk.NW)
+    cancelbutton = tk.Button(interior, width=12, text='Cancel', command=cancel)
+    cancelbutton.grid(row=1, column=1, padx=1, pady=1, sticky=tk.NW)
     cancelbutton['state'] = tk.DISABLED
     
 def resdel(event):
@@ -597,9 +597,9 @@ def roundres(event):
         showinfo('Alert', 'You must load a motif first')
         interior.mainloop()
 
-def randomized():
+def randompdb():
     cmd.delete('all')
-    lineFile = os.path.join(pglob.PROMOL_DIR_PATH,'pdb_entry_type.txt')
+    lineFile = pglob.pathmaker('pdb_entry_type.txt')
     while os.path.exists(lineFile):
         expiration = (os.path.getmtime(lineFile)+864000)
         if expiration <= time.time():
@@ -617,517 +617,249 @@ def randomized():
         OutHandle.close
         randomized()
 
-cmd.extend('randomized',randomized)
-
-def runum():#run all the motifs and count the atoms n the Motifs folder
+cmd.extend('randompdb',random)
         
-        a = ['']
-        entz.delete(0,1000)
-        entz.insert(0,0)
-        for object in os.listdir('./modules/pmg_tk/startup/Motifs'):
-            a.append(object)
-        skipping =True
-        list  = []
-        while skipping:
-            
-            z = int(entz.get()) + 1
-            entz.delete(0,1000)
-            entz.insert(0,z)
+def makemotif():
+    pdb = pglob.Tabs['motif_maker']['pdb'].get()
+    ec = pglob.Tabs['motif_maker']['ec'].get()
+    resn = pglob.Tabs['motif_maker']['resn']
+    resi = pglob.Tabs['motif_maker']['resi']
+    backbone = pglob.Tabs['motif_maker']['backbone']
+    chain = pglob.Tabs['motif_maker']['chain']
+    
+    def acceptresn(resn):
+        if len(resn) == 1 or len(resn) > 3:
             try:
-                cmd.set("suspend_updates",1,quiet=1)
-                time.sleep(1)#rate limiter
-                cmd.delete('Motif')
-                cmd.do('run ./modules/pmg_tk/startup/Motifs/'+a[z])
-                cmd.set("suspend_updates",0,quiet=1)
-                time.sleep(1)#rate limiter
-                
-                r = cmd.count_atoms('Motif')
-                entcount.delete(0,100)
-                entcount.insert(0,r)
-                
-                
-                time.sleep(1)
-                if len(entcount.get())==1:
-                       list.append(entcount.get()+'        '+a[z])
-                if len(entcount.get())==2:
-                       list.append(entcount.get()+'       '+a[z])
-                if len(entcount.get())==3:
-                       list.append(entcount.get()+'      '+a[z])
-            
-            
-            except:
-                cmd.set("suspend_updates",0,quiet=1)
-                skipping = False
-                motifdrop.setlist(list)
-                list.sort()
-
-def loadmotifer():
-    try:
-        ###mRN = motif resn number aka number of residues in motif
-        premRN = askstring('Motif Maker','How many residues are in your motif?\n'
-            +'Please enter a number >= 2 and <=10.\n')
-        if premRN == None:
-            raise Exception
-        else:
-            mRN = int(premRN)
-        if mRN < 2 or mRN > 10:
-            raise ValueError
-        
-        def populate_chain_list():
-            items=[]
-            items.append('')
-            for letter in pglob.AlphaSequence:
-                if cmd.count_atoms("chain "+letter) > 0:
-                    items.append(letter)
-            items.sort()
-            for i in range(1,mRN+1):
-                chain[i].setitems(items)
-        
-        def makemotif():
-            try:
-                exception = False
-                excepLoop = 0
-                exceptions = ''
-                skip = {}
-                skip[0] = 0
-                for i in range(1,mRN+1):
-                    skip[i] = False
-                    if resn[i].getvalue() == '' and resi[i].get() != '':
-                        exception = True
-                        exceptions += 'Please enter a residue for residue %s\n'%(i)
-                    elif resn[i].getvalue() != '' and resi[i].get() == '':
-                        exception = True
-                        exceptions += 'Please enter a number for residue %s\n'%(i)
-                    elif resn[i].getvalue() == '' and resi[i].get() == '':
-                        ### this gives us the ability to skip whole blocks
-                        skip[i] = True
-                        skip[0] += 1
-                    else:
-                        excepLoop +=1
-                        if chain[i].getvalue() == '':
-                            exception = True
-                            exceptions += 'Please select a chain for residue %s\n.'%(i)
-                        elif resn[i].getvalue() == "gly" and backbone[i].getvalue() == "Off":
-                            exception = True
-                            exceptions += 'Please turn on the backbone for glycine residue %s\n'%(i)
-                        elif cmd.count_atoms(chain[i].getvalue()+'/'+resn[i].getvalue()+'`'+resi[i].get()+'/') == 0:
-                            exception = True
-                            exceptions += 'There is no '+resn[i].getvalue()+' at number '+resi[i].get()+' on chain '+chain[i].getvalue()+'.\n'
-                if excepLoop < 2:
-                    exception = True
-                    exceptions += 'Motifs require that 2 or more residues be entered.'
-                if exception == True:
-                    
-                    showinfo('Error', 'The following errors have occurred:\n'+exceptions)
-                    interior.mainloop()
-                else:
-                    cmd.remove('resn HOH')
-                    
-                    Q = asksaveasfilename(defaultextension=".py", initialdir="./modules/pmg_tk/startup/Motifs")
-                    if Q == None:
-                        interior.mainloop()
-                    f=open(Q, 'w')
-                    f.write("######################################################################\n")
-                    f.write("### This motif uses shortened selection algebra and property selectors\n")
-                    f.write("### + = and\n")
-                    f.write("### w. = within\n")
-                    f.write("### br. = byres\n")
-                    f.write("### r. = resn\n")
-                    f.write("### n. = name\n")
-                    f.write("### e. = elem\n")
-                    f.write("######################################################################\n")
-                    atomlist = {}
-                    ### backbone off aka just side chains from beta carbon onwards
-                    atomlist[0] = {'ala':('CB'),
-                                   'arg':('CB','CG','CD','NE','CZ','NH1','NH2'),
-                                   'asn':('CB','CG','OD1','ND2'),
-                                   'asp':('CB','CG','OD1','OD2'),
-                                   'cys':('CB','SG'),
-                                   'gln':('CB','CG','CD','OE1','NE2'),
-                                   'glu':('CB','CG','CD','OE1','OE2'),
-                                   'gly':(),
-                                   'his':('CB','CG','ND1','CD2','CE1','NE2'),
-                                   'ile':('CB','CG1','CG2','CD'),
-                                   'leu':('CB','CG','CD1','CD2'),
-                                   'lys':('CB','CG','CD','CE','NZ'),
-                                   'met':('CB','CG','SD','CE'),
-                                   'phe':('CB','CG','CD1','CD2','CE1','CE2','CZ'),
-                                   'pro':('CB','CG','CD'),
-                                   'ser':('CB','OG'),
-                                   'thr':('CB','OG1','CG2'),
-                                   'trp':('CB','CG','CD1','CD2','NE1','CE2','CE3','CZ2','CZ3','CH2'),
-                                   'tyr':('CB','CG','CD1','CD2','CE1','CE2','CZ','OH'),
-                                   'val':('CB','CG1','CG2')}
-                    atomlist[1] = ('O','C','CA','N')### backbone on
-                    resnlist = ['']### residue list
-                    resnlistf = ['']### residue list with appended 'i', making them unique
-                    resilist = ['']### residue id list. Based on sequence number.
-                    chainlist = ['']### chain list
-                    bonelist = ['']### backbone list
-                    
-                    numOfi = {}
-                    for i in range(1,mRN+1):
-                        if skip[i] == False:
-                            residue = resn[i].getvalue()
-                            if residue not in numOfi:
-                                numOfi[residue] = 0
-                            resnlist.append(residue)
-                            resilist.append(resi[i].get())
-                            resnlistf.append(resn[i].getvalue()+('i'*(numOfi[residue])))
-                            chainlist.append(chain[i].getvalue())
-                            bonelist.append(backbone[i].getvalue())
-                            numOfi[residue] += 1
-                    
-                    ### This loop will increment through the amino acids. The amino acid we are looking
-                    ### at right now is specified by the e variable. The a variable will count the
-                    ### number of times it is compared to the carbons in the other amino acids. And is
-                    ### used later on to print the "byres" and select line, and delete line below.
-                    ### NOTE:
-                    ### Because we are able to skip a whole block, mRN is not used beyond this point,
-                    ### instead resnlen is used as it gives a more accurate picture of the motif.
-                    resnlen = (len(resnlist)-1)
-                    e = 0
-                    while e < resnlen:
-                        try:
-                            try:
-                                a = 0
-                                e += 1
-                                ### select stuff explained later on
-                                selectlimit = 50
-                                selectstart = 1 ### where to start selection
-                                selectlimiter = 1 ### limit defined as a/selectlimit
-                                selectextra = '' ### add to selection at the end
-                                deleteextra = '' ### add to deletion at the end
-                                
-                                if bonelist[e] == 'Off':###just sidechains
-                                    bList=atomlist[0][resnlist[e]]
-                                else:### sidechain with backbone
-                                    bList=atomlist[0][resnlist[e]]+atomlist[1]
-                                
-                                ### This loop will increment through the amino acids that we want
-                                ### to compare to the amino acid we want to find. The amino acid
-                                ### being compared is specified by the d variable.
-                                d = 0
-                                while d < resnlen:
-                                    try:
-                                        d += 1
-                                        ### The following line: compare amino acids
-                                        ### If they are the same, then lets increment one.
-                                        if resnlistf[e] == resnlistf[d]:
-                                            d += 1
-                                            if d > resnlen:
-                                                continue
-                                        
-                                        if bonelist[d] == 'Off':###just sidechains
-                                            cList=atomlist[0][resnlist[d]]
-                                        else:### sidechain with backbone
-                                            cList=atomlist[0][resnlist[d]]+atomlist[1]
-                                        
-                                        ### This loop increments through all the carbons
-                                        ### in the amino acid we want to find.
-                                        blen = (len(bList)-1)
-                                        clen = (len(cList)-1)
-                                        b = -1
-                                        while b < blen:
-                                            b += 1
-                                            ### This loop increments through all the carbons
-                                            ### in the other amino acids that we are want to
-                                            ### compare with.
-                                            c = -1
-                                            while c < clen:
-                                                try:
-                                                    c += 1
-                                                    
-                                                    ### Okay lets get the distance between our atoms in our selected amino acids.
-                                                    r = cmd.get_distance(chainlist[e]+'/'+resilist[e]+'/'+bList[b],chainlist[d]+'/'+resilist[d]+'/'+cList[c])
-                                                    ### The precision factor
-                                                    ### The ranger is the slider that is moved.
-                                                    ### r is set by the get_distance above.
-                                                    g = '%.2f' %(float(r) + float(ranger1.get()))
-                                                    
-                                                    a += 1
-                                                    
-                                                    ### apparently pymol cannot handle over a number
-                                                    ### between 248 and 264 selections at one time.
-                                                    ### This fixes that by making sure we do not pass
-                                                    ### "selectlimit" selections at one time.
-                                                    if float(selectlimiter) < (float(a)/float(selectlimit)):
-                                                        f.write("cmd.select('"+resnlistf[e]+str(selectlimiter*selectlimit)+"','")
-                                                        for i in range(selectstart,a):
-                                                            if i==(a-1):
-                                                                f.write("br. "+resnlistf[e]+str(i)+"')\n")
-                                                            else:
-                                                                f.write("br. "+resnlistf[e]+str(i)+" and ")
-                                                        f.write("cmd.delete('")
-                                                        for i in range(selectstart,a):
-                                                            if i==(a-1):
-                                                                pass
-                                                            elif i==(a-2):
-                                                                f.write(resnlistf[e]+str(i)+"')\n")
-                                                            else:
-                                                                f.write(resnlistf[e]+str(i)+"+")
-                                                        selectextra += ''+resnlistf[e]+str(selectlimiter*selectlimit)+' and '
-                                                        deleteextra += ''+resnlistf[e]+str(selectlimiter*selectlimit)+'+'
-                                                        selectlimiter += 1
-                                                        selectstart += selectlimit
-                                                    
-                                                    ### e > d is all the combinations of residues
-                                                    ### that would already have one of the residues
-                                                    ### found in the motif, therefore the second
-                                                    ### amino acid does not need an r. (resn)
-                                                    ### property selection, as it is already a selection.
-                                                    if e > d:
-                                                        f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+bList[b]+' and r. '+resnlist[e]+' w. %s of n. '+cList[c]+' and '+resnlistf[d]+'"%('+g+'))\n')
-                                                        continue
-                                                    else:
-                                                       f.write( 'cmd.select("'+resnlistf[e]+''+str(a)+'", "n. '+bList[b]+' and r. '+resnlist[e]+' w. %s of n. '+cList[c]+' and r. '+resnlist[d]+'"%('+g+'))\n')
-                                                       continue
-                                                except:
-                                                    pass
-                                    except:
-                                        pass
-                            except:
-                                pass
-                        finally:
-                            f.write('cmd.select("'+resnlistf[e]+'","')
-                            if selectextra != '':
-                                f.write(selectextra)
-                            for i in range(selectstart,a+1):
-                                if i==a:
-                                    f.write('br. '+resnlistf[e]+str(i)+'")\n')
-                                else:
-                                    f.write('br. '+resnlistf[e]+str(i)+' and ')
-                            f.write('cmd.delete("')
-                            if deleteextra != '':
-                                f.write(deleteextra)
-                            for i in range(selectstart,a+1):
-                                if i==a:
-                                    f.write(resnlistf[e]+str(i)+'")\n')
-                                else:
-                                    f.write(resnlistf[e]+str(i)+'+')
-                
-                resnlistfstr = ""
-                for i in range(1,resnlen+1):
-                    if i == resnlen:
-                        resnlistfstr += resnlistf[i]
-                    else:
-                        resnlistfstr += resnlistf[i]+'+'
-                
-                f.write("cmd.select('Motif','%s')\n"%(resnlistfstr))
-                f.write("cmd.delete('%s')\n"%(resnlistfstr))
-                f.write('cmd.hide("everything","all")\n')
-                f.write('cmd.show("cartoon", "all")\n')
-                f.write('cmd.set("cartoon_transparency","0.5", "all")\n')
-                f.write('cmd.show("sticks","Motif")\n')
-                f.write('cmd.color("grey","all")\n')
-                f.write('cmd.color("oxygen","(e. O+Motif)")\n')
-                f.write('cmd.color("nitrogen","(e. N+Motif)")\n')
-                f.write('cmd.color("sulfur","(e. S+Motif)")\n')
-                f.write('cmd.color("hydrogen","(e. H+Motif)")\n')
-                f.write('cmd.color("white","(e. C+Motif)")\n')
-                f.write('cmd.deselect()\n')
-                f.write('cmd.orient("Motif")\n')
-                
-                print '%s Amino Acid Motif Written \n\n\n\n'%(len(resnlist)-1)
-                f.close()
-                interior.mainloop()
-            except:
-                pass
-        
-        root = tk.Tk()
-        root.title('Motif Maker')
-        group = Pmw.Group(root, tag_text='Motif Maker')#And a new group
-        group.grid(row=0, column=0, columnspan=2, padx=0, pady=0, sticky = tk.NW)
-        interior = group.interior()
-        
-        resn = {}
-        for i in range(1,mRN+1):
-            resn[i] = Pmw.OptionMenu(interior,labelpos = tk.W,
-                                        label_text = 'Residue %s:'%(i),
-                                        items = pglob.AminoMenuList,
-                                        menubutton_width = 8)
-            resn[i].grid(row = (i-1), column =0)
-        
-        lent = {}
-        for i in range(1,mRN+1):
-            lent[i] = tk.Label(interior, text = 'Number:')
-            lent[i].grid(row = (i-1), column = 1)
-        
-        resi = {}
-        for i in range(1,mRN+1):
-            resi[i] = tk.Entry(interior, width = 8)
-            resi[i].grid(row = (i-1), column = 2)
-        
-        backbone = {}
-        for i in range(1,mRN+1):
-            backbone[i] = Pmw.OptionMenu(interior,labelpos = tk.W,
-                                         label_text = 'BackBone:',
-                                         items = ('Off', 'On'),
-                                         menubutton_width = 8)
-            backbone[i].grid(row = (i-1), column = 3)
-        
-        chain = {}
-        for i in range(1,mRN+1):
-            chain[i] = Pmw.OptionMenu(interior,labelpos =  tk.W,
-                                          label_text = 'Chain %s:'%(i),
-                                          items = (''),
-                                          menubutton_width = 8)
-            chain[i].grid(row=(i-1), column=4)
-        
-        but1 = tk.Button(interior, text = 'Make Motif', width = 10, command = makemotif)
-        but1.grid(row =mRN, column = 3, sticky = tk.SE)
-        
-        popbtn = tk.Button(interior, text = 'Chain Info', width = 10, command = populate_chain_list)
-        popbtn.grid(row = mRN, column = 4, sticky = tk.SE)
-        
-        framerange = tk.Frame(interior)
-        framerange.grid(row=mRN, column=0,columnspan = 3, sticky = tk.E)
-        ballrange = Pmw.Balloon(interior)
-        ballrange.bind(framerange, 'Changes Precision of Motif Definition\nDefault = 2')
-        ranger1 = tk.Scale(framerange, width =8,
-                        troughcolor="#ffffff",
-                        length="160",
-                        orient="horizontal",
-                        resolution="0.1",
-                        to="4.0")
-        ranger1.grid(row=5, column=1,columnspan = 4, sticky = tk.E)
-        ranger1.set(2)
-        
-        labrange = tk.Label(interior, text='Precision Factor:')
-        labrange.grid(row=mRN, column=0, sticky = tk.SW)
-        
-        group = Pmw.Group(root, tag_text = 'Run Motif')
-        group.grid(row=1, column=1, padx=2, pady=2, sticky = tk.W)
-        interior = group.interior()
-        
-        def getmotif():
-            
-            f = askopenfilename(defaultextension=".py", initialdir="./modules/pmg_tk/startup/Motifs")
-            if f == None:
-                interior.mainloop()
+                newresn = AminoHashTable[resn]
+            except KeyError:
+                showerror('Incorrect Residue', 'Residue `%s` is not recongnized.'%(resn))
             else:
-                cmd.do('run '+f+'')
-                interior.mainloop()
-        openbtn = tk.Button(interior, text= 'Open Motif', command = getmotif)
-        openbtn.grid()
+                return newresn
+        if len(resn) == 3:
+            if resn in AminoList:
+                return resn
+            else:
+                showerror('Incorrect Residue', 'Residue `%s` is not recongnized.'%(resn))
     
-    #---------------------Show residues around active site---------------#
-        def motifoption(tag):
-                if tag=='Surface Pocket':
-                    objects = cmd.get_names('all')
-                    cmd.set('transparency', '0.5', 'all')
-                    if 'Motif' in objects:
-                        cmd.show('surface', 'all')
-                        cmd.hide('cartoon', 'all')
-                        cmd.color('white', '!Motif ')
-                elif tag=='Polar Contacts':
-                        try:
-                            objects = cmd.get_names('all')
-                            cmd.dist("Motif_polar_conts","Motif","Motif",quiet=1,mode=2,label=0,reset=1)
-                            cmd.enable(mot+"_polar_conts")
-                        except:
-                            pass
-                        
-                        if 'Adjacent' in objects:
-                            cmd.dist('Adjacent_polar_conts','Adjacent','Adjacent',quiet=1,mode=2,label=0,reset=1)
-                        if 'substrate' in objects:
-                            cmd.dist("Motif_around_polar_conts","Motif","(byobj (Motif)) and (not (Motif))",quiet=1,mode=2,label=0,reset=1)
-                            cmd.enable("Motif_around_polar_conts")
-                elif tag=='Hide Contacts':
-                    objects = cmd.get_names('all')
-                    try:
-                          try:
-                            cmd.delete("Motif_polar_conts")
-                          except:
-                            pass
-                          if 'Adjacent' in objects:
-                            cmd.delete('Adjacent_polar_conts')
-                          if 'substrate' in objects:
-                            cmd.delete("substrate_polar_conts")
-                    except:
-                          
-                          showinfo('Alert', "No motif polar contacts to hide")
-                elif tag=='Show Substrate':
-                    try:
-                      cmd.select('substrate', 'byres het within 7 of  Motif')
-                      objects = cmd.get_names('all')
-                      xp = cmd.index('substrate')
-                      np  = len(xp)
-                      if(np < 1):
-                          cmd.delete('substrate')
-                      if 'substrate' in objects:
-                          cmd.show('sticks', 'substrate')
-                          cmd.deselect()
-                          cmd.color("oxygen","(elem O and substrate)")
-                          cmd.color("nitrogen","(elem N and substrate)")
-                          cmd.color("sulfur","(elem S and substrate)")
-                          cmd.color("hydrogen","(elem H and substrate)")
-                          cmd.color("white","(elem C and substrate)")
-                    except:
-                        
-                        showinfo('Alert', "No substrate found")
-                elif tag=='Show label':
-                 objects = cmd.get_names('all')
-                 try:
-                              cmd.label('''(name ca+C1*+C1' and (byres(Motif)))''','''"%s-%s"%(resn,resi)''')
-                              if 'Adjacent' in objects:
-                                     cmd.label('''(name ca+C1*+C1' and (byres(Adjacent)))''','''"%s-%s"%(resn,resi)''')
-                 except:
-                            
-                            showinfo('Alert', "Select a motif first")
-                elif tag=='Hide Label':
-                    objects = cmd.get_names('all')
-                    try:
-                          cmd.label("Motif","''")
-                          if 'Adjacent' in objects:
-                              cmd.label('byres Adjacent',"''")
-                    except:
-                            
-                            showinfo('Alert', "No motif labels to hide")
-                elif tag=='Hide Substrate':
-                                  try:
-                                    cmd.hide('sticks', 'substrate')
-                                  except:
-                                    
-                                    showinfo('Alert', "No substrate selected")
-        stereo = Pmw.OptionMenu(interior,label_text = 'Options:',labelpos = 'w',
-                    items = ('','Surface Pocket','Polar Contacts', 'Hide Contacts', 'Show Substrate', 'Hide Substrate', 'Show label', 'Hide Label'),
-                    menubutton_width = 8, command=motifoption)
-        stereo.grid(row=0,column=3,sticky = tk.NW)
-        
-        group = Pmw.Group(root, tag_text='Adjacent')
-        group.grid(row=1, column=0, padx=2, pady=2, sticky = tk.W)
-        
-        interior = group.interior()
-        framesela = tk.Frame(interior)
-        framesela.grid(row=0, column=0, columnspan = 2, padx=0, pady=0, sticky = tk.N)
-        ballsela = Pmw.Balloon(interior)
-        ballsela.bind(framesela, 'Within # Angstroms')
-        selA = tk.Scale(framesela, width = 8)
-        selA.configure(troughcolor="#ffffff")
-        selA.configure(length="130")
-        selA.configure(orient="horizontal")
-        selA.configure(resolution="0.2")
-        selA.configure(to="10.0")
-        selA.grid(row=0, column=0, columnspan= 2, padx=0, pady=0, sticky = tk.N)
-        selA.set(5.0)
-        frameadj = tk.Frame(interior)
-        frameadj.grid(row=1, column=0, padx=1, pady=1, sticky = tk.NW)
-        balladj = Pmw.Balloon(interior)
-        balladj.bind(frameadj, 'Display residues adjacent to motif')
-        
-
-        showround = tk.Button(frameadj, width = 12, text = 'Adjacent', command = roundres)
-        showround.grid(row=1, column=0, padx=1, pady=1, sticky = tk.NW)
-        showround.bind('<Button-1>', roundres)
-        
-
-        delres = tk.Button(interior, width = 14, text = 'Delete Adjacent', command = resdel)
-        delres.grid(row=1, column=1, padx=1, pady=1, sticky = tk.NW)
-        delres.bind('<Button-1>', resdel)
+    excepLoop = 0
+    exceptions = ''
     
+    cmd.reinitialize()
+    exceptions += fetch(pdb,True)
+    try:
+        ectuple = ec.split('.')
+        ec1,ec2,ec3,ec4 = ectuple
     except ValueError:
+        exceptions += 'Please enter a correct EC number with periods.\n'
+    else:
+        if len(ec1) != 1 or int(ec1) < 1 or int(ec1) > 7:
+            exceptions += 'The first EC number has to be >= 1 and <= 7.\n'
+        if len(ec2) > 2 or len(ec2) < 1:
+            exceptions += 'The second EC number has to be at most two digits.\n'
+        if len(ec3) > 2 or len(ec3) < 1:
+            exceptions += 'The third EC number has to be at most two digits.\n'
+        if len(ec4) > 3 or len(ec4) < 1:
+            exceptions += 'The fourth EC number has to be at most three digits.\n'
+    
+    skip = {}
+    skip[0] = 0
+    for i in range(1,11):
+        skip[i] = False
+        if resn[i].get() == '' and resi[i].get() != '':
+            exceptions += 'Please enter a residue for residue %s\n'%(i)
+        elif resn[i].get() != '' and resi[i].get() == '':
+            exceptions += 'Please enter a number for residue %s\n'%(i)
+        elif resn[i].get() == '' and resi[i].get() == '':
+            ### this gives us the ability to skip whole blocks
+            skip[i] = True
+            skip[0] += 1
+        else:
+            if chain[i].get() == '':
+                exceptions += 'Please select a chain for residue %s\n.'%(i)
+            elif cmd.count_atoms('%s/%s`%s/'%(chain[i].get(),resn[i].get(),resi[i].get())) == 0:
+                exceptions += 'There is no %s at number %s on chain %s.\n'%(resn[i].get(),resi[i].get(),chain[i].get())
+            elif resn[i].get() == "gly" and backbone[i].getvalue() == "Off":
+                exceptions += 'Please turn on the backbone for glycine residue %s\n'%(i)
+            excepLoop +=1
+    if excepLoop < 2:
+        exception = True
+        exceptions += 'Motifs require that 2 or more residues be entered.'
+    if exceptions != '':
+        showerror('Error', 'The following errors have occurred:\n'+exceptions)
+    else:
+        cmd.remove('resn HOH')
         
-        showinfo('Error', 'Please enter a number greater than or equal to 2.\n'
-                                                        +'Please enter a number less than or equal to 10.')
-        loadmotifer()
+        name = 'P_%s_%s_%s_%s_%s'%(pdb,ec1,ec2,ec3,ec4)
+        f=open(pglob.pathmaker('Motifs',name), 'w')
+        f.write("def %s(d):\n"%(name))
+        f.write("    '''")
+        f.write("    FUNC:%s"%(name))
+        f.write("    PDB:%s"%(pdb))
+        f.write("    EC:%s"%(ec))
+        f.write("    RESI:%s"%())
+        f.write("    '''")
+        atomlist = {}
+        ### backbone off aka just side chains from beta carbon onwards
+        atomlist[0] = {'ala':('CB'),
+                       'arg':('CB','CG','CD','NE','CZ','NH1','NH2'),
+                       'asn':('CB','CG','OD1','ND2'),
+                       'asp':('CB','CG','OD1','OD2'),
+                       'cys':('CB','SG'),
+                       'gln':('CB','CG','CD','OE1','NE2'),
+                       'glu':('CB','CG','CD','OE1','OE2'),
+                       'gly':(),
+                       'his':('CB','CG','ND1','CD2','CE1','NE2'),
+                       'ile':('CB','CG1','CG2','CD'),
+                       'leu':('CB','CG','CD1','CD2'),
+                       'lys':('CB','CG','CD','CE','NZ'),
+                       'met':('CB','CG','SD','CE'),
+                       'phe':('CB','CG','CD1','CD2','CE1','CE2','CZ'),
+                       'pro':('CB','CG','CD'),
+                       'ser':('CB','OG'),
+                       'thr':('CB','OG1','CG2'),
+                       'trp':('CB','CG','CD1','CD2','NE1','CE2','CE3','CZ2','CZ3','CH2'),
+                       'tyr':('CB','CG','CD1','CD2','CE1','CE2','CZ','OH'),
+                       'val':('CB','CG1','CG2')}
+        atomlist[1] = ('O','C','CA','N')### backbone on
+        resnlist = ['']### residue list
+        resnlistf = ['']### residue list with appended 'i', making them unique
+        resilist = ['']### residue id list. Based on sequence number.
+        chainlist = ['']### chain list
+        bonelist = ['']### backbone list
+        
+        numOfi = {}
+        for i in range(1,11):
+            if skip[i] == False:
+                residue = resn[i].getvalue()
+                if residue not in numOfi:
+                    numOfi[residue] = 0
+                resnlist.append(residue)
+                resilist.append(resi[i].get())
+                resnlistf.append(resn[i].getvalue()+('i'*(numOfi[residue])))
+                chainlist.append(chain[i].getvalue())
+                bonelist.append(backbone[i].getvalue())
+                numOfi[residue] += 1
+        
+        ### This loop will increment through the amino acids. The amino acid we are looking
+        ### at right now is specified by the e variable. The a variable will count the
+        ### number of times it is compared to the carbons in the other amino acids. And is
+        ### used later on to print the "byres" and select line, and delete line below.
+        ### NOTE:
+        ### Because we are able to skip a whole block, mRN is not used beyond this point,
+        ### instead resnlen is used as it gives a more accurate picture of the motif.
+        resnlen = (len(resnlist)-1)
+        e = 0
+        while e < resnlen:
+            a = 0
+            e += 1
+            ### select stuff explained later on
+            selectlimit = 50
+            selectstart = 1 ### where to start selection
+            selectlimiter = 1 ### limit defined as a/selectlimit
+            selectextra = '' ### add to selection at the end
+            deleteextra = '' ### add to deletion at the end
+            
+            if bonelist[e] == 'Off':###just sidechains
+                bList=atomlist[0][resnlist[e]]
+            else:### sidechain with backbone
+                bList=atomlist[0][resnlist[e]]+atomlist[1]
+            
+            ### This loop will increment through the amino acids that we want
+            ### to compare to the amino acid we want to find. The amino acid
+            ### being compared is specified by the d variable.
+            d = 0
+            while d < resnlen:
+                d += 1
+                ### The following line: compare amino acids
+                ### If they are the same, then lets increment one.
+                if resnlistf[e] == resnlistf[d]:
+                    d += 1
+                    if d > resnlen:
+                        continue
+                
+                if bonelist[d] == 'Off':###just sidechains
+                    cList=atomlist[0][resnlist[d]]
+                else:### sidechain with backbone
+                    cList=atomlist[0][resnlist[d]]+atomlist[1]
+                
+                ### This loop increments through all the carbons
+                ### in the amino acid we want to find.
+                blen = (len(bList)-1)
+                clen = (len(cList)-1)
+                b = -1
+                while b < blen:
+                    b += 1
+                    ### This loop increments through all the carbons
+                    ### in the other amino acids that we are want to
+                    ### compare with.
+                    c = -1
+                    while c < clen:
+                        c += 1
+                        
+                        ### Okay lets get the distance between our atoms in our selected amino acids.
+                        r = cmd.get_distance(chainlist[e]+'/'+resilist[e]+'/'+bList[b],chainlist[d]+'/'+resilist[d]+'/'+cList[c])
+                        ### The precision factor
+                        ### The ranger is the slider that is moved.
+                        ### r is set by the get_distance above.
+                        g = '%.2f' %(float(r) + float(ranger1.get()))
+                        
+                        a += 1
+                        
+                        ### apparently pymol cannot handle over a number
+                        ### between 248 and 264 selections at one time.
+                        ### This fixes that by making sure we do not pass
+                        ### "selectlimit" selections at one time.
+                        if float(selectlimiter) < (float(a)/float(selectlimit)):
+                            f.write("    cmd.select('%s%s','"%(resnlistf[e],(selectlimiter*selectlimit)))
+                            for i in range(selectstart,a):
+                                if i==(a-1):
+                                    f.write("br. %s%s')\n"%s(resnlistf[e],i))
+                                else:
+                                    f.write("br. %s%s&"%s(resnlistf[e],i))
+                            f.write()
+                            for i in range(selectstart,a):
+                                if i==(a-1):
+                                    pass
+                                else:
+                                    f.write("    cmd.delete('%s%s')\n"%s(resnlistf[e],i))
+                            selectextra += '%s%s&'%(resnlistf[e],(selectlimiter*selectlimit))
+                            deleteextra += "    cmd.delete('%s%s')\n"%(resnlistf[e],(selectlimiter*selectlimit))
+                            selectlimiter += 1
+                            selectstart += selectlimit
+                        
+                        ### e > d is all the combinations of residues
+                        ### that would already have one of the residues
+                        ### found in the motif, therefore the second
+                        ### amino acid does not need an r. (resn)
+                        ### property selection, as it is already a selection.
+                        if e > d:
+                            f.write("    cmd.select('%s%s', 'n. %s&r. %s w. %%s of n. %s&%s'%(d*%s))\n"%(resnlistf[e],a,bList[b],resnlist[e],cList[c],resnlistf[d],g))
+                        else:
+                            f.write("    cmd.select('%s%s', 'n. %s&r. %s w. %%s of n. %s&r. %s'%(d*%s))\n"%(resnlistf[e],a,bList[b],resnlist[e],cList[c],resnlistf[d],g))
+            f.write("    cmd.select('%s','"%(resnlistf[e]))
+            if selectextra != '':
+                f.write(selectextra)
+            for i in range(selectstart,a+1):
+                if i==a:
+                    f.write("br. %s%s')\n"%(resnlistf[e],i))
+                else:
+                    f.write('br. %s%s&'%(resnlistf[e],i))
+            if deleteextra != '':
+                f.write(deleteextra)
+            for i in range(selectstart,a+1):
+                f.write("    cmd.delete('%s%s')\n"%(resnlistf[e],i))
+    
+        resnlistfstr = ""
+        for i in range(1,resnlen+1):
+            if i == resnlen:
+                resnlistfstr += resnlistf[i]
+            else:
+                resnlistfstr += resnlistf[i]+'|'
+    
+        f.write("    cmd.select('%s','%s')\n"%(name,resnlistfstr))
+        for i in range(1,resnlen+1):
+            f.write("    cmd.delete('%s')\n"%(resnlistf[i]))
+        f.write("    return {'motif':'%s'}"%(name))
+    
+        print '%s Amino Acid Motif Written \n\n\n\n'%(len(resnlist)-1)
+        f.close()

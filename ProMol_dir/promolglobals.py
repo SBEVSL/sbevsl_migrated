@@ -2,6 +2,8 @@ from pymol import cmd
 import Tkinter as tk
 import os
 import math
+import platform
+PLATFORM = platform.system()
 
 Photos = None
 script = 0
@@ -10,24 +12,46 @@ AminoList = None
 AlphaSequence = None
 alphaSequence = None
 Tabs = {}
-
+try:
+    HOME = os.environ['HOME']
+except KeyError:
+    HOME = os.environ['USERPROFILE']
 try:
     PYMOL_PATH = os.environ['PYMOL_PATH']
 except KeyError:
     PYMOL_PATH = '.'
-PROMOL_PATH = os.path.join(PYMOL_PATH,'modules','pmg_tk','startup')
-PROMOL_DIR_PATH = os.path.join(PROMOL_PATH,'ProMol_dir')
+if PLATFORM == 'Windows' or PLATFORM == 'Darwin':
+    PROMOL_PATH = os.path.join(PYMOL_PATH,'modules','pmg_tk','startup')
+    PROMOL_DIR_PATH = os.path.join(PROMOL_PATH,'ProMol_dir')
+else:
+    PROMOL_PATH = os.path.join(PYMOL_PATH.split(os.sep+'pymol')[0],'pmg_tk','startup')
+    PROMOL_DIR_PATH = os.path.join(PROMOL_PATH,'ProMol_dir')
 
 splash = tk.PhotoImage(file = os.path.join(PROMOL_DIR_PATH,'splashmol.gif'))
 
-#Amino Acid Abbre List for Menus
-AminoMenuList = ('', 'ala', 'arg', 'asn', 'asp', 'cys', 'gln', 'glu', 
-    'gly', 'his', 'ile', 'leu', 'lys', 'met', 'phe', 'pro', 'ser', 'thr', 'trp',
-    'tyr', 'val')
-#Amino Acid Array for validation
-AminoList = ('ala', 'arg', 'asn', 'asp', 'cys', 'gln', 'glu', 'gly',
-    'his', 'ile', 'leu', 'lys', 'met', 'phe', 'pro', 'ser', 'thr', 'trp', 'tyr',
-    'val')
+AminoMenuList = ('','ala','arg','asn','asp','cys','gln','glu','gly','his','ile',
+    'leu','lys','met','phe','pro','ser','thr','trp','tyr','val')
+#Amino Acid Lists
+AminoLongList = ('alanine','arginine','asparagine','aspartate','cysteine',
+    'glutamine','glutamate','glycine','histidine','isoleucine','leucine',
+    'lysine','methionine','phenylalanine','proline','serine','threonine',
+    'tryptophan','tyrosine','valine')
+AminoList = ('ala','arg','asn','asp','cys','gln','glu','gly','his','ile','leu',
+    'lys','met','phe','pro','ser','thr','trp','tyr','val')
+AminoShortList = ('a','r','n','d','c','q','e','g','h','i','l','k','m','f','p',
+    's','t','w','y','v')
+AminoLongHashTable = {}
+AminoHashTable = {}
+AminoShortHashTable = {}
+for i in range(0,20):
+    AminoLongHashTable[AminoList[i]] = AminoLongList[i]
+    AminoLongHashTable[AminoShortList[i]] = AminoLongList[i]
+for i in range(0,20):
+    AminoHashTable[AminoLongList[i]] = AminoList[i]
+    AminoHashTable[AminoShortList[i]] = AminoList[i]
+for i in range(0,20):
+    AminoShortHashTable[AminoLongList[i]] = AminoShortList[i]
+    AminoShortHashTable[AminoList[i]] = AminoShortList[i]
 
 Photos = {}
 for x in AminoList:
@@ -74,6 +98,11 @@ CPKNewDict = {
      "Cu":"[.502, .157, .157]", "Zn":"[.502, .157, .157]",
      "Br":"[.502, .157, .157]",  "I":"[.627, .125, .941]",
     "UNK":"[1.000, .086, .569]"}
+
+def pathmaker(*args):
+    newargs = [x for x in args]
+    newargs.insert(0,PROMOL_DIR_PATH)
+    return os.sep.join(newargs)
 
 def defaults(tag = ''):
     if tag == 'cartoon':
