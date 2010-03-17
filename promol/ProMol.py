@@ -33,7 +33,7 @@ def promol(pymol, user_click=1):
             Acknowledgements.
         '''
         import webbrowser
-        webbrowser.open('./modules/pmg_tk/startup/Thanks.html')
+        webbrowser.open(pglob.pathmaker('Thanks.html'))
 
     def promol_help():
         '''
@@ -41,16 +41,16 @@ def promol(pymol, user_click=1):
         '''
         import webbrowser
         try:
-            webbrowser.open('./modules/pmg_tk/startup/Help/EZ-Viz.chm')
+            webbrowser.open(pglob.pathmaker('Help','EZ-Viz.chm'))
         except:
-            webbrowser.open('./modules/pmg_tk/startup/Help/EZ-VizWebMain.html')
+            webbrowser.open(pglob.pathmaker('Help','EZ-VizWebMain.html'))
 
     def bottom_buttons(result):
         '''
             Resultants of clicking buttons at the bottom of gui.
         '''
         if result == 'Open':
-            pdb = askopenfilename(initialdir = './PyMol')
+            pdb = askopenfilename(initialdir = pglob.HOME)
             if pdb:
                 cmd.load(pdb)
         elif result == 'Help':
@@ -87,13 +87,13 @@ def promol(pymol, user_click=1):
     pglob.Tabs['ez_viz'] = {'tab':notebook.add('EZ-Viz')}
     ez_viz.initialise()
     
-    pglob.Tabs['motifs'] = {'tab':notebook.add('Motifs')}
+    pglob.Tabs['motifs'] = {'tab':notebook.add('Motif Finder')}
     motifs.initialise()
     
     #pglob.Tabs['custom_motifs'] = {'tab':notebook.add('Custom\nMotifs')}
     #custom_motifs.initialise()
     
-    pglob.Tabs['motif_maker'] = {'tab':notebook.add('Motif Database')}
+    pglob.Tabs['motif_maker'] = {'tab':notebook.add('Motif Maker')}
     motif_maker.initialise()
     
     pglob.Tabs['view'] = {'tab':notebook.add('View\nOptions')}

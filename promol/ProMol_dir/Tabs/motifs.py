@@ -48,60 +48,24 @@ def initialise():
     #     pglob.Tabs['motifs']['multipdbtxt'])
     
     group = Pmw.Group(pglob.Tabs['motifs']['tab'], tag_text='Tools')
-    group.grid(row=1, column=1, padx=2, pady=2, sticky=tk.W)
+    group.grid(row=1, column=1, sticky=tk.W)
     interior = group.interior()
     
     labrange = tk.Label(interior, text='Precision Factor:')
-    labrange.grid(row=1, column=0, sticky=tk.SW)
-        
-    pglob.Tabs['motifs']['resetrange'] = tk.Button(interior, 
-        text='Reset', highlightthickness=0, width=8, command=resetrange,
-        padx=2,pady=0)
-    pglob.Tabs['motifs']['resetrange'].grid(row=2, column=2,
-        sticky=tk.SW, padx=2, pady=2)
+    labrange.grid(row=1, column=0, sticky=tk.W)
 
     framerange = tk.Frame(interior)
-    framerange.grid(row=2, column=0,columnspan = 2, padx=0, pady=0, sticky=tk.N)
+    framerange.grid(row=1, column=1, padx=0, pady=0, sticky=tk.N)
     ballrange = Pmw.Balloon(interior)
-    ballrange.bind(framerange, 'Multiplier for default measured values\n'+
-        'Re-click on desired motif to render change')
-    pglob.Tabs['motifs'].update({'delta':tk.Scale(framerange, width =8)})
-    pglob.Tabs['motifs']['delta'].configure(troughcolor="#ffffff")
-    pglob.Tabs['motifs']['delta'].configure(length="175")
-    pglob.Tabs['motifs']['delta'].configure(orient="horizontal")
-    pglob.Tabs['motifs']['delta'].configure(resolution="0.01")
-    pglob.Tabs['motifs']['delta'].configure(to="2.0")
-    pglob.Tabs['motifs']['delta'].grid(row=2, column=1,columnspan = 4, padx=0, pady=0, sticky=tk.N)
-    pglob.Tabs['motifs']['delta'].set(1)
+    ballrange.bind(framerange, 'Multiplier for default measured values')
+    pglob.Tabs['motifs']['delta'] = tk.Spinbox(framerange, width=4,
+        bg="#ffffff", increment="0.01", from_="0.01", to="2.00")
+    pglob.Tabs['motifs']['delta'].grid(row=1, column=1, sticky=tk.N)
+    pglob.Tabs['motifs']['delta'].delete(0,4)
+    pglob.Tabs['motifs']['delta'].insert(0,'1.00')
     
-    labadjacent = tk.Label(interior, text='Adjacent:')
-    labadjacent.grid(row=3, column=0, sticky=tk.SW)
-
-    #---------------------Show residues around active site---------------#
+    labrandom = tk.Label(interior, text='Random PDB:')
+    labrandom.grid(row=2, column=0, sticky=tk.SW)
     
-    framesela = tk.Frame(interior)
-    framesela.grid(row=4, column=0, columnspan = 2, padx=0, pady=0, sticky=tk.N)
-    ballsela = Pmw.Balloon(interior)
-    ballsela.bind(framesela, 'Within # Angstroms')
-    selA = tk.Scale(framesela, width =8)
-    selA.configure(troughcolor="#ffffff")
-    selA.configure(length="175")
-    selA.configure(orient="horizontal")
-    selA.configure(resolution="0.2")
-    selA.configure(to="10.0")
-    selA.grid(row=4, column=0, columnspan=2, padx=0, pady=0, sticky=tk.N)
-    selA.set(5.0)
-
-    showround = tk.Button(interior, width = 12, text = 'Adjacent', command=roundres)
-    showround.grid(row=5, column=0, columnspan=2, padx=1, pady=1, sticky=tk.NW)
-    balladj = Pmw.Balloon(interior)
-    balladj.bind(showround, 'Display residues adjacent to motif')
-
-    delres = tk.Button(interior, width = 14, text = 'Delete Adjacent', command=resdel)
-    delres.grid(row=5, column=1, columnspan=2, padx=1, pady=1, sticky=tk.NW)
-    
-    stereo = Pmw.OptionMenu(interior,label_text = 'Options:',labelpos =tk.W,
-                items = ('','Surface Pocket','Polar Contacts', 'Hide Contacts', 
-                'Show Substrate', 'Hide Substrate', 'Show label', 'Hide Label'),
-                menubutton_width = 8, command=motifoption)
-    stereo.grid(row=6,column=0,sticky=tk.N)
+    random = tk.Button(interior, text='Get Random PDB', width=25, command=randompdb)
+    random.grid(row=3, column=0, columnspan=3, sticky=tk.N)

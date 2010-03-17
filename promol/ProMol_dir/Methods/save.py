@@ -113,12 +113,12 @@ def molSave(self):
   try:
     try:
       import os
-      os.mkdir('./modules/pmg_tk/startup/Movies/ ' + name_mov.get())
+      os.mkdir(pglob.pathmaker('Movies',name_mov.get()))
       a = int(enti.get()) + 1
       enti.delete(0,100000)
       enti.insert(0,a)
 
-      file = asksaveasfilename(defaultextension=entfilex.get(), initialdir="./modules/pmg_tk/startup/Movies/ " + name_mov.get(), initialfile= "frame" + enti.get())
+      file = asksaveasfilename(defaultextension=entfilex.get(), initialdir=pglob.pathmaker('Movies',name_mov.get()), initialfile= "frame" + enti.get())
       if len(file)>0:
           cmd.save(file)
       pglob.Tabs['movie_maker']['tab'].mainloop()
@@ -127,7 +127,7 @@ def molSave(self):
       enti.delete(0,100000)
       enti.insert(0,a)
 
-      file = asksaveasfilename(defaultextension=entfilex.get(), initialdir="./modules/pmg_tk/startup/Movies/ " + name_mov.get(), initialfile= "frame" + enti.get())
+      file = asksaveasfilename(defaultextension=entfilex.get(), initialdir=pglob.pathmaker('Movies',name_mov.get()), initialfile= "frame" + enti.get())
       if len(file)>0:
           cmd.save(file)
     pglob.Tabs['movie_maker']['tab'].mainloop()

@@ -650,15 +650,15 @@ def loadframe(event):
     entl.insert(0,a)
     if int(entl.get())<2:
         if askyesno('Load Frames', 'Click yes to load in discrete mode'):
-            file = askopenfilename(defaultextension=entfilex.get(), initialdir=('./modules/pmg_tk/startup/Movies/ ' + name_mov.get()))
+            file = askopenfilename(defaultextension=entfilex.get(), initialdir=pglob.pathmaker('Movies',name_mov.get()))
             if len(file) > 0:
                 cmd.load(file, "mov", entl.get(), discrete=1)
         else:
-            file = askopenfilename(defaultextension=entfilex.get(), initialdir=('./modules/pmg_tk/startup/Movies/ ' + name_mov.get()))
+            file = askopenfilename(defaultextension=entfilex.get(), initialdir=pglob.pathmaker('Movies',name_mov.get()))
             if len(file)>0:
                 cmd.load(file, "mov", entl.get())
     else:
-        file = askopenfilename(defaultextension=entfilex.get(), initialdir=('./modules/pmg_tk/startup/Movies/ ' + name_mov.get()))
+        file = askopenfilename(defaultextension=entfilex.get(), initialdir=pglob.pathmaker('Movies',name_mov.get()))
         if len(file)>0:
             cmd.load(file, "mov", entl.get())
     pglob.Tabs['movie_maker']['tab'].mainloop()
