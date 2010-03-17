@@ -18,14 +18,21 @@ from pmg_tk import startup
 # axes.py
 from pymol.cgo import *
 from pymol.vfont import plain
-
-
+import platform
+PLATFORM = platform.system()
 #Make sure it will work on Linux/Mac (with X11)/ and of course Windows
 try:
-    PYMOL_PATH=os.environ['PYMOL_PATH']
+    HOME = os.environ['HOME']
 except KeyError:
-    PYMOL_PATH='./'
-
+    HOME = os.environ['USERPROFILE']
+try:
+    PYMOL_PATH = os.environ['PYMOL_PATH']
+except KeyError:
+    PYMOL_PATH = '.'
+if PLATFORM == 'Windows' or PLATFORM == 'Darwin':
+    CONSCRIPT_PATH = os.path.join(PYMOL_PATH,'modules','pmg_tk','startup')
+else:
+    CONSCRIPT_PATH = os.path.join(PYMOL_PATH.split(os.sep+'pymol')[0],'pmg_tk','startup')
     
 ## Global defintions
 
@@ -2521,7 +2528,7 @@ class converter:
             global filestack
 
             try:
-                Q = tkFileDialog.askopenfilename(initialdir=('./modules/pmg_tk/startup'))
+                Q = tkFileDialog.askopenfilename(initialdir=HOME)
                 filelevel = 0
                 filestack = []
                 donext = processVSLscript(Q)
