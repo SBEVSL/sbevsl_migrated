@@ -615,35 +615,51 @@ def randompdb():
         for line in InHandle:
             OutHandle.write(line)
         OutHandle.close
-        randomized()
+        randompdb()
 
 cmd.extend('randompdb',random)
         
 def makemotif():
+    pglob.Tabs['motif_maker']['resnnum'] = {}
+    pf = pglob.Tabs['motif_maker']['pf'].get()
     pdb = pglob.Tabs['motif_maker']['pdb'].get()
     ec = pglob.Tabs['motif_maker']['ec'].get()
-    resn = pglob.Tabs['motif_maker']['resn']
-    resi = pglob.Tabs['motif_maker']['resi']
-    backbone = pglob.Tabs['motif_maker']['backbone']
-    chain = pglob.Tabs['motif_maker']['chain']
+    resn = {}
+    resi = {}
+    backbone = {}
+    chain = {}
+    
+    def addresn(resn):
+        if resn in pglob.Tabs['motif_maker']['resnnum']:
+            pglob.Tabs['motif_maker']['resnnum'][resn] += 1
+            return resn
+        pglob.Tabs['motif_maker']['resnnum'][resn] = 1
+        return resn
+    
+    def getresnnum():
+        resnstr = []
+        for resn in pglob.Tabs['motif_maker']['resnnum']:
+            if pglob.Tabs['motif_maker']['resnnum'][resn] == 1:
+                resnstr.append(resn)
+                continue
+            resnstr.append('%s of %s'%(pglob.Tabs['motif_maker']['resnnum'][resn],resn))
+        return ','.join(resnstr)
     
     def acceptresn(resn):
-        if len(resn) == 1 or len(resn) > 3:
-            try:
-                newresn = AminoHashTable[resn]
-            except KeyError:
-                showerror('Incorrect Residue', 'Residue `%s` is not recongnized.'%(resn))
-            else:
-                return newresn
-        if len(resn) == 3:
-            if resn in AminoList:
-                return resn
-            else:
-                showerror('Incorrect Residue', 'Residue `%s` is not recongnized.'%(resn))
+        if len(resn) == 0:
+            return ''
+        try:
+            if len(resn) == 3:
+                if resn in pglob.AminoList:
+                    return resn
+                raise KeyError
+            newresn = pglob.AminoHashTable[resn]
+        except KeyError:
+            return None
+        return newresn
     
     excepLoop = 0
     exceptions = ''
-    
     cmd.reinitialize()
     exceptions += fetch(pdb,True)
     try:
@@ -664,22 +680,30 @@ def makemotif():
     skip = {}
     skip[0] = 0
     for i in range(1,11):
+        resn[i] = acceptresn(pglob.Tabs['motif_maker']['resn'][i].get())
+        resi[i] = pglob.Tabs['motif_maker']['resi'][i].get()
+        backbone[i] = pglob.Tabs['motif_maker']['backbone'][i].get()
+        chain[i] = pglob.Tabs['motif_maker']['chain'][i].get()
         skip[i] = False
-        if resn[i].get() == '' and resi[i].get() != '':
-            exceptions += 'Please enter a residue for residue %s\n'%(i)
-        elif resn[i].get() != '' and resi[i].get() == '':
-            exceptions += 'Please enter a number for residue %s\n'%(i)
-        elif resn[i].get() == '' and resi[i].get() == '':
+        if resn[i] == '' and resi[i] == '' and chain[i] == '':
             ### this gives us the ability to skip whole blocks
             skip[i] = True
             skip[0] += 1
-        else:
-            if chain[i].get() == '':
-                exceptions += 'Please select a chain for residue %s\n.'%(i)
-            elif cmd.count_atoms('%s/%s`%s/'%(chain[i].get(),resn[i].get(),resi[i].get())) == 0:
-                exceptions += 'There is no %s at number %s on chain %s.\n'%(resn[i].get(),resi[i].get(),chain[i].get())
-            elif resn[i].get() == "gly" and backbone[i].getvalue() == "Off":
+        elif resn[i] != '' and resi[i] != '' and chain[i] != '':
+            if resn[i] == None:
+                exceptions += 'Residue %s is not recongnized.\n'%(i)
+            elif cmd.count_atoms('%s/%s`%s/'%(chain[i],resn[i],resi[i])) == 0:
+                exceptions += 'There is no %s at number %s on chain %s.\n'%(resn[i],resi[i],chain[i])
+            elif resn[i] == 'gly' and backbone[i] == 'Off':
                 exceptions += 'Please turn on the backbone for glycine residue %s\n'%(i)
+            excepLoop +=1
+        else:    
+            if resn[i] == '':
+                exceptions += 'Please enter a residue for residue %s\n'%(i)
+            if resi[i] == '':
+                exceptions += 'Please enter a number for residue %s\n'%(i)
+            if chain[i] == '':
+                exceptions += 'Please select a chain for residue %s\n.'%(i)
             excepLoop +=1
     if excepLoop < 2:
         exception = True
@@ -696,7 +720,7 @@ def makemotif():
         f.write("    FUNC:%s"%(name))
         f.write("    PDB:%s"%(pdb))
         f.write("    EC:%s"%(ec))
-        f.write("    RESI:%s"%())
+        f.write("    RESI:%s"%(getresnnum()))
         f.write("    '''")
         atomlist = {}
         ### backbone off aka just side chains from beta carbon onwards
@@ -730,15 +754,14 @@ def makemotif():
         numOfi = {}
         for i in range(1,11):
             if skip[i] == False:
-                residue = resn[i].getvalue()
-                if residue not in numOfi:
-                    numOfi[residue] = 0
-                resnlist.append(residue)
-                resilist.append(resi[i].get())
-                resnlistf.append(resn[i].getvalue()+('i'*(numOfi[residue])))
-                chainlist.append(chain[i].getvalue())
-                bonelist.append(backbone[i].getvalue())
-                numOfi[residue] += 1
+                if resn[i] not in numOfi:
+                    numOfi[resn[i]] = 0
+                resnlist.append(resn[i])
+                resilist.append(resi[i])
+                resnlistf.append(resn[i]+('i'*(numOfi[resn[i]])))
+                chainlist.append(chain[i])
+                bonelist.append(backbone[i])
+                numOfi[resn[i]] += 1
         
         ### This loop will increment through the amino acids. The amino acid we are looking
         ### at right now is specified by the e variable. The a variable will count the
@@ -801,7 +824,7 @@ def makemotif():
                         ### The precision factor
                         ### The ranger is the slider that is moved.
                         ### r is set by the get_distance above.
-                        g = '%.2f' %(float(r) + float(ranger1.get()))
+                        g = '%.2f' %(float(r) + float(pf))
                         
                         a += 1
                         
