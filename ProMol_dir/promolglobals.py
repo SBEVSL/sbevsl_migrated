@@ -99,9 +99,14 @@ CPKNewDict = {
      "Br":"[.502, .157, .157]",  "I":"[.627, .125, .941]",
     "UNK":"[1.000, .086, .569]"}
 
-def pathmaker(*args):
-    newargs = [x for x in args]
-    newargs.insert(0,PROMOL_DIR_PATH)
+def pathmaker(*args,**options):
+    newargs = [PROMOL_DIR_PATH]
+    if 'root' in options:
+        newargs = [options['root']]
+    for x in args:
+        if type(x).__name__ == 'tuple':
+            x = ''.join(x)
+        newargs.append(x)
     return os.sep.join(newargs)
 
 def defaults(tag = ''):

@@ -7,10 +7,9 @@ import random
 import os
 import urllib2
 import time
-from tkFileDialog import askopenfilename, asksaveasfile, asksaveasfilename
+from tkFileDialog import asksaveasfile, askdirectory
 from tkSimpleDialog import askstring
-from tkMessageBox import showinfo
-from tkMessageBox import showerror
+from tkMessageBox import showinfo, showerror, askyesno
 from pmg_tk.startup.ProMol_dir import promolglobals as pglob
 from pmg_tk.startup.ProMol_dir.Methods import motifcoded as motcod
 from pmg_tk.startup.ProMol_dir.remote_pdb_load import fetch
@@ -619,7 +618,10 @@ def randompdb():
 
 cmd.extend('randompdb',random)
         
-def makemotif():
+def makemotif(mode):
+    pglob.Tabs['motif_maker']['file'] = None
+    pglob.Tabs['motif_maker']['wait'] = []
+    pglob.Tabs['motif_maker']['motif'] = []
     pglob.Tabs['motif_maker']['resnnum'] = {}
     pf = pglob.Tabs['motif_maker']['pf'].get()
     pdb = pglob.Tabs['motif_maker']['pdb'].get()
@@ -629,34 +631,88 @@ def makemotif():
     backbone = {}
     chain = {}
     
-    def addresn(resn):
-        if resn in pglob.Tabs['motif_maker']['resnnum']:
-            pglob.Tabs['motif_maker']['resnnum'][resn] += 1
-            return resn
-        pglob.Tabs['motif_maker']['resnnum'][resn] = 1
-        return resn
+    def clear():
+        for i in range(1,11):
+            pglob.Tabs['motif_maker']['resn'][i].delete(0,tk.END)
+            pglob.Tabs['motif_maker']['resi'][i].delete(0,tk.END)
+            pglob.Tabs['motif_maker']['chain'][i].delete(0,tk.END)
+            if pglob.Tabs['motif_maker']['backbone'][i].get() == 'On':
+                pglob.Tabs['motif_maker']['backbone'][i].invoke('buttonup')
+        pglob.Tabs['motif_maker']['pdb'].delete(0,tk.END)
+        pglob.Tabs['motif_maker']['ec'].delete(0,tk.END)
+        pglob.Tabs['motif_maker']['pf'].delete(0,tk.END)
+        pglob.Tabs['motif_maker']['pf'].insert(0,'2.00')
+    
+    if mode == 3:
+        return clear()
+    
+    def write(string,**options):
+        pglob.Tabs['motif_maker']['motif'].append(string)
+        if mode == 0:
+            if 'close' in options:
+                pglob.procolor(name, show_all='cartoon', color_all='gray')
+                cmd.orient(name)
+                cmd.deselect()
+                return True
+            if 'test_ignore' in options:
+                return True
+            if 'wait' in options:
+                pglob.Tabs['motif_maker']['wait'].append(string)
+                return True
+            if pglob.Tabs['motif_maker']['wait'] != []:
+                pglob.Tabs['motif_maker']['wait'].append(string)
+                eval(''.join(pglob.Tabs['motif_maker']['wait']).strip())
+                pglob.Tabs['motif_maker']['wait'] = []
+                return True
+            d = 1
+            eval(string.strip())
+            return True
+        f = pglob.Tabs['motif_maker']['file']
+        if 'open' in options:
+            if mode == 1:
+                if os.path.exists(pglob.pathmaker('Motifs',(name,'.py'))):
+                    answer = askyesno('Motif Exist', 
+                    'A motif has already been made for EC:%s on PDB:%s.\n'%(ec,pdb)+
+                    'Are you sure you want to replace it?')
+                    if answer == False:
+                        return False
+                f = open(pglob.pathmaker('Motifs',(name,'.py')), 'w')
+            if mode == 2:
+                f = open(pglob.pathmaker((name,'.py'),root=askdirectory(initialdir=pglob.HOME)), 'w')
+        if 'close' in options:
+            f.write(''.join(pglob.Tabs['motif_maker']['motif']))
+            f.close()
+        pglob.Tabs['motif_maker']['file'] = f
+        return True
+
+    def addresn(x):
+        if x in pglob.Tabs['motif_maker']['resnnum']:
+            pglob.Tabs['motif_maker']['resnnum'][x] += 1
+            return x
+        pglob.Tabs['motif_maker']['resnnum'][x] = 1
+        return x
     
     def getresnnum():
         resnstr = []
-        for resn in pglob.Tabs['motif_maker']['resnnum']:
-            if pglob.Tabs['motif_maker']['resnnum'][resn] == 1:
-                resnstr.append(resn)
+        for x in pglob.Tabs['motif_maker']['resnnum']:
+            if pglob.Tabs['motif_maker']['resnnum'][x] == 1:
+                resnstr.append(x)
                 continue
-            resnstr.append('%s of %s'%(pglob.Tabs['motif_maker']['resnnum'][resn],resn))
+            resnstr.append('%s of %s'%(pglob.Tabs['motif_maker']['resnnum'][x],x))
         return ','.join(resnstr)
     
-    def acceptresn(resn):
-        if len(resn) == 0:
+    def acceptresn(x):
+        if len(x) == 0:
             return ''
         try:
-            if len(resn) == 3:
-                if resn in pglob.AminoList:
-                    return resn
+            if len(x) == 3:
+                if x in pglob.AminoList:
+                    return addresn(x)
                 raise KeyError
-            newresn = pglob.AminoHashTable[resn]
+            newresn = pglob.AminoHashTable[x]
         except KeyError:
             return None
-        return newresn
+        return addresn(newresn)
     
     excepLoop = 0
     exceptions = ''
@@ -712,16 +768,24 @@ def makemotif():
         showerror('Error', 'The following errors have occurred:\n'+exceptions)
     else:
         cmd.remove('resn HOH')
-        
         name = 'P_%s_%s_%s_%s_%s'%(pdb,ec1,ec2,ec3,ec4)
-        f=open(pglob.pathmaker('Motifs',name), 'w')
-        f.write("def %s(d):\n"%(name))
-        f.write("    '''")
-        f.write("    FUNC:%s"%(name))
-        f.write("    PDB:%s"%(pdb))
-        f.write("    EC:%s"%(ec))
-        f.write("    RESI:%s"%(getresnnum()))
-        f.write("    '''")
+        resnnum = getresnnum()
+        
+        if write('from pymol import cmd\n',test_ignore=True,open=True) == False:
+            return False
+        write("'''\n",test_ignore=True)
+        write("FUNC:%s\n"%(name),test_ignore=True)
+        write("PDB:%s\n"%(pdb),test_ignore=True)
+        write("EC:%s\n"%(ec),test_ignore=True)
+        write("RESI:%s\n"%(resnnum),test_ignore=True)
+        write("'''\n",test_ignore=True)
+        write('def %s(d):\n'%(name),test_ignore=True)
+        write("    '''\n",test_ignore=True)
+        write("    FUNC:%s\n"%(name),test_ignore=True)
+        write("    PDB:%s\n"%(pdb),test_ignore=True)
+        write("    EC:%s\n"%(ec),test_ignore=True)
+        write("    RESI:%s\n"%(resnnum),test_ignore=True)
+        write("    '''\n",test_ignore=True)
         atomlist = {}
         ### backbone off aka just side chains from beta carbon onwards
         atomlist[0] = {'ala':('CB'),
@@ -779,8 +843,8 @@ def makemotif():
             selectlimit = 50
             selectstart = 1 ### where to start selection
             selectlimiter = 1 ### limit defined as a/selectlimit
-            selectextra = '' ### add to selection at the end
-            deleteextra = '' ### add to deletion at the end
+            selectextra = [] ### add to selection at the end
+            deleteextra = [] ### add to deletion at the end
             
             if bonelist[e] == 'Off':###just sidechains
                 bList=atomlist[0][resnlist[e]]
@@ -833,20 +897,19 @@ def makemotif():
                         ### This fixes that by making sure we do not pass
                         ### "selectlimit" selections at one time.
                         if float(selectlimiter) < (float(a)/float(selectlimit)):
-                            f.write("    cmd.select('%s%s','"%(resnlistf[e],(selectlimiter*selectlimit)))
+                            write("    cmd.select('%s%s','"%(resnlistf[e],(selectlimiter*selectlimit)),wait=True)
                             for i in range(selectstart,a):
                                 if i==(a-1):
-                                    f.write("br. %s%s')\n"%s(resnlistf[e],i))
+                                    write("br. %s%s')\n"%(resnlistf[e],i))
                                 else:
-                                    f.write("br. %s%s&"%s(resnlistf[e],i))
-                            f.write()
+                                    write("br. %s%s&"%(resnlistf[e],i),wait=True)
                             for i in range(selectstart,a):
                                 if i==(a-1):
                                     pass
                                 else:
-                                    f.write("    cmd.delete('%s%s')\n"%s(resnlistf[e],i))
-                            selectextra += '%s%s&'%(resnlistf[e],(selectlimiter*selectlimit))
-                            deleteextra += "    cmd.delete('%s%s')\n"%(resnlistf[e],(selectlimiter*selectlimit))
+                                    write("    cmd.delete('%s%s')\n"%(resnlistf[e],i))
+                            selectextra.append('%s%s&'%(resnlistf[e],(selectlimiter*selectlimit)))
+                            deleteextra.append("    cmd.delete('%s%s')\n"%(resnlistf[e],(selectlimiter*selectlimit)))
                             selectlimiter += 1
                             selectstart += selectlimit
                         
@@ -856,21 +919,21 @@ def makemotif():
                         ### amino acid does not need an r. (resn)
                         ### property selection, as it is already a selection.
                         if e > d:
-                            f.write("    cmd.select('%s%s', 'n. %s&r. %s w. %%s of n. %s&%s'%(d*%s))\n"%(resnlistf[e],a,bList[b],resnlist[e],cList[c],resnlistf[d],g))
+                            write("    cmd.select('%s%s', 'n. %s&r. %s w. %%s of n. %s&%s'%%(d*%s))\n"%(resnlistf[e],a,bList[b],resnlist[e],cList[c],resnlistf[d],g))
                         else:
-                            f.write("    cmd.select('%s%s', 'n. %s&r. %s w. %%s of n. %s&r. %s'%(d*%s))\n"%(resnlistf[e],a,bList[b],resnlist[e],cList[c],resnlistf[d],g))
-            f.write("    cmd.select('%s','"%(resnlistf[e]))
-            if selectextra != '':
-                f.write(selectextra)
+                            write("    cmd.select('%s%s', 'n. %s&r. %s w. %%s of n. %s&r. %s'%%(d*%s))\n"%(resnlistf[e],a,bList[b],resnlist[e],cList[c],resnlistf[d],g))
+            write("    cmd.select('%s','"%(resnlistf[e]),wait=True)
+            if selectextra != []:
+                write(''.join(selectextra),wait=True)
             for i in range(selectstart,a+1):
                 if i==a:
-                    f.write("br. %s%s')\n"%(resnlistf[e],i))
+                    write("br. %s%s')\n"%(resnlistf[e],i))
                 else:
-                    f.write('br. %s%s&'%(resnlistf[e],i))
-            if deleteextra != '':
-                f.write(deleteextra)
+                    write('br. %s%s&'%(resnlistf[e],i),wait=True)
+            for x in deleteextra:
+                write(x)
             for i in range(selectstart,a+1):
-                f.write("    cmd.delete('%s%s')\n"%(resnlistf[e],i))
+                write("    cmd.delete('%s%s')\n"%(resnlistf[e],i))
     
         resnlistfstr = ""
         for i in range(1,resnlen+1):
@@ -879,10 +942,14 @@ def makemotif():
             else:
                 resnlistfstr += resnlistf[i]+'|'
     
-        f.write("    cmd.select('%s','%s')\n"%(name,resnlistfstr))
+        write("    cmd.select('%s','%s')\n"%(name,resnlistfstr))
         for i in range(1,resnlen+1):
-            f.write("    cmd.delete('%s')\n"%(resnlistf[i]))
-        f.write("    return {'motif':'%s'}"%(name))
+            write("    cmd.delete('%s')\n"%(resnlistf[i]))
+        write("    return {'motif':'%s'}"%(name),test_ignore=True,close=True)
     
-        print '%s Amino Acid Motif Written \n\n\n\n'%(len(resnlist)-1)
-        f.close()
+        if mode == 0:
+            print '%s Amino Acid Motif Run\n'%(len(resnlist)-1)
+        if mode == 1:
+            print '%s Amino Acid Motif Saved To Motifs Folder\n'%(len(resnlist)-1)
+        if mode == 2:
+            print '%s Amino Acid Motif Exported\n'%(len(resnlist)-1)
