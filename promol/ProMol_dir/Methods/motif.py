@@ -718,6 +718,7 @@ def makemotif(mode):
     exceptions = ''
     cmd.reinitialize()
     exceptions += fetch(pdb,True)
+    pglob.update()
     try:
         ectuple = ec.split('.')
         ec1,ec2,ec3,ec4 = ectuple
@@ -897,7 +898,7 @@ def makemotif(mode):
                         ### This fixes that by making sure we do not pass
                         ### "selectlimit" selections at one time.
                         if float(selectlimiter) < (float(a)/float(selectlimit)):
-                            write("    cmd.select('%s%s','"%(resnlistf[e],(selectlimiter*selectlimit)),wait=True)
+                            write("    cmd.select('%s%s',' "%(resnlistf[e],(selectlimiter*selectlimit)),wait=True)
                             for i in range(selectstart,a):
                                 if i==(a-1):
                                     write("br. %s%s')\n"%(resnlistf[e],i))
@@ -922,7 +923,7 @@ def makemotif(mode):
                             write("    cmd.select('%s%s', 'n. %s&r. %s w. %%s of n. %s&%s'%%(d*%s))\n"%(resnlistf[e],a,bList[b],resnlist[e],cList[c],resnlistf[d],g))
                         else:
                             write("    cmd.select('%s%s', 'n. %s&r. %s w. %%s of n. %s&r. %s'%%(d*%s))\n"%(resnlistf[e],a,bList[b],resnlist[e],cList[c],resnlistf[d],g))
-            write("    cmd.select('%s','"%(resnlistf[e]),wait=True)
+            write("    cmd.select('%s',' "%(resnlistf[e]),wait=True)
             if selectextra != []:
                 write(''.join(selectextra),wait=True)
             for i in range(selectstart,a+1):
@@ -942,7 +943,7 @@ def makemotif(mode):
             else:
                 resnlistfstr += resnlistf[i]+'|'
     
-        write("    cmd.select('%s','%s')\n"%(name,resnlistfstr))
+        write("    cmd.select('%s', '%s')\n"%(name,resnlistfstr))
         for i in range(1,resnlen+1):
             write("    cmd.delete('%s')\n"%(resnlistf[i]))
         write("    return {'motif':'%s'}"%(name),test_ignore=True,close=True)
