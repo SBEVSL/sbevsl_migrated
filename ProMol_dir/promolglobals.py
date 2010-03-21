@@ -24,7 +24,8 @@ if PLATFORM == 'Windows' or PLATFORM == 'Darwin':
     PROMOL_PATH = os.path.join(PYMOL_PATH,'modules','pmg_tk','startup')
     PROMOL_DIR_PATH = os.path.join(PROMOL_PATH,'ProMol_dir')
 else:
-    PROMOL_PATH = os.path.join(PYMOL_PATH.split(os.sep+'pymol')[0],'pmg_tk','startup')
+    PROMOL_FILE = os.readlink(os.path.join(PYMOL_PATH.split(os.sep+'pymol')[0],'pmg_tk','startup','ProMol.py'))
+    PROMOL_PATH = PROMOL_FILE.split('/ProMol.py')[0]
     PROMOL_DIR_PATH = os.path.join(PROMOL_PATH,'ProMol_dir')
 
 splash = tk.PhotoImage(file = os.path.join(PROMOL_DIR_PATH,'splashmol.gif'))
@@ -246,21 +247,17 @@ def deleteEmpty():
             cmd.delete('heme')
 cmd.extend('deleteEmpty', deleteEmpty)
 
-def procolor(selection=None,
-        show_selection='sticks',
-        color_selection='cpk',
-        show_all=('sticks','spheres'),
-        color_all='cpk',
-        cpknew=False):
-    cmd.do('hide everything, all')
+def procolor(selection=None,show_selection='sticks',color_selection='cpk',
+        show_all=('sticks','spheres'),color_all='cpk',cpknew=False):
+    cmd.hide('everything','all')
     def cpk(cpkkit,selection):
         unk = 'not e. '
         cpk,suffix = cpkkit
         for k in cpk:
             if k != 'UNK':
-                cmd.do('color '+k+suffix+',(e. '+k+' & '+selection+')')
-                unk += ''+k+'+'
-        cmd.do('color UNK'+suffix+',(('+unk[:-1]+') & '+selection+')')
+                cmd.color('%s%s'%(k,suffix),'(e. %s & %s)'%(k,selection))
+                unk += '%s+'%(k)
+        cmd.color('UNK%s'%(suffix),'((%s) & %s)'%(unk[:-1],selection))
     def setcolors(cpknew):
         colorIndex = {}
         for i in cmd.get_color_indices():
@@ -274,18 +271,18 @@ def procolor(selection=None,
             suffix = 'cpk'
         for k in cpk:
             if k+suffix not in colorIndex:
-                cmd.do('set_color '+k+suffix+','+cpk[k])
+                cmd.set_color('%s%s'%(k,suffix),cpk[k])
         return cpk,suffix
     def show(selection,toshow,tocolor,cpknew):
         if type(toshow).__name__ == 'tuple':
             for show in toshow:
-                cmd.do('show %s, %s'%(show,selection))
+                cmd.show('%s'%(show),'%s'%(selection))
         else:
-            cmd.do('show %s, %s'%(toshow,selection))
+            cmd.show('%s'%(toshow),'%s'%(selection))
         if tocolor == 'cpk':
             cpk(setcolors(cpknew),selection)
         else:
-            cmd.do('color %s, %s'%(tocolor,selection))
+            cmd.color('%s'%(tocolor),'%s'%(selection))
     if show_all != None:
         show('all', show_all, color_all, cpknew)
     if selection != None:
