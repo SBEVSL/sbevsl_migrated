@@ -4,85 +4,85 @@ from tkMessageBox import showerror
 from pmg_tk.startup.ProMol_dir import promolglobals as pglob
 
 motifs = {
-    'Jfa_1csi_00_Citrate_Synthase':{'function':'Jfa_1csi_00', 'upper':38, 'exact':28, 'lower':18},
-    'Jfa_1a2f_00_Ascorbate_Peroxidase':{'function':'Jfa_1a2f_00', 'upper':40, 'exact':29, 'lower':18},
-    'Jfa_1rab_00_Aspartate_Carbamoyltransferase':{'function':'Jfa_1rab_00', 'upper':50, 'exact':39, 'lower':28},
-    'Jfa_2had_00_Haloalkane_Dehalogenase':{'function':'Jfa_2had_00', 'upper':36, 'exact':26, 'lower':16},
-    'Jfa_1jz6_04_Beta-Glucuronidase':{'function':'Jfa_1jz6_04', 'upper':42, 'exact':30, 'lower':18},
-    'Jfa_1pzp_00_Beta-Lactamase':{'function':'Jfa_1pzp_00', 'upper':39, 'exact':30, 'lower':21},
-    'Jfa_1n7n_01_Hyaluronidase':{'function':'Jfa_1n7n_01', 'upper':45, 'exact':33, 'lower':21},
-    'Jfa_1que_00_Ferredoxin_Reductase':{'function':'Jfa_1que_00', 'upper':30, 'exact':21, 'lower':12},
-    'Jfa_1ga8_00_Galacosytransferase':{'function':'Jfa_1ga8_00', 'upper':34, 'exact':25, 'lower':16},
-    'Jfa_1j96_00_20Alpha-Hydroxysteroid_Dehydrogenase':{'function':'Jfa_1j96_00', 'upper':51, 'exact':39, 'lower':27},
-    'Jfa_1pyd_00_Thiamin_Diphosphate_Dependent_Enzyme_Pyruvate_Decarboxylase':{'function':'Jfa_1pyd_00', 'upper':47, 'exact':37, 'lower':27},
-    'Jfa_1h1y_00_D-Ribulose-5-Phosphate_3-Epimerase':{'function':'Jfa_1h1y_00', 'upper':46, 'exact':36, 'lower':26},
-    'Jfa_1djq_00_Trimethylamine_Dehydrogenase':{'function':'Jfa_1djq_00', 'upper':42, 'exact':30, 'lower':18},
-    'Jfa_5csm_00_Chorismate_Mutase':{'function':'Jfa_5csm_00', 'upper':51, 'exact':40, 'lower':29},
-    'Jfa_2ctb_01_Carboxypeptidase_A':{'function':'Jfa_2ctb_01', 'upper':42, 'exact':31, 'lower':20},
-    'Jfa_12as_00_Aaparagine_Synthetase':{'function':'Jfa_12as_00', 'upper':39, 'exact':28, 'lower':17},
-    'Jfa_1aur_00_Carboxylesterase':{'function':'Jfa_1aur_00', 'upper':51, 'exact':41, 'lower':31},
-    'Jfa_1gk2_00_Histidine_Ammonia-Lyase':{'function':'Jfa_1gk2_00', 'upper':48, 'exact':36, 'lower':24},
-    'Jfa_1sry_00_Seryl-TRNA_Synthetase':{'function':'Jfa_1sry_00', 'upper':56, 'exact':45, 'lower':34},
-    'Jfa_1kuv_00_Serotonin_N-Acetyltransferase':{'function':'Jfa_1kuv_00', 'upper':56, 'exact':44, 'lower':32},
-    'Jfa_1pfk_00_Phosphofructokinase':{'function':'Jfa_1pfk_00', 'upper':52, 'exact':41, 'lower':30},
-    'Jfa_1nwc_00_Aspartate_Semialdehyde_Dehydrogenase':{'function':'Jfa_1nwc_00', 'upper':35, 'exact':25, 'lower':15},
-    'Jfa_1bcs_00_Serine_Carboxypeptidase_ii':{'function':'Jfa_1bcs_00', 'upper':52, 'exact':40, 'lower':28},
-    'Jab_1csc_00_Citrate_Synthase':{'function':'Jab_1csc_00', 'upper':38, 'exact':28, 'lower':18},
-    'Jab_1a2f_00_Ascorbate_Peroxidase':{'function':'Jab_1a2f_00', 'upper':40, 'exact':29, 'lower':18},
-    'Jab_1raf_00_Aspartate_Carbamoyltransferase':{'function':'Jab_1raf_00', 'upper':50, 'exact':39, 'lower':28},
-    'Jab_1aur_00_Carboxylesterase':{'function':'Jab_1aur_00', 'upper':51, 'exact':41, 'lower':31},
-    'Jab_1cjw_00_Serotonin_N-Acetyltransferase':{'function':'Jab_1cjw_00', 'upper':56, 'exact':44, 'lower':32},
-    'Jab_1edd_00_Haloalkane_Dehalogenase':{'function':'Jab_1edd_00', 'upper':36, 'exact':26, 'lower':16},
-    'Jab_1b8f_00_Histidine_Ammonia-Lyase':{'function':'Jab_1b8f_00', 'upper':48, 'exact':36, 'lower':24},
-    'Jab_1jz7_04_Beta-Glucuronidase':{'function':'Jab_1jz7_04', 'upper':42, 'exact':30, 'lower':18},
-    'Jab_1nyy_00_Beta-Lactamase':{'function':'Jab_1nyy_00', 'upper':39, 'exact':30, 'lower':21},
-    'Jab_1n7n_01_Hyaluronidase':{'function':'Jab_1n7n_01', 'upper':45, 'exact':33, 'lower':21},
-    'Jab_1qgy_00_Ferredoxin_Reductase':{'function':'Jab_1qgy_00', 'upper':30, 'exact':21, 'lower':12},
-    'Jab_1g9r_00_Galacosytransferase':{'function':'Jab_1g9r_00', 'upper':34, 'exact':25, 'lower':16},
-    'Jab_1ah3_00_20Alpha-Hydroxysteroid_Dehydrogenase':{'function':'Jab_1ah3_00', 'upper':51, 'exact':39, 'lower':27},
-    'Jab_4pfk_00_Phosphofructokinase':{'function':'Jab_4pfk_00', 'upper':52, 'exact':41, 'lower':30},
-    'Jab_1pyd_00_Thiamin_Diphosphate_Dependent_Enzyme_Pyruvate_Decarboxylase':{'function':'Jab_1pyd_00', 'upper':47, 'exact':37, 'lower':27},
-    'Jab_1h1y_00_D-Ribulose-5-Phosphate_3-Epimerase':{'function':'Jab_1h1y_00', 'upper':46, 'exact':36, 'lower':26},
-    'Jab_1sry_00_Seryl-TRNA_Synthetase':{'function':'Jab_1sry_00', 'upper':56, 'exact':45, 'lower':34},
-    'Jab_1djq_00_Trimethylamine_Dehydrogenase':{'function':'Jab_1djq_00', 'upper':42, 'exact':30, 'lower':18},
-    'Jab_5csm_00_Chorismate_Mutase':{'function':'Jab_5csm_00', 'upper':51, 'exact':40, 'lower':29},
-    'Jab_12as_00_Aaparagine_Synthetase':{'function':'Jab_12as_00', 'upper':39, 'exact':28, 'lower':17},
-    'Jab_1nwc_00_Aspartate_Semialdehyde_Dehydrogenase':{'function':'Jab_1nwc_00', 'upper':35, 'exact':25, 'lower':15},
-    'Jab_1hdq_01_Carboxypeptidase_A':{'function':'Jab_1hdq_01', 'upper':42, 'exact':31, 'lower':20},
-    'Jab_1bcr_00_Serine_Carboxypeptidase_ii':{'function':'Jab_1bcr_00', 'upper':52, 'exact':40, 'lower':38},
-    'P_1a2f_00_Ascorbate_Peroxidase':{'function':'P_1a2f_00', 'upper':40, 'exact':29, 'lower':18},
-    'P_12as_00_Asparagine_Synthetase':{'function':'P_12as_00', 'upper':39, 'exact':28, 'lower':17},
-    'P_1nwc_00_Aspartate_Semialdehyde_Dehydrogenase':{'function':'P_1nwc_00', 'upper':35, 'exact':25, 'lower':15},
-    'P_1aur_00_Carboxylesterase':{'function':'P_1aur_00', 'upper':51, 'exact':41, 'lower':31},
-    'P_1n7n_00_Chondroitinase':{'function':'P_1n7n_00', 'upper':51, 'exact':41, 'lower':31},
-    'P_5csm_00_Chorismate_Mutase':{'function':'P_5csm_00', 'upper':51, 'exact':40, 'lower':29},
-    'P_1pyd_00_Pyruvate_Decarboxylase':{'function':'P_1pyd_00', 'upper':47, 'exact':37, 'lower':27},
-    'P_1h1y_00_Ribulose-Phosphate_Epimerase':{'function':'P_1h1y_00', 'upper':46, 'exact':36, 'lower':26},
-    'P_1sry_00_Seryl-tRNA_Synthetase':{'function':'P_1sry_00', 'upper':56, 'exact':45, 'lower':34},
-    'P_1djq_00_Trimethylamine_Dehydrogenase':{'function':'P_1djq_00', 'upper':42, 'exact':30, 'lower':18},
-    'Pfa_1rab_00_Aspartate_Transcarbamoylase':{'function':'Pfa_1rab_00', 'upper':50, 'exact':39, 'lower':28},
-    'Pfa_1jz6_00_beta-Glucuronidase':{'function':'Pfa_1jz6_00', 'upper':42, 'exact':30, 'lower':18},
-    'Pfa_1pzp_00_beta-Lactamase':{'function':'Pfa_1pzp_00', 'upper':39, 'exact':30, 'lower':21},
-    'Pfa_2ctb_00_Carboxypeptidase-A':{'function':'Pfa_2ctb_00', 'upper':42, 'exact':31, 'lower':20},
-    'Pfa_1csi_00_Citrate_Synthase':{'function':'Pfa_1csi_00', 'upper':38, 'exact':28, 'lower':18},
-    'Pfa_1que_00_Ferredoxin_Reductase':{'function':'Pfa_1que_00', 'upper':30, 'exact':21, 'lower':12},
-    'Pfa_1ga8_00_Galactosyltransferase':{'function':'Pfa_1ga8_00', 'upper':34, 'exact':25, 'lower':16},
-    'Pfa_2had_00_Haloalkane_Dehydrogenase':{'function':'Pfa_2had_00', 'upper':36, 'exact':26, 'lower':16},
-    'Pfa_1gk2_00_Histidine_Ammonia_Lyase':{'function':'Pfa_1gk2_00', 'upper':48, 'exact':36, 'lower':24},
-    'Pfa_1j96_00_Hydroxysteroid_Dehydrogenase':{'function':'Pfa_1j96_00', 'upper':51, 'exact':39, 'lower':27},
-    'Pfa_1pfk_00_Phosphofructokinase':{'function':'Pfa_1pfk_00', 'upper':52, 'exact':41, 'lower':30},
-    'Pfa_1kuv_00_Serotonin_N-Acetyltransferase':{'function':'Pfa_1kuv_00', 'upper':56, 'exact':44, 'lower':32},
-    'Pab_1jz7_00_beta-Glucuronidase':{'function':'Pab_1jz7_00', 'upper':42, 'exact':30, 'lower':18},
-    'Pab_1nyy_00_beta_Lactamase':{'function':'Pab_1nyy_00', 'upper':39, 'exact':30, 'lower':21},
-    'Pab_1hdq_00_Carboxypeptidase-A':{'function':'Pab_1hdq_00', 'upper':42, 'exact':31, 'lower':20},
-    'Pab_1csc_00_Citrate_Synthase':{'function':'Pab_1csc_00', 'upper':38, 'exact':28, 'lower':18},
-    'Pab_1qgy_00_Ferredoxin_Reductase':{'function':'Pab_1qgy_00', 'upper':30, 'exact':21, 'lower':12},
-    'Pab_1g9r_00_Galactosyltransferase':{'function':'Pab_1g9r_00', 'upper':34, 'exact':25, 'lower':16},
-    'Pab_1edd_00_Haloalkane_Dehydrogenase':{'function':'Pab_1edd_00', 'upper':36, 'exact':26, 'lower':16},
-    'Pab_1b8f_00_Histidine_Ammonia_Lyase':{'function':'Pab_1b8f_00', 'upper':48, 'exact':36, 'lower':24},
-    'Pab_1ah3_00_Hydroxysteroid_Dehydrogenase':{'function':'Pab_1ah3_00', 'upper':51, 'exact':39, 'lower':27},
-    'Pab_4pfk_00_Phosphofructokinase':{'function':'Pab_4pfk_00', 'upper':52, 'exact':41, 'lower':30},
-    'Pab_1cjw_00_Serotonin_N-Acetyltransferase':{'function':'Pab_1cjw_00', 'upper':56, 'exact':44, 'lower':32}
+    'Jfa_1csi_2_3_3_1_Citrate_Synthase':{'function':'Jfa_1csi_2_3_3_1', 'upper':38, 'exact':28, 'lower':18},
+    'Jfa_1a2f_1_11_1_11_Ascorbate_Peroxidase':{'function':'Jfa_1a2f_1_11_1_11', 'upper':40, 'exact':29, 'lower':18},
+    'Jfa_1rab_2_1_3_2_Aspartate_Carbamoyltransferase':{'function':'Jfa_1rab_2_1_3_2', 'upper':50, 'exact':39, 'lower':28},
+    'Jfa_2had_3_8_1_5_Haloalkane_Dehalogenase':{'function':'Jfa_2had_3_8_1_5', 'upper':36, 'exact':26, 'lower':16},
+    'Jfa_1jz6_3_2_1_23_Beta-Glucuronidase':{'function':'Jfa_1jz6_3_2_1_23', 'upper':42, 'exact':30, 'lower':18},
+    'Jfa_1pzp_3_5_2_6_Beta-Lactamase':{'function':'Jfa_1pzp_3_5_2_6', 'upper':39, 'exact':30, 'lower':21},
+    'Jfa_1n7n_4_2_2_5_Hyaluronidase':{'function':'Jfa_1n7n_4_2_2_5', 'upper':45, 'exact':33, 'lower':21},
+    'Jfa_1que_1_18_1_2_Ferredoxin_Reductase':{'function':'Jfa_1que_1_18_1_2', 'upper':30, 'exact':21, 'lower':12},
+    'Jfa_1ga8_2_4_1_44_Galacosytransferase':{'function':'Jfa_1ga8_2_4_1_44', 'upper':34, 'exact':25, 'lower':16},
+    'Jfa_1j96_1_3_1_20_20Alpha-Hydroxysteroid_Dehydrogenase':{'function':'Jfa_1j96_1_3_1_20', 'upper':51, 'exact':39, 'lower':27},
+    'Jfa_1pyd_4_1_1_1_Thiamin_Diphosphate_Dependent_Enzyme_Pyruvate_Decarboxylase':{'function':'Jfa_1pyd_4_1_1_1', 'upper':47, 'exact':37, 'lower':27},
+    'Jfa_1h1y_5_1_3_1_D-Ribulose-5-Phosphate_3-Epimerase':{'function':'Jfa_1h1y_5_1_3_1', 'upper':46, 'exact':36, 'lower':26},
+    'Jfa_1djq_1_5_99_7_Trimethylamine_Dehydrogenase':{'function':'Jfa_1djq_1_5_99_7', 'upper':42, 'exact':30, 'lower':18},
+    'Jfa_5csm_5_4_99_5_Chorismate_Mutase':{'function':'Jfa_5csm_5_4_99_5', 'upper':51, 'exact':40, 'lower':29},
+    'Jfa_2ctb_3_4_17_1_Carboxypeptidase_A':{'function':'Jfa_2ctb_3_4_17_1', 'upper':42, 'exact':31, 'lower':20},
+    'Jfa_12as_6_3_1_1_Aaparagine_Synthetase':{'function':'Jfa_12as_6_3_1_1', 'upper':39, 'exact':28, 'lower':17},
+    'Jfa_1aur_3_1_1_1_Carboxylesterase':{'function':'Jfa_1aur_3_1_1_1', 'upper':51, 'exact':41, 'lower':31},
+    'Jfa_1gk2_4_3_1_3_Histidine_Ammonia-Lyase':{'function':'Jfa_1gk2_4_3_1_3', 'upper':48, 'exact':36, 'lower':24},
+    'Jfa_1sry_6_1_1_11_Seryl-TRNA_Synthetase':{'function':'Jfa_1sry_6_1_1_11', 'upper':56, 'exact':45, 'lower':34},
+    'Jfa_1kuv_2_3_1_87_Serotonin_N-Acetyltransferase':{'function':'Jfa_1kuv_2_3_1_87', 'upper':56, 'exact':44, 'lower':32},
+    'Jfa_1pfk_2_7_1_11_Phosphofructokinase':{'function':'Jfa_1pfk_2_7_1_11', 'upper':52, 'exact':41, 'lower':30},
+    'Jfa_1nwc_1_2_1_11_Aspartate_Semialdehyde_Dehydrogenase':{'function':'Jfa_1nwc_1_2_1_11', 'upper':35, 'exact':25, 'lower':15},
+    'Jfa_1bcs_3_4_16_6_Serine_Carboxypeptidase_ii':{'function':'Jfa_1bcs_3_4_16_6', 'upper':52, 'exact':40, 'lower':28},
+    'Jab_1csc_4_1_3_7_Citrate_Synthase':{'function':'Jab_1csc_4_1_3_7', 'upper':38, 'exact':28, 'lower':18},
+    'Jab_1a2f_1_11_1_11_Ascorbate_Peroxidase':{'function':'Jab_1a2f_1_11_1_11', 'upper':40, 'exact':29, 'lower':18},
+    'Jab_1raf_2_1_3_2_Aspartate_Carbamoyltransferase':{'function':'Jab_1raf_2_1_3_2', 'upper':50, 'exact':39, 'lower':28},
+    'Jab_1aur_3_1_1_1_Carboxylesterase':{'function':'Jab_1aur_3_1_1_1', 'upper':51, 'exact':41, 'lower':31},
+    'Jab_1cjw_2_3_1_87_Serotonin_N-Acetyltransferase':{'function':'Jab_1cjw_2_3_1_87', 'upper':56, 'exact':44, 'lower':32},
+    'Jab_1edd_3_8_1_5_Haloalkane_Dehalogenase':{'function':'Jab_1edd_3_8_1_5', 'upper':36, 'exact':26, 'lower':16},
+    'Jab_1b8f_4_3_1_3_Histidine_Ammonia-Lyase':{'function':'Jab_1b8f_4_3_1_3', 'upper':48, 'exact':36, 'lower':24},
+    'Jab_1jz7_3_2_1_31_Beta-Glucuronidase':{'function':'Jab_1jz7_3_2_1_31', 'upper':42, 'exact':30, 'lower':18},
+    'Jab_1nyy_3_5_2_6_Beta-Lactamase':{'function':'Jab_1nyy_3_5_2_6', 'upper':39, 'exact':30, 'lower':21},
+    'Jab_1n7n_4_2_2_5_Hyaluronidase':{'function':'Jab_1n7n_4_2_2_5', 'upper':45, 'exact':33, 'lower':21},
+    'Jab_1qgy_1_18_1_2_Ferredoxin_Reductase':{'function':'Jab_1qgy_1_18_1_2', 'upper':30, 'exact':21, 'lower':12},
+    'Jab_1g9r_2_4_1_44_Galacosytransferase':{'function':'Jab_1g9r_2_4_1_44', 'upper':34, 'exact':25, 'lower':16},
+    'Jab_1ah3_1_1_1_21_20Alpha-Hydroxysteroid_Dehydrogenase':{'function':'Jab_1ah3_1_1_1_21', 'upper':51, 'exact':39, 'lower':27},
+    'Jab_4pfk_2_7_1_11_Phosphofructokinase':{'function':'Jab_4pfk_2_7_1_11', 'upper':52, 'exact':41, 'lower':30},
+    'Jab_1pyd_4_1_1_1_Thiamin_Diphosphate_Dependent_Enzyme_Pyruvate_Decarboxylase':{'function':'Jab_1pyd_4_1_1_1', 'upper':47, 'exact':37, 'lower':27},
+    'Jab_1h1y_5_1_3_1_D-Ribulose-5-Phosphate_3-Epimerase':{'function':'Jab_1h1y_5_1_3_1', 'upper':46, 'exact':36, 'lower':26},
+    'Jab_1sry_6_1_1_11_Seryl-TRNA_Synthetase':{'function':'Jab_1sry_6_1_1_11', 'upper':56, 'exact':45, 'lower':34},
+    'Jab_1djq_1_5_99_7_Trimethylamine_Dehydrogenase':{'function':'Jab_1djq_1_5_99_7', 'upper':42, 'exact':30, 'lower':18},
+    'Jab_5csm_5_4_99_5_Chorismate_Mutase':{'function':'Jab_5csm_5_4_99_5', 'upper':51, 'exact':40, 'lower':29},
+    'Jab_12as_6_3_1_1_Aaparagine_Synthetase':{'function':'Jab_12as_6_3_1_1', 'upper':39, 'exact':28, 'lower':17},
+    'Jab_1nwc_1_2_1_11_Aspartate_Semialdehyde_Dehydrogenase':{'function':'Jab_1nwc_1_2_1_11', 'upper':35, 'exact':25, 'lower':15},
+    'Jab_1hdq_3_4_17_1_Carboxypeptidase_A':{'function':'Jab_1hdq_3_4_17_1', 'upper':42, 'exact':31, 'lower':20},
+    'Jab_1bcr_3_4_16_6_Serine_Carboxypeptidase_ii':{'function':'Jab_1bcr_3_4_16_6', 'upper':52, 'exact':40, 'lower':38},
+    'P_1a2f_1_11_1_11_Ascorbate_Peroxidase':{'function':'P_1a2f_1_11_1_11', 'upper':40, 'exact':29, 'lower':18},
+    'P_12as_6_3_1_1_Asparagine_Synthetase':{'function':'P_12as_6_3_1_1', 'upper':39, 'exact':28, 'lower':17},
+    'P_1nwc_1_2_1_11_Aspartate_Semialdehyde_Dehydrogenase':{'function':'P_1nwc_1_2_1_11', 'upper':35, 'exact':25, 'lower':15},
+    'P_1aur_3_1_1_1_Carboxylesterase':{'function':'P_1aur_3_1_1_1', 'upper':51, 'exact':41, 'lower':31},
+    'P_1n7n_4_2_2_5_Chondroitinase':{'function':'P_1n7n_4_2_2_5', 'upper':51, 'exact':41, 'lower':31},
+    'P_5csm_5_4_99_5_Chorismate_Mutase':{'function':'P_5csm_5_4_99_5', 'upper':51, 'exact':40, 'lower':29},
+    'P_1pyd_4_1_1_1_Pyruvate_Decarboxylase':{'function':'P_1pyd_4_1_1_1', 'upper':47, 'exact':37, 'lower':27},
+    'P_1h1y_5_1_3_1_Ribulose-Phosphate_Epimerase':{'function':'P_1h1y_5_1_3_1', 'upper':46, 'exact':36, 'lower':26},
+    'P_1sry_6_1_1_11_Seryl-tRNA_Synthetase':{'function':'P_1sry_6_1_1_11', 'upper':56, 'exact':45, 'lower':34},
+    'P_1djq_1_5_99_7_Trimethylamine_Dehydrogenase':{'function':'P_1djq_1_5_99_7', 'upper':42, 'exact':30, 'lower':18},
+    'Pfa_1rab_2_1_3_2_Aspartate_Transcarbamoylase':{'function':'Pfa_1rab_2_1_3_2', 'upper':50, 'exact':39, 'lower':28},
+    'Pfa_1jz6_3_2_1_23_beta-Glucuronidase':{'function':'Pfa_1jz6_3_2_1_23', 'upper':42, 'exact':30, 'lower':18},
+    'Pfa_1pzp_3_5_2_6_beta-Lactamase':{'function':'Pfa_1pzp_3_5_2_6', 'upper':39, 'exact':30, 'lower':21},
+    'Pfa_2ctb_3_4_17_1_Carboxypeptidase-A':{'function':'Pfa_2ctb_3_4_17_1', 'upper':42, 'exact':31, 'lower':20},
+    'Pfa_1csi_2_3_3_1_Citrate_Synthase':{'function':'Pfa_1csi_2_3_3_1', 'upper':38, 'exact':28, 'lower':18},
+    'Pfa_1que_1_18_1_2_Ferredoxin_Reductase':{'function':'Pfa_1que_1_18_1_2', 'upper':30, 'exact':21, 'lower':12},
+    'Pfa_1ga8_2_4_1_44_Galactosyltransferase':{'function':'Pfa_1ga8_2_4_1_44', 'upper':34, 'exact':25, 'lower':16},
+    'Pfa_2had_3_8_1_5_Haloalkane_Dehydrogenase':{'function':'Pfa_2had_3_8_1_5', 'upper':36, 'exact':26, 'lower':16},
+    'Pfa_1gk2_4_3_1_3_Histidine_Ammonia_Lyase':{'function':'Pfa_1gk2_4_3_1_3', 'upper':48, 'exact':36, 'lower':24},
+    'Pfa_1j96_1_3_1_20_Hydroxysteroid_Dehydrogenase':{'function':'Pfa_1j96_1_3_1_20', 'upper':51, 'exact':39, 'lower':27},
+    'Pfa_1pfk_2_7_1_11_Phosphofructokinase':{'function':'Pfa_1pfk_2_7_1_11', 'upper':52, 'exact':41, 'lower':30},
+    'Pfa_1kuv_2_3_1_87_Serotonin_N-Acetyltransferase':{'function':'Pfa_1kuv_2_3_1_87', 'upper':56, 'exact':44, 'lower':32},
+    'Pab_1jz7_3_2_1_31_beta-Glucuronidase':{'function':'Pab_1jz7_3_2_1_31', 'upper':42, 'exact':30, 'lower':18},
+    'Pab_1nyy_3_5_2_6_beta_Lactamase':{'function':'Pab_1nyy_3_5_2_6', 'upper':39, 'exact':30, 'lower':21},
+    'Pab_1hdq_3_4_17_1_Carboxypeptidase-A':{'function':'Pab_1hdq_3_4_17_1', 'upper':42, 'exact':31, 'lower':20},
+    'Pab_1csc_4_1_3_7_Citrate_Synthase':{'function':'Pab_1csc_4_1_3_7', 'upper':38, 'exact':28, 'lower':18},
+    'Pab_1qgy_1_18_1_2_Ferredoxin_Reductase':{'function':'Pab_1qgy_1_18_1_2', 'upper':30, 'exact':21, 'lower':12},
+    'Pab_1g9r_2_4_1_44_Galactosyltransferase':{'function':'Pab_1g9r_2_4_1_44', 'upper':34, 'exact':25, 'lower':16},
+    'Pab_1edd_3_8_1_5_Haloalkane_Dehydrogenase':{'function':'Pab_1edd_3_8_1_5', 'upper':36, 'exact':26, 'lower':16},
+    'Pab_1b8f_4_3_1_3_Histidine_Ammonia_Lyase':{'function':'Pab_1b8f_4_3_1_3', 'upper':48, 'exact':36, 'lower':24},
+    'Pab_1ah3_1_1_1_21_Hydroxysteroid_Dehydrogenase':{'function':'Pab_1ah3_1_1_1_21', 'upper':51, 'exact':39, 'lower':27},
+    'Pab_4pfk_2_7_1_11_Phosphofructokinase':{'function':'Pab_4pfk_2_7_1_11', 'upper':52, 'exact':41, 'lower':30},
+    'Pab_1cjw_2_3_1_87_Serotonin_N-Acetyltransferase':{'function':'Pab_1cjw_2_3_1_87', 'upper':56, 'exact':44, 'lower':32}
 }
 
 def MotifCaller(motif_function, camera=True):
@@ -125,10 +125,11 @@ def MotifCaller(motif_function, camera=True):
     else:
         return True
 
-def Jfa_1csi_00(d):
+def Jfa_1csi_2_3_3_1(d):
     '''
-    NAME:Jfa_1csi_00_Citrate_Synthase
-    FUNC:Jfa_1csi_00
+    FUNC:Jfa_1csi_2_3_3_1
+    PDB:1csi
+    EC:2.3.3.1
     RESI:2 of his, asp or glu
     '''
     cmd.select('temp0', 'n. cg')
@@ -233,7 +234,7 @@ def Jfa_1csi_00(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*7.645700))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*1.212000))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.232100))
-    cmd.select('Jfa_1csi_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_1csi_2_3_3_1', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -300,12 +301,13 @@ def Jfa_1csi_00(d):
     cmd.delete('temp54')
     cmd.delete('temp55')
     cmd.delete('temp56')
-    return {'motif':'Jfa_1csi_00'}
+    return {'motif':'Jfa_1csi_2_3_3_1'}
 
-def Jfa_1a2f_00(d):
+def Jfa_1a2f_1_11_1_11(d):
     '''
-    NAME:Jfa_1a2f_00_Ascorbate_Peroxidase
-    FUNC:Jfa_1a2f_00
+    FUNC:Jfa_1a2f_1_11_1_11
+    PDB:1a2f
+    EC:1.11.1.11
     RESI:arg or glu,his,asn or gln
     '''
     cmd.select('temp0', 'n. ne')
@@ -410,7 +412,7 @@ def Jfa_1a2f_00(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*7.029600))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*1.333200))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.171500))
-    cmd.select('Jfa_1a2f_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_1a2f_1_11_1_11', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -477,12 +479,13 @@ def Jfa_1a2f_00(d):
     cmd.delete('temp54')
     cmd.delete('temp55')
     cmd.delete('temp56')
-    return {'motif':'Jfa_1a2f_00'}
+    return {'motif':'Jfa_1a2f_1_11_1_11'}
 
-def Jfa_1rab_00(d):
+def Jfa_1rab_2_1_3_2(d):
     '''
-    NAME:Jfa_1rab_00_Aspartate_Carbamoyltransferase
-    FUNC:Jfa_1rab_00
+    FUNC:Jfa_1rab_2_1_3_2
+    PDB:1rab
+    EC:2.1.3.2
     RESI:2 of arg,thr or ser,his
     '''
     cmd.select('temp0', 'n. ne')
@@ -653,7 +656,7 @@ def Jfa_1rab_00(d):
     cmd.select('jessatom8', 'jessatom8 w. %s of jessatom11'%(d*3.322900))
     cmd.select('jessatom9', 'jessatom9 w. %s of jessatom11'%(d*2.060400))
     cmd.select('jessatom10', 'jessatom10 w. %s of jessatom11'%(d*2.161400))
-    cmd.select('Jfa_1rab_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
+    cmd.select('Jfa_1rab_2_1_3_2', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -756,12 +759,13 @@ def Jfa_1rab_00(d):
     cmd.delete('temp87')
     cmd.delete('temp88')
     cmd.delete('temp89')
-    return {'motif':'Jfa_1rab_00'}
+    return {'motif':'Jfa_1rab_2_1_3_2'}
 
-def Jfa_2had_00(d):
+def Jfa_2had_3_8_1_5(d):
     '''
-    NAME:Jfa_2had_00_Haloalkane_Dehalogenase
-    FUNC:Jfa_2had_00
+    FUNC:Jfa_2had_3_8_1_5
+    PDB:2had
+    EC:3.8.1.5
     RESI:2 of asp or glu,his
     '''
     cmd.select('temp0', 'n. cg')
@@ -865,7 +869,7 @@ def Jfa_2had_00(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*5.019700))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*2.191700))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.181600))
-    cmd.select('Jfa_2had_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_2had_3_8_1_5', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -931,12 +935,13 @@ def Jfa_2had_00(d):
     cmd.delete('temp53')
     cmd.delete('temp54')
     cmd.delete('temp55')
-    return {'motif':'Jfa_2had_00'}
+    return {'motif':'Jfa_2had_3_8_1_5'}
 
-def Jfa_1jz6_04(d):
+def Jfa_1jz6_3_2_1_23(d):
     '''
-    NAME:Jfa_1jz6_04_Beta-Glucuronidase
-    FUNC:Jfa_1jz6_04
+    FUNC:Jfa_1jz6_3_2_1_23
+    PDB:1jz6
+    EC:3.2.1.23
     RESI:2 of glu or asp,tyr
     '''
     cmd.select('temp0', 'n. cd')
@@ -1040,7 +1045,7 @@ def Jfa_1jz6_04(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*2.605800))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*1.292800))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.232100))
-    cmd.select('Jfa_1jz6_04', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_1jz6_3_2_1_23', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -1106,12 +1111,13 @@ def Jfa_1jz6_04(d):
     cmd.delete('temp53')
     cmd.delete('temp54')
     cmd.delete('temp55')
-    return {'motif':'Jfa_1jz6_04'}
+    return {'motif':'Jfa_1jz6_3_2_1_23'}
 
-def Jfa_1pzp_00(d):
+def Jfa_1pzp_3_5_2_6(d):
     '''
-    NAME:Jfa_1pzp_00_Beta-Lactamase
-    FUNC:Jfa_1pzp_00
+    FUNC:Jfa_1pzp_3_5_2_6
+    PDB:1pzp
+    EC:3.5.2.6
     RESI:2 of ser or thr,lys,glu or asp
     '''
     cmd.select('temp0', 'n. ca')
@@ -1283,7 +1289,7 @@ def Jfa_1pzp_00(d):
     cmd.select('jessatom8', 'jessatom8 w. %s of jessatom11'%(d*6.393300))
     cmd.select('jessatom9', 'jessatom9 w. %s of jessatom11'%(d*1.252400))
     cmd.select('jessatom10', 'jessatom10 w. %s of jessatom11'%(d*2.181600))
-    cmd.select('Jfa_1pzp_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
+    cmd.select('Jfa_1pzp_3_5_2_6', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -1387,12 +1393,13 @@ def Jfa_1pzp_00(d):
     cmd.delete('temp88')
     cmd.delete('temp89')
     cmd.delete('temp90')
-    return {'motif':'Jfa_1pzp_00'}
+    return {'motif':'Jfa_1pzp_3_5_2_6'}
 
-def Jfa_1n7n_01(d):
+def Jfa_1n7n_4_2_2_5(d):
     '''
-    NAME:Jfa_1n7n_01_Hyaluronidase
-    FUNC:Jfa_1n7n_01
+    FUNC:Jfa_1n7n_4_2_2_5
+    PDB:1n7n
+    EC:4.2.2.5
     RESI:arg,tyr,his
     '''
     cmd.select('temp0', 'n. cg')
@@ -1497,7 +1504,7 @@ def Jfa_1n7n_01(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*3.858200))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*2.323000))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.292700))
-    cmd.select('Jfa_1n7n_01', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_1n7n_4_2_2_5', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -1564,12 +1571,13 @@ def Jfa_1n7n_01(d):
     cmd.delete('temp54')
     cmd.delete('temp55')
     cmd.delete('temp56')
-    return {'motif':'Jfa_1n7n_01'}
+    return {'motif':'Jfa_1n7n_4_2_2_5'}
 
-def Jfa_1que_00(d):
+def Jfa_1que_1_18_1_2(d):
     '''
-    NAME:Jfa_1que_00_Ferredoxin_Reductase
-    FUNC:Jfa_1que_00
+    FUNC:Jfa_1que_1_18_1_2
+    PDB:1que
+    EC:1.18.1.2
     RESI:ser or thr,cys,glu or asp
     '''
     cmd.select('temp0', 'n. ca')
@@ -1676,7 +1684,7 @@ def Jfa_1que_00(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*3.898600))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*1.262500))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.222000))
-    cmd.select('Jfa_1que_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_1que_1_18_1_2', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -1745,12 +1753,13 @@ def Jfa_1que_00(d):
     cmd.delete('temp56')
     cmd.delete('temp57')
     cmd.delete('temp58')
-    return {'motif':'Jfa_1que_00'}
+    return {'motif':'Jfa_1que_1_18_1_2'}
 
-def Jfa_1ga8_00(d):
+def Jfa_1ga8_2_4_1_44(d):
     '''
-    NAME:Jfa_1ga8_00_Galacosytransferase
-    FUNC:Jfa_1ga8_00
+    FUNC:Jfa_1ga8_2_4_1_44
+    PDB:1ga8
+    EC:2.4.1.44
     RESI:asp or glu,2 of asn or gln
     '''
     cmd.select('temp0', 'n. cg')
@@ -1856,7 +1865,7 @@ def Jfa_1ga8_00(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*4.595500))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*1.353400))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.282600))
-    cmd.select('Jfa_1ga8_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_1ga8_2_4_1_44', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -1924,12 +1933,13 @@ def Jfa_1ga8_00(d):
     cmd.delete('temp55')
     cmd.delete('temp56')
     cmd.delete('temp57')
-    return {'motif':'Jfa_1ga8_00'}
+    return {'motif':'Jfa_1ga8_2_4_1_44'}
 
-def Jfa_1j96_00(d):
+def Jfa_1j96_1_3_1_20(d):
     '''
-    NAME:Jfa_1j96_00_20Alpha-Hydroxysteroid_Dehydrogenase
-    FUNC:Jfa_1j96_00
+    FUNC:Jfa_1j96_1_3_1_20
+    PDB:1j96
+    EC:1.3.1.20
     RESI:asp or glu,tyr,lys,his
     '''
     cmd.select('temp0', 'n. cg')
@@ -2106,7 +2116,7 @@ def Jfa_1j96_00(d):
     cmd.select('jessatom8', 'jessatom8 w. %s of jessatom11'%(d*4.797500))
     cmd.select('jessatom9', 'jessatom9 w. %s of jessatom11'%(d*2.222000))
     cmd.select('jessatom10', 'jessatom10 w. %s of jessatom11'%(d*2.191700))
-    cmd.select('Jfa_1j96_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
+    cmd.select('Jfa_1j96_1_3_1_20', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -2215,12 +2225,13 @@ def Jfa_1j96_00(d):
     cmd.delete('temp93')
     cmd.delete('temp94')
     cmd.delete('temp95')
-    return {'motif':'Jfa_1j96_00'}
+    return {'motif':'Jfa_1j96_1_3_1_20'}
 
-def Jfa_1pyd_00(d):
+def Jfa_1pyd_4_1_1_1(d):
     '''
-    NAME:Jfa_1pyd_00_Thiamin_Diphosphate_Dependent_Enzyme_Pyruvate_Decarboxylase
-    FUNC:Jfa_1pyd_00
+    FUNC:Jfa_1pyd_4_1_1_1
+    PDB:1pyd
+    EC:4.1.1.1
     RESI:2 of asp or glu,2 of his
     '''
     cmd.select('temp0', 'n. cg')
@@ -2389,7 +2400,7 @@ def Jfa_1pyd_00(d):
     cmd.select('jessatom8', 'jessatom8 w. %s of jessatom11'%(d*33.966300))
     cmd.select('jessatom9', 'jessatom9 w. %s of jessatom11'%(d*1.262500))
     cmd.select('jessatom10', 'jessatom10 w. %s of jessatom11'%(d*2.232100))
-    cmd.select('Jfa_1pyd_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
+    cmd.select('Jfa_1pyd_4_1_1_1', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -2490,12 +2501,13 @@ def Jfa_1pyd_00(d):
     cmd.delete('temp85')
     cmd.delete('temp86')
     cmd.delete('temp87')
-    return {'motif':'Jfa_1pyd_00'}
+    return {'motif':'Jfa_1pyd_4_1_1_1'}
 
-def Jfa_1h1y_00(d):
+def Jfa_1h1y_5_1_3_1(d):
     '''
-    NAME:Jfa_1h1y_00_D-Ribulose-5-Phosphate_3-Epimerase
-    FUNC:Jfa_1h1y_00
+    FUNC:Jfa_1h1y_5_1_3_1
+    PDB:1h1y
+    EC:5.1.3.1
     RESI:2 of his,2 of asp or glu
     '''
     cmd.select('temp0', 'n. cg')
@@ -2665,7 +2677,7 @@ def Jfa_1h1y_00(d):
     cmd.select('jessatom8', 'jessatom8 w. %s of jessatom11'%(d*6.221600))
     cmd.select('jessatom9', 'jessatom9 w. %s of jessatom11'%(d*1.252400))
     cmd.select('jessatom10', 'jessatom10 w. %s of jessatom11'%(d*2.201800))
-    cmd.select('Jfa_1h1y_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
+    cmd.select('Jfa_1h1y_5_1_3_1', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -2767,12 +2779,13 @@ def Jfa_1h1y_00(d):
     cmd.delete('temp86')
     cmd.delete('temp87')
     cmd.delete('temp88')
-    return {'motif':'Jfa_1h1y_00'}
+    return {'motif':'Jfa_1h1y_5_1_3_1'}
 
-def Jfa_1djq_00(d):
+def Jfa_1djq_1_5_99_7(d):
     '''
-    NAME:Jfa_1djq_00_Trimethylamine_Dehydrogenase
-    FUNC:Jfa_1djq_00
+    FUNC:Jfa_1djq_1_5_99_7
+    PDB:1djq
+    EC:1.5.99.7
     RESI:tyr,asp or glu,his
     '''
     cmd.select('temp0', 'n. ce1')
@@ -2880,7 +2893,7 @@ def Jfa_1djq_00(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*2.828000))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*1.262500))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.211900))
-    cmd.select('Jfa_1djq_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_1djq_1_5_99_7', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -2950,12 +2963,13 @@ def Jfa_1djq_00(d):
     cmd.delete('temp57')
     cmd.delete('temp58')
     cmd.delete('temp59')
-    return {'motif':'Jfa_1djq_00'}
+    return {'motif':'Jfa_1djq_1_5_99_7'}
 
-def Jfa_5csm_00(d):
+def Jfa_5csm_5_4_99_5(d):
     '''
-    NAME:Jfa_5csm_00_Chorismate_Mutase
-    FUNC:Jfa_5csm_00
+    FUNC:Jfa_5csm_5_4_99_5
+    PDB:5csm
+    EC:5.4.99.5
     RESI:2 of arg,lys,glu or asp
     '''
     cmd.select('temp0', 'n. ne')
@@ -3129,7 +3143,7 @@ def Jfa_5csm_00(d):
     cmd.select('jessatom8', 'jessatom8 w. %s of jessatom11'%(d*7.292200))
     cmd.select('jessatom9', 'jessatom9 w. %s of jessatom11'%(d*1.242300))
     cmd.select('jessatom10', 'jessatom10 w. %s of jessatom11'%(d*2.161400))
-    cmd.select('Jfa_5csm_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
+    cmd.select('Jfa_5csm_5_4_99_5', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -3235,12 +3249,13 @@ def Jfa_5csm_00(d):
     cmd.delete('temp90')
     cmd.delete('temp91')
     cmd.delete('temp92')
-    return {'motif':'Jfa_5csm_00'}
+    return {'motif':'Jfa_5csm_5_4_99_5'}
 
-def Jfa_2ctb_01(d):
+def Jfa_2ctb_3_4_17_1(d):
     '''
-    NAME:Jfa_2ctb_01_Carboxypeptidase_A
-    FUNC:Jfa_2ctb_01
+    FUNC:Jfa_2ctb_3_4_17_1
+    PDB:2ctb
+    EC:3.4.17.1
     RESI:2 of arg,glu or asp
     '''
     cmd.select('temp0', 'n. ne')
@@ -3347,7 +3362,7 @@ def Jfa_2ctb_01(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*7.120500))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*1.262500))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.252300))
-    cmd.select('Jfa_2ctb_01', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_2ctb_3_4_17_1', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -3416,12 +3431,13 @@ def Jfa_2ctb_01(d):
     cmd.delete('temp56')
     cmd.delete('temp57')
     cmd.delete('temp58')
-    return {'motif':'Jfa_2ctb_01'}
+    return {'motif':'Jfa_2ctb_3_4_17_1'}
 
-def Jfa_12as_00(d):
+def Jfa_12as_6_3_1_1(d):
     '''
-    NAME:Jfa_12as_00_Aaparagine_Synthetase
-    FUNC:Jfa_12as_00
+    FUNC:Jfa_12as_6_3_1_1
+    PDB:12as
+    EC:6.3.1.1
     RESI:asp or glu,arg,gln or asn
     '''
     cmd.select('temp0', 'n. cg')
@@ -3531,7 +3547,7 @@ def Jfa_12as_00(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*5.403500))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*1.343300))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.262400))
-    cmd.select('Jfa_12as_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_12as_6_3_1_1', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -3603,12 +3619,13 @@ def Jfa_12as_00(d):
     cmd.delete('temp59')
     cmd.delete('temp60')
     cmd.delete('temp61')
-    return {'motif':'Jfa_12as_00'}
+    return {'motif':'Jfa_12as_6_3_1_1'}
 
-def Jfa_1aur_00(d):
+def Jfa_1aur_3_1_1_1(d):
     '''
-    NAME:Jfa_1aur_00_Carboxylesterase
-    FUNC:Jfa_1aur_00
+    FUNC:Jfa_1aur_3_1_1_1
+    PDB:1aur
+    EC:3.1.1.1
     RESI:leu,ser or thr,gln or asn,asp or glu,his
     '''
     cmd.select('temp0', 'n. n')
@@ -3869,7 +3886,7 @@ def Jfa_1aur_00(d):
     cmd.select('jessatom11', 'jessatom11 w. %s of jessatom14'%(d*4.817700))
     cmd.select('jessatom12', 'jessatom12 w. %s of jessatom14'%(d*2.211900))
     cmd.select('jessatom13', 'jessatom13 w. %s of jessatom14'%(d*2.151300))
-    cmd.select('Jfa_1aur_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
+    cmd.select('Jfa_1aur_3_1_1_1', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -4023,12 +4040,13 @@ def Jfa_1aur_00(d):
     cmd.delete('temp135')
     cmd.delete('temp136')
     cmd.delete('temp137')
-    return {'motif':'Jfa_1aur_00'}
+    return {'motif':'Jfa_1aur_3_1_1_1'}
 
-def Jfa_1gk2_00(d):
+def Jfa_1gk2_4_3_1_3(d):
     '''
-    NAME:Jfa_1gk2_00_Histidine_Ammonia-Lyase
-    FUNC:Jfa_1gk2_00
+    FUNC:Jfa_1gk2_4_3_1_3
+    PDB:1gk2
+    EC:4.3.1.3
     RESI:ala,ser or thr,gly,tyr,glu or asp
     '''
     cmd.select('temp0', 'n. ca')
@@ -4289,7 +4307,7 @@ def Jfa_1gk2_00(d):
     cmd.select('jessatom11', 'jessatom11 w. %s of jessatom14'%(d*50.550500))
     cmd.select('jessatom12', 'jessatom12 w. %s of jessatom14'%(d*1.262500))
     cmd.select('jessatom13', 'jessatom13 w. %s of jessatom14'%(d*2.232100))
-    cmd.select('Jfa_1gk2_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
+    cmd.select('Jfa_1gk2_4_3_1_3', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -4443,12 +4461,13 @@ def Jfa_1gk2_00(d):
     cmd.delete('temp135')
     cmd.delete('temp136')
     cmd.delete('temp137')
-    return {'motif':'Jfa_1gk2_00'}
+    return {'motif':'Jfa_1gk2_4_3_1_3'}
 
-def Jfa_1sry_00(d):
+def Jfa_1sry_6_1_1_11(d):
     '''
-    NAME:Jfa_1sry_00_Seryl-TRNA_Synthetase
-    FUNC:Jfa_1sry_00
+    FUNC:Jfa_1sry_6_1_1_11
+    PDB:1sry
+    EC:6.1.1.11
     RESI:2 of arg,2 of glu or asp,ser or thr
     '''
     cmd.select('temp0', 'n. ne')
@@ -4708,7 +4727,7 @@ def Jfa_1sry_00(d):
     cmd.select('jessatom11', 'jessatom11 w. %s of jessatom14'%(d*13.422900))
     cmd.select('jessatom12', 'jessatom12 w. %s of jessatom14'%(d*2.363400))
     cmd.select('jessatom13', 'jessatom13 w. %s of jessatom14'%(d*2.292700))
-    cmd.select('Jfa_1sry_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
+    cmd.select('Jfa_1sry_6_1_1_11', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -4861,12 +4880,13 @@ def Jfa_1sry_00(d):
     cmd.delete('temp134')
     cmd.delete('temp135')
     cmd.delete('temp136')
-    return {'motif':'Jfa_1sry_00'}
+    return {'motif':'Jfa_1sry_6_1_1_11'}
 
-def Jfa_1kuv_00(d):
+def Jfa_1kuv_2_3_1_87(d):
     '''
-    NAME:Jfa_1kuv_00_Serotonin_N-Acetyltransferase
-    FUNC:Jfa_1kuv_00
+    FUNC:Jfa_1kuv_2_3_1_87
+    PDB:1kuv
+    EC:2.3.1.87
     RESI:ser or thr,2 of leu,his,tyr
     '''
     cmd.select('temp0', 'n. ca')
@@ -5120,7 +5140,7 @@ def Jfa_1kuv_00(d):
     cmd.select('jessatom11', 'jessatom11 w. %s of jessatom14'%(d*5.797400))
     cmd.select('jessatom12', 'jessatom12 w. %s of jessatom14'%(d*2.424000))
     cmd.select('jessatom13', 'jessatom13 w. %s of jessatom14'%(d*1.393800))
-    cmd.select('Jfa_1kuv_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
+    cmd.select('Jfa_1kuv_2_3_1_87', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -5267,12 +5287,13 @@ def Jfa_1kuv_00(d):
     cmd.delete('temp128')
     cmd.delete('temp129')
     cmd.delete('temp130')
-    return {'motif':'Jfa_1kuv_00'}
+    return {'motif':'Jfa_1kuv_2_3_1_87'}
 
-def Jfa_1pfk_00(d):
+def Jfa_1pfk_2_7_1_11(d):
     '''
-    NAME:Jfa_1pfk_00_Phosphofructokinase
-    FUNC:Jfa_1pfk_00
+    FUNC:Jfa_1pfk_2_7_1_11
+    PDB:1pfk
+    EC:2.7.1.11
     RESI:gly,2 of arg,thr or ser,asp or glu
     '''
     cmd.select('temp0', 'n. n')
@@ -5534,7 +5555,7 @@ def Jfa_1pfk_00(d):
     cmd.select('jessatom11', 'jessatom11 w. %s of jessatom14'%(d*7.070000))
     cmd.select('jessatom12', 'jessatom12 w. %s of jessatom14'%(d*2.312900))
     cmd.select('jessatom13', 'jessatom13 w. %s of jessatom14'%(d*2.343200))
-    cmd.select('Jfa_1pfk_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
+    cmd.select('Jfa_1pfk_2_7_1_11', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -5689,12 +5710,13 @@ def Jfa_1pfk_00(d):
     cmd.delete('temp136')
     cmd.delete('temp137')
     cmd.delete('temp138')
-    return {'motif':'Jfa_1pfk_00'}
+    return {'motif':'Jfa_1pfk_2_7_1_11'}
 
-def Jfa_1nwc_00(d):
+def Jfa_1nwc_1_2_1_11(d):
     '''
-    NAME:Jfa_1nwc_00_Aspartate_Semialdehyde_Dehydrogenase
-    FUNC:Jfa_1nwc_00
+    FUNC:Jfa_1nwc_1_2_1_11
+    PDB:1nwc
+    EC:1.2.1.11
     RESI:cys,gln or asn,his
     '''
     cmd.select('temp0', 'n. ca')
@@ -5797,7 +5819,7 @@ def Jfa_1nwc_00(d):
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom8'%(d*5.474200))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom8'%(d*2.211900))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom8'%(d*2.161400))
-    cmd.select('Jfa_1nwc_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
+    cmd.select('Jfa_1nwc_1_2_1_11', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -5862,12 +5884,13 @@ def Jfa_1nwc_00(d):
     cmd.delete('temp52')
     cmd.delete('temp53')
     cmd.delete('temp54')
-    return {'motif':'Jfa_1nwc_00'}
+    return {'motif':'Jfa_1nwc_1_2_1_11'}
 
-def Jfa_1bcs_00(d):
+def Jfa_1bcs_3_4_16_6(d):
     '''
-    NAME:Jfa_1bcs_00_Serine_Carboxypeptidase_ii
-    FUNC:Jfa_1bcs_00
+    FUNC:Jfa_1bcs_3_4_16_6
+    PDB:1bcs
+    EC:3.4.16.6
     RESI:gly,ser or thr,tyr,asp or glu,his
     '''
     cmd.select('temp0', 'n. n')
@@ -6127,7 +6150,7 @@ def Jfa_1bcs_00(d):
     cmd.select('jessatom11', 'jessatom11 w. %s of jessatom14'%(d*5.029800))
     cmd.select('jessatom12', 'jessatom12 w. %s of jessatom14'%(d*2.201800))
     cmd.select('jessatom13', 'jessatom13 w. %s of jessatom14'%(d*2.201800))
-    cmd.select('Jfa_1bcs_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
+    cmd.select('Jfa_1bcs_3_4_16_6', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11|br. jessatom12|br. jessatom13|br. jessatom14')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -6280,12 +6303,13 @@ def Jfa_1bcs_00(d):
     cmd.delete('temp134')
     cmd.delete('temp135')
     cmd.delete('temp136')
-    return {'motif':'Jfa_1bcs_00'}
+    return {'motif':'Jfa_1bcs_3_4_16_6'}
 
-def Jab_1csc_00(d):
+def Jab_1csc_4_1_3_7(d):
     '''
-    NAME:Jab_1csc_00_Citrate_Synthase
-    FUNC:Jab_1csc_00
+    FUNC:Jab_1csc_4_1_3_7
+    PDB:1csc
+    EC:4.1.3.7
     RESI:2 of his,asp or glu
     '''
     cmd.select('temp0', 'n. ca')
@@ -6333,7 +6357,7 @@ def Jab_1csc_00(d):
     cmd.select('jessatom2', 'jessatom2 w. %s of jessatom5'%(d*10.130300))
     cmd.select('jessatom3', 'jessatom3 w. %s of jessatom5'%(d*9.988900))
     cmd.select('jessatom4', 'jessatom4 w. %s of jessatom5'%(d*1.545300))
-    cmd.select('Jab_1csc_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
+    cmd.select('Jab_1csc_4_1_3_7', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -6364,12 +6388,13 @@ def Jab_1csc_00(d):
     cmd.delete('temp21')
     cmd.delete('temp22')
     cmd.delete('temp23')
-    return {'motif':'Jab_1csc_00'}
+    return {'motif':'Jab_1csc_4_1_3_7'}
 
-def Jab_1a2f_00(d):
+def Jab_1a2f_1_11_1_11(d):
     '''
-    NAME:Jab_1a2f_00_Ascorbate_Peroxidase
-    FUNC:Jab_1a2f_00
+    FUNC:Jab_1a2f_1_11_1_11
+    PDB:1a2f
+    EC:1.11.1.11
     RESI:arg,his,asn or gln
     '''
     cmd.select('temp0', 'n. ca')
@@ -6418,7 +6443,7 @@ def Jab_1a2f_00(d):
     cmd.select('jessatom2', 'jessatom2 w. %s of jessatom5'%(d*7.221500))
     cmd.select('jessatom3', 'jessatom3 w. %s of jessatom5'%(d*5.888300))
     cmd.select('jessatom4', 'jessatom4 w. %s of jessatom5'%(d*1.555400))
-    cmd.select('Jab_1a2f_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
+    cmd.select('Jab_1a2f_1_11_1_11', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -6450,12 +6475,13 @@ def Jab_1a2f_00(d):
     cmd.delete('temp22')
     cmd.delete('temp23')
     cmd.delete('temp24')
-    return {'motif':'Jab_1a2f_00'}
+    return {'motif':'Jab_1a2f_1_11_1_11'}
 
-def Jab_1raf_00(d):
+def Jab_1raf_2_1_3_2(d):
     '''
-    NAME:Jab_1raf_00_Aspartate_Carbamoyltransferase
-    FUNC:Jab_1raf_00
+    FUNC:Jab_1raf_2_1_3_2
+    PDB:1raf
+    EC:2.1.3.2
     RESI:2 of arg,thr or ser,his
     '''
     cmd.select('temp0', 'n. ca')
@@ -6533,7 +6559,7 @@ def Jab_1raf_00(d):
     cmd.select('jessatom4', 'jessatom4 w. %s of jessatom7'%(d*9.069800))
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom7'%(d*8.766800))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom7'%(d*1.525100))
-    cmd.select('Jab_1raf_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7')
+    cmd.select('Jab_1raf_2_1_3_2', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -6581,12 +6607,13 @@ def Jab_1raf_00(d):
     cmd.delete('temp36')
     cmd.delete('temp37')
     cmd.delete('temp38')
-    return {'motif':'Jab_1raf_00'}
+    return {'motif':'Jab_1raf_2_1_3_2'}
 
-def Jab_1aur_00(d):
+def Jab_1aur_3_1_1_1(d):
     '''
-    NAME:Jab_1aur_00_Carboxylesterase
-    FUNC:Jab_1aur_00
+    FUNC:Jab_1aur_3_1_1_1
+    PDB:1aur
+    EC:3.1.1.1
     RESI:leu,ser or thr,gln or asn,asp or glu,his
     '''
     cmd.select('temp0', 'n. n')
@@ -6703,7 +6730,7 @@ def Jab_1aur_00(d):
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom9'%(d*5.100500))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom9'%(d*4.898500))
     cmd.select('jessatom8', 'jessatom8 w. %s of jessatom9'%(d*1.545300))
-    cmd.select('Jab_1aur_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9')
+    cmd.select('Jab_1aur_3_1_1_1', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -6773,12 +6800,13 @@ def Jab_1aur_00(d):
     cmd.delete('temp56')
     cmd.delete('temp57')
     cmd.delete('temp58')
-    return {'motif':'Jab_1aur_00'}
+    return {'motif':'Jab_1aur_3_1_1_1'}
 
-def Jab_1cjw_00(d):
+def Jab_1cjw_2_3_1_87(d):
     '''
-    NAME:Jab_1cjw_00_Serotonin_N-Acetyltransferase
-    FUNC:Jab_1cjw_00
+    FUNC:Jab_1cjw_2_3_1_87
+    PDB:1cjw
+    EC:2.3.1.87
     RESI:ser or thr,2 of leu,his,tyr
     '''
     cmd.select('temp0', 'n. ca')
@@ -6894,7 +6922,7 @@ def Jab_1cjw_00(d):
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom9'%(d*11.241300))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom9'%(d*10.928200))
     cmd.select('jessatom8', 'jessatom8 w. %s of jessatom9'%(d*1.545300))
-    cmd.select('Jab_1cjw_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9')
+    cmd.select('Jab_1cjw_2_3_1_87', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -6963,12 +6991,13 @@ def Jab_1cjw_00(d):
     cmd.delete('temp55')
     cmd.delete('temp56')
     cmd.delete('temp57')
-    return {'motif':'Jab_1cjw_00'}
+    return {'motif':'Jab_1cjw_2_3_1_87'}
 
-def Jab_1edd_00(d):
+def Jab_1edd_3_8_1_5(d):
     '''
-    NAME:Jab_1edd_00_Haloalkane_Dehalogenase
-    FUNC:Jab_1edd_00
+    FUNC:Jab_1edd_3_8_1_5
+    PDB:1edd
+    EC:3.8.1.5
     RESI:2 of asp or glu,his
     '''
     cmd.select('temp0', 'n. ca')
@@ -7015,7 +7044,7 @@ def Jab_1edd_00(d):
     cmd.select('jessatom2', 'jessatom2 w. %s of jessatom5'%(d*5.161100))
     cmd.select('jessatom3', 'jessatom3 w. %s of jessatom5'%(d*4.474300))
     cmd.select('jessatom4', 'jessatom4 w. %s of jessatom5'%(d*1.545300))
-    cmd.select('Jab_1edd_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
+    cmd.select('Jab_1edd_3_8_1_5', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -7045,12 +7074,13 @@ def Jab_1edd_00(d):
     cmd.delete('temp20')
     cmd.delete('temp21')
     cmd.delete('temp22')
-    return {'motif':'Jab_1edd_00'}
+    return {'motif':'Jab_1edd_3_8_1_5'}
 
-def Jab_1b8f_00(d):
+def Jab_1b8f_4_3_1_3(d):
     '''
-    NAME:Jab_1b8f_00_Histidine_Ammonia-Lyase
-    FUNC:Jab_1b8f_00
+    FUNC:Jab_1b8f_4_3_1_3
+    PDB:1b8f
+    EC:4.3.1.3
     RESI:ala,ser or thr,gly,tyr,glu or asp
     '''
     cmd.select('temp0', 'n. ca')
@@ -7169,7 +7199,7 @@ def Jab_1b8f_00(d):
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom9'%(d*47.672000))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom9'%(d*46.853900))
     cmd.select('jessatom8', 'jessatom8 w. %s of jessatom9'%(d*1.535200))
-    cmd.select('Jab_1b8f_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9')
+    cmd.select('Jab_1b8f_4_3_1_3', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -7241,12 +7271,13 @@ def Jab_1b8f_00(d):
     cmd.delete('temp58')
     cmd.delete('temp59')
     cmd.delete('temp60')
-    return {'motif':'Jab_1b8f_00'}
+    return {'motif':'Jab_1b8f_4_3_1_3'}
 
-def Jab_1jz7_04(d):
+def Jab_1jz7_3_2_1_31(d):
     '''
-    NAME:Jab_1jz7_04_Beta-Glucuronidase
-    FUNC:Jab_1jz7_04
+    FUNC:Jab_1jz7_3_2_1_31
+    PDB:1jz7
+    EC:3.2.1.31
     RESI:2 of glu or asp,tyr
     '''
     cmd.select('temp0', 'n. ca')
@@ -7293,7 +7324,7 @@ def Jab_1jz7_04(d):
     cmd.select('jessatom2', 'jessatom2 w. %s of jessatom5'%(d*5.928700))
     cmd.select('jessatom3', 'jessatom3 w. %s of jessatom5'%(d*6.150900))
     cmd.select('jessatom4', 'jessatom4 w. %s of jessatom5'%(d*1.575600))
-    cmd.select('Jab_1jz7_04', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
+    cmd.select('Jab_1jz7_3_2_1_31', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -7323,12 +7354,13 @@ def Jab_1jz7_04(d):
     cmd.delete('temp20')
     cmd.delete('temp21')
     cmd.delete('temp22')
-    return {'motif':'Jab_1jz7_04'}
+    return {'motif':'Jab_1jz7_3_2_1_31'}
 
-def Jab_1nyy_00(d):
+def Jab_1nyy_3_5_2_6(d):
     '''
-    NAME:Jab_1nyy_00_Beta-Lactamase
-    FUNC:Jab_1nyy_00
+    FUNC:Jab_1nyy_3_5_2_6
+    PDB:1nyy
+    EC:3.5.2.6
     RESI:2 of ser or thr,lys,glu or asp
     '''
     cmd.select('temp0', 'n. ca')
@@ -7406,7 +7438,7 @@ def Jab_1nyy_00(d):
     cmd.select('jessatom4', 'jessatom4 w. %s of jessatom7'%(d*9.766700))
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom7'%(d*10.039400))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom7'%(d*1.535200))
-    cmd.select('Jab_1nyy_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7')
+    cmd.select('Jab_1nyy_3_5_2_6', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -7454,12 +7486,13 @@ def Jab_1nyy_00(d):
     cmd.delete('temp36')
     cmd.delete('temp37')
     cmd.delete('temp38')
-    return {'motif':'Jab_1nyy_00'}
+    return {'motif':'Jab_1nyy_3_5_2_6'}
 
-def Jab_1n7n_01(d):
+def Jab_1n7n_4_2_2_5(d):
     '''
-    NAME:Jab_1n7n_01_Hyaluronidase
-    FUNC:Jab_1n7n_01
+    FUNC:Jab_1n7n_4_2_2_5
+    PDB:1n7n
+    EC:4.2.2.5
     RESI:his,tyr,arg
     '''
     cmd.select('temp0', 'n. ca')
@@ -7507,7 +7540,7 @@ def Jab_1n7n_01(d):
     cmd.select('jessatom2', 'jessatom2 w. %s of jessatom5'%(d*10.877700))
     cmd.select('jessatom3', 'jessatom3 w. %s of jessatom5'%(d*10.645400))
     cmd.select('jessatom4', 'jessatom4 w. %s of jessatom5'%(d*1.565500))
-    cmd.select('Jab_1n7n_01', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
+    cmd.select('Jab_1n7n_4_2_2_5', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -7538,12 +7571,13 @@ def Jab_1n7n_01(d):
     cmd.delete('temp21')
     cmd.delete('temp22')
     cmd.delete('temp23')
-    return {'motif':'Jab_1n7n_01'}
+    return {'motif':'Jab_1n7n_4_2_2_5'}
 
-def Jab_1qgy_00(d):
+def Jab_1qgy_1_18_1_2(d):
     '''
-    NAME:Jab_1qgy_00_Ferredoxin_Reductase
-    FUNC:Jab_1qgy_00
+    FUNC:Jab_1qgy_1_18_1_2
+    PDB:1qgy
+    EC:1.18.1.2
     RESI:ser or thr,cys,glu or asp
     '''
     cmd.select('temp0', 'n. ca')
@@ -7592,7 +7626,7 @@ def Jab_1qgy_00(d):
     cmd.select('jessatom2', 'jessatom2 w. %s of jessatom5'%(d*5.100500))
     cmd.select('jessatom3', 'jessatom3 w. %s of jessatom5'%(d*4.888400))
     cmd.select('jessatom4', 'jessatom4 w. %s of jessatom5'%(d*1.545300))
-    cmd.select('Jab_1qgy_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
+    cmd.select('Jab_1qgy_1_18_1_2', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -7624,12 +7658,13 @@ def Jab_1qgy_00(d):
     cmd.delete('temp22')
     cmd.delete('temp23')
     cmd.delete('temp24')
-    return {'motif':'Jab_1qgy_00'}
+    return {'motif':'Jab_1qgy_1_18_1_2'}
 
-def Jab_1g9r_00(d):
+def Jab_1g9r_2_4_1_44(d):
     '''
-    NAME:Jab_1g9r_00_Galacosytransferase
-    FUNC:Jab_1g9r_00
+    FUNC:Jab_1g9r_2_4_1_44
+    PDB:1g9r
+    EC:2.4.1.44
     RESI:asp or glu,2 of asn or gln
     '''
     cmd.select('temp0', 'n. ca')
@@ -7677,7 +7712,7 @@ def Jab_1g9r_00(d):
     cmd.select('jessatom2', 'jessatom2 w. %s of jessatom5'%(d*5.948900))
     cmd.select('jessatom3', 'jessatom3 w. %s of jessatom5'%(d*6.999300))
     cmd.select('jessatom4', 'jessatom4 w. %s of jessatom5'%(d*1.545300))
-    cmd.select('Jab_1g9r_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
+    cmd.select('Jab_1g9r_2_4_1_44', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -7708,12 +7743,13 @@ def Jab_1g9r_00(d):
     cmd.delete('temp21')
     cmd.delete('temp22')
     cmd.delete('temp23')
-    return {'motif':'Jab_1g9r_00'}
+    return {'motif':'Jab_1g9r_2_4_1_44'}
 
-def Jab_1ah3_00(d):
+def Jab_1ah3_1_1_1_21(d):
     '''
-    NAME:Jab_1ah3_00_20Alpha-Hydroxysteroid_Dehydrogenase
-    FUNC:Jab_1ah3_00
+    FUNC:Jab_1ah3_1_1_1_21
+    PDB:1ah3
+    EC:1.1.1.21
     RESI:asp or glu,tyr,lys,his
     '''
     cmd.select('temp0', 'n. ca')
@@ -7791,7 +7827,7 @@ def Jab_1ah3_00(d):
     cmd.select('jessatom4', 'jessatom4 w. %s of jessatom7'%(d*4.817700))
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom7'%(d*3.797600))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom7'%(d*1.535200))
-    cmd.select('Jab_1ah3_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7')
+    cmd.select('Jab_1ah3_1_1_1_21', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -7839,12 +7875,13 @@ def Jab_1ah3_00(d):
     cmd.delete('temp36')
     cmd.delete('temp37')
     cmd.delete('temp38')
-    return {'motif':'Jab_1ah3_00'}
+    return {'motif':'Jab_1ah3_1_1_1_21'}
 
-def Jab_4pfk_00(d):
+def Jab_4pfk_2_7_1_11(d):
     '''
-    NAME:Jab_4pfk_00_Phosphofructokinase
-    FUNC:Jab_4pfk_00
+    FUNC:Jab_4pfk_2_7_1_11
+    PDB:4pfk
+    EC:2.7.1.11
     RESI:gly,2 of arg,thr or ser,asp or glu
     '''
     cmd.select('temp0', 'n. n')
@@ -7960,7 +7997,7 @@ def Jab_4pfk_00(d):
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom9'%(d*7.746700))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom9'%(d*6.514500))
     cmd.select('jessatom8', 'jessatom8 w. %s of jessatom9'%(d*1.565500))
-    cmd.select('Jab_4pfk_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9')
+    cmd.select('Jab_4pfk_2_7_1_11', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -8029,12 +8066,13 @@ def Jab_4pfk_00(d):
     cmd.delete('temp55')
     cmd.delete('temp56')
     cmd.delete('temp57')
-    return {'motif':'Jab_4pfk_00'}
+    return {'motif':'Jab_4pfk_2_7_1_11'}
 
-def Jab_1pyd_00(d):
+def Jab_1pyd_4_1_1_1(d):
     '''
-    NAME:Jab_1pyd_00_Thiamin_Diphosphate_Dependent_Enzyme_Pyruvate_Decarboxylase
-    FUNC:Jab_1pyd_00
+    FUNC:Jab_1pyd_4_1_1_1
+    PDB:1pyd
+    EC:4.1.1.1
     RESI:2 of asp or glu,2 of his
     '''
     cmd.select('temp0', 'n. ca')
@@ -8110,7 +8148,7 @@ def Jab_1pyd_00(d):
     cmd.select('jessatom4', 'jessatom4 w. %s of jessatom7'%(d*35.885300))
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom7'%(d*35.824700))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom7'%(d*1.555400))
-    cmd.select('Jab_1pyd_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7')
+    cmd.select('Jab_1pyd_4_1_1_1', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -8156,12 +8194,13 @@ def Jab_1pyd_00(d):
     cmd.delete('temp34')
     cmd.delete('temp35')
     cmd.delete('temp36')
-    return {'motif':'Jab_1pyd_00'}
+    return {'motif':'Jab_1pyd_4_1_1_1'}
 
-def Jab_1h1y_00(d):
+def Jab_1h1y_5_1_3_1(d):
     '''
-    NAME:Jab_1h1y_00_D-Ribulose-5-Phosphate_3-Epimerase
-    FUNC:Jab_1h1y_00
+    FUNC:Jab_1h1y_5_1_3_1
+    PDB:1h1y
+    EC:5.1.3.1
     RESI:2 of his,2 of asp or glu
     '''
     cmd.select('temp0', 'n. ca')
@@ -8238,7 +8277,7 @@ def Jab_1h1y_00(d):
     cmd.select('jessatom4', 'jessatom4 w. %s of jessatom7'%(d*8.857700))
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom7'%(d*7.352800))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom7'%(d*1.545300))
-    cmd.select('Jab_1h1y_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7')
+    cmd.select('Jab_1h1y_5_1_3_1', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -8285,12 +8324,13 @@ def Jab_1h1y_00(d):
     cmd.delete('temp35')
     cmd.delete('temp36')
     cmd.delete('temp37')
-    return {'motif':'Jab_1h1y_00'}
+    return {'motif':'Jab_1h1y_5_1_3_1'}
 
-def Jab_1sry_00(d):
+def Jab_1sry_6_1_1_11(d):
     '''
-    NAME:Jab_1sry_00_Seryl-TRNA_Synthetase
-    FUNC:Jab_1sry_00
+    FUNC:Jab_1sry_6_1_1_11
+    PDB:1sry
+    EC:6.1.1.11
     RESI:2 of arg,2 of glu or asp,ser or thr
     '''
     cmd.select('temp0', 'n. ca')
@@ -8406,7 +8446,7 @@ def Jab_1sry_00(d):
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom9'%(d*9.645500))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom9'%(d*10.817100))
     cmd.select('jessatom8', 'jessatom8 w. %s of jessatom9'%(d*1.555400))
-    cmd.select('Jab_1sry_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9')
+    cmd.select('Jab_1sry_6_1_1_11', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -8475,12 +8515,13 @@ def Jab_1sry_00(d):
     cmd.delete('temp55')
     cmd.delete('temp56')
     cmd.delete('temp57')
-    return {'motif':'Jab_1sry_00'}
+    return {'motif':'Jab_1sry_6_1_1_11'}
 
-def Jab_1djq_00(d):
+def Jab_1djq_1_5_99_7(d):
     '''
-    NAME:Jab_1djq_00_Trimethylamine_Dehydrogenase
-    FUNC:Jab_1djq_00
+    FUNC:Jab_1djq_1_5_99_7
+    PDB:1djq
+    EC:1.5.99.7
     RESI:tyr,his,asp or glu
     '''
     cmd.select('temp0', 'n. ca')
@@ -8529,7 +8570,7 @@ def Jab_1djq_00(d):
     cmd.select('jessatom2', 'jessatom2 w. %s of jessatom5'%(d*7.383100))
     cmd.select('jessatom3', 'jessatom3 w. %s of jessatom5'%(d*7.241700))
     cmd.select('jessatom4', 'jessatom4 w. %s of jessatom5'%(d*1.555400))
-    cmd.select('Jab_1djq_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
+    cmd.select('Jab_1djq_1_5_99_7', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -8561,12 +8602,13 @@ def Jab_1djq_00(d):
     cmd.delete('temp22')
     cmd.delete('temp23')
     cmd.delete('temp24')
-    return {'motif':'Jab_1djq_00'}
+    return {'motif':'Jab_1djq_1_5_99_7'}
 
-def Jab_5csm_00(d):
+def Jab_5csm_5_4_99_5(d):
     '''
-    NAME:Jab_5csm_00_Chorismate_Mutase
-    FUNC:Jab_5csm_00
+    FUNC:Jab_5csm_5_4_99_5
+    PDB:5csm
+    EC:5.4.99.5
     RESI:2 of arg,lys,glu or asp
     '''
     cmd.select('temp0', 'n. ca')
@@ -8644,7 +8686,7 @@ def Jab_5csm_00(d):
     cmd.select('jessatom4', 'jessatom4 w. %s of jessatom7'%(d*9.443500))
     cmd.select('jessatom5', 'jessatom5 w. %s of jessatom7'%(d*8.241600))
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom7'%(d*1.545300))
-    cmd.select('Jab_5csm_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7')
+    cmd.select('Jab_5csm_5_4_99_5', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -8692,12 +8734,13 @@ def Jab_5csm_00(d):
     cmd.delete('temp36')
     cmd.delete('temp37')
     cmd.delete('temp38')
-    return {'motif':'Jab_5csm_00'}
+    return {'motif':'Jab_5csm_5_4_99_5'}
 
-def Jab_1hdq_01(d):
+def Jab_1hdq_3_4_17_1(d):
     '''
-    NAME:Jab_1hdq_01_Carboxypeptidase_A
-    FUNC:Jab_1hdq_01
+    FUNC:Jab_1hdq_3_4_17_1
+    PDB:1hdq
+    EC:3.4.17.1
     RESI:2 of arg,glu or asp
     '''
     cmd.select('temp0', 'n. ca')
@@ -8745,7 +8788,7 @@ def Jab_1hdq_01(d):
     cmd.select('jessatom2', 'jessatom2 w. %s of jessatom5'%(d*14.877300))
     cmd.select('jessatom3', 'jessatom3 w. %s of jessatom5'%(d*13.837000))
     cmd.select('jessatom4', 'jessatom4 w. %s of jessatom5'%(d*1.545300))
-    cmd.select('Jab_1hdq_01', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
+    cmd.select('Jab_1hdq_3_4_17_1', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -8776,12 +8819,13 @@ def Jab_1hdq_01(d):
     cmd.delete('temp21')
     cmd.delete('temp22')
     cmd.delete('temp23')
-    return {'motif':'Jab_1hdq_01'}
+    return {'motif':'Jab_1hdq_3_4_17_1'}
 
-def Jab_12as_00(d):
+def Jab_12as_6_3_1_1(d):
     '''
-    NAME:Jab_12as_00_Aaparagine_Synthetase
-    FUNC:Jab_12as_00
+    FUNC:Jab_12as_6_3_1_1
+    PDB:12as
+    EC:6.3.1.1
     RESI:asp or glu,arg,gln or asn
     '''
     cmd.select('temp0', 'n. ca')
@@ -8830,7 +8874,7 @@ def Jab_12as_00(d):
     cmd.select('jessatom2', 'jessatom2 w. %s of jessatom5'%(d*12.140200))
     cmd.select('jessatom3', 'jessatom3 w. %s of jessatom5'%(d*11.190800))
     cmd.select('jessatom4', 'jessatom4 w. %s of jessatom5'%(d*1.545300))
-    cmd.select('Jab_12as_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
+    cmd.select('Jab_12as_6_3_1_1', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -8862,12 +8906,13 @@ def Jab_12as_00(d):
     cmd.delete('temp22')
     cmd.delete('temp23')
     cmd.delete('temp24')
-    return {'motif':'Jab_12as_00'}
+    return {'motif':'Jab_12as_6_3_1_1'}
 
-def Jab_1nwc_00(d):
+def Jab_1nwc_1_2_1_11(d):
     '''
-    NAME:Jab_1nwc_00_Aspartate_Semialdehyde_Dehydrogenase
-    FUNC:Jab_1nwc_00
+    FUNC:Jab_1nwc_1_2_1_11
+    PDB:1nwc
+    EC:1.2.1.11
     RESI:cys,gln or asn,his
     '''
     cmd.select('temp0', 'n. ca')
@@ -8916,7 +8961,7 @@ def Jab_1nwc_00(d):
     cmd.select('jessatom2', 'jessatom2 w. %s of jessatom5'%(d*4.595500))
     cmd.select('jessatom3', 'jessatom3 w. %s of jessatom5'%(d*4.949000))
     cmd.select('jessatom4', 'jessatom4 w. %s of jessatom5'%(d*1.545300))
-    cmd.select('Jab_1nwc_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
+    cmd.select('Jab_1nwc_1_2_1_11', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -8948,12 +8993,13 @@ def Jab_1nwc_00(d):
     cmd.delete('temp22')
     cmd.delete('temp23')
     cmd.delete('temp24')
-    return {'motif':'Jab_1nwc_00'}
+    return {'motif':'Jab_1nwc_1_2_1_11'}
 
-def Jab_1bcr_00(d):
+def Jab_1bcr_3_4_16_6(d):
     '''
-    NAME:Jab_1bcr_00_Serine_Carboxypeptidase_ii
-    FUNC:Jab_1bcr_00
+    FUNC:Jab_1bcr_3_4_16_6
+    PDB:1bcr
+    EC:3.4.16.6
     RESI:gly,ser or thr,tyr,asp or glu,his
     '''
     cmd.select('temp0', 'n. n')
@@ -9069,7 +9115,7 @@ def Jab_1bcr_00(d):
     cmd.select('jessatom6', 'jessatom6 w. %s of jessatom9'%(d*5.161100))
     cmd.select('jessatom7', 'jessatom7 w. %s of jessatom9'%(d*4.272300))
     cmd.select('jessatom8', 'jessatom8 w. %s of jessatom9'%(d*1.515000))
-    cmd.select('Jab_1bcr_00', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9')
+    cmd.select('Jab_1bcr_3_4_16_6', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9')
     cmd.delete('jessatom0')
     cmd.delete('jessatom1')
     cmd.delete('jessatom2')
@@ -9138,12 +9184,13 @@ def Jab_1bcr_00(d):
     cmd.delete('temp55')
     cmd.delete('temp56')
     cmd.delete('temp57')
-    return {'motif':'Jab_1bcr_00'}
+    return {'motif':'Jab_1bcr_3_4_16_6'}
 
-def P_1a2f_00(d):
+def P_1a2f_1_11_1_11(d):
     '''
-    NAME:P_1a2f_00_Ascorbate_Peroxidase
-    FUNC:P_1a2f_00
+    FUNC:P_1a2f_1_11_1_11
+    PDB:1a2f
+    EC:1.11.1.11
     RESI:his,asn,arg
     '''
     cmd.select('arg1', 'n. CB&r. arg w. %s of n. CB&r. his'%(d*8.22))
@@ -9528,16 +9575,17 @@ def P_1a2f_00(d):
     cmd.delete('asn50')
     cmd.delete('asn51')
     cmd.delete('asn52')
-    cmd.select('P_1a2f_00', 'arg|his|asn')
+    cmd.select('P_1a2f_1_11_1_11', 'arg|his|asn')
     cmd.delete('arg')
     cmd.delete('his')
     cmd.delete('asn')
-    return {'motif':'P_1a2f_00'}
+    return {'motif':'P_1a2f_1_11_1_11'}
 
-def P_12as_00(d):
+def P_12as_6_3_1_1(d):
     '''
-    NAME:P_12as_00_Asparagine_Synthetase
-    FUNC:P_12as_00
+    FUNC:P_12as_6_3_1_1
+    PDB:12as
+    EC:6.3.1.1
     RESI:asp,gln,arg
     '''
     cmd.select('gln1', 'n. CB&r. gln w. %s of n. CB&r. arg'%(d*11.64))
@@ -10588,16 +10636,17 @@ def P_12as_00(d):
     cmd.delete('asp158')
     cmd.delete('asp159')
     cmd.delete('asp160')
-    cmd.select('P_12as_00', 'gln|arg|asp')
+    cmd.select('P_12as_6_3_1_1', 'gln|arg|asp')
     cmd.delete('gln')
     cmd.delete('arg')
     cmd.delete('asp')
-    return {'motif':'P_12as_00'}
+    return {'motif':'P_12as_6_3_1_1'}
 
-def P_1nwc_00(d):
+def P_1nwc_1_2_1_11(d):
     '''
-    NAME:P_1nwc_00_Aspartate_Semialdehyde_Dehydrogenase
-    FUNC:P_1nwc_00
+    FUNC:P_1nwc_1_2_1_11
+    PDB:1nwc
+    EC:1.2.1.11
     RESI:cys,his,gln
     '''
     cmd.select('cys1', 'n. CB&r. cys w. %s of n. CB&r. gln'%(d*10.02))
@@ -10811,16 +10860,17 @@ def P_1nwc_00(d):
     cmd.delete('his40')
     cmd.delete('his41')
     cmd.delete('his42')
-    cmd.select('P_1nwc_00', 'cys|gln|his')
+    cmd.select('P_1nwc_1_2_1_11', 'cys|gln|his')
     cmd.delete('cys')
     cmd.delete('gln')
     cmd.delete('his')
-    return {'motif':'P_1nwc_00'}
+    return {'motif':'P_1nwc_1_2_1_11'}
 
-def P_1aur_00(d):
+def P_1aur_3_1_1_1(d):
     '''
-    NAME:P_1aur_00_Carboxylesterase
-    FUNC:P_1aur_00
+    FUNC:P_1aur_3_1_1_1
+    PDB:1aur
+    EC:3.1.1.1
     RESI:his,asp,leu,gln,ser
     '''
     cmd.select('leu1', 'n. CB&r. leu w. %s of n. CB&r. ser'%(d*8.39))
@@ -12118,18 +12168,19 @@ def P_1aur_00(d):
     cmd.delete('his136')
     cmd.delete('his137')
     cmd.delete('his138')
-    cmd.select('P_1aur_00', 'leu|ser|gln|asp|his')
+    cmd.select('P_1aur_3_1_1_1', 'leu|ser|gln|asp|his')
     cmd.delete('leu')
     cmd.delete('ser')
     cmd.delete('gln')
     cmd.delete('asp')
     cmd.delete('his')
-    return {'motif':'P_1aur_00'}
+    return {'motif':'P_1aur_3_1_1_1'}
 
-def P_1n7n_00(d):
+def P_1n7n_4_2_2_5(d):
     '''
-    NAME:P_1n7n_00_Chondroitinase
-    FUNC:P_1n7n_00
+    FUNC:P_1n7n_4_2_2_5
+    PDB:1n7n
+    EC:4.2.2.5
     RESI:his,tyr,arg
     '''
     cmd.select('his1', 'n. CB&r. his w. %s of n. CB&r. tyr'%(d*9.10))
@@ -12723,16 +12774,17 @@ def P_1n7n_00(d):
     cmd.delete('arg96')
     cmd.delete('arg97')
     cmd.delete('arg98')
-    cmd.select('P_1n7n_00', 'his|tyr|arg')
+    cmd.select('P_1n7n_4_2_2_5', 'his|tyr|arg')
     cmd.delete('his')
     cmd.delete('tyr')
     cmd.delete('arg')
-    return {'motif':'P_1n7n_00'}
+    return {'motif':'P_1n7n_4_2_2_5'}
 
-def P_5csm_00(d):
+def P_5csm_5_4_99_5(d):
     '''
-    NAME:P_5csm_00_Chorismate_Mutase
-    FUNC:P_5csm_00
+    FUNC:P_5csm_5_4_99_5
+    PDB:5csm
+    EC:5.4.99.5
     RESI:lys,glu,2 of arg
     '''
     cmd.select('arg1', 'n. CB&r. arg w. %s of n. CB&r. arg'%(d*12.66))
@@ -15153,17 +15205,18 @@ def P_5csm_00(d):
     cmd.delete('glu277')
     cmd.delete('glu278')
     cmd.delete('glu279')
-    cmd.select('P_5csm_00', 'arg|argi|lys|glu')
+    cmd.select('P_5csm_5_4_99_5', 'arg|argi|lys|glu')
     cmd.delete('arg')
     cmd.delete('argi')
     cmd.delete('lys')
     cmd.delete('glu')
-    return {'motif':'P_5csm_00'}
+    return {'motif':'P_5csm_5_4_99_5'}
 
-def P_1pyd_00(d):
+def P_1pyd_4_1_1_1(d):
     '''
-    NAME:P_1pyd_00_Pyruvate_Decarboxylase
-    FUNC:P_1pyd_00
+    FUNC:P_1pyd_4_1_1_1
+    PDB:1pyd
+    EC:4.1.1.1
     RESI:2 of his,glu,asp
     '''
     cmd.select('his1', 'n. CB&r. his w. %s of n. CB&r. his'%(d*6.35))
@@ -17237,17 +17290,18 @@ def P_1pyd_00(d):
     cmd.delete('glu250')
     cmd.delete('glu251')
     cmd.delete('glu252')
-    cmd.select('P_1pyd_00', 'his|hisi|asp|glu')
+    cmd.select('P_1pyd_4_1_1_1', 'his|hisi|asp|glu')
     cmd.delete('his')
     cmd.delete('hisi')
     cmd.delete('asp')
     cmd.delete('glu')
-    return {'motif':'P_1pyd_00'}
+    return {'motif':'P_1pyd_4_1_1_1'}
 
-def P_1h1y_00(d):
+def P_1h1y_5_1_3_1(d):
     '''
-    NAME:P_1h1y_00_Ribulose-Phosphate_Epimerase
-    FUNC:P_1h1y_00
+    FUNC:P_1h1y_5_1_3_1
+    PDB:1h1y
+    EC:5.1.3.1
     RESI:2 of his,2 of asp
     '''
     cmd.select('his1', 'n. CB&r. his w. %s of n. CB&r. asp'%(d*8.80))
@@ -19208,17 +19262,18 @@ def P_1h1y_00(d):
     cmd.delete('aspi222')
     cmd.delete('aspi223')
     cmd.delete('aspi224')
-    cmd.select('P_1h1y_00', 'his|asp|hisi|aspi')
+    cmd.select('P_1h1y_5_1_3_1', 'his|asp|hisi|aspi')
     cmd.delete('his')
     cmd.delete('asp')
     cmd.delete('hisi')
     cmd.delete('aspi')
-    return {'motif':'P_1h1y_00'}
+    return {'motif':'P_1h1y_5_1_3_1'}
 
-def P_1sry_00(d):
+def P_1sry_6_1_1_11(d):
     '''
-    NAME:P_1sry_00_Seryl-tRNA_Synthetase
-    FUNC:P_1sry_00
+    FUNC:P_1sry_6_1_1_11
+    PDB:1sry
+    EC:6.1.1.11
     RESI:ser,asp,glu,2 of arg
     '''
     cmd.select('arg1', 'n. CB&r. arg w. %s of n. CB&r. glu'%(d*7.03))
@@ -22459,18 +22514,19 @@ def P_1sry_00(d):
     cmd.delete('argi372')
     cmd.delete('argi373')
     cmd.delete('argi374')
-    cmd.select('P_1sry_00', 'arg|glu|ser|asp|argi')
+    cmd.select('P_1sry_6_1_1_11', 'arg|glu|ser|asp|argi')
     cmd.delete('arg')
     cmd.delete('glu')
     cmd.delete('ser')
     cmd.delete('asp')
     cmd.delete('argi')
-    return {'motif':'P_1sry_00'}
+    return {'motif':'P_1sry_6_1_1_11'}
 
-def P_1djq_00(d):
+def P_1djq_1_5_99_7(d):
     '''
-    NAME:P_1djq_00_Trimethylamine_Dehydrogenase
-    FUNC:P_1djq_00
+    FUNC:P_1djq_1_5_99_7
+    PDB:1djq
+    EC:1.5.99.7
     RESI:asp,his,tyr
     '''
     cmd.select('tyr1', 'n. CB&r. tyr w. %s of n. CB&r. his'%(d*10.09))
@@ -23347,16 +23403,17 @@ def P_1djq_00(d):
     cmd.delete('asp142')
     cmd.delete('asp143')
     cmd.delete('asp144')
-    cmd.select('P_1djq_00', 'tyr|his|asp')
+    cmd.select('P_1djq_1_5_99_7', 'tyr|his|asp')
     cmd.delete('tyr')
     cmd.delete('his')
     cmd.delete('asp')
-    return {'motif':'P_1djq_00'}
+    return {'motif':'P_1djq_1_5_99_7'}
 
-def Pfa_1rab_00(d):
+def Pfa_1rab_2_1_3_2(d):
     '''
-    NAME:Pfa_1rab_00_Aspartate_Transcarbamoylase
-    FUNC:Pfa_1rab_00
+    FUNC:Pfa_1rab_2_1_3_2
+    PDB:1rab
+    EC:2.1.3.2
     RESI:his,thr,2 of arg
     '''
     cmd.select('arg1', 'n. CB&r. arg w. %s of n. CB&r. thr'%(d*7.28))
@@ -25644,17 +25701,18 @@ def Pfa_1rab_00(d):
     cmd.delete('his288')
     cmd.delete('his289')
     cmd.delete('his290')
-    cmd.select('Pfa_1rab_00', 'arg|thr|argi|his')
+    cmd.select('Pfa_1rab_2_1_3_2', 'arg|thr|argi|his')
     cmd.delete('arg')
     cmd.delete('thr')
     cmd.delete('argi')
     cmd.delete('his')
-    return {'motif':'Pfa_1rab_00'}
+    return {'motif':'Pfa_1rab_2_1_3_2'}
 
-def Pfa_1jz6_00(d):
+def Pfa_1jz6_3_2_1_23(d):
     '''
-    NAME:Pfa_1jz6_00_beta-Glucuronidase
-    FUNC:Pfa_1jz6_00
+    FUNC:Pfa_1jz6_3_2_1_23
+    PDB:1jz6
+    EC:3.2.1.23
     RESI:2 of glu,tyr
     '''
     cmd.select('tyr1', 'n. CB&r. tyr w. %s of n. CB&r. glu'%(d*7.91))
@@ -26858,16 +26916,17 @@ def Pfa_1jz6_00(d):
     cmd.delete('glui187')
     cmd.delete('glui188')
     cmd.delete('glui189')
-    cmd.select('Pfa_1jz6_00', 'tyr|glu|glui')
+    cmd.select('Pfa_1jz6_3_2_1_23', 'tyr|glu|glui')
     cmd.delete('tyr')
     cmd.delete('glu')
     cmd.delete('glui')
-    return {'motif':'Pfa_1jz6_00'}
+    return {'motif':'Pfa_1jz6_3_2_1_23'}
 
-def Pfa_1pzp_00(d):
+def Pfa_1pzp_3_5_2_6(d):
     '''
-    NAME:Pfa_1pzp_00_beta-Lactamase
-    FUNC:Pfa_1pzp_00
+    FUNC:Pfa_1pzp_3_5_2_6
+    PDB:1pzp
+    EC:3.5.2.6
     RESI:glu,2 of ser,lys
     '''
     cmd.select('ser1', 'n. CB&r. ser w. %s of n. CB&r. lys'%(d*7.30))
@@ -27150,17 +27209,18 @@ def Pfa_1pzp_00(d):
     cmd.delete('glu43')
     cmd.delete('glu44')
     cmd.delete('glu45')
-    cmd.select('Pfa_1pzp_00', 'ser|lys|seri|glu')
+    cmd.select('Pfa_1pzp_3_5_2_6', 'ser|lys|seri|glu')
     cmd.delete('ser')
     cmd.delete('lys')
     cmd.delete('seri')
     cmd.delete('glu')
-    return {'motif':'Pfa_1pzp_00'}
+    return {'motif':'Pfa_1pzp_3_5_2_6'}
 
-def Pfa_2ctb_00(d):
+def Pfa_2ctb_3_4_17_1(d):
     '''
-    NAME:Pfa_2ctb_00_Carboxypeptidase-A
-    FUNC:Pfa_2ctb_00
+    FUNC:Pfa_2ctb_3_4_17_1
+    PDB:2ctb
+    EC:3.4.17.1
     RESI:glu,2 of arg
     '''
     cmd.select('arg1', 'n. CB&r. arg w. %s of n. CB&r. arg'%(d*5.50))
@@ -28453,16 +28513,17 @@ def Pfa_2ctb_00(d):
     cmd.delete('glu196')
     cmd.delete('glu197')
     cmd.delete('glu198')
-    cmd.select('Pfa_2ctb_00', 'arg|argi|glu')
+    cmd.select('Pfa_2ctb_3_4_17_1', 'arg|argi|glu')
     cmd.delete('arg')
     cmd.delete('argi')
     cmd.delete('glu')
-    return {'motif':'Pfa_2ctb_00'}
+    return {'motif':'Pfa_2ctb_3_4_17_1'}
 
-def Pfa_1csi_00(d):
+def Pfa_1csi_2_3_3_1(d):
     '''
-    NAME:Pfa_1csi_00_Citrate_Synthase
-    FUNC:Pfa_1csi_00
+    FUNC:Pfa_1csi_2_3_3_1
+    PDB:1csi
+    EC:2.3.3.1
     RESI:2 of his,asp
     '''
     cmd.select('his1', 'n. CB&r. his w. %s of n. CB&r. his'%(d*13.29))
@@ -29517,16 +29578,17 @@ def Pfa_1csi_00(d):
     cmd.delete('asp158')
     cmd.delete('asp159')
     cmd.delete('asp160')
-    cmd.select('Pfa_1csi_00', 'his|hisi|asp')
+    cmd.select('Pfa_1csi_2_3_3_1', 'his|hisi|asp')
     cmd.delete('his')
     cmd.delete('hisi')
     cmd.delete('asp')
-    return {'motif':'Pfa_1csi_00'}
+    return {'motif':'Pfa_1csi_2_3_3_1'}
 
-def Pfa_1que_00(d):
+def Pfa_1que_1_18_1_2(d):
     '''
-    NAME:Pfa_1que_00_Ferredoxin_Reductase
-    FUNC:Pfa_1que_00
+    FUNC:Pfa_1que_1_18_1_2
+    PDB:1que
+    EC:1.18.1.2
     RESI:cys,ser,glu
     '''
     cmd.select('ser1', 'n. CB&r. ser w. %s of n. CB&r. cys'%(d*8.91))
@@ -29628,16 +29690,17 @@ def Pfa_1que_00(d):
     cmd.delete('glu18')
     cmd.delete('glu19')
     cmd.delete('glu20')
-    cmd.select('Pfa_1que_00', 'ser|cys|glu')
+    cmd.select('Pfa_1que_1_18_1_2', 'ser|cys|glu')
     cmd.delete('ser')
     cmd.delete('cys')
     cmd.delete('glu')
-    return {'motif':'Pfa_1que_00'}
+    return {'motif':'Pfa_1que_1_18_1_2'}
 
-def Pfa_1ga8_00(d):
+def Pfa_1ga8_2_4_1_44(d):
     '''
-    NAME:Pfa_1ga8_00_Galactosyltransferase
-    FUNC:Pfa_1ga8_00
+    FUNC:Pfa_1ga8_2_4_1_44
+    PDB:1ga8
+    EC:2.4.1.44
     RESI:asp,asn,gln
     '''
     cmd.select('asp1', 'n. CB&r. asp w. %s of n. CB&r. asn'%(d*6.05))
@@ -29867,16 +29930,17 @@ def Pfa_1ga8_00(d):
     cmd.delete('gln38')
     cmd.delete('gln39')
     cmd.delete('gln40')
-    cmd.select('Pfa_1ga8_00', 'asp|asn|gln')
+    cmd.select('Pfa_1ga8_2_4_1_44', 'asp|asn|gln')
     cmd.delete('asp')
     cmd.delete('asn')
     cmd.delete('gln')
-    return {'motif':'Pfa_1ga8_00'}
+    return {'motif':'Pfa_1ga8_2_4_1_44'}
 
-def Pfa_2had_00(d):
+def Pfa_2had_3_8_1_5(d):
     '''
-    NAME:Pfa_2had_00_Haloalkane_Dehydrogenase
-    FUNC:Pfa_2had_00
+    FUNC:Pfa_2had_3_8_1_5
+    PDB:2had
+    EC:3.8.1.5
     RESI:his,2 of asp
     '''
     cmd.select('asp1', 'n. CB&r. asp w. %s of n. CB&r. asp'%(d*11.20))
@@ -30785,16 +30849,17 @@ def Pfa_2had_00(d):
     cmd.delete('his158')
     cmd.delete('his159')
     cmd.delete('his160')
-    cmd.select('Pfa_2had_00', 'asp|aspi|his')
+    cmd.select('Pfa_2had_3_8_1_5', 'asp|aspi|his')
     cmd.delete('asp')
     cmd.delete('aspi')
     cmd.delete('his')
-    return {'motif':'Pfa_2had_00'}
+    return {'motif':'Pfa_2had_3_8_1_5'}
 
-def Pfa_1gk2_00(d):
+def Pfa_1gk2_4_3_1_3(d):
     '''
-    NAME:Pfa_1gk2_00_Histidine_Ammonia_Lyase
-    FUNC:Pfa_1gk2_00
+    FUNC:Pfa_1gk2_4_3_1_3
+    PDB:1gk2
+    EC:4.3.1.3
     RESI:gly,glu,ser,tyr,ala
     '''
     cmd.select('ala1', 'n. C&r. ala w. %s of n. CB&r. ser'%(d*4.97))
@@ -31385,18 +31450,19 @@ def Pfa_1gk2_00(d):
     cmd.delete('glu73')
     cmd.delete('glu74')
     cmd.delete('glu75')
-    cmd.select('Pfa_1gk2_00', 'ala|ser|gly|tyr|glu')
+    cmd.select('Pfa_1gk2_4_3_1_3', 'ala|ser|gly|tyr|glu')
     cmd.delete('ala')
     cmd.delete('ser')
     cmd.delete('gly')
     cmd.delete('tyr')
     cmd.delete('glu')
-    return {'motif':'Pfa_1gk2_00'}
+    return {'motif':'Pfa_1gk2_4_3_1_3'}
 
-def Pfa_1j96_00(d):
+def Pfa_1j96_1_3_1_20(d):
     '''
-    NAME:Pfa_1j96_00_Hydroxysteroid_Dehydrogenase
-    FUNC:Pfa_1j96_00
+    FUNC:Pfa_1j96_1_3_1_20
+    PDB:1j96
+    EC:1.3.1.20
     RESI:his,asp,tyr,lys
     '''
     cmd.select('asp1', 'n. CB&r. asp w. %s of n. CB&r. tyr'%(d*11.16))
@@ -32185,17 +32251,18 @@ def Pfa_1j96_00(d):
     cmd.delete('his100')
     cmd.delete('his101')
     cmd.delete('his102')
-    cmd.select('Pfa_1j96_00', 'asp|tyr|lys|his')
+    cmd.select('Pfa_1j96_1_3_1_20', 'asp|tyr|lys|his')
     cmd.delete('asp')
     cmd.delete('tyr')
     cmd.delete('lys')
     cmd.delete('his')
-    return {'motif':'Pfa_1j96_00'}
+    return {'motif':'Pfa_1j96_1_3_1_20'}
 
-def Pfa_1pfk_00(d):
+def Pfa_1pfk_2_7_1_11(d):
     '''
-    NAME:Pfa_1pfk_00_Phosphofructokinase
-    FUNC:Pfa_1pfk_00
+    FUNC:Pfa_1pfk_2_7_1_11
+    PDB:1pfk
+    EC:2.7.1.11
     RESI:gly,asp,thr,2 of arg
     '''
     cmd.select('gly1', 'n. O&r. gly w. %s of n. CB&r. arg'%(d*12.39))
@@ -34846,18 +34913,19 @@ def Pfa_1pfk_00(d):
     cmd.delete('argi328')
     cmd.delete('argi329')
     cmd.delete('argi330')
-    cmd.select('Pfa_1pfk_00', 'gly|arg|thr|asp|argi')
+    cmd.select('Pfa_1pfk_2_7_1_11', 'gly|arg|thr|asp|argi')
     cmd.delete('gly')
     cmd.delete('arg')
     cmd.delete('thr')
     cmd.delete('asp')
     cmd.delete('argi')
-    return {'motif':'Pfa_1pfk_00'}
+    return {'motif':'Pfa_1pfk_2_7_1_11'}
 
-def Pfa_1kuv_00(d):
+def Pfa_1kuv_2_3_1_87(d):
     '''
-    NAME:Pfa_1kuv_00_Serotonin_N-Acetyltransferase
-    FUNC:Pfa_1kuv_00
+    FUNC:Pfa_1kuv_2_3_1_87
+    PDB:1kuv
+    EC:2.3.1.87
     RESI:his,ser,tyr,2 of leu
     '''
     cmd.select('ser1', 'n. CB&r. ser w. %s of n. CB&r. leu'%(d*8.54))
@@ -36462,18 +36530,19 @@ def Pfa_1kuv_00(d):
     cmd.delete('tyr190')
     cmd.delete('tyr191')
     cmd.delete('tyr192')
-    cmd.select('Pfa_1kuv_00', 'ser|leu|his|leui|tyr')
+    cmd.select('Pfa_1kuv_2_3_1_87', 'ser|leu|his|leui|tyr')
     cmd.delete('ser')
     cmd.delete('leu')
     cmd.delete('his')
     cmd.delete('leui')
     cmd.delete('tyr')
-    return {'motif':'Pfa_1kuv_00'}
+    return {'motif':'Pfa_1kuv_2_3_1_87'}
 
-def Pab_1jz7_00(d):
+def Pab_1jz7_3_2_1_31(d):
     '''
-    NAME:Pab_1jz7_00_beta-Glucuronidase
-    FUNC:Pab_1jz7_00
+    FUNC:Pab_1jz7_3_2_1_31
+    PDB:1jz7
+    EC:3.2.1.31
     RESI:2 of glu,tyr
     '''
     cmd.select('tyr1', 'n. CB&r. tyr w. %s of n. CB&r. glu'%(d*8.09))
@@ -37677,16 +37746,17 @@ def Pab_1jz7_00(d):
     cmd.delete('glui187')
     cmd.delete('glui188')
     cmd.delete('glui189')
-    cmd.select('Pab_1jz7_00', 'tyr|glu|glui')
+    cmd.select('Pab_1jz7_3_2_1_31', 'tyr|glu|glui')
     cmd.delete('tyr')
     cmd.delete('glu')
     cmd.delete('glui')
-    return {'motif':'Pab_1jz7_00'}
+    return {'motif':'Pab_1jz7_3_2_1_31'}
 
-def Pab_1nyy_00(d):
+def Pab_1nyy_3_5_2_6(d):
     '''
-    NAME:Pab_1nyy_00_beta_Lactamase
-    FUNC:Pab_1nyy_00
+    FUNC:Pab_1nyy_3_5_2_6
+    PDB:1nyy
+    EC:3.5.2.6
     RESI:glu,2 of ser,lys
     '''
     cmd.select('ser1', 'n. CB&r. ser w. %s of n. CB&r. lys'%(d*7.40))
@@ -37969,17 +38039,18 @@ def Pab_1nyy_00(d):
     cmd.delete('glu43')
     cmd.delete('glu44')
     cmd.delete('glu45')
-    cmd.select('Pab_1nyy_00', 'ser|lys|seri|glu')
+    cmd.select('Pab_1nyy_3_5_2_6', 'ser|lys|seri|glu')
     cmd.delete('ser')
     cmd.delete('lys')
     cmd.delete('seri')
     cmd.delete('glu')
-    return {'motif':'Pab_1nyy_00'}
+    return {'motif':'Pab_1nyy_3_5_2_6'}
 
-def Pab_1hdq_00(d):
+def Pab_1hdq_3_4_17_1(d):
     '''
-    NAME:Pab_1hdq_00_Carboxypeptidase-A
-    FUNC:Pab_1hdq_00
+    FUNC:Pab_1hdq_3_4_17_1
+    PDB:1hdq
+    EC:3.4.17.1
     RESI:glu,2 of arg
     '''
     cmd.select('arg1', 'n. CB&r. arg w. %s of n. CB&r. arg'%(d*5.51))
@@ -39272,16 +39343,17 @@ def Pab_1hdq_00(d):
     cmd.delete('glu196')
     cmd.delete('glu197')
     cmd.delete('glu198')
-    cmd.select('Pab_1hdq_00', 'arg|argi|glu')
+    cmd.select('Pab_1hdq_3_4_17_1', 'arg|argi|glu')
     cmd.delete('arg')
     cmd.delete('argi')
     cmd.delete('glu')
-    return {'motif':'Pab_1hdq_00'}
+    return {'motif':'Pab_1hdq_3_4_17_1'}
 
-def Pab_1csc_00(d):
+def Pab_1csc_4_1_3_7(d):
     '''
-    NAME:Pab_1csc_00_Citrate_Synthase
-    FUNC:Pab_1csc_00
+    FUNC:Pab_1csc_4_1_3_7
+    PDB:1csc
+    EC:4.1.3.7
     RESI:2 of his,asp
     '''
     cmd.select('his1', 'n. CB&r. his w. %s of n. CB&r. his'%(d*13.13))
@@ -40336,16 +40408,17 @@ def Pab_1csc_00(d):
     cmd.delete('asp158')
     cmd.delete('asp159')
     cmd.delete('asp160')
-    cmd.select('Pab_1csc_00', 'his|hisi|asp')
+    cmd.select('Pab_1csc_4_1_3_7', 'his|hisi|asp')
     cmd.delete('his')
     cmd.delete('hisi')
     cmd.delete('asp')
-    return {'motif':'Pab_1csc_00'}
+    return {'motif':'Pab_1csc_4_1_3_7'}
 
-def Pab_1qgy_00(d):
+def Pab_1qgy_1_18_1_2(d):
     '''
-    NAME:Pab_1qgy_00_Ferredoxin_Reductase
-    FUNC:Pab_1qgy_00
+    FUNC:Pab_1qgy_1_18_1_2
+    PDB:1qgy
+    EC:1.18.1.2
     RESI:cys,ser,glu
     '''
     cmd.select('ser1', 'n. CB&r. ser w. %s of n. CB&r. cys'%(d*8.81))
@@ -40447,16 +40520,17 @@ def Pab_1qgy_00(d):
     cmd.delete('glu18')
     cmd.delete('glu19')
     cmd.delete('glu20')
-    cmd.select('Pab_1qgy_00', 'ser|cys|glu')
+    cmd.select('Pab_1qgy_1_18_1_2', 'ser|cys|glu')
     cmd.delete('ser')
     cmd.delete('cys')
     cmd.delete('glu')
-    return {'motif':'Pab_1qgy_00'}
+    return {'motif':'Pab_1qgy_1_18_1_2'}
 
-def Pab_1g9r_00(d):
+def Pab_1g9r_2_4_1_44(d):
     '''
-    NAME:Pab_1g9r_00_Galactosyltransferase
-    FUNC:Pab_1g9r_00
+    FUNC:Pab_1g9r_2_4_1_44
+    PDB:1g9r
+    EC:2.4.1.44
     RESI:asp,asn,gln
     '''
     cmd.select('asp1', 'n. CB&r. asp w. %s of n. CB&r. asn'%(d*5.93))
@@ -40686,16 +40760,17 @@ def Pab_1g9r_00(d):
     cmd.delete('gln38')
     cmd.delete('gln39')
     cmd.delete('gln40')
-    cmd.select('Pab_1g9r_00', 'asp|asn|gln')
+    cmd.select('Pab_1g9r_2_4_1_44', 'asp|asn|gln')
     cmd.delete('asp')
     cmd.delete('asn')
     cmd.delete('gln')
-    return {'motif':'Pab_1g9r_00'}
+    return {'motif':'Pab_1g9r_2_4_1_44'}
 
-def Pab_1edd_00(d):
+def Pab_1edd_3_8_1_5(d):
     '''
-    NAME:Pab_1edd_00_Haloalkane_Dehydrogenase
-    FUNC:Pab_1edd_00
+    FUNC:Pab_1edd_3_8_1_5
+    PDB:1edd
+    EC:3.8.1.5
     RESI:his,2 of asp
     '''
     cmd.select('asp1', 'n. CB&r. asp w. %s of n. CB&r. asp'%(d*11.62))
@@ -40957,16 +41032,17 @@ def Pab_1edd_00(d):
     cmd.delete('his46')
     cmd.delete('his47')
     cmd.delete('his48')
-    cmd.select('Pab_1edd_00', 'asp|aspi|his')
+    cmd.select('Pab_1edd_3_8_1_5', 'asp|aspi|his')
     cmd.delete('asp')
     cmd.delete('aspi')
     cmd.delete('his')
-    return {'motif':'Pab_1edd_00'}
+    return {'motif':'Pab_1edd_3_8_1_5'}
 
-def Pab_1b8f_00(d):
+def Pab_1b8f_4_3_1_3(d):
     '''
-    NAME:Pab_1b8f_00_Histidine_Ammonia_Lyase
-    FUNC:Pab_1b8f_00
+    FUNC:Pab_1b8f_4_3_1_3
+    PDB:1b8f
+    EC:4.3.1.3
     RESI:gly,glu,ser,tyr,ala
     '''
     cmd.select('ala1', 'n. C&r. ala w. %s of n. CB&r. ser'%(d*5.51))
@@ -41485,18 +41561,19 @@ def Pab_1b8f_00(d):
     cmd.delete('glu68')
     cmd.delete('glu69')
     cmd.delete('glu70')
-    cmd.select('Pab_1b8f_00', 'ala|ser|gly|tyr|glu')
+    cmd.select('Pab_1b8f_4_3_1_3', 'ala|ser|gly|tyr|glu')
     cmd.delete('ala')
     cmd.delete('ser')
     cmd.delete('gly')
     cmd.delete('tyr')
     cmd.delete('glu')
-    return {'motif':'Pab_1b8f_00'}
+    return {'motif':'Pab_1b8f_4_3_1_3'}
 
-def Pab_1ah3_00(d):
+def Pab_1ah3_1_1_1_21(d):
     '''
-    NAME:Pab_1ah3_00_Hydroxysteroid_Dehydrogenase
-    FUNC:Pab_1ah3_00
+    FUNC:Pab_1ah3_1_1_1_21
+    PDB:1ah3
+    EC:1.1.1.21
     RESI:his,asp,tyr,lys
     '''
     cmd.select('asp1', 'n. CB&r. asp w. %s of n. CB&r. tyr'%(d*11.25))
@@ -42285,17 +42362,18 @@ def Pab_1ah3_00(d):
     cmd.delete('his100')
     cmd.delete('his101')
     cmd.delete('his102')
-    cmd.select('Pab_1ah3_00', 'asp|tyr|lys|his')
+    cmd.select('Pab_1ah3_1_1_1_21', 'asp|tyr|lys|his')
     cmd.delete('asp')
     cmd.delete('tyr')
     cmd.delete('lys')
     cmd.delete('his')
-    return {'motif':'Pab_1ah3_00'}
+    return {'motif':'Pab_1ah3_1_1_1_21'}
 
-def Pab_4pfk_00(d):
+def Pab_4pfk_2_7_1_11(d):
     '''
-    NAME:Pab_4pfk_00_Phosphofructokinase
-    FUNC:Pab_4pfk_00
+    FUNC:Pab_4pfk_2_7_1_11
+    PDB:4pfk
+    EC:2.7.1.11
     RESI:gly,asp,thr,2 of arg
     '''
     cmd.select('gly1', 'n. O&r. gly w. %s of n. CB&r. arg'%(d*12.74))
@@ -44946,18 +45024,19 @@ def Pab_4pfk_00(d):
     cmd.delete('argi328')
     cmd.delete('argi329')
     cmd.delete('argi330')
-    cmd.select('Pab_4pfk_00', 'gly|arg|thr|asp|argi')
+    cmd.select('Pab_4pfk_2_7_1_11', 'gly|arg|thr|asp|argi')
     cmd.delete('gly')
     cmd.delete('arg')
     cmd.delete('thr')
     cmd.delete('asp')
     cmd.delete('argi')
-    return {'motif':'Pab_4pfk_00'}
+    return {'motif':'Pab_4pfk_2_7_1_11'}
 
-def Pab_1cjw_00(d):
+def Pab_1cjw_2_3_1_87(d):
     '''
-    NAME:Pab_1cjw_00_Serotonin_N-Acetyltransferase
-    FUNC:Pab_1cjw_00
+    FUNC:Pab_1cjw_2_3_1_87
+    PDB:1cjw
+    EC:2.3.1.87
     RESI:his,ser,tyr,2 of leu
     '''
     cmd.select('ser1', 'n. CB&r. ser w. %s of n. CB&r. leu'%(d*8.49))
@@ -46562,10 +46641,11 @@ def Pab_1cjw_00(d):
     cmd.delete('tyr190')
     cmd.delete('tyr191')
     cmd.delete('tyr192')
-    cmd.select('Pab_1cjw_00', 'ser|leu|his|leui|tyr')
+    cmd.select('Pab_1cjw_2_3_1_87', 'ser|leu|his|leui|tyr')
     cmd.delete('ser')
     cmd.delete('leu')
     cmd.delete('his')
     cmd.delete('leui')
     cmd.delete('tyr')
-    return {'motif':'Pab_1cjw_00'}
+    return {'motif':'Pab_1cjw_2_3_1_87'}
+

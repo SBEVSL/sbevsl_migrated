@@ -625,7 +625,7 @@ def makemotif(mode):
     pglob.Tabs['motif_maker']['resnnum'] = {}
     pf = pglob.Tabs['motif_maker']['pf'].get()
     pdb = pglob.Tabs['motif_maker']['pdb'].get()
-    ec = pglob.Tabs['motif_maker']['ec'].get()
+    ecen = pglob.Tabs['motif_maker']['ec'].get()
     resn = {}
     resi = {}
     backbone = {}
@@ -680,6 +680,7 @@ def makemotif(mode):
             if mode == 2:
                 f = open(pglob.pathmaker((name,'.py'),root=askdirectory(initialdir=pglob.HOME)), 'w')
         if 'close' in options:
+            pglob.Tabs['motif_maker']['motif'].append('\n')
             f.write(''.join(pglob.Tabs['motif_maker']['motif']))
             f.close()
         pglob.Tabs['motif_maker']['file'] = f
@@ -705,6 +706,7 @@ def makemotif(mode):
         if len(x) == 0:
             return ''
         try:
+            x = x.lower()
             if len(x) == 3:
                 if x in pglob.AminoList:
                     return addresn(x)
@@ -719,21 +721,23 @@ def makemotif(mode):
     cmd.reinitialize()
     exceptions += fetch(pdb,True)
     pglob.update()
-    try:
-        ectuple = ec.split('.')
-        ec1,ec2,ec3,ec4 = ectuple
-    except ValueError:
-        exceptions += 'Please enter a correct EC number with periods.\n'
-    else:
-        if len(ec1) != 1 or int(ec1) < 1 or int(ec1) > 7:
-            exceptions += 'The first EC number has to be >= 1 and <= 7.\n'
-        if len(ec2) > 2 or len(ec2) < 1:
-            exceptions += 'The second EC number has to be at most two digits.\n'
-        if len(ec3) > 2 or len(ec3) < 1:
-            exceptions += 'The third EC number has to be at most two digits.\n'
-        if len(ec4) > 3 or len(ec4) < 1:
-            exceptions += 'The fourth EC number has to be at most three digits.\n'
-    
+    preecs = ecen.split(',')
+    for preec in preecs:
+        try:
+            eclist = preec.split('.')
+            ec1,ec2,ec3,ec4 = eclist
+        except ValueError:
+            exceptions += 'Please enter a correct EC code with periods.\n'
+        else:
+            if len(ec1) != 1 or int(ec1) < 1 or int(ec1) > 7:
+                exceptions += 'The first number in an EC code has to be >= 1 and <= 7.\n'
+            if len(ec2) > 2 or len(ec2) < 1:
+                exceptions += 'The second number in an EC code has to be at most two digits.\n'
+            if len(ec3) > 2 or len(ec3) < 1:
+                exceptions += 'The third number in an EC code has to be at most two digits.\n'
+            if len(ec4) > 3 or len(ec4) < 1:
+                exceptions += 'The fourth number in an EC code has to be at most three digits.\n'
+    ec = ecen.replace('.','_').replace(',','_').replace(' ','')
     skip = {}
     skip[0] = 0
     for i in range(1,11):
@@ -769,7 +773,7 @@ def makemotif(mode):
         showerror('Error', 'The following errors have occurred:\n'+exceptions)
     else:
         cmd.remove('resn HOH')
-        name = 'P_%s_%s_%s_%s_%s'%(pdb,ec1,ec2,ec3,ec4)
+        name = 'P_%s_%s'%(pdb,ec)
         resnnum = getresnnum()
         
         if write('from pymol import cmd\n',test_ignore=True,open=True) == False:
@@ -949,8 +953,8 @@ def makemotif(mode):
         write("    return {'motif':'%s'}"%(name),test_ignore=True,close=True)
     
         if mode == 0:
-            print '%s Amino Acid Motif Run\n'%(len(resnlist)-1)
+            print '%s Amino Acid Motif `%s` Run\n'%(len(resnlist)-1,name)
         if mode == 1:
-            print '%s Amino Acid Motif Saved To Motifs Folder\n'%(len(resnlist)-1)
+            print '%s Amino Acid Motif `%s` Saved To Motifs Folder\n'%(len(resnlist)-1,name)
         if mode == 2:
-            print '%s Amino Acid Motif Exported\n'%(len(resnlist)-1)
+            print '%s Amino Acid Motif `%s` Exported\n'%(len(resnlist)-1,name)
