@@ -30,7 +30,7 @@ def initialise():
         dblclickcommand=allmotif,
         usehullsize = 1,
         hull_width = 350,
-        hull_height = 400)
+        hull_height = 300)
     pglob.Tabs['motifs']['motifbox'].grid()
     
     # group = Pmw.Group(pglob.Tabs['motifs']['tab'], tag_text='Batch Search')

@@ -20,7 +20,7 @@ def __init__(self):
     '''
     self.menuBar.addmenuitem('Plugin', 'command',
                              'Easy GUI',
-                             label = 'ProMol 3.03',
+                             label = 'ProMol 3.04',
                              command = lambda s = self : promol(s))
     promol(self, 0)
 
@@ -111,3 +111,4 @@ def promol(pymol, user_click=1):
     notebook.setnaturalsize()
     
     pglob.update()
+    
