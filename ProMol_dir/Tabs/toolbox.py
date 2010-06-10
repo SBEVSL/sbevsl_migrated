@@ -1,5 +1,5 @@
 from pymol import cmd
-from Tkinter import *
+import Tkinter as tk
 import Pmw
 from pmg_tk.startup.ProMol_dir import promolglobals as pglob
 from pmg_tk.startup.ProMol_dir.Methods.motif import *

@@ -1,17 +1,17 @@
 from pymol import cmd
 from pymol import stored
+from urllib import urlretrieve
 import Tkinter as tk
 import Pmw
 import linecache
 import random
 import os
-import urllib2
+import tempfile
 import time
 from tkFileDialog import asksaveasfile, askdirectory
 from tkSimpleDialog import askstring
 from tkMessageBox import showinfo, showerror, askyesno
 from pmg_tk.startup.ProMol_dir import promolglobals as pglob
-from pmg_tk.startup.ProMol_dir.Methods import motifcoded as motcod
 from pmg_tk.startup.ProMol_dir.remote_pdb_load import fetch
 
 #print dir(motcod)
@@ -44,7 +44,7 @@ def surfmotifer():
         cmd.hide('cartoon', 'all')
         if 'Adjacent' in objects:
             adjacent = ' and !Adjacent'
-        for motif in motcod.motifs.keys():
+        for motif in pglob.MOTIFS.keys():
             if motif in objects:
                 cmd.color('white', '!%s%s'%(motif,adjacent))
         cpksubstrate()
@@ -156,11 +156,11 @@ def labelmotif():
 def allmotif():
     motif = pglob.Tabs['motifs']['motifbox'].getcurselection()
     for item in motif:
-        tag = item[2:]
+        tag = item.split('-')[1]
     if len(tag) == 0:
         print 'No selection for double click'
-    if tag in motcod.motifs.keys():
-        motcod.MotifCaller(motcod.motifs[tag]['function'])
+    if tag in pglob.MOTIFS.keys():
+        MotifCaller(tag)
 
 #def custom motif dropdown selection
 
@@ -388,25 +388,29 @@ def resetmotif():
     selBD.set(4.0)
     selCD.set(4.0)
 
-def setcusmotif():
-    a = []
-    for object in os.listdir(pglob.pathmaker('Motifs')):
-        a.append(object)
-    motifdrop.setlist(a)
-
-def runcusmotif():
-        a = ['']
-        for object in os.listdir(pglob.pathmaker('Motifs')):
-            a.append(object)
-        motif = motifdrop.getcurselection()
-        for item in motif:
-            tag = item
-        try:
-             for i in range(1, 100, 1):
-                if a[i] in tag:
-                    cmd.run(pglob.pathmaker('Motifs',a[i]))
-        except:
-            pass
+def MotifCaller(motif, camera=True):
+    d = float(pglob.Tabs['motifs']['delta'].get())
+    if camera:
+        pglob.deletemotif()
+        pglob.update()
+    try:
+        if execfile(pglob.MOTIFS[motif]['path']) != False:
+            if motif not in cmd.get_names('all'):
+                raise Warning
+            if cmd.count_atoms(motif) == 0:
+                raise Warning
+            if camera:
+                pglob.procolor(motif, show_all='cartoon',color_all='gray')
+                cmd.orient(motif)
+                cmd.deselect()
+        else:
+            raise Warning
+    except Warning:
+        if camera:
+            showinfo('Not Found', 'The selected motif did not return a result.')
+        return False
+    else:
+        return True
 
 def toggleMultiState():
     mode = pglob.Tabs['motifs']['mode'].get()
@@ -426,6 +430,7 @@ def export2csv():
     motifs = pglob.Tabs['motifs']['motifbox'].get()
     first = True
     for motif in motifs:
+        motif = motif.split('-')[1]
         x = pglob.Tabs['motifs']['csvprep'][motif]['x']
         pf = pglob.Tabs['motifs']['csvprep'][motif]['pf']
         pdb = '%s@PF%s'%(pglob.Tabs['motifs']['csvprep'][motif]['pdb'],pf)
@@ -448,11 +453,12 @@ def export2csv():
                 continue
             same[key] = len(csv)
             if first == True:
-                csv.append('%s,%s,%s,%s,%s,%s,%s'%(pdb,hom,motif[2:],x,chain,resn,resi))
+                csv.append('%s,%s,%s,%s,%s,%s,%s'%(pdb,hom,motif,x,chain,resn,resi))
                 first = False
+                motifline = False
                 continue
             if motifline == True:
-                csv.append(',,%s,%s,%s,%s,%s'%(motif[2:],x,chain,resn,resi))
+                csv.append(',,%s,%s,%s,%s,%s'%(motif,x,chain,resn,resi))
                 motifline = False
                 continue
             csv.append(',,,,%s,%s,%s'%(chain,resn,resi))
@@ -470,22 +476,9 @@ def motifchecker():
     pglob.Tabs['motifs']['delta']['state'] = tk.DISABLED
     pglob.Tabs['motifs']['csv']['state'] = tk.DISABLED
     pglob.Tabs['motifs']['findmotif']['state'] = tk.DISABLED
-    def iterate4export(function,x,motif):
-        last = None
-        export = []
-        stored.iterate = []
-        cmd.iterate(function, 'stored.iterate.append((chain,resn,resi))')
-        for iteration in stored.iterate:
-            if last != iteration:
-                export.append(iteration)
-            last = iteration
-        pglob.Tabs['motifs']['csvprep'][motif] = {}
-        pglob.Tabs['motifs']['csvprep'][motif]['x'] = x
-        pglob.Tabs['motifs']['csvprep'][motif]['pf'] = pglob.Tabs['motifs']['delta'].get()
-        pglob.Tabs['motifs']['csvprep'][motif]['pdb'] = cmd.get_names().pop()
-        pglob.Tabs['motifs']['csvprep'][motif]['res'] = export
-
+    
     def ModBounds(x, exact, upper=None, lower=None):
+        print exact,upper,lower
         if x != 0 and x % exact == 0:
             return '1'
         elif upper != None and lower != None:
@@ -497,6 +490,99 @@ def motifchecker():
                 upper += upStatic
                 lower += lowStatic
         return '0'
+    
+    def LevenshteinDistance(x,y):
+        w,h = len(x)+1,len(y)+1
+        #x+1 rows and y+1 columns
+        matrix = [ [None]*h for i in range(w) ]
+        for i in range(w):
+            matrix[i][0] = i
+        for j in range(h):
+            matrix[0][j] = j
+        for j in range(1,h):
+            for i in range(1,w):
+                if x[i-1] == y[j-1]:
+                    matrix[i][j] = matrix[i-1][j-1]
+                else:
+                    #deletion,insertion,substitution
+                    matrix[i][j] = min(matrix[i-1][j]+1,matrix[i][j-1]+1,
+                        matrix[i-1][j-1]+1)
+        return matrix[w-1][h-1] #edit distance
+    
+    def count(motif):
+        def createsubs(tup):
+            nn = 0
+            for c in tup:
+                if c in ('asp','glu','asn','gln','thr','ser'):
+                    nn += 1
+            if nn == 0:
+                return [None]
+            n = 2**nn
+            r = len(tup)
+            matrix = [[None]*r for i in range(n)]
+            ii = 0
+            for i in tup:
+                h = 2**(ii+1)               
+                if 's' in pglob.AminoHashTable[i]:
+                    for g in range(n/h):
+                        for j in range(h):
+                            matrix[g+(j*(n/h))][ii] = j%2 and pglob.AminoHashTable[i]['s'] or i
+                else:
+                    for g in range(n):
+                        matrix[g][ii] = i
+                ii += 1
+            return matrix
+
+        last = None
+        ordered = []
+        orderedchain = {}
+        bannedchain = []
+        stored.motif = []
+        editdist = []
+        cmd.iterate(motif, 'stored.motif.append((chain,resn,resi))')
+        residues = pglob.MOTIFS[motif]['resi']
+        residuesl = len(residues)*2
+        pglob.Tabs['motifs']['csvprep'][motif] = {}
+        pglob.Tabs['motifs']['csvprep'][motif]['res'] = []
+        for iteration in stored.motif:
+            if last != iteration:
+                last = iteration
+                pglob.Tabs['motifs']['csvprep'][motif]['res'].append(iteration)
+                ordered.append(iteration[1].lower())
+                if iteration[0] not in orderedchain:
+                    if iteration[0] not in bannedchain:
+                        orderedchain[iteration[0]] = []
+                    else:
+                        continue
+                orderedchain[iteration[0]].append(iteration[1].lower())
+                if residuesl < len(orderedchain[iteration[0]]):
+                    bannedchain.append(iteration[0])
+                    del orderedchain[iteration[0]]
+        if len(orderedchain) == 0 and residuesl < len(ordered):
+            return None
+        substitutions = [None]
+        if motif[0] == 'J':
+            for c in ('asp','glu','asn','gln','thr','ser'):
+                if c in residues:
+                    substitutions = createsubs(residues)
+                    break
+        for chain in orderedchain:
+            editdist.append(LevenshteinDistance(residues,orderedchain[chain]))
+            for sub in substitutions:
+                if sub == None:
+                    break
+                editdist.append(LevenshteinDistance(sub,orderedchain[chain]))
+        editdist.append(LevenshteinDistance(residues,ordered))
+        for sub in substitutions:
+            if sub == None:
+                break
+            editdist.append(LevenshteinDistance(sub,ordered))
+        mini = min(editdist)
+        maxi = max(editdist)
+        pglob.Tabs['motifs']['csvprep'][motif]['x'] = mini<maxi and '%s/%s'%(mini,maxi) or mini
+        pglob.Tabs['motifs']['csvprep'][motif]['pf'] = pglob.Tabs['motifs']['delta'].get()
+        pglob.Tabs['motifs']['csvprep'][motif]['pdb'] = cmd.get_names().pop()
+        return pglob.Tabs['motifs']['csvprep'][motif]['x']
 
     def cancel():
         pglob.Tabs['motifs']['cancel'] = True
@@ -511,15 +597,11 @@ def motifchecker():
         cmd.hide('everything', 'all')
         cmd.remove("all and hydro")
         found = []
-        keys = motcod.motifs.keys()
+        keys = pglob.MOTIFS.keys()
         keysL = len(keys)
         last = 0.0
     
-        for motif in keys:
-            exact = motcod.motifs[motif]['exact']
-            upper = motcod.motifs[motif]['upper']
-            lower = motcod.motifs[motif]['lower']
-            
+        for motif in keys:            
             last += 1
             bar = (last/keysL)*100
             if pglob.Tabs['motifs']['cancel'] == True:
@@ -530,16 +612,12 @@ def motifchecker():
             group['tag_text'] = 'Searching... %.3s%% Complete'%(bar)
             status.SetProgressPercent(bar)
             root.update()
-            if exact == None:
-                continue
-            function = motcod.motifs[motif]['function']
-            if motcod.MotifCaller(function,False):
-                x = ModBounds(cmd.count_atoms(function),exact,upper,lower)
-                if x != '0':
+            if MotifCaller(motif,False):
+                x = count(motif)
+                if x != None:
                     motifStr = '%s-%s'%(x,motif)
                     found.append(motifStr)
-                    iterate4export(function,x,motifStr)
-            cmd.delete(function)
+            cmd.delete(motif)
 
         print 'Motif Finder finished with %s results.'%(len(found))
         cmd.orient('all')
@@ -565,40 +643,10 @@ def motifchecker():
     cancelbutton = tk.Button(interior, width=12, text='Cancel', command=cancel)
     cancelbutton.grid(row=1, column=1, padx=1, pady=1, sticky=tk.NW)
     cancelbutton['state'] = tk.DISABLED
-    
-def resdel(event):
-    try:
-        objects = cmd.get_names('all')
-        cmd.hide('sticks', '!'+mot)
-        cmd.color('white', '!'+mot)
-        if 'Adjacent' in objects:
-            cmd.delete('Adjacent_polar_conts')
-        if 'Adjacent' in objects:
-            cmd.label('byres Adjacent',"''")
-        cmd.delete('Adjacent')
-    except:
-
-        showinfo('Alert', 'You must load a motif first')
-        interior.mainloop()
-
-def roundres(event):
-    try:
-        cmd.hide('sticks', '!'+mot)
-        cmd.color('white', '!'+mot)
-        cmd.select('Adjacent', 'byres '+mot+' around %s'%(selA.get()))
-        cmd.show('sticks', 'Adjacent')
-        cmd.color('orange', 'Adjacent')
-        util.cnc('Adjacent')
-        cmd.remove('hydro')
-        cmd.deselect()
-    except:
-        
-        showinfo('Alert', 'You must load a motif first')
-        interior.mainloop()
 
 def randompdb():
     cmd.delete('all')
-    lineFile = pglob.pathmaker('pdb_entry_type.txt')
+    lineFile = pglob.pathmaker('pdb_entry_type.txt',root=pglob.OFFSITE)
     while os.path.exists(lineFile):
         expiration = (os.path.getmtime(lineFile)+864000)
         if expiration <= time.time():
@@ -609,20 +657,16 @@ def randompdb():
             fetch(pdbCode)
             break
     else:
-        InHandle = urllib2.urlopen('ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_entry_type.txt')
-        OutHandle = open(lineFile,'w')
-        for line in InHandle:
-            OutHandle.write(line)
-        OutHandle.close
+        urlretrieve('ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_entry_type.txt',
+            lineFile)
         randompdb()
-
 cmd.extend('randompdb',random)
         
 def makemotif(mode):
     pglob.Tabs['motif_maker']['file'] = None
     pglob.Tabs['motif_maker']['wait'] = []
     pglob.Tabs['motif_maker']['motif'] = []
-    pglob.Tabs['motif_maker']['resnnum'] = {}
+    pglob.Tabs['motif_maker']['resnstr'] = {}
     pf = pglob.Tabs['motif_maker']['pf'].get()
     pdb = pglob.Tabs['motif_maker']['pdb'].get()
     ecen = pglob.Tabs['motif_maker']['ec'].get()
@@ -630,8 +674,13 @@ def makemotif(mode):
     resi = {}
     backbone = {}
     chain = {}
+    if 'motionstack' not in pglob.Tabs['motif_maker']:
+        pglob.Tabs['motif_maker']['motionstack'] = []
     
-    def clear():
+    while pglob.Tabs['motif_maker']['motionstack'] != []:
+        print '{'
+    
+    if mode == 3:
         for i in range(1,11):
             pglob.Tabs['motif_maker']['resn'][i].delete(0,tk.END)
             pglob.Tabs['motif_maker']['resi'][i].delete(0,tk.END)
@@ -642,79 +691,189 @@ def makemotif(mode):
         pglob.Tabs['motif_maker']['ec'].delete(0,tk.END)
         pglob.Tabs['motif_maker']['pf'].delete(0,tk.END)
         pglob.Tabs['motif_maker']['pf'].insert(0,'2.00')
+        return True
     
-    if mode == 3:
-        return clear()
+    def press(event):
+        pglob.Tabs['motif_maker']['motion'] = True
+        pglob.Tabs['motif_maker']['yanchor'] = event.y
+        pglob.Tabs['motif_maker']['ydredge'] = 0
+        pglob.Tabs['motif_maker']['oldg'] = pglob.Tabs['motif_maker']['maker'].interior().grid_location(0,event.y)[1]+1
+        print '/'
+        while pglob.Tabs['motif_maker']['motion'] == True or pglob.Tabs['motif_maker']['motionstack'] != []:
+            print '\\'
+            if pglob.Tabs['motif_maker']['motionstack'] == []:
+                print '|'
+                continue
+            next = pglob.Tabs['motif_maker']['motionstack'].pop(0)
+            newg = pglob.Tabs['motif_maker']['maker'].interior().grid_location(0,next)[1]+1
+            if newg <=0 or newg >=11:
+                return False
+            oldg = pglob.Tabs['motif_maker']['oldg']
+            i = pglob.Tabs['motif_maker']['neworder'][newg]
+            if newg != oldg:
+                pglob.Tabs['motif_maker']['oldg'] = newg
+                i = pglob.Tabs['motif_maker']['neworder'][oldg]
+                h = pglob.Tabs['motif_maker']['neworder'][newg]
+                pglob.Tabs['motif_maker']['neworder'][newg] = i
+                pglob.Tabs['motif_maker']['neworder'][oldg] = h
+                print pglob.Tabs['motif_maker']['neworder']
+                y = 22
+                if oldg < newg:
+                    y = -22
+                pglob.Tabs['motif_maker']['canvas'].move('row%s'%h,0,y)
+            y = next - pglob.Tabs['motif_maker']['yanchor'] - pglob.Tabs['motif_maker']['ydredge']
+            print next,pglob.Tabs['motif_maker']['yanchor'],pglob.Tabs['motif_maker']['ydredge'],y
+            if y > 21 or y < -21:
+                if y > 21:
+                    y = 21
+                elif y < -21:
+                    y = -21
+                pglob.Tabs['motif_maker']['canvas'].move('row%s'%i,0,y)
+                motion(False,next)
+            else:
+                pglob.Tabs['motif_maker']['canvas'].move('row%s'%i,0,y)
+            pglob.Tabs['motif_maker']['ydredge'] += y
     
-    def write(string,**options):
-        pglob.Tabs['motif_maker']['motif'].append(string)
-        if mode == 0:
-            if 'close' in options:
-                pglob.procolor(name, show_all='cartoon', color_all='gray')
-                cmd.orient(name)
-                cmd.deselect()
-                return True
-            if 'test_ignore' in options:
-                return True
-            if 'wait' in options:
-                pglob.Tabs['motif_maker']['wait'].append(string)
-                return True
-            if pglob.Tabs['motif_maker']['wait'] != []:
-                pglob.Tabs['motif_maker']['wait'].append(string)
-                eval(''.join(pglob.Tabs['motif_maker']['wait']).strip())
-                pglob.Tabs['motif_maker']['wait'] = []
-                return True
-            d = 1
-            eval(string.strip())
-            return True
-        f = pglob.Tabs['motif_maker']['file']
+    def motion(event,y=None):
+        if event == False and y != None:
+            pglob.Tabs['motif_maker']['motionstack'].append(y)
+        else:
+            pglob.Tabs['motif_maker']['motionstack'].append(event.y)
+            
+    def release(event):
+        pglob.Tabs['motif_maker']['motion'] = False
+        if pglob.Tabs['motif_maker']['yanchor'] + pglob.Tabs['motif_maker']['ydredge'] == 22:
+            pass
+    
+    if mode >= 5 and mode < 6:
+        if mode == 5:
+            for i in range(1,11):
+                pglob.Tabs['motif_maker']['resn'][i]['state'] = tk.DISABLED
+                pglob.Tabs['motif_maker']['resi'][i]['state'] = tk.DISABLED
+                pglob.Tabs['motif_maker']['chain'][i]['state'] = tk.DISABLED
+                pglob.Tabs['motif_maker']['backbone'][i]['state'] = tk.DISABLED
+                pglob.Tabs['motif_maker']['canvas'].itemconfigure(pglob.Tabs['motif_maker']['canvasr'][i],
+                    text=pglob.Tabs['motif_maker']['resn'][i].get())
+                pglob.Tabs['motif_maker']['canvas'].itemconfigure(pglob.Tabs['motif_maker']['canvasc'][i],
+                    text=pglob.Tabs['motif_maker']['chain'][i].get())
+                pglob.Tabs['motif_maker']['canvas'].itemconfigure(pglob.Tabs['motif_maker']['canvasn'][i],
+                    text=pglob.Tabs['motif_maker']['resi'][i].get())
+                pglob.Tabs['motif_maker']['canvas'].itemconfigure(pglob.Tabs['motif_maker']['canvasb'][i],
+                    text=pglob.Tabs['motif_maker']['backbone'][i].get())
+            pglob.Tabs['motif_maker']['canvas'].grid()
+            pglob.Tabs['motif_maker']['canvas'].bind('<Button-1>', press)
+            pglob.Tabs['motif_maker']['canvas'].bind('<B1-Motion>', motion)
+            pglob.Tabs['motif_maker']['canvas'].bind('<ButtonRelease-1>', release)
+            pglob.Tabs['motif_maker']['test'].grid_remove()
+            pglob.Tabs['motif_maker']['save'].grid_remove()
+            pglob.Tabs['motif_maker']['export'].grid_remove()
+            pglob.Tabs['motif_maker']['clear'].grid_remove()
+            pglob.Tabs['motif_maker']['order'].grid_remove()
+            pglob.Tabs['motif_maker']['extest'] = tk.DISABLED
+            pglob.Tabs['motif_maker']['done'].grid()
+            pglob.Tabs['motif_maker']['recommend'].grid()
+            pglob.Tabs['motif_maker']['cancel'].grid()
+        if mode > 5:
+            for i in range(1,11):
+                pglob.Tabs['motif_maker']['resn'][i]['state'] = tk.NORMAL
+                pglob.Tabs['motif_maker']['resi'][i]['state'] = tk.NORMAL
+                pglob.Tabs['motif_maker']['chain'][i]['state'] = tk.NORMAL
+                pglob.Tabs['motif_maker']['backbone'][i]['state'] = tk.NORMAL
+            pglob.Tabs['motif_maker']['canvas'].grid_remove()
+            pglob.Tabs['motif_maker']['canvas'].unbind('<Button-1>')
+            pglob.Tabs['motif_maker']['canvas'].unbind('<B1-Motion>')
+            pglob.Tabs['motif_maker']['canvas'].unbind('<ButtonRelease-1>')
+            pglob.Tabs['motif_maker']['test'].grid()
+            pglob.Tabs['motif_maker']['save'].grid()
+            pglob.Tabs['motif_maker']['export'].grid()
+            pglob.Tabs['motif_maker']['clear'].grid()
+            pglob.Tabs['motif_maker']['order'].grid()
+            pglob.Tabs['motif_maker']['extest'] = tk.NORMAL
+            pglob.Tabs['motif_maker']['done'].grid_remove()
+            pglob.Tabs['motif_maker']['recommend'].grid_remove()
+            pglob.Tabs['motif_maker']['cancel'].grid_remove()
+        return True
+    
+    def write(string=None,**options):
+        if string != None:
+            pglob.Tabs['motif_maker']['motif'].append(string)
         if 'open' in options:
+            if mode == 0 or mode == 4:
+                pglob.Tabs['motif_maker']['motif'] = []
             if mode == 1:
-                if os.path.exists(pglob.pathmaker('Motifs',(name,'.py'))):
+                if os.path.exists(pglob.pathmaker('Motifs',(name,'.py'),root=pglob.OFFSITE)) or os.path.exists(pglob.pathmaker('Motifs',(name,'.py'))):
                     answer = askyesno('Motif Exist', 
                     'A motif has already been made for EC:%s on PDB:%s.\n'%(ec,pdb)+
                     'Are you sure you want to replace it?')
                     if answer == False:
                         return False
-                f = open(pglob.pathmaker('Motifs',(name,'.py')), 'w')
+                pglob.Tabs['motif_maker']['file'] = open(pglob.pathmaker('Motifs',(name,'.py'),root=pglob.OFFSITE), 'w')
             if mode == 2:
-                f = open(pglob.pathmaker((name,'.py'),root=askdirectory(initialdir=pglob.HOME)), 'w')
+                pref = askdirectory(initialdir=pglob.HOME)
+                if os.access(pref,os.W_OK | os.X_OK):
+                    if os.path.exists(pglob.pathmaker('Motifs',(name,'.py'),root=pref)):
+                        answer = askyesno('Motif Exist', 
+                        'This file exist at this location.\n'+
+                        'Are you sure you want to replace it?')
+                        if answer == False:
+                            return False
+                    pglob.Tabs['motif_maker']['file'] = open(pglob.pathmaker((name,'.py'),root=pref), 'w')
+                else:
+                    showerror('Access Denied','You do not have access to write to this folder.')
+                    return False
         if 'close' in options:
-            pglob.Tabs['motif_maker']['motif'].append('\n')
-            f.write(''.join(pglob.Tabs['motif_maker']['motif']))
-            f.close()
-        pglob.Tabs['motif_maker']['file'] = f
+            if mode == 4:
+                cmd.reinitialize()
+                if pglob.Tabs['motif_maker']['radio'].get() == 1:
+                    fetch(pglob.Tabs['motif_maker']['testpdb'].get())
+                elif pglob.Tabs['motif_maker']['radio'].get() == 2:
+                    randompdb()
+                pglob.update()
+            if mode == 0 or mode == 4:
+                d = 1
+                lines = ''.join(pglob.Tabs['motif_maker']['motif']).split('\n')
+                for line in lines:
+                    if line != '':
+                        eval(line)
+                pglob.procolor(name, show_all='cartoon', color_all='gray')
+                cmd.orient(name)
+                cmd.deselect()
+            else:
+                pglob.Tabs['motif_maker']['file'].writelines(pglob.Tabs['motif_maker']['motif'])
+                pglob.Tabs['motif_maker']['file'].close()
         return True
 
-    def addresn(x):
-        if x in pglob.Tabs['motif_maker']['resnnum']:
-            pglob.Tabs['motif_maker']['resnnum'][x] += 1
-            return x
-        pglob.Tabs['motif_maker']['resnnum'][x] = 1
+    def addresn(x,y,z):
+        if z not in pglob.Tabs['motif_maker']['resnstr']:
+            pglob.Tabs['motif_maker']['resnstr'][z] = {}
+        pglob.Tabs['motif_maker']['resnstr'][z][y] = x
         return x
     
-    def getresnnum():
-        resnstr = []
-        for x in pglob.Tabs['motif_maker']['resnnum']:
-            if pglob.Tabs['motif_maker']['resnnum'][x] == 1:
-                resnstr.append(x)
-                continue
-            resnstr.append('%s of %s'%(pglob.Tabs['motif_maker']['resnnum'][x],x))
-        return ','.join(resnstr)
+    def getresnstr():
+        for i in pglob.Tabs['motif_maker']['resnstr']:
+            keys = pglob.Tabs['motif_maker']['resnstr'][i].keys()
+            pglob.natsort(keys)
+            resn = []
+            for key in keys:
+                resn.append(pglob.Tabs['motif_maker']['resnstr'][i][key])
+            pglob.Tabs['motif_maker']['resnstr'][i] = resn
+        keys = pglob.Tabs['motif_maker']['resnstr'].keys()
+        pglob.natsort(keys)
+        resn = []
+        for key in keys:
+            for i in pglob.Tabs['motif_maker']['resnstr'][key]:
+                resn.append(i)
+        return ','.join(resn)
     
-    def acceptresn(x):
+    def acceptresn(x,y,z):
         if len(x) == 0:
             return ''
         try:
             x = x.lower()
-            if len(x) == 3:
-                if x in pglob.AminoList:
-                    return addresn(x)
-                raise KeyError
-            newresn = pglob.AminoHashTable[x]
+            newresn = pglob.AminoHashTable[x][3]
         except KeyError:
             return None
-        return addresn(newresn)
+        return addresn(newresn,y,z)
     
     excepLoop = 0
     exceptions = ''
@@ -741,30 +900,31 @@ def makemotif(mode):
     skip = {}
     skip[0] = 0
     for i in range(1,11):
-        resn[i] = acceptresn(pglob.Tabs['motif_maker']['resn'][i].get())
-        resi[i] = pglob.Tabs['motif_maker']['resi'][i].get()
-        backbone[i] = pglob.Tabs['motif_maker']['backbone'][i].get()
-        chain[i] = pglob.Tabs['motif_maker']['chain'][i].get()
-        skip[i] = False
-        if resn[i] == '' and resi[i] == '' and chain[i] == '':
+        g = pglob.Tabs['motif_maker']['curorder'][i]
+        resi[g] = pglob.Tabs['motif_maker']['resi'][g].get()
+        backbone[g] = pglob.Tabs['motif_maker']['backbone'][g].get()
+        chain[g] = pglob.Tabs['motif_maker']['chain'][g].get()
+        resn[g] = acceptresn(pglob.Tabs['motif_maker']['resn'][g].get(),resi[g],chain[g])
+        skip[g] = False
+        if resn[g] == '' and resi[g] == '' and chain[g] == '':
             ### this gives us the ability to skip whole blocks
-            skip[i] = True
+            skip[g] = True
             skip[0] += 1
-        elif resn[i] != '' and resi[i] != '' and chain[i] != '':
-            if resn[i] == None:
-                exceptions += 'Residue %s is not recongnized.\n'%(i)
-            elif cmd.count_atoms('%s/%s`%s/'%(chain[i],resn[i],resi[i])) == 0:
-                exceptions += 'There is no %s at number %s on chain %s.\n'%(resn[i],resi[i],chain[i])
-            elif resn[i] == 'gly' and backbone[i] == 'Off':
-                exceptions += 'Please turn on the backbone for glycine residue %s\n'%(i)
+        elif resn[g] != '' and resi[g] != '' and chain[g] != '':
+            if resn[g] == None:
+                exceptions += 'Residue %s is not recongnized.\n'%(g)
+            elif cmd.count_atoms('%s/%s`%s/'%(chain[g],resn[g],resi[g])) == 0:
+                exceptions += 'There is no %s at number %s on chain %s.\n'%(resn[g],resi[g],chain[g])
+            elif resn[g] == 'gly' and backbone[g] == 'Off':
+                exceptions += 'Please turn on the backbone for glycine residue %s\n'%(g)
             excepLoop +=1
         else:    
-            if resn[i] == '':
-                exceptions += 'Please enter a residue for residue %s\n'%(i)
-            if resi[i] == '':
-                exceptions += 'Please enter a number for residue %s\n'%(i)
-            if chain[i] == '':
-                exceptions += 'Please select a chain for residue %s\n.'%(i)
+            if resn[g] == '':
+                exceptions += 'Please enter a residue for residue %s\n'%(g)
+            if resi[g] == '':
+                exceptions += 'Please enter a number for residue %s\n'%(g)
+            if chain[g] == '':
+                exceptions += 'Please select a chain for residue %s\n.'%(g)
             excepLoop +=1
     if excepLoop < 2:
         exception = True
@@ -774,23 +934,16 @@ def makemotif(mode):
     else:
         cmd.remove('resn HOH')
         name = 'P_%s_%s'%(pdb,ec)
-        resnnum = getresnnum()
+        resnstr = getresnstr()
         
-        if write('from pymol import cmd\n',test_ignore=True,open=True) == False:
+        write("'''\n")
+        write("FUNC:%s\n"%(name))
+        write("PDB:%s\n"%(pdb))
+        write("EC:%s\n"%(ec.replace('_','.')))
+        write("RESI:%s\n"%(resnstr))
+        write("'''\n")
+        if write(open=True) == False:
             return False
-        write("'''\n",test_ignore=True)
-        write("FUNC:%s\n"%(name),test_ignore=True)
-        write("PDB:%s\n"%(pdb),test_ignore=True)
-        write("EC:%s\n"%(ec),test_ignore=True)
-        write("RESI:%s\n"%(resnnum),test_ignore=True)
-        write("'''\n",test_ignore=True)
-        write('def %s(d):\n'%(name),test_ignore=True)
-        write("    '''\n",test_ignore=True)
-        write("    FUNC:%s\n"%(name),test_ignore=True)
-        write("    PDB:%s\n"%(pdb),test_ignore=True)
-        write("    EC:%s\n"%(ec),test_ignore=True)
-        write("    RESI:%s\n"%(resnnum),test_ignore=True)
-        write("    '''\n",test_ignore=True)
         atomlist = {}
         ### backbone off aka just side chains from beta carbon onwards
         atomlist[0] = {'ala':('CB'),
@@ -822,23 +975,21 @@ def makemotif(mode):
         
         numOfi = {}
         for i in range(1,11):
-            if skip[i] == False:
-                if resn[i] not in numOfi:
-                    numOfi[resn[i]] = 0
-                resnlist.append(resn[i])
-                resilist.append(resi[i])
-                resnlistf.append(resn[i]+('i'*(numOfi[resn[i]])))
-                chainlist.append(chain[i])
-                bonelist.append(backbone[i])
-                numOfi[resn[i]] += 1
+            g = pglob.Tabs['motif_maker']['curorder'][i]
+            if skip[g] == False:
+                if resn[g] not in numOfi:
+                    numOfi[resn[g]] = 0
+                resnlist.append(resn[g])
+                resilist.append(resi[g])
+                resnlistf.append(resn[g]+('i'*(numOfi[resn[g]])))
+                chainlist.append(chain[g])
+                bonelist.append(backbone[g])
+                numOfi[resn[g]] += 1
         
         ### This loop will increment through the amino acids. The amino acid we are looking
         ### at right now is specified by the e variable. The a variable will count the
         ### number of times it is compared to the carbons in the other amino acids. And is
         ### used later on to print the "byres" and select line, and delete line below.
-        ### NOTE:
-        ### Because we are able to skip a whole block, mRN is not used beyond this point,
-        ### instead resnlen is used as it gives a more accurate picture of the motif.
         resnlen = (len(resnlist)-1)
         e = 0
         while e < resnlen:
@@ -902,19 +1053,19 @@ def makemotif(mode):
                         ### This fixes that by making sure we do not pass
                         ### "selectlimit" selections at one time.
                         if float(selectlimiter) < (float(a)/float(selectlimit)):
-                            write("    cmd.select('%s%s',' "%(resnlistf[e],(selectlimiter*selectlimit)),wait=True)
+                            write("cmd.select('%s%s',' "%(resnlistf[e],(selectlimiter*selectlimit)))
                             for i in range(selectstart,a):
                                 if i==(a-1):
                                     write("br. %s%s')\n"%(resnlistf[e],i))
                                 else:
-                                    write("br. %s%s&"%(resnlistf[e],i),wait=True)
+                                    write("br. %s%s&"%(resnlistf[e],i))
                             for i in range(selectstart,a):
                                 if i==(a-1):
                                     pass
                                 else:
-                                    write("    cmd.delete('%s%s')\n"%(resnlistf[e],i))
+                                    write("cmd.delete('%s%s')\n"%(resnlistf[e],i))
                             selectextra.append('%s%s&'%(resnlistf[e],(selectlimiter*selectlimit)))
-                            deleteextra.append("    cmd.delete('%s%s')\n"%(resnlistf[e],(selectlimiter*selectlimit)))
+                            deleteextra.append("cmd.delete('%s%s')\n"%(resnlistf[e],(selectlimiter*selectlimit)))
                             selectlimiter += 1
                             selectstart += selectlimit
                         
@@ -924,21 +1075,21 @@ def makemotif(mode):
                         ### amino acid does not need an r. (resn)
                         ### property selection, as it is already a selection.
                         if e > d:
-                            write("    cmd.select('%s%s', 'n. %s&r. %s w. %%s of n. %s&%s'%%(d*%s))\n"%(resnlistf[e],a,bList[b],resnlist[e],cList[c],resnlistf[d],g))
+                            write("cmd.select('%s%s', 'n. %s&r. %s w. %%s of n. %s&%s'%%(d*%s))\n"%(resnlistf[e],a,bList[b],resnlist[e],cList[c],resnlistf[d],g))
                         else:
-                            write("    cmd.select('%s%s', 'n. %s&r. %s w. %%s of n. %s&r. %s'%%(d*%s))\n"%(resnlistf[e],a,bList[b],resnlist[e],cList[c],resnlistf[d],g))
-            write("    cmd.select('%s',' "%(resnlistf[e]),wait=True)
+                            write("cmd.select('%s%s', 'n. %s&r. %s w. %%s of n. %s&r. %s'%%(d*%s))\n"%(resnlistf[e],a,bList[b],resnlist[e],cList[c],resnlist[d],g))
+            write("cmd.select('%s',' "%(resnlistf[e]))
             if selectextra != []:
-                write(''.join(selectextra),wait=True)
+                write(''.join(selectextra))
             for i in range(selectstart,a+1):
                 if i==a:
                     write("br. %s%s')\n"%(resnlistf[e],i))
                 else:
-                    write('br. %s%s&'%(resnlistf[e],i),wait=True)
+                    write('br. %s%s&'%(resnlistf[e],i))
             for x in deleteextra:
                 write(x)
             for i in range(selectstart,a+1):
-                write("    cmd.delete('%s%s')\n"%(resnlistf[e],i))
+                write("cmd.delete('%s%s')\n"%(resnlistf[e],i))
     
         resnlistfstr = ""
         for i in range(1,resnlen+1):
@@ -947,10 +1098,10 @@ def makemotif(mode):
             else:
                 resnlistfstr += resnlistf[i]+'|'
     
-        write("    cmd.select('%s', '%s')\n"%(name,resnlistfstr))
+        write("cmd.select('%s', '%s')\n"%(name,resnlistfstr))
         for i in range(1,resnlen+1):
-            write("    cmd.delete('%s')\n"%(resnlistf[i]))
-        write("    return {'motif':'%s'}"%(name),test_ignore=True,close=True)
+            write("cmd.delete('%s')\n"%(resnlistf[i]))
+        write(close=True)
     
         if mode == 0:
             print '%s Amino Acid Motif `%s` Run\n'%(len(resnlist)-1,name)

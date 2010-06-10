@@ -1,33 +1,98 @@
 from pymol import cmd
+from urllib import urlretrieve
 import Tkinter as tk
 import os
 import math
 import platform
+import cPickle
 PLATFORM = platform.system()
-
-Photos = None
-script = 0
-AminoMenuList = None
-AminoList = None
-AlphaSequence = None
-alphaSequence = None
 Tabs = {}
+SELE = 'all'
+script = 0
+PROMOL_DIR_PATH = os.path.dirname(__file__)
 try:
     HOME = os.environ['HOME']
 except KeyError:
     HOME = os.environ['USERPROFILE']
-try:
-    PYMOL_PATH = os.environ['PYMOL_PATH']
-except KeyError:
-    PYMOL_PATH = '.'
-if PLATFORM == 'Windows' or PLATFORM == 'Darwin':
-    PROMOL_PATH = os.path.join(PYMOL_PATH,'modules','pmg_tk','startup')
-    PROMOL_DIR_PATH = os.path.join(PROMOL_PATH,'ProMol_dir')
+if PLATFORM == 'Windows':
+    OFFSITE = os.path.join(os.environ['AppData'],'SBEVSL','ProMol')
+elif PLATFORM == 'Darwin':
+    OFFSITE = os.path.join(HOME,'Library','Application Support','SBEVSL','ProMol')
 else:
-    PROMOL_FILE = os.readlink(os.path.join(PYMOL_PATH.split(os.sep+'pymol')[0],'pmg_tk','startup','ProMol.py'))
-    PROMOL_PATH = PROMOL_FILE.split('/ProMol.py')[0]
-    PROMOL_DIR_PATH = os.path.join(PROMOL_PATH,'ProMol_dir')
+    OFFSITE = os.path.join(HOME,'.sbevsl','ProMol')
+DIRS = ('Motifs',)
+if not os.path.isdir(OFFSITE):
+    os.makedirs(OFFSITE)
+for DIR in DIRS:
+    DIR = os.path.join(OFFSITE,DIR)
+    if not os.path.isdir(DIR):
+        os.mkdir(DIR)
 
+def motifstore(folder,motdir):
+    for motfile in motdir:
+        func = motfile[0:-3]
+        MOTIFS[func] = {}
+        MOTIFS[func]['path'] = os.path.join(folder,motfile)
+        tmpf = open(MOTIFS[func]['path'])
+        hexf = ''
+        i = 0
+        for line in tmpf:
+            hexf = ''.join([hexf,line])
+            if line[0:3] == "'''":
+                i+=1
+                continue
+            if i != 1:
+                if line[0:3] != 'cmd' and line != '':
+                    del MOTIFS[func]
+                    tmpf.close()
+                    break
+            if line[0:4] == 'FUNC':
+                funccheck = line.split(':')[1][0:-1]
+                if func != funccheck:
+                    del MOTIFS[func]
+                    tmpf.close()
+                    break
+                continue
+            if line[0:3] == 'PDB':
+                pdbcheck = line.split(':')[1][0:-1]
+                if func.split('_')[1] != pdbcheck:
+                    del MOTIFS[func]
+                    tmpf.close()
+                    break
+                MOTIFS[func]['pdb'] = pdbcheck
+                continue
+            if line[0:2] == 'EC':
+                preec = func.split('_')
+                ec = '.'.join((preec[2],preec[3],preec[4],preec[5]))
+                eccheck = line.split(':')[1][0:-1]
+                if ec != eccheck:
+                    del MOTIFS[func]
+                    tmpf.close()
+                    break
+                MOTIFS[func]['ec'] = eccheck
+                continue
+            if line[0:4] == 'RESI':
+                resi = line.split(':')[1][0:-1]
+                if resi == '':
+                    del MOTIFS[func]
+                    tmpf.close()
+                    break
+                MOTIFS[func]['resi'] = resi.split(',')
+                continue
+
+MOTIFSFOLDER = os.path.join(PROMOL_DIR_PATH,'Motifs')
+USRMOTIFSFOLDER = os.path.join(OFFSITE,'Motifs')
+MOTIFS = {}
+#try:
+#    MOTIFS = cPickle.load(open(os.path.join(OFFSITE,'motifs.pkl'),'r'))
+#except (IOError,TypeError):
+motifstore(MOTIFSFOLDER,os.listdir(MOTIFSFOLDER))
+motifstore(USRMOTIFSFOLDER,os.listdir(USRMOTIFSFOLDER))
+#    try:
+#        cPickle.dump(MOTIFS,open(os.path.join(OFFSITE,'motifs.pkl'),'w'))
+#    except (IOError,TypeError):
+#        pass
+            
 splash = tk.PhotoImage(file = os.path.join(PROMOL_DIR_PATH,'splashmol.gif'))
 
 AminoMenuList = ('','ala','arg','asn','asp','cys','gln','glu','gly','his','ile',
@@ -41,18 +106,44 @@ AminoList = ('ala','arg','asn','asp','cys','gln','glu','gly','his','ile','leu',
     'lys','met','phe','pro','ser','thr','trp','tyr','val')
 AminoShortList = ('a','r','n','d','c','q','e','g','h','i','l','k','m','f','p',
     's','t','w','y','v')
+AminoSubsList = {
+        3:'glu',
+        6:'asp',
+        5:'asn',
+        2:'gln',
+        15:'thr',
+        16:'ser'
+    }
+AminoNumberList = (5,11,8,8,6,9,9,4,10,8,8,9,8,11,7,6,7,14,12,7)
+
 AminoLongHashTable = {}
 AminoHashTable = {}
 AminoShortHashTable = {}
 for i in range(0,20):
-    AminoLongHashTable[AminoList[i]] = AminoLongList[i]
-    AminoLongHashTable[AminoShortList[i]] = AminoLongList[i]
-for i in range(0,20):
-    AminoHashTable[AminoLongList[i]] = AminoList[i]
-    AminoHashTable[AminoShortList[i]] = AminoList[i]
-for i in range(0,20):
-    AminoShortHashTable[AminoLongList[i]] = AminoShortList[i]
-    AminoShortHashTable[AminoList[i]] = AminoShortList[i]
+    AminoHashTable[AminoLongList[i]] = {}
+    AminoHashTable[AminoList[i]] = {}
+    AminoHashTable[AminoShortList[i]] = {}
+
+    AminoHashTable[AminoLongList[i]]['l'] = AminoLongList[i]
+    AminoHashTable[AminoList[i]]['l'] = AminoLongList[i]
+    AminoHashTable[AminoShortList[i]]['l'] = AminoLongList[i]
+
+    AminoHashTable[AminoLongList[i]][3] = AminoList[i]
+    AminoHashTable[AminoList[i]][3] = AminoList[i]
+    AminoHashTable[AminoShortList[i]][3] = AminoList[i]
+
+    AminoHashTable[AminoLongList[i]][1] = AminoShortList[i]
+    AminoHashTable[AminoList[i]][1] = AminoShortList[i]
+    AminoHashTable[AminoShortList[i]][1] = AminoShortList[i]
+    
+    AminoHashTable[AminoLongList[i]][0] = AminoNumberList[i]
+    AminoHashTable[AminoList[i]][0] = AminoNumberList[i]
+    AminoHashTable[AminoShortList[i]][0] = AminoNumberList[i]
+    
+    if i in AminoSubsList:
+        AminoHashTable[AminoLongList[i]]['s'] = AminoSubsList[i]
+        AminoHashTable[AminoList[i]]['s'] = AminoSubsList[i]
+        AminoHashTable[AminoShortList[i]]['s'] = AminoSubsList[i]
 
 Photos = {}
 for x in AminoList:
@@ -60,7 +151,19 @@ for x in AminoList:
     for y in ('3D', '2D'):
         Photos["%s%s" % (x, y)] = tk.PhotoImage(
             file = os.path.join(PROMOL_DIR_PATH,'AminoPics',x+y+'.gif'))
-
+#/*=====================*//*==========================================*/
+#/*   DNA Nucleotides   *//*  DNA Nucleotides PDB Revision, Jul 2007  */
+#/*=====================*//*==========================================*/
+DNA = ("A", "C", "G", "T","DA", "DC", "DG", "DT","DI")
+DNASTR = '+'.join(DNA)
+#/*===================*/
+#/*  RNA Nucleotides  */
+#/*===================*/
+RNA = ("U", "I", "1MA",
+       "5MC", "OMC", "1MG", "2MG",
+       "M2G", "7MG", "OMG", "YG",
+       "H2U", "5MU", "PSU")
+RNASTR = '+'.join(RNA)
 #A - Z
 AlphaSequence = [ "%c" % (x) for x in range(ord('A'), ord('Z')+1)]
 #a - z
@@ -168,88 +271,12 @@ def defaults(tag = ''):
     cmd.cartoon('automatic', 'all')
 cmd.extend('defaults', defaults)
 
-def checkforchain():
-    objects = cmd.get_names('all')
-    for letter in AlphaSequence:
-        chain = 'Chain-'+letter
-        if chain in objects:
-            if(len(cmd.index(chain)) < 1):
-                cmd.delete(chain)
-    # if 'Chain-' '' in objects:
-    #         if(len(cmd.index('Chain-' '')) < 1):
-    #             cmd.delete('Chain-' '')
-cmd.extend('checkforchain', checkforchain)
-
 def deletemotif():
-    cmd.delete('p-loop')
-    cmd.delete('serineprotease')
-    cmd.delete('lactamase')
-    cmd.delete('superoxide')
-    cmd.delete('metalloprotease')
-    cmd.delete('tyrophos')
-    cmd.delete('carbonicanhydrase')
-    cmd.delete('paplike')
-    cmd.delete('Zinc_finger')
-    cmd.delete('Aminotransferase')
-    cmd.delete('fucoseisomerase')
-    cmd.delete('Ligase')
-    cmd.delete('o-glycosyl')
-    cmd.delete('glu_amidotransferase')
-    cmd.delete('Peroxidase')
-    cmd.delete('carboncarbon')
-    cmd.delete('Tkinase')
-    cmd.delete('TrioseIsomerase')
-    cmd.delete('alcoholdehyd')
-    cmd.delete('Cis-trans')
-    cmd.delete('aldoreductase')
-    cmd.delete('NAD-reductase')
-    cmd.delete('NAD-reductase2')
-    cmd.delete('chondroitinase')
-    cmd.delete('Hyaluronate_Lyase')
-    cmd.delete('deacetylase')
-    cmd.delete('p-loop')
-    cmd.delete('adenylatekinase')
-    cmd.delete('SRC-Kinase')
-    cmd.delete('Cyclin_Kinase')
-    cmd.delete('Serotonin_transferase')
-    cmd.delete('actase')
-    cmd.delete('Exonuclease3')
-    cmd.delete('Citrate_Synth')
-    cmd.delete('hhal')
-    cmd.delete('betaine_dehydrogenase')
+    pass
 cmd.extend('deletemotif', deletemotif)
-
-def deleteEmpty():
-    objects = cmd.get_names('all')
-    if 'ligands' in objects:
-        if(len(cmd.index('ligands')) < 1):
-            cmd.delete('ligands')
-    if 'nucleic_acid' in objects:
-        if(len(cmd.index('nucleic_acid')) < 1):
-            cmd.delete('nucleic_acid')
-    if 'protein' in objects:
-        if(len(cmd.index('protein')) < 1):
-            cmd.delete('protein')
-    if 'hydrophilic' in objects:
-        if(len(cmd.index('hydrophilic')) < 1):
-            cmd.delete('hydrophilic')
-    if 'hydrophobic' in objects:
-        if(len(cmd.index('hydrophobic')) < 1):
-            cmd.delete('hydrophobic')
-    if 'acidic' in objects:
-        if(len(cmd.index('acidic')) < 1):
-            cmd.delete('acidic')
-    if 'basic' in objects:
-        if(len(cmd.index('basic')) < 1):
-            cmd.delete('basic')
-    if 'heme' in objects:
-        if(len(cmd.index('heme')) < 1):
-            cmd.delete('heme')
-cmd.extend('deleteEmpty', deleteEmpty)
 
 def procolor(selection=None,show_selection='sticks',color_selection='cpk',
         show_all=('sticks','spheres'),color_all='cpk',cpknew=False):
-    cmd.hide('everything','all')
     def cpk(cpkkit,selection):
         unk = 'not e. '
         cpk,suffix = cpkkit
@@ -270,8 +297,9 @@ def procolor(selection=None,show_selection='sticks',color_selection='cpk',
             cpk = CPKDict
             suffix = 'cpk'
         for k in cpk:
-            if k+suffix not in colorIndex:
-                cmd.set_color('%s%s'%(k,suffix),cpk[k])
+            color = '%s%s'%(k,suffix)
+            if color not in colorIndex:
+                cmd.set_color(color,cpk[k])
         return cpk,suffix
     def show(selection,toshow,tocolor,cpknew):
         if type(toshow).__name__ == 'tuple':
@@ -284,16 +312,17 @@ def procolor(selection=None,show_selection='sticks',color_selection='cpk',
         else:
             cmd.color('%s'%(tocolor),'%s'%(selection))
     if show_all != None:
+        cmd.hide('everything','all')
         show('all', show_all, color_all, cpknew)
     if selection != None:
         show(selection, show_selection, color_selection, cpknew)
 cmd.extend('procolor', procolor)
 
 def populate():
-    objects = cmd.get_names('all')
     cmd.select('protein', 'resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+'+
         'HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
-    cmd.select('nucleic_acid', 'resn a+t+g+c+u')
+    cmd.select('dna', 'resn %s'%(DNASTR))
+    cmd.select('rna', 'resn %s'%(RNASTR))
     cmd.select('hydrophobic', 'resn ALA+ILE+LEU+MET+PHE+PRO+TRP+VAL')
     cmd.select('hydrophilic', 'resn THR+SER+ARG+ASN+ASP+GLN+GLU+HIS+LYS')
     cmd.select('acidic', 'resn ASP+GLU')
@@ -306,47 +335,57 @@ def populate():
     cmd.disable('acidic')
     cmd.disable('hydrophilic')
     cmd.disable('hydrophobic')
-    cmd.disable('nucleic_acid')
+    cmd.disable('dna')
+    cmd.disable('rna')
     cmd.disable('protein')
     for letter in AlphaSequence:
-        cmd.select("Chain-" + letter, "chain " + letter)
+        chain = 'Chain-%s'%(letter)
+        cmd.select(chain, "chain %s"%(letter))
+        if(len(cmd.index(chain)) < 1):
+            cmd.delete(chain)
     #cmd.select("Chain-' '", "chain ' '")
-    checkforchain()
-    items = []
+    # if 'Chain-' '' in objects:
+    #         if(len(cmd.index('Chain-' '')) < 1):
+    #             cmd.delete('Chain-' '')
     objects = cmd.get_names('all')
+    for obj in objects:
+        try:
+            if(len(cmd.index(obj)) < 1):
+                cmd.delete(obj)
+        except:
+            cmd.delete(obj)
+    objects = cmd.get_names('all')
+    items = []
     items.append('All')
+    items.append('Selected')
     items.append('Not Selected')
-    if 'protein' in objects:
-        items.append('protein')
-    if 'nucleic_acid' in objects:
-        items.append('nucleic_acid')
-    if 'hydrophobic' in objects:
-        items.append('hydrophobic')
-    if 'hydrophilic' in objects:
-        items.append('hydrophilic')
-    if 'acidic' in objects:
-        items.append('acidic')
-    if 'basic' in objects:
-        items.append('basic')
-    if 'ligands' in objects:
-        items.append('ligands')
-    if 'heme' in objects:
-        items.append('heme')
-    for letter in AlphaSequence:
-        if 'Chain-' + letter in objects:
-            items.append('Chain-' + letter)
-    items.sort()
-    #selection.setitems(items)
+    for obj in objects:
+        items.append(obj)
+    Tabs['ez_viz']['selection'].configure(command = None)
+    Tabs['view']['advanced_selection'].configure(command = None)
+    Tabs['ez_viz']['selection'].setitems(items)
     Tabs['view']['advanced_selection'].setitems(items)
+    Tabs['ez_viz']['selection'].configure(command = set_selection)
+    Tabs['view']['advanced_selection'].configure(command = set_selection)
 cmd.extend('populate', populate)
 
 def update():
     defaults()
     populate()
     cmd.remove('resn HOH')
-    deleteEmpty()
     cmd.orient('all')
 cmd.extend('update', update)
+
+def set_selection(tag='all'):
+    global SELE
+    Tabs['ez_viz']['selection'].setvalue(tag)
+    Tabs['view']['advanced_selection'].setvalue(tag)
+    if tag == 'Not Selected':
+        SELE = '!sele'
+    elif tag == 'Selected':
+        SELE = 'sele'
+    else:
+        SELE = tag
 
 class ProgressBar:
     def __init__(self, Parent, Height=10, Width=100, Row=0, Column=0, Span=1,
@@ -376,3 +415,37 @@ class ProgressBar:
             0,0,ProgressPixel,self.Height)
     def GetProgressPercent(self):
         return self.Progress
+
+## {{{ http://code.activestate.com/recipes/285264/ (r1)
+# ---------------------------------------------------------
+# natsort.py: Natural string sorting.
+# ---------------------------------------------------------
+
+# By Seo Sanghyeon.  Some changes by Connelly Barnes.
+
+def natcmp(a, b):
+    "Natural string comparison, case sensitive."
+    def natsort_key(s):
+        "Used internally to get a tuple by which s is sorted."
+        def try_int(s):
+            "Convert to integer if possible."
+            try: return int(s)
+            except: return s
+        import re
+        return map(try_int, re.findall(r'(\d+|\D+)', s))
+    return cmp(natsort_key(a), natsort_key(b))
+
+def natcmpi(a, b):
+    "Natural string comparison, ignores case."
+    return natcmp(a.lower(), b.lower())
+
+def natsort(seq, cmp=natcmp):
+    "In-place natural string sort."
+    seq.sort(cmp)
+
+def natsorted(seq, cmp=natcmp):
+    "Returns a copy of seq, sorted by natural string sort."
+    import copy
+    temp = copy.copy(seq)
+    natsort(temp, cmp)
+    return temp

@@ -40,25 +40,6 @@ def addSpace(frame, gridrow, gridcol):
     # create the button
     space = Label(frame, text = '            ')
     space.grid(row = gridrow, column = gridcol)
-    
-def loadlog(event):
-    loaderent.delete(0, 1000)
-    log = askopenfilename(defaultextension=".pml")
-    loaderent.insert(0, log)
-    cmd.do('@'+loaderent.get())
-    pglob.Tabs['ez_viz']['tab'].mainloop()
-
-def write_script(tag):
-    if tag == 'Off':
-        pglob.script ='0'
-    if tag=='On': #write a scritp
-        try:
-            pglob.script = '1'
-            Q = asksaveasfilename(defaultextension=".py", initialdir=pglob.pathmaker('Scripts'))
-            cmd.do('log_open %s, a'%(Q))
-            f=open(Q, 'w')
-        except:
-            pass
 
 def dim_dim(tag):
     if tag == '2D':
@@ -767,7 +748,7 @@ def loadmapps(event):
     loadbtn = Button(interior, text = "Load Map")
     loadbtn.grid(row=5, column=2, padx=4, pady=2, sticky=W)
     def loadccp4(event):      
-        file = askopenfilename(defaultextension=".ccp4", initialdir=pglob.pathmaker(''))
+        file = askopenfilename(defaultextension=".ccp4", initialdir=pglob.HOME)
         if len(file)>0:
             cmd.load(file)
         interior.mainloop()

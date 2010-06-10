@@ -7,6 +7,9 @@ from pmg_tk.startup.ProMol_dir.Methods.utility import *
 from pmg_tk.startup.ProMol_dir.Methods.visual import *
 Pmw.initialise()
 
+def ambient_update():
+    cmd.set("ambient", asca.get())
+
 def initialise():
     group = Pmw.Group(pglob.Tabs['view']['tab'], tag_text = 'Automated Commands')
     group.grid(row=2, column=0, padx=0, pady=0)
@@ -18,8 +21,8 @@ def initialise():
 
 
     #-------------- Selection Dropdown -----------------
-    pglob.Tabs['view'].update({'advanced_selection':Pmw.OptionMenu(pglob.Tabs['view']['tab'],label_text = 'Select:',labelpos = tk.W,
-                items = (''), menubutton_width = 10, command = set_sel1)})
+    pglob.Tabs['view']['advanced_selection'] =  Pmw.OptionMenu(pglob.Tabs['view']['tab'],label_text = 'Select:',labelpos = tk.W,
+                items = (''), menubutton_width = 10, command = pglob.set_selection)
 
     pglob.Tabs['view']['advanced_selection'].grid(row=0, column=0,sticky = tk.NW)
 
@@ -196,8 +199,7 @@ def initialise():
     asca.configure(to="2.0")
     asca.grid(row=0, column=1, padx=0, pady=0, sticky = tk.W)
     asca.set(.25)
-    ambientupdate = tk.Button(interior, text = 'Update')
+    ambientupdate = tk.Button(interior, text = 'Update', command = ambient_update)
     ambientupdate.grid(row=0, column=2, padx=0, pady=0, sticky = tk.SW)
     ambientupdate.configure(width = 10)
     ambientupdate.pack
-    ambientupdate.bind('<Button-1>', ambient_update)
