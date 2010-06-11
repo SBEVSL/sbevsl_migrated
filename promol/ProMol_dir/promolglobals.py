@@ -5,6 +5,7 @@ import os
 import math
 import platform
 import cPickle
+VERSION = '4.0rc2'
 PLATFORM = platform.system()
 Tabs = {}
 SELE = 'all'
@@ -28,72 +29,110 @@ for DIR in DIRS:
     if not os.path.isdir(DIR):
         os.mkdir(DIR)
 
-def motifstore(folder,motdir):
-    for motfile in motdir:
-        func = motfile[0:-3]
-        MOTIFS[func] = {}
-        MOTIFS[func]['path'] = os.path.join(folder,motfile)
-        tmpf = open(MOTIFS[func]['path'])
-        hexf = ''
-        i = 0
-        for line in tmpf:
-            hexf = ''.join([hexf,line])
-            if line[0:3] == "'''":
-                i+=1
+def motifstore(*args):
+    repickle = False
+    find = ('FUNC','PDB','EC','RESI')
+    MOTIFS['errors'] = []
+    for motdir in args:
+        motfiles = os.listdir(motdir)
+        for motfile in motfiles:
+            found = []
+            func = motfile[0:-3]
+            if func not in MOTIFS or 'mtime' not in MOTIFS[func]:
+                MOTIFS[func] = {}
+                MOTIFS[func]['mtime'] = None
+            MOTIFS[func]['path'] = os.path.join(motdir,motfile)
+            if MOTIFS[func]['mtime'] == os.path.getmtime(MOTIFS[func]['path']):
                 continue
-            if i != 1:
+            repickle = True
+            MOTIFS[func]['mtime'] = os.path.getmtime(MOTIFS[func]['path'])
+            tmpf = open(MOTIFS[func]['path'],'rU')
+            i = 0
+            for line in tmpf:
+                if line[0:3] == "'''":
+                    i += 1
+                    continue
+                if i == 1:
+                    if line[0:4] == 'FUNC':
+                        if 'FUNC' in found:
+                            MOTIFS['errors'].append('Warning: Motif `%s` included an extra `FUNC` attribute, which was ignored.'%(MOTIFS[func]['path']))
+                            MOTIFS[func]['mtime'] = 0
+                            continue
+                        found.append('FUNC')
+                        funccheck = line.split(':')[1][0:-1]
+                        if func != funccheck:
+                            MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to an incorrect `FUNC` attribute.'%(MOTIFS[func]['path']))
+                            del MOTIFS[func]
+                            tmpf.close()
+                            break
+                        continue
+                    if line[0:3] == 'PDB':
+                        if 'PDB' in found:
+                            MOTIFS['errors'].append('Warning: Motif `%s` included an extra `PDB` attribute, which was ignored.'%(MOTIFS[func]['path']))
+                            MOTIFS[func]['mtime'] = 0
+                            continue
+                        found.append('PDB')
+                        pdbcheck = line.split(':')[1][0:-1].lower()
+                        if func.split('_')[1].lower() != pdbcheck:
+                            MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to an incorrect `PDB` attribute.'%(MOTIFS[func]['path']))
+                            del MOTIFS[func]
+                            tmpf.close()
+                            break
+                        MOTIFS[func]['pdb'] = pdbcheck
+                        continue
+                    if line[0:2] == 'EC':
+                        if 'EC' in found:
+                            MOTIFS['errors'].append('Warning: Motif `%s` included an extra `EC` attribute, which was ignored.'%(MOTIFS[func]['path']))
+                            MOTIFS[func]['mtime'] = 0
+                            continue
+                        found.append('EC')
+                        preec = func.split('_')
+                        ec = '.'.join((preec[2],preec[3],preec[4],preec[5]))
+                        eccheck = line.split(':')[1][0:-1]
+                        if ec != eccheck:
+                            MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to an incorrect `EC` attribute.'%(MOTIFS[func]['path']))
+                            del MOTIFS[func]
+                            tmpf.close()
+                            break
+                        MOTIFS[func]['ec'] = eccheck
+                        continue
+                    if line[0:4] == 'RESI':
+                        if 'RESI' in found:
+                            MOTIFS['errors'].append('Warning: Motif `%s` included an extra `RESI` attribute, which was ignored.'%(MOTIFS[func]['path']))
+                            MOTIFS[func]['mtime'] = 0
+                            continue
+                        found.append('RESI')
+                        resi = line.split(':')[1][0:-1].lower()
+                        if resi == '':
+                            MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to an incorrect `RESI` attribute.'%(MOTIFS[func]['path']))
+                            del MOTIFS[func]
+                            tmpf.close()
+                            break
+                        MOTIFS[func]['resi'] = resi.split(',')
+                        continue
                 if line[0:3] != 'cmd' and line != '':
+                    MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to potential mallicious code.'%(MOTIFS[func]['path']))
                     del MOTIFS[func]
                     tmpf.close()
                     break
-            if line[0:4] == 'FUNC':
-                funccheck = line.split(':')[1][0:-1]
-                if func != funccheck:
-                    del MOTIFS[func]
-                    tmpf.close()
-                    break
-                continue
-            if line[0:3] == 'PDB':
-                pdbcheck = line.split(':')[1][0:-1]
-                if func.split('_')[1] != pdbcheck:
-                    del MOTIFS[func]
-                    tmpf.close()
-                    break
-                MOTIFS[func]['pdb'] = pdbcheck
-                continue
-            if line[0:2] == 'EC':
-                preec = func.split('_')
-                ec = '.'.join((preec[2],preec[3],preec[4],preec[5]))
-                eccheck = line.split(':')[1][0:-1]
-                if ec != eccheck:
-                    del MOTIFS[func]
-                    tmpf.close()
-                    break
-                MOTIFS[func]['ec'] = eccheck
-                continue
-            if line[0:4] == 'RESI':
-                resi = line.split(':')[1][0:-1]
-                if resi == '':
-                    del MOTIFS[func]
-                    tmpf.close()
-                    break
-                MOTIFS[func]['resi'] = resi.split(',')
-                continue
+            if func in MOTIFS and len(find) != len(found):
+                MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to missing required attributes.'%(MOTIFS[func]['path']))
+                del MOTIFS[func]
+            tmpf.close()
+    return repickle
 
 MOTIFSFOLDER = os.path.join(PROMOL_DIR_PATH,'Motifs')
 USRMOTIFSFOLDER = os.path.join(OFFSITE,'Motifs')
 MOTIFS = {}
-#try:
-#    MOTIFS = cPickle.load(open(os.path.join(OFFSITE,'motifs.pkl'),'r'))
-#except (IOError,TypeError):
-motifstore(MOTIFSFOLDER,os.listdir(MOTIFSFOLDER))
-motifstore(USRMOTIFSFOLDER,os.listdir(USRMOTIFSFOLDER))
-#    try:
-#        cPickle.dump(MOTIFS,open(os.path.join(OFFSITE,'motifs.pkl'),'w'))
-#    except (IOError,TypeError):
-#        pass
-            
-splash = tk.PhotoImage(file = os.path.join(PROMOL_DIR_PATH,'splashmol.gif'))
+try:
+    MOTIFS = cPickle.load(open(os.path.join(OFFSITE,'motifs.pkl'),'r'))
+except IOError:
+    pass
+if motifstore(MOTIFSFOLDER,USRMOTIFSFOLDER) == True:
+    try:
+        cPickle.dump(MOTIFS,open(os.path.join(OFFSITE,'motifs.pkl'),'w'))
+    except IOError:
+        pass
 
 AminoMenuList = ('','ala','arg','asn','asp','cys','gln','glu','gly','his','ile',
     'leu','lys','met','phe','pro','ser','thr','trp','tyr','val')

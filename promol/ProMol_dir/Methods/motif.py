@@ -477,20 +477,6 @@ def motifchecker():
     pglob.Tabs['motifs']['csv']['state'] = tk.DISABLED
     pglob.Tabs['motifs']['findmotif']['state'] = tk.DISABLED
     
-    def ModBounds(x, exact, upper=None, lower=None):
-        print exact,upper,lower
-        if x != 0 and x % exact == 0:
-            return '1'
-        elif upper != None and lower != None:
-            upStatic = upper
-            lowStatic = lower
-            while x > lower:
-                if x < upper:
-                    return '2'
-                upper += upStatic
-                lower += lowStatic
-        return '0'
-    
     def LevenshteinDistance(x,y):
         w,h = len(x)+1,len(y)+1
         #x+1 rows and y+1 columns
@@ -668,7 +654,7 @@ def makemotif(mode):
     pglob.Tabs['motif_maker']['motif'] = []
     pglob.Tabs['motif_maker']['resnstr'] = {}
     pf = pglob.Tabs['motif_maker']['pf'].get()
-    pdb = pglob.Tabs['motif_maker']['pdb'].get()
+    pdb = pglob.Tabs['motif_maker']['pdb'].get().lower()
     ecen = pglob.Tabs['motif_maker']['ec'].get()
     resn = {}
     resi = {}
