@@ -20,7 +20,7 @@ def __init__(self):
     '''
     self.menuBar.addmenuitem('Plugin', 'command',
                              'Easy GUI',
-                             label = 'ProMol 3.04',
+                             label = 'ProMol %s'%(pglob.VERSION),
                              command = lambda s = self : promol(s))
     promol(self, 0)
 
@@ -71,8 +71,7 @@ def promol(pymol, user_click=1):
     if not user_click:
         bottom_buttons('Quit')
 
-    lab = tk.Label(interior, text = 'ProMol Version 3.03\nDeveloped By: '+
-            'The SBEVSL Team', background = '#000066',
+    lab = tk.Label(interior, text = 'ProMol Version %s'%(pglob.VERSION), background = '#000066',
             foreground = 'white')
     lab.pack(expand = 0, fill = 'x', padx = 4, pady = 0)
 
