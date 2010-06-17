@@ -1077,7 +1077,7 @@ Pmw.initialise()
 def __init__(self):
     self.menuBar.addmenuitem('Plugin', 'command',
                              'VSL Script Loader',
-                             label = 'ConSCRIPT',    
+                             label = 'ConSCRIPT 17 June 2010',    
                              command = lambda s=self : converter(s))
 
 class converter:
@@ -1085,7 +1085,7 @@ class converter:
 
         # create the dialog box which contains the GUI
         parent = app.root
-        self.dialog = Pmw.Dialog(parent, title = 'ConSCRIPT')
+        self.dialog = Pmw.Dialog(parent, title = 'ConSCRIPT 17 June 2010')
         
         # set the size of the 
         #self.dialog.geometry('550x550')
@@ -1093,7 +1093,7 @@ class converter:
             
         #TITLE BAR
         lab = Label(interior, 
-            text='ConSCRIPT (C) Copyright 2007-2009\nS. Mottarella, P. Craig, H. Bernstein\nGPL, No Warranty', 
+            text='ConSCRIPT (C) Copyright 2007-2010\nS. Mottarella, P. Craig, H. Bernstein\nGPL, No Warranty', 
             background='#000066', foreground='white')
                         
         lab.pack(expand=0, fill='x', padx=4, pady=0)
@@ -1316,7 +1316,7 @@ class converter:
 
             return selection 
 
-        ## Select method when parantheses are used.  This method removes each object in the parantheses and performs the select method on them.
+        ## Select method when parentheses are used.  This method removes each object in the parantheses and performs the select method on them.
         def selectpar( allparameters ):
 
             selection = ''
@@ -1492,6 +1492,7 @@ class converter:
         ##Handles parameters that can be changed using the 'set' command
         def set_parameters( parameters ):
             global hydrogen, hetero, hbonds_backbone, ssbonds_backbone, solvent, radius, set_monitor
+            global VSLVerbose
             not_coded = ['backfade','bondmode','bonds','cisangle','fontstroke','hourglass ','kinemage','menus','strands','transparent','vectps','write',
                         'boundbox','display','mouse','picking','shadepower','slabmode','specpower',
                         'cartoon','hbonds','radius','ssbonds']
@@ -1646,6 +1647,14 @@ class converter:
                             cmd.set( 'ray_shadows', 'off' )
                         else:
                             print 'An error has occured with the Shadows setting.'
+                    ##PARAMETER: verbose -- set the VSLVerbose flag 
+                    elif first == 'verbose':
+                        if second == 'on' or second == 'true':
+                            VSLVerbose = 1;
+                        elif second == 'off' or second == 'false':
+                            VSLVerbose = 0;
+                        else:
+                            print 'An error has occured with the Verbose setting.'                   
                     else:
                         print 'That setting is not a valid RasMol setting.'
             except:
@@ -1762,6 +1771,7 @@ class converter:
             selected = VSLselection           
             cmd.select('VSLselection',VSLselection)
             if VSLVerbose > 0:
+              print os.times()
               print 'VSLselection: ' + VSLselection
               print 'VSLcommand: ' + p
 
@@ -2156,7 +2166,11 @@ class converter:
             ##---------------Surface--------------##
 
             if p[:7]=='surface':
-                print 'PyMOL only supports the Connolly type of surface.  Try the command \' generate map surface\' to generate that type.  Pymol does not support Lee-Richards molecular surface.'
+                #print 'PyMOL only supports the Connolly type of surface.  Try the command \' generate map surface\' to generate that type.  Pymol does not support Lee-Richards molecular surface.'
+                try:
+                    cmd.show('surface', 'VSLselection')
+                except:
+                    print 'An error has occurred with the surface command'
                 return 0
 
             ##---------------Bond---------------##
@@ -2178,7 +2192,7 @@ class converter:
                     else:
                         print 'That function is not supported by PyMOL'
                 except:
-                    'An error has occured with the bond command'
+                    print 'An error has occurred with the bond command'
                 return 0
 
             ##---------------Unbond---------------##
@@ -2465,6 +2479,15 @@ class converter:
                 UserDefinedGroups[ defparams[0] ] =  defparams[1]
                 return 0
                 
+            ##-----------Pause/Wait---------------------##
+
+            if p[:5]=='pause':
+                keystroke=False
+                while not keystroke:
+                    if event.char==event.keysym:
+                        keystroke=True
+                return 0
+                
             ##-------Quit/Exit/blank/comment------------##
 
             if CurToken == ExitTok or CurToken == QuitTok or CurToken == 0 :
@@ -2484,9 +2507,11 @@ class converter:
 
 
     ## Handler for SBEVSL commands from the command line
-        def VSL( *args ):
+        def VSL( *args, **kwargs  ):
           p = ' '.join(args)
           donext = handlecommand(p.rstrip())
+          if VSLVerbose > 0:
+              print os.times()
           if donext == QuitTok or donext == ExitTok:
               cmd.quit()
           return donext
@@ -2519,6 +2544,8 @@ class converter:
                 #Close the file
                 f.close()
                 filelevel = filelevel-1
+                if VSLVerbose > 0:
+                  print os.times()
                 return 0
             
         #Define the Boffo Function
@@ -2528,6 +2555,7 @@ class converter:
             global filestack
 
             try:
+                openbtn.config(relief=SUNKEN)
                 Q = tkFileDialog.askopenfilename(initialdir=HOME)
                 filelevel = 0
                 filestack = []
@@ -2535,8 +2563,10 @@ class converter:
                 if donext == QuitTok:
                     cmd.quit()
                 #Reset the GUI
+                openbtn.config(relief=RAISED)
                 interior.mainloop()
             except:
+                openbtn.config(relief=RAISED)
                 interior.mainloop()
 
         #Define the Boffocmd Function
@@ -2546,6 +2576,12 @@ class converter:
             cmd.extend('vsl', VSL)
             cmd.extend('SBEVSL', VSL)
             cmd.extend('sbevsl', VSL)
+            cmd.extend('R', VSL)
+            cmd.extend('r', VSL)
+            cmd.extend('RASMOL', VSL)
+            cmd.extend('rasmol', VSL)
+            openbtncmd.config(relief=SUNKEN)
+            openbtncmd.config(text="VSL enabled")
             interiorcmd.mainloop()
             #Reset the GUI
             interior.mainloop()
