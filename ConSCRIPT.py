@@ -1077,7 +1077,7 @@ Pmw.initialise()
 def __init__(self):
     self.menuBar.addmenuitem('Plugin', 'command',
                              'VSL Script Loader',
-                             label = 'ConSCRIPT 17 June 2010',    
+                             label = 'ConSCRIPT 18 June 2010',    
                              command = lambda s=self : converter(s))
 
 class converter:
@@ -1085,7 +1085,7 @@ class converter:
 
         # create the dialog box which contains the GUI
         parent = app.root
-        self.dialog = Pmw.Dialog(parent, title = 'ConSCRIPT 17 June 2010')
+        self.dialog = Pmw.Dialog(parent, title = 'ConSCRIPT 18 June 2010')
         
         # set the size of the 
         #self.dialog.geometry('550x550')
@@ -2026,8 +2026,9 @@ class converter:
                         cmd.hide( 'ribbon', 'VSLselection' )
                         print 'Cartoon off complete'
                     elif command=='true' or command=='on' or command=='':
-                        cmd.cartoon( 'rectangle', 'VSLselection' )
                         cmd.hide( 'ribbon', 'VSLselection' )
+                        cmd.cartoon( 'rectangle', 'VSLselection' )
+                        cmd.show( 'cartoon', 'VSLselection' )
                         print 'Cartoon on complete'
                     elif float(command)>=0 and float(command)<=500:
                         if '.' in command:
@@ -2037,6 +2038,7 @@ class converter:
                         cmd.cartoon( 'rectangle', 'VSLselection' )
                         cmd.hide( 'ribbon', 'VSLselection' )
                         cmd.set( 'cartoon_rect_length', command )
+                        cmd.show( 'cartoon', 'VSLselection' )
                         print 'Cartoon on complete'
                 except:
                     print 'An error occured with the cartoon command'
@@ -2372,10 +2374,10 @@ class converter:
                     cmd.set( 'ribbon_smooth', 1 )
                     cmd.set( 'ribbon_width', 0.02 )
                     if command=='false' or command=='off':
-                        cmd.hide( 'ribbon' )
+                        cmd.hide( 'ribbon' , 'VSLselection')
                         print 'Backbone off complete'
                     elif command=='true' or command=='on' or command=='':
-                        cmd.show( 'ribbon' )
+                        cmd.show( 'ribbon', 'VSLselection')
                         print 'Backbone on complete'
                     elif command=='dash':
                         print 'PyMOL does not include funcionality for this command.'
@@ -2384,8 +2386,8 @@ class converter:
                             command = float(command) * 5
                         else:
                             command = float(command)/50
+                        cmd.show( 'ribbon' , 'VSLselection')
                         cmd.set( 'ribbon_width', command )
-                        cmd.show( 'ribbon' )
                         print 'Backbone on complete'
                     else:
                         print 'That function is not supported by PyMOL.'
@@ -2401,12 +2403,12 @@ class converter:
                     if len(parameters) == 3:
                         cmd.distance( 'monitor', 'id ' + parameters[1],  'id ' + parameters[2] )
                         if not set_monitor:
-                            cmd.hide( 'labels' )
+                            cmd.hide( 'labels' , 'VSLselection')
                     elif len(parameters) == 2:
                         command = parameters[1]
                         if command=='false' or command=='off':
-                            cmd.hide( 'labels' )
-                            cmd.hide( 'dashes' )
+                            cmd.hide( 'labels' , 'VSLselection')
+                            cmd.hide( 'dashes' , 'VSLselection' )
                             print 'Monitor off complete'
                         elif command=='true' or command=='on' or command=='':
                             pass
