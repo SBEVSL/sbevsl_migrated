@@ -2,13 +2,26 @@ ConScript Installation Instructions
 
 download PyMOL from http://pymol.sourceforge.net and install to default location
 
-Unzip all ConScript files to:  C:\Program Files\DeLano Scientific\pymol\modules\pmg_tk\startup\
+Unzip all all files and move ConSCRIPT.py to:
+
+  C:\Program Files\DeLano Scientific\pymol\modules\pmg_tk\startup\
+
+on windows with a standard 0.99 pymol installation, or locate
+the portion of the pymol installation tree that contains 
+
+   modules/pmg_tk/startup
+
+and place ConSCRIPT.py in startup.  For example in a fink pymol
+istallation for python 2.4 on a mac
+
+  /sw/lib/pymol-py24/modules/pmg_tk/startup
+
 
 When all files are in place, the ConScript interface can be run by choosing ConSCRIPT from the PyMOL plug-in menu.  
 
 Work done in part with support from NIH and Nation Institute of General Medical Sciences (NIGMS) under Grant number 1R15GM078077-01.
 
-Work being presented at ASBMB COnference in San Diego, April 2008:
+Work presented at ASBMB COnference in San Diego, April 2008:
 
 Executing RasMol Scripts in PyMOL
 Scott Mottarella1, Corey Wischmeyer1, Brett Hanson3, Charles 
