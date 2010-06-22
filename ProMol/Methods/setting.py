@@ -1,82 +1,93 @@
 from pymol import cmd
 from Tkinter import *
 import Pmw
-from pmg_tk.startup.ProMol_dir import promolglobals as pglob
+from pmg_tk.startup.ProMol import promolglobals as pglob
 Pmw.initialise()
 
-# Set Cartoon Thickness
-def cartoon_thickness(self):
-    self.populate()
-    sel1 = ''
-    value = self.toonThickness.get()
-    cmd.set('cartoon_rect_width', value, 'all') # strands
-    cmd.set('cartoon_oval_width', value, 'all') # helices
+def stereo_switch(tag):
+    if tag == 'Off':
+        cmd.stereo('off')
+    elif tag == 'Quad':
+        cmd.stereo('off')
+        cmd.stereo('cross')
+        cmd.stereo('quadbuffer')
+        cmd.stereo('on')
+    elif tag == 'Cross-Eye':
+        cmd.stereo('off')
+        cmd.stereo('cross')
+        cmd.stereo('on')
+    else:
+        cmd.stereo('off')
+        cmd.stereo('walleye')
+        cmd.stereo('on')
 
+# change the color space
+def cspace_switch(tag):
+    if tag == 'PyMOL':
+        cmd.space('pymol')
+    elif tag == 'Publications':
+        cmd.space('rgb')
+    else:
+        cmd.space('cmyk')
+
+# hide/show interface
+def hide_interface(tag):
+    if tag == 'Show':
+        cmd.set('internal_gui', '1')
+    else:
+        cmd.set('internal_gui', '0')
+
+def ambient_update():
+    cmd.set("ambient", pglob.GUI['view']['asca'].get())
+
+# Set Cartoon Thickness
+def cartoon_thickness():
+    pglob.populate()
+    value = pglob.GUI['view']['toonThickness'].get()
+    cmd.set('cartoon_rect_width', value, pglob.SELE) # strands
+    cmd.set('cartoon_oval_width', value, pglob.SELE) # helices
 
 # Set Cartoon Width
-def cartoon_width(self):
-    self.populate()
-    sel1 = ''
-    value = self.toonWidth.get()
-    cmd.set('cartoon_rect_length', value, 'all') # strands
-    cmd.set('cartoon_oval_length', value, 'all') # helices
+def cartoon_width():
+    pglob.populate()
+    value = pglob.GUI['view']['toonWidth'].get()
+    cmd.set('cartoon_rect_length', value, pglob.SELE) # strands
+    cmd.set('cartoon_oval_length', value, pglob.SELE) # helices
 
 # Set Cartoon Transparency
-def cartoon_transparency(self):
-    self.populate()
-    sel1 = ''
-    amount = self.cartoonTransparency.get()
-    cmd.set('cartoon_transparency', amount, 'all')
+def cartoon_transparency():
+    pglob.populate()
+    amount = pglob.GUI['view']['cartoonTransparency'].get()
+    cmd.set('cartoon_transparency', amount, pglob.SELE)
 
 # Set Cartoon Tube Radius
-def cartoon_tube_radius(self):
-    self.populate()
-    sel1 = ''
-    value = self.toonTubeRadius.get()
-    cmd.set('cartoon_tube_radius', value, 'all') # strands
+def cartoon_tube_radius():
+    pglob.populate()
+    value = pglob.GUI['view']['toonTubeRadius'].get()
+    cmd.set('cartoon_tube_radius', value, pglob.SELE) # strands
 
 #Set Ribbon Type
-def ribType(self, tag):
+def ribType(tag):
     try:
-        try:
-            if tag == 'Skip':
-                    cmd.cartoon('skip', sel1)
-            elif tag == 'Automatic':
-                    cmd.cartoon('automatic', sel1)
-            elif tag == 'Oval':
-                    cmd.cartoon('oval', sel1)
-            elif tag == 'Tube':
-                    cmd.cartoon('tube', sel1)
-            elif tag == 'Rectangle':
-                    cmd.cartoon('rectangle', sel1)
-            elif tag == 'Loop':
-                    cmd.cartoon('loop', sel1)
-            elif tag == 'Arrow':
-                    cmd.cartoon('arrow', sel1)
-            elif tag == 'Dumbbell':
-                    cmd.cartoon('dumbbell', sel1)
-            elif tag == 'Putty':
-                    cmd.cartoon('putty', sel1)
-        except:
-            self.populate()
-            if tag == 'Skip':
-                    cmd.cartoon('skip', sel1)
-            elif tag == 'Automatic':
-                    cmd.cartoon('automatic', sel1)
-            elif tag == 'Oval':
-                    cmd.cartoon('oval', sel1)
-            elif tag == 'Tube':
-                    cmd.cartoon('tube', sel1)
-            elif tag == 'Rectangle':
-                    cmd.cartoon('rectangle', sel1)
-            elif tag == 'Loop':
-                    cmd.cartoon('loop', sel1)
-            elif tag == 'Arrow':
-                    cmd.cartoon('arrow', sel1)
-            elif tag == 'Dumbbell':
-                    cmd.cartoon('dumbbell', sel1)
-            elif tag == 'Putty':
-                    cmd.cartoon('putty', sel1)
+        pglob.populate()
+        if tag == 'Skip':
+            cmd.cartoon('skip', pglob.SELE)
+        elif tag == 'Automatic':
+            cmd.cartoon('automatic', pglob.SELE)
+        elif tag == 'Oval':
+            cmd.cartoon('oval', pglob.SELE)
+        elif tag == 'Tube':
+            cmd.cartoon('tube', pglob.SELE)
+        elif tag == 'Rectangle':
+            cmd.cartoon('rectangle', pglob.SELE)
+        elif tag == 'Loop':
+            cmd.cartoon('loop', pglob.SELE)
+        elif tag == 'Arrow':
+            cmd.cartoon('arrow', pglob.SELE)
+        elif tag == 'Dumbbell':
+            cmd.cartoon('dumbbell', pglob.SELE)
+        elif tag == 'Putty':
+            cmd.cartoon('putty', pglob.SELE)
     except:
         showinfo('Error', 'Drop down menu is set to an invalid selection\n'+
             'You may need to update selections')
@@ -85,56 +96,51 @@ def ribType(self, tag):
 #                 Sphere Functions             #
 #------------------------------------------#
 # Set Sphere Transparency
-def sphere_transparency(self):
-    self.populate()
-    sel1 = 'all'
-    amount = self.sphereTransparency.get()
-    cmd.set('sphere_transparency', amount, 'all')
+def sphere_transparency():
+    pglob.populate()
+    amount = pglob.GUI['view']['sphereTransparency'].get()
+    cmd.set('sphere_transparency', amount, pglob.SELE)
 
 # Set Sphere Size
-def sphereSize(self):
-    self.populate()
-    sel1 = 'all'
-    size = self.sphereScale.get()
-    cmd.set('sphere_scale', size, 'all')
+def sphereSize():
+    pglob.populate()
+    size = pglob.GUI['view']['sphereScale'].get()
+    cmd.set('sphere_scale', size, pglob.SELE)
 
 #------------------------------------------#
 #                Surface    Functions            #
 #------------------------------------------#
 # Set Surface Transparency
-def surface_transparency(self):
-    self.populate()
-    sel1 = 'all'
-    amount = self.surfaceTransparency.get()
-    cmd.set('transparency', amount, 'all')
+def surface_transparency():
+    pglob.populate()
+    amount = pglob.GUI['view']['surfaceTransparency'].get()
+    cmd.set('transparency', amount, pglob.SELE)
 
 #------------------------------------------#
 #                Stick    Functions            #
 #------------------------------------------#
 # Set Stick Transparency
-def stick_transparency(self):
-    self.populate()
-    sel1 = 'all'
-    amount = self.stickTransparency.get()
-    cmd.set('stick_transparency', amount, 'all')
+def stick_transparency():
+    pglob.populate()
+    amount = pglob.GUI['view']['stickTransparency'].get()
+    cmd.set('stick_transparency', amount, pglob.SELE)
  
  # Set Stick Radius
-def stickRad(self):
-    self.populate()
-    sel1 = 'all'
-    size = self.stickRadius.get()
-    cmd.set('stick_radius', size, 'all')
+def stickRad():
+    pglob.populate()
+    size = pglob.GUI['view']['stickRadius'].get()
+    cmd.set('stick_radius', size, pglob.SELE)
     
 def setray0(event):
     cmd.set("ray_trace_mode", "0")
     imgraysave()
 def setray1(event):
     cmd.set("ray_trace_mode", "1")
-    cmd.do('bg_color white')
+    cmd.bg_color('white')
     imgraysave()
 def setray2(event):
     cmd.set("ray_trace_mode", "2")
-    cmd.do('bg_color white')
+    cmd.bg_color('white')
     imgraysave()
 def setray3(event):
     cmd.set("ray_trace_mode", "3")
@@ -253,7 +259,7 @@ def esurf(*args):
             showinfo("Error", 'No PDB is present')
             interior.mainloop()
 cmd.extend('esurf',esurf)
-def roving_density(self):
+def roving_density():
     delcrea()
     try:
         cmd.set("suspend_updates",1,quiet=1)
@@ -278,7 +284,7 @@ def roving_density(self):
         showinfo("Error", 'No PDB is present')
         interior.mainloop()
 cmd.extend('roving_density',roving_density)
-def roving_surface(self):
+def roving_surface():
     delcrea()
     try:
 

@@ -1,10 +1,10 @@
-def imgSave(self):
+def imgSave():
     
     file = asksaveasfilename(defaultextension = ".png", initialdir = "./PyMOL/")
     if len(file)>0:
         cmd.save(file)
 
-def imgraysave(self):
+def imgraysave():
     
     root = Tk()
     root.geometry('226x147+140+140')
@@ -101,7 +101,7 @@ def savefilename(*args):
 
 def savefile(filename, fileString):
     try:
-        newFile = open(filename,"w")
+        newFile = open(filename,"wb")
         newFile.write(fileString)
         newFile.close()
     except:
@@ -109,7 +109,7 @@ def savefile(filename, fileString):
     topFrame = Frame(interior)
     bottomFrame = Frame(interior)
     
-def molSave(self):
+def molSave():
   try:
     try:
       a = int(enti.get()) + 1
@@ -119,7 +119,7 @@ def molSave(self):
       file = asksaveasfilename(defaultextension=entfilex.get(), initialdir=pglob.HOME, initialfile= "frame" + enti.get())
       if len(file)>0:
           cmd.save(file)
-      pglob.Tabs['movie_maker']['tab'].mainloop()
+      pglob.GUI['movie_maker']['tab'].mainloop()
     except:
       a = int(enti.get()) + 1
       enti.delete(0,100000)
@@ -128,7 +128,7 @@ def molSave(self):
       file = asksaveasfilename(defaultextension=entfilex.get(), initialdir=pglob.HOME, initialfile= "frame" + enti.get())
       if len(file)>0:
           cmd.save(file)
-    pglob.Tabs['movie_maker']['tab'].mainloop()
+    pglob.GUI['movie_maker']['tab'].mainloop()
   except:
 
 

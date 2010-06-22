@@ -1,6 +1,133 @@
 from pymol import cmd, util
-from pmg_tk.startup.ProMol_dir import promolglobals as pglob
-from tkMessageBox import showinfo
+from pmg_tk.startup.ProMol import promolglobals as pglob
+from tkColorChooser import askcolor
+from tkMessageBox import showinfo,showerror
+
+def pre_surface_view(tag):
+    if tag == 'Surface':
+        surface_view()
+    elif tag == 'Surface on Cartoon':
+        surface_view('toon')
+    elif tag == 'Surface on Sticks':
+        surface_view('stick')
+    elif tag == 'Surface on Spheres':
+        surface_view('sphere')
+    elif tag == 'Mesh on Sticks':
+        surface_view('mesh')
+    elif tag == 'Dots on Lines':
+        surface_view('dot')
+
+def pre_cartoon_view(tag):
+    if tag == 'Cartoon':
+        cartoon_view()
+    elif tag == 'Putty':
+        cartoon_view('putty')
+    elif tag == 'Lines on Cartoon':
+        stick_toon()
+    elif tag == 'Color by Chain':
+        util.cbc()
+
+def preres(tag):
+    if tag == 'Aromatics':
+        color_aromatics()
+    elif tag == 'Show Charged':
+        show_charged()
+    elif tag == 'Solubility':
+        view_polarity()
+
+def prerov(tag):
+    if tag == 'Roving Sticks':
+        rovingstickers()
+    elif tag == 'Roving Ball&Sticks':
+        rovingballstick()
+    elif tag == 'Roving Spheres':
+        rovingspheres()
+    elif tag == 'Roving Lines':
+        rovinglines()
+
+def preele(tag):
+    if tag == 'Mesh on Ribbon':
+        mesh_ribbon()
+    elif tag == 'Dots on Sticks':
+        dot_sticks()
+    elif tag == 'Surface on Lines':
+        surfinglines()
+
+def premisc(tag):
+    if tag == 'Hetero Atoms':
+        show_hetero()
+    elif tag == 'Chain Contacts':
+        chain_contact()
+    elif tag == 'DNA & RNA':
+        show_dna_rna()
+    elif tag == 'CPK':
+        pglob.procolor()
+    elif tag == 'Ball & Stick':
+        ball_and_stick()
+
+# Show/Hide Water
+def show_hide_water(tag):
+    if tag == 'Show':
+        cmd.show('(resn HOH)')
+        cmd.show('spheres', '(resn HOH)')
+    else:
+        cmd.hide('(resn HOH)')
+
+# Coloring on Selection
+def color_sel(tag):
+    try:
+        sel = sel
+        if tag == 'Red':
+            cmd.color('red', sel)
+        elif tag == 'Green':
+            cmd.color('green', sel)
+        elif tag == 'Orange':
+            cmd.color('orange', sel)
+        elif tag == 'Yellow':
+            cmd.color('yellow', sel)
+        elif tag == 'Blue':
+            cmd.color('blue', sel)
+        elif tag == 'Violet':
+            cmd.color('violet', sel)
+        elif tag == 'CPK':
+            cmd.color("oxygen", "(elem O and "+sel+")")
+            cmd.color("nitrogen", "(elem N and "+sel+")")
+            cmd.color("sulfur", "(elem S and "+sel+")")
+            cmd.color("hydrogen", "(elem H and "+sel+")")
+            cmd.color("gray", "(elem C and "+sel+")")
+        elif tag == 'Other':
+            color = askcolor(title = "Selection Color Chooser")
+            colorArray = []
+            if color[0] != None:
+                list = color[0]
+                for each in list:
+                    z = (each/255.0)
+                    val = repr(z)
+                    colorArray.append(val)
+                cmd.set_color('newcolor', colorArray)
+                cmd.color('newcolor', sel)
+    except:
+        showerror('Error', 'Update Selection!')
+
+# change background colors
+def bgcolor_switch(tag):
+    if tag == 'Black':
+        cmd.bg_color('black')
+    elif tag == 'White':
+        cmd.bg_color('white')
+    elif tag == 'Grey':
+        cmd.bg_color('grey')
+    elif tag == 'Other':
+        color = askcolor(title = "Background Color Chooser")
+        colorArray = []
+        if color[0] != None:
+            list = color[0]
+            for each in list:
+                z = (each/255.0)
+                val = repr(z)
+                colorArray.append(val)
+            cmd.set_color('newcolor', colorArray)
+            cmd.bg_color('newcolor')
 
 def show_dna_rna():
     pglob.update()
@@ -38,12 +165,13 @@ def cartoon_view(cartoon=None):
     pglob.update()
     cmd.hide('all')
     objects = cmd.get_names('all')
-    cmd.show('cartoon', 'protein')
+    if 'protein' in objects:
+        cmd.show('cartoon', 'protein')
     cmd.color("red", "ss h")
     cmd.color("yellow", "ss s")
     cmd.color("cyan", "ss l+\'\'")
     if 'ligands' in objects:
-        pglob.procolor('lignads','spheres','orange',None)
+        pglob.procolor('ligands','spheres','orange',None)
     if 'dna' in objects:
         pglob.procolor('dna','sticks','cpk',None)
     if 'rna' in objects:
@@ -90,7 +218,7 @@ def ball_and_stick():
     if 'rna' in objects:
         pglob.procolor('rna',('sticks','cartoon','spheres'),None)
     if 'ligands' in objects:
-        pglob.procolor('ligands','spheres','oragne',None)
+        pglob.procolor('ligands','spheres','orange',None)
 cmd.extend('ball_and_stick', ball_and_stick)
 
 def surface_view(surface = None):
@@ -99,31 +227,31 @@ def surface_view(surface = None):
     '''
     pglob.update()
     util.cbc()
-    cmd.do('hide all')
+    cmd.hide('all')
     if surface == 'dot':
-        cmd.do('set dot_density, 3')
-        cmd.do('show lines, all')
-        cmd.do('show dots, all')
+        cmd.set('dot_density',3)
+        cmd.show('lines','all')
+        cmd.show('dots','all')
     elif surface == 'mesh':
-        cmd.do('set mesh_quality, 3')
-        cmd.do("show stick, all")
-        cmd.do("show mesh, all")
+        cmd.set('mesh_quality',3)
+        cmd.show('stick','all')
+        cmd.show('mesh','all')
     elif surface == 'sphere':
-        cmd.do('set sphere_scale, 0.5, all')
-        cmd.do('show spheres, all')
-        cmd.do('show surface, all')
-        cmd.do('set transparency, 0.5, all')
+        cmd.set('sphere_scale',0.5,'all')
+        cmd.show('spheres','all')
+        cmd.show('surface','all')
+        cmd.set('transparency',0.5,'all')
     elif surface == 'stick':
-        cmd.do('show stick, all')
-        cmd.do('show surface, all')
-        cmd.do('set transparency, 0.5, all')
+        cmd.show('stick','all')
+        cmd.show('surface','all')
+        cmd.set('transparency',0.5,'all')
     elif surface == 'toon':
-        cmd.do('set cartoon_smooth_loops, 0')
-        cmd.do('show cartoon, all')
-        cmd.do('show surface, all')
-        cmd.do('set transparency, 0.5, all')
+        cmd.set('cartoon_smooth_loops', 0)
+        cmd.show('cartoon','all')
+        cmd.show('surface','all')
+        cmd.set('transparency',0.5,'all')
     else:
-        cmd.do('show surface, all')
+        cmd.show('surface','all')
 cmd.extend('surface_view', surface_view)
 
 # show the polarities of the molecule
@@ -199,7 +327,7 @@ def rovingstickers():
     cmd.set("roving_origin", 1)
     cmd.set("stick_radius", 0.3)
     cmd.set("roving_polar_contacts", 8)
-    cmd.set("roving_sticks", pglob.Tabs['ez_viz']['roving'].get())
+    cmd.set("roving_sticks", pglob.GUI['ez_viz']['roving'].get())
 cmd.extend('roving_stick', rovingstickers)
 
 def rovinglines():
@@ -209,7 +337,7 @@ def rovinglines():
     cmd.set("roving_origin", 1)
     cmd.set("roving_sticks", 0)
     cmd.set("roving_polar_contacts", 8)
-    cmd.set('roving_lines', pglob.Tabs['ez_viz']['roving'].get())
+    cmd.set('roving_lines', pglob.GUI['ez_viz']['roving'].get())
 cmd.extend('roving_line', rovinglines)
 
 def rovingspheres(): 
@@ -220,7 +348,7 @@ def rovingspheres():
     cmd.set("roving_polar_contacts", 8)
     cmd.set('sphere_transparency', '0.2')
     cmd.set('sphere_scale', '0.8', 'all')
-    cmd.set('roving_spheres', pglob.Tabs['ez_viz']['roving'].get())
+    cmd.set('roving_spheres', pglob.GUI['ez_viz']['roving'].get())
 cmd.extend('roving_sphere', rovingspheres)
 
 def rovingballstick():
@@ -231,10 +359,10 @@ def rovingballstick():
     cmd.set("roving_polar_contacts", 8)
     cmd.set('sphere_transparency', '0.2')
     cmd.set("sphere_scale", "0.3", "all")
-    cmd.set('roving_spheres', pglob.Tabs['ez_viz']['roving'].get())
+    cmd.set('roving_spheres', pglob.GUI['ez_viz']['roving'].get())
     cmd.set("stick_radius", 0.3)
     cmd.set("roving_polar_contacts", 8)
-    cmd.set("roving_sticks", pglob.Tabs['ez_viz']['roving'].get())
+    cmd.set("roving_sticks", pglob.GUI['ez_viz']['roving'].get())
 cmd.extend('roving_ballstick', rovingballstick)
 
 def chain_contact():
@@ -242,10 +370,8 @@ def chain_contact():
         d = 0
         l = c + 1
         while len(chainPullList) > l and (26-d) >= 0:
-            cmd.do('sele chain_contact,'+chainPullList[d]+' w. 5 of '+
-                    chainPullList[c+1]+',enable=0,quiet=1,merge=1')
-            cmd.do('sele chain_contact,'+chainPullList[c+1]+' w. 5 of '+
-                    chainPullList[d]+',enable=0,quiet=1,merge=1')
+            cmd.select('chain_contact','%s w. 5 of %s'%(chainPullList[d],chainPullList[c+1]),enable=0,quiet=1,merge=1)
+            cmd.select('chain_contact','%s w. 5 of %s'%(chainPullList[c+1],chainPullList[d]),enable=0,quiet=1,merge=1)
             d += 1
             l += 1
             while d == (c+1) or d in skip:
@@ -257,10 +383,10 @@ def chain_contact():
     objects = cmd.get_names('all')
     chainPullList = []
     for i in cmd.get_chains(quiet=1):
-        if(i.islower()):
-            chainPullList.append('Chain-'+i+i)
-            continue
         chainPullList.append('Chain-'+i)
+    if len(chainPullList) < 2:
+        showinfo('Notice','There needs to be two or more chains to run this functions.')
+        return False
     c = 0
     skip = []
     while c < (len(chainPullList)-1) and c < 26:
@@ -268,11 +394,9 @@ def chain_contact():
         chain_contact_loop(c,skip,chainPullList)
         c += 1
     pglob.procolor('chain_contact','mesh','cpk',None)
-    cmd.do('delete chain_contact')
+    cmd.delete('chain_contact')
     return chainPullList
 cmd.extend('chain_contact',chain_contact)
-cmd.extend('chain_contact', chain_contact)
-
     #-----------Electron Density Presets----------------#
 
 def mesh_ribbon():
@@ -336,9 +460,9 @@ def show_all(tag):
             rep1.invoke(item)
         for item in list2:
             rep2.invoke(item)
-        cmd.do('show everything')
+        cmd.show('everything')
     else:
-        cmd.do('hide everything')
+        cmd.hide('everything')
         for item in list:
             rep1.invoke(item)
         for item in list2:

@@ -1,17 +1,8 @@
 from pymol import cmd
 from Tkinter import *
 import Pmw
-from pmg_tk.startup.ProMol_dir import promolglobals as pglob
+from pmg_tk.startup.ProMol import promolglobals as pglob
 Pmw.initialise()
-
-def buttonAdd(frame, text, size, cmd, gridrow, gridcol, gridstick):
-    #the button
-    newBtn = Button(frame, text = text, highlightthickness = 0,
-                    width = size, command = cmd, padx = 0, pady = 0)
-
-# add it to the gui
-    newBtn.grid(row = gridrow, column = gridcol, sticky = gridstick,
-        padx = 2, pady = 2)
 
 # ADD RADIO BUTTONS
 # Create and add radio buttons to the GUI
@@ -612,7 +603,7 @@ def gotorcsb():
     import webbrowser
     webbrowser.open('http://www.rcsb.org/pdb/Welcome.do')
     
-def fetchurl(self):
+def fetchurl():
     import webbrowser
     webbrowser.open('http://eds.bmc.uu.se/cgi-bin/eds/rama?pdbCode='+enterpdb.get())
 def dis(event):
@@ -754,7 +745,7 @@ def loadmapps(event):
         interior.mainloop()
     loadbtn.bind('<Button-1>', loadccp4)
     #go to upsalla website for maps
-    def getmap(self):
+    def getmap():
         import webbrowser
         webbrowser.open('http://eds.bmc.uu.se/cgi-bin/eds/gen_maps_zip.pl?pdbCode='+ getmapper.get())
     mapper = Button (framemapper)
