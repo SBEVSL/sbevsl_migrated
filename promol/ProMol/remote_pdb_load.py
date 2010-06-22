@@ -58,7 +58,7 @@ def fetch(pdbCode,passerrors=False):
             tkMessageBox.showerror('Invalid Code',
                 'You entered an invalid pdb code: %s'%(pdbCode))
         else:
-            return 'You entered an invalid pdb code: %s\n'%(pdbCode)
+            return 'You entered an invalid pdb code: %s'%(pdbCode)
     except urllib2.URLError:
         if passerrors == False:
             tkMessageBox.showerror('Connection Error',

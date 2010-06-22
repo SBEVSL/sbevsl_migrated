@@ -5,11 +5,8 @@ import os
 import math
 import platform
 import cPickle
-VERSION = '4.0rc2'
+VERSION = '4.0rc3'
 PLATFORM = platform.system()
-Tabs = {}
-SELE = 'all'
-script = 0
 PROMOL_DIR_PATH = os.path.dirname(__file__)
 try:
     HOME = os.environ['HOME']
@@ -29,110 +26,8 @@ for DIR in DIRS:
     if not os.path.isdir(DIR):
         os.mkdir(DIR)
 
-def motifstore(*args):
-    repickle = False
-    find = ('FUNC','PDB','EC','RESI')
-    MOTIFS['errors'] = []
-    for motdir in args:
-        motfiles = os.listdir(motdir)
-        for motfile in motfiles:
-            found = []
-            func = motfile[0:-3]
-            if func not in MOTIFS or 'mtime' not in MOTIFS[func]:
-                MOTIFS[func] = {}
-                MOTIFS[func]['mtime'] = None
-            MOTIFS[func]['path'] = os.path.join(motdir,motfile)
-            if MOTIFS[func]['mtime'] == os.path.getmtime(MOTIFS[func]['path']):
-                continue
-            repickle = True
-            MOTIFS[func]['mtime'] = os.path.getmtime(MOTIFS[func]['path'])
-            tmpf = open(MOTIFS[func]['path'],'rU')
-            i = 0
-            for line in tmpf:
-                if line[0:3] == "'''":
-                    i += 1
-                    continue
-                if i == 1:
-                    if line[0:4] == 'FUNC':
-                        if 'FUNC' in found:
-                            MOTIFS['errors'].append('Warning: Motif `%s` included an extra `FUNC` attribute, which was ignored.'%(MOTIFS[func]['path']))
-                            MOTIFS[func]['mtime'] = 0
-                            continue
-                        found.append('FUNC')
-                        funccheck = line.split(':')[1][0:-1]
-                        if func != funccheck:
-                            MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to an incorrect `FUNC` attribute.'%(MOTIFS[func]['path']))
-                            del MOTIFS[func]
-                            tmpf.close()
-                            break
-                        continue
-                    if line[0:3] == 'PDB':
-                        if 'PDB' in found:
-                            MOTIFS['errors'].append('Warning: Motif `%s` included an extra `PDB` attribute, which was ignored.'%(MOTIFS[func]['path']))
-                            MOTIFS[func]['mtime'] = 0
-                            continue
-                        found.append('PDB')
-                        pdbcheck = line.split(':')[1][0:-1].lower()
-                        if func.split('_')[1].lower() != pdbcheck:
-                            MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to an incorrect `PDB` attribute.'%(MOTIFS[func]['path']))
-                            del MOTIFS[func]
-                            tmpf.close()
-                            break
-                        MOTIFS[func]['pdb'] = pdbcheck
-                        continue
-                    if line[0:2] == 'EC':
-                        if 'EC' in found:
-                            MOTIFS['errors'].append('Warning: Motif `%s` included an extra `EC` attribute, which was ignored.'%(MOTIFS[func]['path']))
-                            MOTIFS[func]['mtime'] = 0
-                            continue
-                        found.append('EC')
-                        preec = func.split('_')
-                        ec = '.'.join((preec[2],preec[3],preec[4],preec[5]))
-                        eccheck = line.split(':')[1][0:-1]
-                        if ec != eccheck:
-                            MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to an incorrect `EC` attribute.'%(MOTIFS[func]['path']))
-                            del MOTIFS[func]
-                            tmpf.close()
-                            break
-                        MOTIFS[func]['ec'] = eccheck
-                        continue
-                    if line[0:4] == 'RESI':
-                        if 'RESI' in found:
-                            MOTIFS['errors'].append('Warning: Motif `%s` included an extra `RESI` attribute, which was ignored.'%(MOTIFS[func]['path']))
-                            MOTIFS[func]['mtime'] = 0
-                            continue
-                        found.append('RESI')
-                        resi = line.split(':')[1][0:-1].lower()
-                        if resi == '':
-                            MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to an incorrect `RESI` attribute.'%(MOTIFS[func]['path']))
-                            del MOTIFS[func]
-                            tmpf.close()
-                            break
-                        MOTIFS[func]['resi'] = resi.split(',')
-                        continue
-                if line[0:3] != 'cmd' and line != '':
-                    MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to potential mallicious code.'%(MOTIFS[func]['path']))
-                    del MOTIFS[func]
-                    tmpf.close()
-                    break
-            if func in MOTIFS and len(find) != len(found):
-                MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to missing required attributes.'%(MOTIFS[func]['path']))
-                del MOTIFS[func]
-            tmpf.close()
-    return repickle
-
-MOTIFSFOLDER = os.path.join(PROMOL_DIR_PATH,'Motifs')
-USRMOTIFSFOLDER = os.path.join(OFFSITE,'Motifs')
-MOTIFS = {}
-try:
-    MOTIFS = cPickle.load(open(os.path.join(OFFSITE,'motifs.pkl'),'r'))
-except IOError:
-    pass
-if motifstore(MOTIFSFOLDER,USRMOTIFSFOLDER) == True:
-    try:
-        cPickle.dump(MOTIFS,open(os.path.join(OFFSITE,'motifs.pkl'),'w'))
-    except IOError:
-        pass
+GUI = {}
+SELE = 'All'
 
 AminoMenuList = ('','ala','arg','asn','asp','cys','gln','glu','gly','his','ile',
     'leu','lys','met','phe','pro','ser','thr','trp','tyr','val')
@@ -242,6 +137,118 @@ CPKNewDict = {
      "Br":"[.502, .157, .157]",  "I":"[.627, .125, .941]",
     "UNK":"[1.000, .086, .569]"}
 
+MOTIFSFOLDER = os.path.join(PROMOL_DIR_PATH,'Motifs')
+USRMOTIFSFOLDER = os.path.join(OFFSITE,'Motifs')
+def motifstore(*args):
+    repickle = False
+    if MOTIFS != {}:
+        for filecheck in MOTIFS.keys():
+            if filecheck == 'errors':
+                continue
+            if not os.path.isfile(MOTIFS[filecheck]['path']):
+                del MOTIFS[filecheck]
+
+    find = ('FUNC','PDB','EC','RESI')
+    MOTIFS['errors'] = []
+    for motdir in args:
+        motfiles = os.listdir(motdir)
+        for motfile in motfiles:
+            found = []
+            func = motfile[0:-3]
+            if func not in MOTIFS or 'mtime' not in MOTIFS[func]:
+                MOTIFS[func] = {}
+                MOTIFS[func]['mtime'] = None
+            MOTIFS[func]['path'] = os.path.join(motdir,motfile)
+            if MOTIFS[func]['mtime'] == os.path.getmtime(MOTIFS[func]['path']):
+                continue
+            repickle = True
+            MOTIFS[func]['mtime'] = os.path.getmtime(MOTIFS[func]['path'])
+            tmpf = open(MOTIFS[func]['path'],'rbU')
+            i = 0
+            for line in tmpf:
+                if line[0:3] == "'''":
+                    i += 1
+                    continue
+                if i == 1:
+                    if line[0:4] == 'FUNC':
+                        if 'FUNC' in found:
+                            MOTIFS['errors'].append('Warning: Motif `%s` included an extra `FUNC` attribute, which was ignored.'%(MOTIFS[func]['path']))
+                            MOTIFS[func]['mtime'] = 0
+                            continue
+                        found.append('FUNC')
+                        funccheck = line.split(':')[1][0:-1]
+                        if func != funccheck:
+                            MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to an incorrect `FUNC` attribute.'%(MOTIFS[func]['path']))
+                            del MOTIFS[func]
+                            tmpf.close()
+                            break
+                        continue
+                    if line[0:3] == 'PDB':
+                        if 'PDB' in found:
+                            MOTIFS['errors'].append('Warning: Motif `%s` included an extra `PDB` attribute, which was ignored.'%(MOTIFS[func]['path']))
+                            MOTIFS[func]['mtime'] = 0
+                            continue
+                        found.append('PDB')
+                        pdbcheck = line.split(':')[1][0:-1].lower()
+                        if func.split('_')[1].lower() != pdbcheck:
+                            MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to an incorrect `PDB` attribute.'%(MOTIFS[func]['path']))
+                            del MOTIFS[func]
+                            tmpf.close()
+                            break
+                        MOTIFS[func]['pdb'] = pdbcheck
+                        continue
+                    if line[0:2] == 'EC':
+                        if 'EC' in found:
+                            MOTIFS['errors'].append('Warning: Motif `%s` included an extra `EC` attribute, which was ignored.'%(MOTIFS[func]['path']))
+                            MOTIFS[func]['mtime'] = 0
+                            continue
+                        found.append('EC')
+                        preec = func.split('_')
+                        ec = '.'.join((preec[2],preec[3],preec[4],preec[5]))
+                        eccheck = line.split(':')[1][0:-1]
+                        if ec != eccheck:
+                            MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to an incorrect `EC` attribute.'%(MOTIFS[func]['path']))
+                            del MOTIFS[func]
+                            tmpf.close()
+                            break
+                        MOTIFS[func]['ec'] = eccheck
+                        continue
+                    if line[0:4] == 'RESI':
+                        if 'RESI' in found:
+                            MOTIFS['errors'].append('Warning: Motif `%s` included an extra `RESI` attribute, which was ignored.'%(MOTIFS[func]['path']))
+                            MOTIFS[func]['mtime'] = 0
+                            continue
+                        found.append('RESI')
+                        resi = line.split(':')[1][0:-1].lower()
+                        if resi == '':
+                            MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to an incorrect `RESI` attribute.'%(MOTIFS[func]['path']))
+                            del MOTIFS[func]
+                            tmpf.close()
+                            break
+                        MOTIFS[func]['resi'] = resi.split(',')
+                        continue
+                if line[0:3] != 'cmd' and line != '':
+                    MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to potential mallicious code.'%(MOTIFS[func]['path']))
+                    del MOTIFS[func]
+                    tmpf.close()
+                    break
+            if func in MOTIFS and len(find) != len(found):
+                MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to missing required attributes.'%(MOTIFS[func]['path']))
+                del MOTIFS[func]
+            tmpf.close()
+    return repickle
+
+MOTIFS = {}
+try:
+    MOTIFS = cPickle.load(open(os.path.join(OFFSITE,'motifs.pkl'),'rbU'))
+except IOError:
+    pass
+if motifstore(MOTIFSFOLDER,USRMOTIFSFOLDER) == True:
+    try:
+        cPickle.dump(MOTIFS,open(os.path.join(OFFSITE,'motifs.pkl'),'wb'))
+    except IOError:
+        pass
+
 def pathmaker(*args,**options):
     newargs = [PROMOL_DIR_PATH]
     if 'root' in options:
@@ -311,7 +318,8 @@ def defaults(tag = ''):
 cmd.extend('defaults', defaults)
 
 def deletemotif():
-    pass
+    for motif in MOTIFS:
+        cmd.delete('%s'%(motif))
 cmd.extend('deletemotif', deletemotif)
 
 def procolor(selection=None,show_selection='sticks',color_selection='cpk',
@@ -395,17 +403,14 @@ def populate():
             cmd.delete(obj)
     objects = cmd.get_names('all')
     items = []
-    items.append('All')
-    items.append('Selected')
-    items.append('Not Selected')
+    items.extend(['All','Selected','Not Selected'])
     for obj in objects:
         items.append(obj)
-    Tabs['ez_viz']['selection'].configure(command = None)
-    Tabs['view']['advanced_selection'].configure(command = None)
-    Tabs['ez_viz']['selection'].setitems(items)
-    Tabs['view']['advanced_selection'].setitems(items)
-    Tabs['ez_viz']['selection'].configure(command = set_selection)
-    Tabs['view']['advanced_selection'].configure(command = set_selection)
+    GUI['ez_viz']['selection_menu']['menu'].delete(0, tk.END)
+    GUI['view']['advanced_selection_menu']['menu'].delete(0, tk.END)
+    for item in items:
+        GUI['ez_viz']['selection_menu']['menu'].add_command(label=item,command=tk._setit(GUI['ez_viz']['selection'], item, set_selection))
+        GUI['view']['advanced_selection_menu']['menu'].add_command(label=item,command=tk._setit(GUI['view']['advanced_selection'], item, set_selection))
 cmd.extend('populate', populate)
 
 def update():
@@ -417,8 +422,8 @@ cmd.extend('update', update)
 
 def set_selection(tag='all'):
     global SELE
-    Tabs['ez_viz']['selection'].setvalue(tag)
-    Tabs['view']['advanced_selection'].setvalue(tag)
+    GUI['ez_viz']['selection'].set(tag)
+    GUI['view']['advanced_selection'].set(tag)
     if tag == 'Not Selected':
         SELE = '!sele'
     elif tag == 'Selected':
@@ -428,63 +433,16 @@ def set_selection(tag='all'):
 
 class ProgressBar:
     def __init__(self, Parent, Height=10, Width=100, Row=0, Column=0, Span=1,
-                 ForegroundColor=None, BackgroundColor=None, Progress=0):
+                 ForegroundColor="black", BackgroundColor=None):
         self.Height=Height
         self.Width=Width
         self.BarCanvas = tk.Canvas(Parent,
             width=Width,height=Height,
             background=BackgroundColor,borderwidth=1,
             relief=tk.SUNKEN)
-        if (BackgroundColor):
-            self.BarCanvas["backgroundcolor"]=BackgroundColor
         self.BarCanvas.grid(row=Row,column=Column,columnspan=Span,padx=5,pady=2)
-        self.RectangleID=self.BarCanvas.create_rectangle(0,0,0,Height)
-        if (ForegroundColor==None):
-            ForegroundColor="black"
-        self.BarCanvas.itemconfigure(self.RectangleID,fill=ForegroundColor)
-        self.SetProgressPercent(Progress)        
+        self.RectangleID=self.BarCanvas.create_rectangle(0,0,0,Height,
+            fill=ForegroundColor)
     def SetProgressPercent(self,NewLevel):
-        self.Progress = math.floor(NewLevel)
-        self.Progress = min(100,self.Progress)
-        self.Progress = max(0,self.Progress) 
-        self.DrawProgress()
-    def DrawProgress(self):
-        ProgressPixel=(self.Progress/100.0)*self.Width
-        self.BarCanvas.coords(self.RectangleID,
-            0,0,ProgressPixel,self.Height)
-    def GetProgressPercent(self):
-        return self.Progress
-
-## {{{ http://code.activestate.com/recipes/285264/ (r1)
-# ---------------------------------------------------------
-# natsort.py: Natural string sorting.
-# ---------------------------------------------------------
-
-# By Seo Sanghyeon.  Some changes by Connelly Barnes.
-
-def natcmp(a, b):
-    "Natural string comparison, case sensitive."
-    def natsort_key(s):
-        "Used internally to get a tuple by which s is sorted."
-        def try_int(s):
-            "Convert to integer if possible."
-            try: return int(s)
-            except: return s
-        import re
-        return map(try_int, re.findall(r'(\d+|\D+)', s))
-    return cmp(natsort_key(a), natsort_key(b))
-
-def natcmpi(a, b):
-    "Natural string comparison, ignores case."
-    return natcmp(a.lower(), b.lower())
-
-def natsort(seq, cmp=natcmp):
-    "In-place natural string sort."
-    seq.sort(cmp)
-
-def natsorted(seq, cmp=natcmp):
-    "Returns a copy of seq, sorted by natural string sort."
-    import copy
-    temp = copy.copy(seq)
-    natsort(temp, cmp)
-    return temp
+        self.BarCanvas.coords(self.RectangleID,0,0,
+            (max(0,min(100,math.floor(NewLevel)))/100.0)*self.Width,self.Height)

@@ -1,9 +1,31 @@
 from pymol import cmd
-from pmg_tk.startup.ProMol_dir import promolglobals as pglob
-from pmg_tk.startup.ProMol_dir.Methods.visual import *
+from pmg_tk.startup.ProMol import promolglobals as pglob
+from pmg_tk.startup.ProMol.Methods.visual import *
 from tkMessageBox import showinfo
 import Pmw
 Pmw.initialise()
+
+def premovie(tag):
+    if tag == 'Build Protein':
+        growProtein()
+    elif tag == 'Highlight Chains':
+        highlight_chains()
+    elif tag == 'Rotate':
+        rotate_y()
+    elif tag == 'Chain Pull':
+        chain_pull()
+    elif tag == 'Ligand Pull':
+        Ligand_Pull()
+    elif tag == 'Surface to Stick':
+        surface_stick()
+    elif tag == 'Surface to Cartoon':
+        surface_cartoon()
+    elif tag == 'Play':
+        play()
+    elif tag == 'Stop':
+        stop()
+    elif tag == 'Rewind':
+        rewind()
 
 def rotate_y():
     cmd.mset()
@@ -57,7 +79,7 @@ def highlight_chains():
         frameCount += 200
         if(frameCount > numFrames-100):
             cmd.orient()
-        cmd.do('mdo '+str(numFrames)+': mstop')
+        cmd.mdo(numFrames,'mstop')
     cmd.mview('store', (numChains*200)+70)
     cmd.mview('interpolate')
     cmd.show('ribbon')
@@ -67,21 +89,14 @@ cmd.extend('highlight_chains', highlight_chains)
 # flash the chains on and off, eventually changing the color
 # (utilized by the highlight_chains method)
 def flash_chain(chainID, frame, initialColor, afterColor):
-     cmd.do('mdo ' + str(frame)+': show cartoon, chain ' + str(chainID))
-     cmd.do('mdo '+str(frame+7)+': color '+afterColor+', chain '+
-        str(chainID))
-     cmd.do('mdo '+str(frame+14)+': color '+initialColor+', chain '+
-        str(chainID))
-     cmd.do('mdo '+str(frame+21)+': color '+afterColor+', chain '+
-        str(chainID))
-     cmd.do('mdo '+str(frame+28)+': color '+initialColor+', chain '+
-        str(chainID))
-     cmd.do('mdo '+str(frame+35)+': color '+afterColor+', chain '+
-        str(chainID))
-     cmd.do('mdo '+str(frame+42)+': color '+initialColor+', chain '+
-        str(chainID))
-     cmd.do('mdo '+str(frame+49)+': color '+afterColor+', chain '+
-        str(chainID))
+     cmd.mdo(frame, 'show cartoon, chain %s'%chainID)
+     cmd.mdo(frame+7, 'color %s, chain %s'%(afterColor,chainID))
+     cmd.mdo(frame+14, 'color %s, chain %s'%(initialColor,chainID))
+     cmd.mdo(frame+21, 'color %s, chain %s'%(afterColor,chainID))
+     cmd.mdo(frame+28, 'color %s, chain %s'%(initialColor,chainID))
+     cmd.mdo(frame+35, 'color %s, chain %s'%(afterColor,chainID))
+     cmd.mdo(frame+42, 'color %s, chain %s'%(initialColor,chainID))
+     cmd.mdo(frame+49, 'color %s, chain %s'%(afterColor,chainID))
 
 def growProtein():
     cmd.mstop()
@@ -130,15 +145,15 @@ def growProtein():
         cmd.util.mrock('402', '600', '90', '1', '1')
         if 'ligands' in objects:
             cmd.color('hotpink', 'ligands')
-            cmd.do('mdo 600: show spheres, ligands; show sticks, ligands;'+
+            cmd.mdo(600, 'show spheres, ligands; show sticks, ligands;'+
                 ' set sphere_transparency = 0.5, ligands;')
         cmd.util.mroll('601', '800', '1', axis = "x")
         cmd.color('blue', 'surface')
         cmd.mview('store', '800')
-        cmd.do('turn z, 180')
+        cmd.turn('z', 180)
         cmd.mview('store' , '1000')
-        cmd.do('turn z, 180')
-        cmd.do('mdo 800: show surface, surface; '+
+        cmd.turn('z', 180)
+        cmd.mdo(800, 'show surface, surface; '+
             'set transparency = 0.8, surface;')
         cmd.mdo(850,'set transparency = 0.7, surface;')
         cmd.mdo(900,'set transparency = 0.6, surface;')
@@ -237,6 +252,7 @@ def surface_stick():
     pglob.update()
     cmd.mstop()
     cmd.mclear()
+    cmd.mset()
     cmd.mset('1', '60')
     pglob.procolor(None,show_all=('sticks','surface'))
     cmd.mdo(1,'set transparency = 0.75, all;')
@@ -411,8 +427,8 @@ cmd.extend('ligand_pull',Ligand_Pull)
 
 
 def chain_pull():
-   cmd.do('mstop')
-   cmd.do('mclear')
+   cmd.mstop
+   cmd.mclear
    coor = { 2:'[0,0,0]',      3:'[75,0,0]',     4:'[0,75,0]',
             5:'[0,0,75]',     6:'[-75,0,0]',    7:'[0,-75,0]',
             8:'[0,0,-75]',    9:'[75,75,0]',   10:'[-75,-75,0]',
@@ -423,22 +439,25 @@ def chain_pull():
            23:'[75,75,-75]', 24:'[75,-75,75]', 25:'[-75,75,75]',
            26:'[-75,-75,75]',27:'[75,-75,-75]',28:'[-75,-75,-75]'}
    chainPullList = chain_contact()
+   if chainPullList == False:
+       return False
    chainPullLen = len(chainPullList)
    frames = 1+chainPullLen+172+chainPullLen+172
-   cmd.do('mset 1,%s'%(frames))
+   cmd.mset('1','%s'%frames)
 
-   for i in range(2,chainPullLen+2):
-       cmd.do('mdo %s: translate %s,'%(i,coor.get(i))+chainPullList[i-2])
    i = chainPullLen+2
-   cmd.do('mdo %s: zoom all'%(i))
-   cmd.do('util.mroll %s'%(i+1)+',%s'%(i+171)+',1')
+   for h in range(2,i):
+       print 'translate %s,%s'%(coor[h],chainPullList[h-2])
+       cmd.mdo(h,'translate %s,%s'%(coor[h],chainPullList[h-2]))
+   cmd.mdo(i,'zoom all')
+   util.mroll(i+1,i+171,1)
    i += 172
    for g in range(i,chainPullLen+i):
-       c = coor.get((g-i)+2).replace('7','-7').replace('--','-')
-       cmd.do('mdo %s: translate %s,'%(g,c)+chainPullList[g-i])
+       c = coor[(g-i)+2].replace('7','-7').replace('--','-')
+       cmd.mdo(g,'translate %s,%s'%(c,chainPullList[g-i]))
    g = chainPullLen+i
-   cmd.do('mdo %s: zoom all'%(g))
-   cmd.do('util.mroll %s'%(g+1)+',%s'%(g+171)+',1')
+   cmd.mdo(g,'zoom all')
+   util.mroll(g+1,g+171,1)
 cmd.extend('chain_pull',chain_pull)
 
 
@@ -478,7 +497,7 @@ def loadframe(event):
     file = askopenfilename(defaultextension=entfilex.get(), initialdir=pglob.HOME)
     if len(file)>0:
         cmd.load(file, "mov", entl.get())
-    pglob.Tabs['movie_maker']['tab'].mainloop()
+    pglob.GUI['movie_maker']['tab'].mainloop()
     
 def gotoframe(event):
     try:
@@ -496,7 +515,7 @@ def clearram(event):
     
 def makmovie(event):
     try:
-        cmd.mset("1 -"+ fent.get())
+        cmd.mset("1 -%s"%fent.get())
         scriptent.delete(0,100000000)
         scriptent.insert(0,0)
     except:
