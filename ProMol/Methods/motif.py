@@ -864,7 +864,7 @@ def makemotif(mode):
     if excepLoop < 2:
         exception = True
         exceptions += 'Motifs require that 2 or more residues be entered.'
-    if exceptions != '':
+    if exceptions != '' and exceptions != '\n':
         showerror('Error', 'The following errors have occurred:\n'+exceptions)
     else:
         if mode >= 5 and mode < 6:
