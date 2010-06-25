@@ -76,25 +76,24 @@ def show_hide_water(tag):
 # Coloring on Selection
 def color_sel(tag):
     try:
-        sel = sel
         if tag == 'Red':
-            cmd.color('red', sel)
+            cmd.color('red', pglob.SELE)
         elif tag == 'Green':
-            cmd.color('green', sel)
+            cmd.color('green', pglob.SELE)
         elif tag == 'Orange':
-            cmd.color('orange', sel)
+            cmd.color('orange', pglob.SELE)
         elif tag == 'Yellow':
-            cmd.color('yellow', sel)
+            cmd.color('yellow', pglob.SELE)
         elif tag == 'Blue':
-            cmd.color('blue', sel)
+            cmd.color('blue', pglob.SELE)
         elif tag == 'Violet':
-            cmd.color('violet', sel)
+            cmd.color('violet', pglob.SELE)
         elif tag == 'CPK':
-            cmd.color("oxygen", "(elem O and "+sel+")")
-            cmd.color("nitrogen", "(elem N and "+sel+")")
-            cmd.color("sulfur", "(elem S and "+sel+")")
-            cmd.color("hydrogen", "(elem H and "+sel+")")
-            cmd.color("gray", "(elem C and "+sel+")")
+            cmd.color("oxygen", "(elem O and %s)"%pglob.SELE)
+            cmd.color("nitrogen", "(elem N and %s)"%pglob.SELE)
+            cmd.color("sulfur", "(elem S and %s)"%pglob.SELE)
+            cmd.color("hydrogen", "(elem H and %s)"%pglob.SELE)
+            cmd.color("gray", "(elem C and %s)"%pglob.SELE)
         elif tag == 'Other':
             color = askcolor(title = "Selection Color Chooser")
             colorArray = []
@@ -105,7 +104,7 @@ def color_sel(tag):
                     val = repr(z)
                     colorArray.append(val)
                 cmd.set_color('newcolor', colorArray)
-                cmd.color('newcolor', sel)
+                cmd.color('newcolor', pglob.SELE)
     except:
         showerror('Error', 'Update Selection!')
 
