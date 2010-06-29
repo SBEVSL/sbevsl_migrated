@@ -1,2600 +1,2136 @@
-import Pmw
-import pymol
+'''ConSCRIPT a Rasmol to Pymol converter'''
 from pymol import cmd
-import Tkinter
-from Tkinter import *
-import tkSimpleDialog
-import tkMessageBox
-import string
 import os
 import tkFileDialog
-import re
-import urllib2
-import StringIO
-import gzip
-import time
-import pmg_tk
-from pmg_tk import startup
-# axes.py
 from pymol.cgo import *
 from pymol.vfont import plain
 import platform
 PLATFORM = platform.system()
-#Make sure it will work on Linux/Mac (with X11)/ and of course Windows
+CONSCRIPT_PATH = os.path.dirname(__file__)
 try:
     HOME = os.environ['HOME']
 except KeyError:
     HOME = os.environ['USERPROFILE']
-try:
-    PYMOL_PATH = os.environ['PYMOL_PATH']
-except KeyError:
-    PYMOL_PATH = '.'
-if PLATFORM == 'Windows' or PLATFORM == 'Darwin':
-    CONSCRIPT_PATH = os.path.join(PYMOL_PATH,'modules','pmg_tk','startup')
+if PLATFORM == 'Windows':
+    OFFSITE = os.path.join(os.environ['AppData'], 'SBEVSL', 'ConSCRIPT')
+elif PLATFORM == 'Darwin':
+    OFFSITE = os.path.join(HOME, 'Library', 'Application Support', 'SBEVSL',
+        'ConSCRIPT')
 else:
-    CONSCRIPT_PATH = os.path.join(PYMOL_PATH.split(os.sep+'pymol')[0],'pmg_tk','startup')
-    
-## Global defintions
+    OFFSITE = os.path.join(HOME, '.sbevsl', 'ConSCRIPT')
+if not os.path.isdir(OFFSITE):
+    os.makedirs(OFFSITE)
+#DIRS = ()
+#for DIR in DIRS:
+#    DIR = os.path.join(OFFSITE, DIR)
+#    if not os.path.isdir(DIR):
+#       os.mkdir(DIR)
+class ConSCRIPTConverter:
+    '''The ConSCRIPT Converter'''
+    def __init__(self):
+        '''Set up some stuff'''
+        self.assign = 0
+        self.vsltok = {}
+        self.templist = []
+        self.map_name = 0
+        self.map_type = 'gaussian'
+        self.map_grid = 1.0
+        self.map_level = 1.0
+        self.map_selection = 0
+        self.map_unspecified_selection = True
+        self.centerselection = '(all)'
+        self.zoomnum = 0
+        self.clip_dist_near = -50.0
+        self.clip_dist_far = 50.0
+        self.userdefinedgroups = {}
+        self.vslselection = "(all)"
+        self.vslselectionsaved = "(all)"
+        self.vslverbose = 0
+        self.bondfirstatom = 0
+        self.bondsecondatom = 0
+        self.hbonds_backbone = False
+        self.ssbonds_backbone = False
+        self.hydrogen = False
+        self.hetero = True
+        self.solvent = False
+        self.radius = 0.0
+        self.set_monitor = True
+        self.tokenptr = 0
+        self.tokenstart = 0
+        self.curtoken = 0
+        self.tokenident = ""
+        self.tokenvalue = 0
 
-map_name = 0
-map_type = 'gaussian'
-map_grid = 1.0
-map_level = 1.0
-map_selection = map_name
-map_unspecified_selection = True
-centerselection = '( all )'
-zoomnum = 0
-clip_dist_near = -50.0
-clip_dist_far = 50.0
-filestack = []
-filelevel = 0
-UserDefinedGroups = {}
-VSLselection = "( all )"
-VSLselectionsaved = "( all )"
-VSLVerbose = 0
-bondfirstatom = 0
-bondsecondatom = 0
-hbonds_backbone = False
-ssbonds_backbone = False
-hydrogen = False
-hetero = True
-solvent = False
-radius = 0.0
-set_monitor = True
+        ### /* Lexeme Tokens */
+        self.identtok =       self._assigntok('ident')
+        self.numbertok =      self._assigntok('number')
+        self.floattok =       self._assigntok('float')
+        self.stringtok =      self._assigntok('string')
 
-### /* Lexeme Tokens */
-IdentTok =      256
-NumberTok =     257
-FloatTok =      258
-StringTok =     259
+        ### /* Command Tokens */
+        self.advisetok =      self._assigntok('advise')
+        self.backbonetok =    self._assigntok('backbone', 'esqueleto',
+            'scheletro')
+        self.cartoontok =     self._assigntok('cartoon', 'cartoons', 'dibujo',
+            'dibujos', 'vignetta')
+        self.centretok =      self._assigntok('center', 'centre')
+        self.clipboardtok =   self._assigntok('clipboard')
+        self.colourtok =      self._assigntok('color', 'colors', 'colour',
+            'colours')
+        self.colourmodetok =  self._assigntok('colormode', 'colourmode')
+        self.connecttok =     self._assigntok('connect')
+        self.dashtok =        self._assigntok('dash', 'dashes')
+        self.definetok =      self._assigntok('define')
+        self.delaytok =       self._assigntok('delay')
+        self.depthtok =       self._assigntok('depth')
+        self.displaytok =     self._assigntok('display', 'mostrar', 'visualizza')
+        self.echotok =        self._assigntok('echo')
+        self.exittok =        self._assigntok('exit', 'salir')
+        self.generatetok =    self._assigntok('generate')
+        self.helptok =        self._assigntok('help')
+        self.labeltok =       self._assigntok('label', 'labels', 'etiqueta',
+            'etiquetas', 'etichetta', 'etichette')
+        self.loadtok =        self._assigntok('load')
+        self.looptok =        self._assigntok('loop')
+        self.maptok =         self._assigntok('map')
+        self.masktok =        self._assigntok('mask')
+        self.moleculetok =    self._assigntok('molecule')
+        self.molsurftok =     self._assigntok('molsurf')
+        self.monitortok =     self._assigntok('monitor', 'monitors')
+        self.movetok =        self._assigntok('move')
+        self.notoggletok =    self._assigntok('notoggle')
+        self.pausetok =       self._assigntok('pause')
+        self.printtok =       self._assigntok('print')
+        self.quittok =        self._assigntok('quit')
+        self.refreshtok =     self._assigntok('refresh')
+        self.renumtok =       self._assigntok('renum', 'renumber')
+        self.resettok =       self._assigntok('reset')
+        self.resizetok =      self._assigntok('resize')
+        self.restoretok =     self._assigntok('restore')
+        self.restricttok =    self._assigntok('restrict')
+        self.rotatetok =      self._assigntok('rotate', 'rot', 'rotation')
+        self.savetok =        self._assigntok('save')
+        self.scripttok =      self._assigntok('script')
+        self.selecttok =      self._assigntok('select')
+        self.settok =         self._assigntok('set')
+        self.showtok =        self._assigntok('show')
+        self.slabtok =        self._assigntok('slab')
+        self.sourcetok =      self._assigntok('source')
+        self.spacefilltok =   self._assigntok('spacefill', 'riempimento')
+        self.startok =        self._assigntok('star', 'stars')
+        self.structuretok =   self._assigntok('structure')
+        self.surfacetok =     self._assigntok('surface')
+        self.symmetrytok =    self._assigntok('symmetry')
+        self.titletok =       self._assigntok('title')
+        self.tracetok =       self._assigntok('trace')
+        self.translatetok =   self._assigntok('translate', 'translation')
+        self.viewtok =        self._assigntok('view')
+        self.waittok =        self._assigntok('wait', 'pause')
+        self.wireframetok =   self._assigntok('wireframe', 'filodiferro',
+            'fildiferro', 'mesh')
+        self.writetok =       self._assigntok('write')
+        self.zaptok =         self._assigntok('zap')
+        self.zoomtok =        self._assigntok('zoom')
 
-### /* Command Tokens */
-AdviseTok =     260
-BackboneTok =   261
-CartoonTok =    262
-CentreTok =     263
-ClipboardTok =  264
-ColourTok =     265
-ColourModeTok = 609
-ConnectTok =    266
-DashTok =       267
-DefineTok =     268
-DelayTok =      269
-DepthTok =      270
-DisplayTok =    271
-EchoTok =       272
-ExitTok =       273
-GenerateTok =   274
-HelpTok =       275
-LabelTok =      276
-LoadTok =       277
-LoopTok =       278
-MapTok =        279
-MaskTok =       280
-MoleculeTok =   281
-MolSurfTok =    282 
-MonitorTok =    283
-MoveTok =       284
-NoToggleTok =   610
-PrintTok =      285
-QuitTok =       286
-RefreshTok =    287
-RenumTok =      288
-ResetTok =      289
-ResizeTok =     290
-RestoreTok =    291
-RestrictTok =   292
-RotateTok =     293
-SaveTok =       294
-ScriptTok =     295
-SelectTok =     296
-SetTok =        297
-ShowTok =       298
-SlabTok =       299
-SourceTok =     300
-SpacefillTok =  301
-StarTok =       302
-StructureTok =  303
-SurfaceTok =    304
-SymmetryTok =   305
-TitleTok =      306
-TraceTok =      307
-TranslateTok =  308
-ViewTok =       309
-WaitTok =       310
-WireframeTok =  311
-WriteTok =      312
-ZapTok =        313
-ZoomTok =       314
+        ### /* Predicate Tokens */
+        self.alphatok =       self._assigntok('alpha')
+        self.aminotok =       self._assigntok('amino')
+        self.attok =          self._assigntok('at')
+        self.bondedtok =      self._assigntok('bonded')
+        self.cgtok =          self._assigntok('cg')
+        self.cystinetok =     self._assigntok('cystine')
+        self.dnatok =         self._assigntok('dna')
+        self.helixtok =       self._assigntok('helix', 'helices', 'eliche')
+        self.heterotok =      self._assigntok('hetero')
+        self.hydrogentok =    self._assigntok('hydrogen')
+        self.iontok =         self._assigntok('ion', 'ions')
+        self.ligandtok =      self._assigntok('ligand', 'ligands')
+        self.mainchaintok =   self._assigntok('mainchain')
+        self.nucleictok =     self._assigntok('nucleic')
+        self.proteintok =     self._assigntok('protein')
+        self.purinetok =      self._assigntok('purine', 'purines')
+        self.pyrimidinetok =  self._assigntok('pyrimidine', 'pyrimibines')
+        self.rnatok =         self._assigntok('rna')
+        self.selectedtok =    self._assigntok('selected', 'selection')
+        self.sheettok =       self._assigntok('sheet', 'sheets')
+        self.sidechaintok =   self._assigntok('sidechain')
+        self.solventtok =     self._assigntok('solvent', 'solvents')
+        self.turntok =        self._assigntok('turn', 'turns', 'giro', 'giros')
+        self.watertok =       self._assigntok('water', 'waters')
+        self.acidictok =      self._assigntok('acidic', 'negative')
+        self.acyclictok =     self._assigntok('acyclic')
+        self.aliphatictok =   self._assigntok('aliphatic')
+        self.aromatictok =    self._assigntok('aromatic')
+        self.basictok =       self._assigntok('basic', 'positive')
+        self.buriedtok =      self._assigntok('buried')
+        self.chargedtok =     self._assigntok('charged')
+        self.cisbondedtok =   self._assigntok('cisbonded')
+        self.cyclictok =      self._assigntok('cyclic')
+        self.hydrophobictok = self._assigntok('hydrophobic')
+        self.largetok =       self._assigntok('large')
+        self.mediumtok =      self._assigntok('medium')
+        self.neutraltok =     self._assigntok('neutral')
+        self.polartok =       self._assigntok('polar')
+        self.smalltok =       self._assigntok('small')
 
-### /* Predicate Tokens */
+        ### /* Property Tokens */
+        self.temperaturetok = self._assigntok('temperature')
+        self.radiustok =      self._assigntok('radius')
+        self.atomnotok =      self._assigntok('atomno', 'atomnumber')
+        self.elemnotok =      self._assigntok('elemno')
+        self.modeltok =       self._assigntok('model')
+        self.resnotok =       self._assigntok('resno', 'residuenumber')
+        self.altltok =        self._assigntok('alt')
 
-AlphaTok =      320
-AminoTok =      321
-ATTok =         322
-BondedTok =     323
-CGTok =         324
-CystineTok =    325
-DNATok =        326
-HelixTok =      327
-HeteroTok =     328
-HydrogenTok =   329
-IonTok =        330
-LigandTok =     331
-MainChainTok =  332
-NucleicTok =    333
-ProteinTok =    334
-PurineTok =     335
-PyrimidineTok = 336
-RNATok =        337
-SelectedTok =   338
-SheetTok =      339
-SidechainTok =  340
-SolventTok =    341
-TurnTok =       342
-WaterTok =      343
+        ### /* File Format Tokens */
+        ### /* Warning! Tokens are related to Format values */
+        self.pdbtok =         self._assigntok('pdb')
+        self.ramprinttok =    self._assigntok('ramprint', 'rpp', 'macromodel',
+            'ramachandranprinterplot')
+        self.gaussiantok =    self._assigntok('gaussian')
+        self.alchemytok =     self._assigntok('alchemy')
+        self.nmrpdbtok =      self._assigntok('nmrpdb')
+        self.charmmtok =      self._assigntok('charmm')
+        self.biosymtok =      self._assigntok('biosym')
+        self.mopactok =       self._assigntok('mopac')
+        self.shelxtok =       self._assigntok('shelx')
+        self.mol2tok =        self._assigntok('mol2')
+        self.fdattok =        self._assigntok('fdat')
+        self.mmdbtok =        self._assigntok('mmdb')
+        self.mdltok =         self._assigntok('mdl')
+        self.xyztok =         self._assigntok('xyz')
+        self.ciftok =         self._assigntok('cif')
+        self.cextok =         self._assigntok('cex')
 
-AcidicTok =     344
-AcyclicTok =    345
-AliphaticTok =  346
-AromaticTok =   347
-BasicTok =      348
-BuriedTok =     349
-ChargedTok =    350
-CisBondedTok =  351
-CyclicTok =     352
-HydrophobicTok =353
-LargeTok =      354
-MediumTok =     355
-NeutralTok =    356
-PolarTok =      357
-SmallTok =      358
+        ### /* Raster Tokens */
+        self.giftok =         self._assigntok('gif')
+        self.ppmtok =         self._assigntok('ppm')
+        self.suntok =         self._assigntok('sun')
+        self.sunrletok =      self._assigntok('sunrle')
+        self.epsftok =        self._assigntok('epsf', 'ps')
+        self.picttok =        self._assigntok('pict')
+        self.iristok =        self._assigntok('iris', 'rgb')
+        self.bmptok =         self._assigntok('bmp')
+        self.monopstok =      self._assigntok('monops')
+        self.jpegtok =        self._assigntok('jpeg')
+        self.pngtok =         self._assigntok('png')
+        self.vectpstok =      self._assigntok('vectps')
+        self.kinemagetok =    self._assigntok('kinemage')
+        self.molscripttok =   self._assigntok('molscript')
+        self.povraytok =      self._assigntok('povray')
+        self.povray2tok =     self._assigntok('povray2')
+        self.povray3tok =     self._assigntok('povray3')
+        self.vrmltok =        self._assigntok('vrml')
+        self.raster3dtok =    self._assigntok('raster3d', 'r3d')
+        self.ramachantok =    self._assigntok('ramachan', 'ramdata', 'rdf',
+            'ramachandrandatafile')
+        self.mirrortok =      self._assigntok('mirror')
 
+        ### /* Feature Tokens */
+        self.atomtok =        self._assigntok('atom', 'atoms')
+        self.bondtok =        self._assigntok('bond', 'bonds', 'elance',
+            'elances')
+        self.dotstok =        self._assigntok('dots')
+        self.hbondtok =       self._assigntok('hbond', 'hbonds')
+        self.ribbontok =      self._assigntok('ribbon', 'nastro', 'nastri',
+            'ribbons')
+        self.ssbondtok =      self._assigntok('ssbond', 'ssbonds')
+        self.ribbon1tok =     self._assigntok('ribbon1', 'ribbons1')
+        self.ribbon2tok =     self._assigntok('ribbon2', 'ribbons2')
+        self.unbondtok =      self._assigntok('unbond')
 
+        ### /* Expression Tokens */
+        self.truetok =        self._assigntok('true', 'on')
+        self.falsetok =       self._assigntok('false', 'off')
+        self.alltok =         self._assigntok('all', 'todo', 'tutto')
+        self.nonetok =        self._assigntok('none')
+        self.andtok =         self._assigntok('and', 'e')
+        self.ortok =          self._assigntok('or')
+        self.nottok =         self._assigntok('not')
+        self.withintok =      self._assigntok('within')
+        self.xortok =         self._assigntok('xor')
+        self.meantok =        self._assigntok('average', 'mean')
+        self.nexttok =        self._assigntok('next')
+        self.newtok =         self._assigntok('new')
 
-### /* Property Tokens */
-TemperatureTok =360
-RadiusTok =     361
-AtomNoTok =     362
-ElemNoTok =     363
-ModelTok =      364
-ResNoTok =      365
-AltlTok =       366
+        ### /* Colour Tokens */
+        ### /* Warning! Tokens are related to colour values */
+        self.blacktok =       self._assigntok('black')
+        self.bluetok =        self._assigntok('blue')
+        self.bluetinttok =    self._assigntok('bluetint')
+        self.browntok =       self._assigntok('brown')
+        self.cyantok =        self._assigntok('cyan')
+        self.goldtok =        self._assigntok('gold')
+        self.graytok =        self._assigntok('gray', 'grey')
+        self.greentok =       self._assigntok('green')
+        self.greenbluetok =   self._assigntok('greenblue')
+        self.greentinttok =   self._assigntok('greentint')
+        self.hotpinktok =     self._assigntok('hotpink')
+        self.magentatok =     self._assigntok('magenta')
+        self.orangetok =      self._assigntok('orange')
+        self.pinktok =        self._assigntok('pink')
+        self.pinktinttok =    self._assigntok('pinktint')
+        self.purpletok =      self._assigntok('purple')
+        self.redtok =         self._assigntok('red')
+        self.redorangetok =   self._assigntok('redorange')
+        self.seagreentok =    self._assigntok('seagreen')
+        self.skybluetok =     self._assigntok('skyblue')
+        self.violettok =      self._assigntok('violet')
+        self.whitetok =       self._assigntok('white')
+        self.yellowtok =      self._assigntok('yellow')
+        self.yellowtinttok =  self._assigntok('yellowtint')
+        self.cpktok =         self._assigntok('cpk')
+        self.shapelytok =     self._assigntok('shapely')
+        self.residuetok =     self._assigntok('residue')
+        self.usertok =        self._assigntok('user')
+        self.grouptok =       self._assigntok('group', 'grupo', 'gruppo')
+        self.chaintok =       self._assigntok('chain', 'chains', 'cadena',
+            'cadenas', 'catena', 'catene')
+        self.typetok =        self._assigntok('type')
+        self.potentialtok =   self._assigntok('potential')
+        self.chargetok =      self._assigntok('charge', 'charges')
+        self.cpknewtok =      self._assigntok('cpknew')
 
-### /* File Format Tokens */
-### /* Warning! Tokens are related to Format values */
+        ### /* Variable Tokens */
+        self.ambienttok =     self._assigntok('ambient')
+        self.axestok =        self._assigntok('axes', 'asse', 'assi', 'axis',
+            'eje', 'ejes')
+        self.backfadetok =    self._assigntok('backfade')
+        self.backgroundtok =  self._assigntok('background')
+        self.bondmodetok =    self._assigntok('bondmode')
+        self.boundboxtok =    self._assigntok('boundbox', 'boundingbox')
+        self.cisangletok =    self._assigntok('cisangle')
+        self.contourtok =     self._assigntok('contour', 'level')
+        self.depthcuetok =    self._assigntok('depthcue')
+        self.fontsizetok =    self._assigntok('fontsize')
+        self.fontstroketok =  self._assigntok('fontstroke')
+        self.hourglasstok =   self._assigntok('hourglass')
+        self.menustok =       self._assigntok('menus')
+        self.mousetok =       self._assigntok('mouse', 'mousemode')
+        self.pickingtok =     self._assigntok('pick', 'picking')
+        self.resolutiontok =  self._assigntok('resolution')
+        self.shadepowertok =  self._assigntok('shadepower')
+        self.shadowtok =      self._assigntok('shadow', 'shadows')
+        self.slabmodetok =    self._assigntok('slabmode')
+        self.spacingtok =     self._assigntok('spacing')
+        self.speculartok =    self._assigntok('specular')
+        self.specpowertok =   self._assigntok('specpower')
+        self.spreadtok =      self._assigntok('spread', 'width')
+        self.strandstok =     self._assigntok('strands', 'fili', 'hebras')
+        self.transparenttok = self._assigntok('transparent')
+        self.unitcelltok =    self._assigntok('unitcell')
 
-PDBTok =        370
-MacroModelTok = 371
-GaussianTok =   372
-AlchemyTok =    373
-NMRPDBTok =     374
-CharmmTok =     375
-BiosymTok =     376
-MOPACTok =      377
-SHELXTok =      378
-Mol2Tok =       379
-FDATTok =       380
-MMDBTok =       381
-MDLTok =        382
-XYZTok =        383
-CIFTok =        384
-CEXTok =        385
+        ### /* SlabMode Tokens */
+        self.rejecttok =      self._assigntok('reject')
+        self.halftok =        self._assigntok('half')
+        self.hollowtok =      self._assigntok('hollow')
+        self.solidtok =       self._assigntok('solid')
+        self.sectiontok =     self._assigntok('section')
 
-### /* Raster Tokens */
-GIFTok =        390
-PPMTok =        391
-SUNTok =        392
-SUNRLETok =     393
-EPSFTok =       394
-PICTTok =       395
-IRISTok =       396
-BMPTok =        397
-MonoPSTok =     398
-JPEGTok =       399
-PNGTok =        400
-VectPSTok =     401
-KinemageTok =   402
-MolScriptTok =  403
-POVRayTok =     404
-POVRay2Tok =    404
-POVRay3Tok =    405
-VRMLTok =       406
-Raster3DTok =   407
-RamachanTok =   408  ### /* ok, this isn't a real image format ... */
-RamPrintTok =   409
-MirrorTok =     410
+        ### /* MouseMode Tokens */
+        self.rasmoltok =      self._assigntok('rasmol', 'rasmac', 'raswin')
+        self.insighttok =     self._assigntok('insight')
+        self.quantatok =      self._assigntok('quanta')
+        self.sybyltok =       self._assigntok('sybyl')
 
-### /* Feature Tokens */
-AtomTok =       421
-BondTok =       422
-DotsTok =       423
-HBondTok =      424
-RibbonTok =     425
-SSBondTok =     426
-Ribbon1Tok =    427
-Ribbon2Tok =    428
-UnBondTok =     429
+        ### /* Information Tokens */
+        self.infotok =        self._assigntok('info', 'information')
+        self.sequencetok =    self._assigntok('sequence')
+        self.versiontok =     self._assigntok('version')
+        self.phipsitok =      self._assigntok('phipsi')
 
-### /* Expression Tokens */
-TrueTok =       430
-FalseTok =      431
-AllTok =        432
-NoneTok =       433
-AndTok =        434
-OrTok =         435
-NotTok =        436
-WithinTok =     437
-XorTok =        438
-MeanTok =       439
-NextTok =       440
-NewTok =        441
+        ### /* Display Mode Tokens */
+        self.normaltok =      self._assigntok('normal')
+        self.stereotok =      self._assigntok('stereo')
+        self.monotok =        self._assigntok('mono', 'monochrome')
+        self.hardwaretok =    self._assigntok('hardware')
 
-### /* Colour Tokens */
-### /* Warning! Tokens are related to colour values */
+        ### /* Axis Tokens */
+        self.xtok =           self._assigntok('x')
+        self.ytok =           self._assigntok('y')
+        self.ztok =           self._assigntok('z')
 
-BlackTok =      442
-BlueTok =       443
-BlueTintTok =   444
-BrownTok =      445
-CyanTok =       446
-GoldTok =       447
-GrayTok =       448
-GreenTok =      449
-GreenBlueTok =  450
-GreenTintTok =  451
-HotPinkTok =    452
-MagentaTok =    453
-OrangeTok =     454
-PinkTok =       455
-PinkTintTok =   456
-PurpleTok =     457
-RedTok =        458
-RedOrangeTok =  459
-SeaGreenTok =   460
-SkyBlueTok =    461
-VioletTok =     462
-WhiteTok =      463
-YellowTok =     464
-YellowTintTok = 465
+        ### /* Picking Tokens */
+        self.identifytok =    self._assigntok('identify')
+        self.coordtok =       self._assigntok('coord', 'coords', 'coordinate',
+            'coordinates')
+        self.distancetok =    self._assigntok('distance', 'distances')
+        self.angletok =       self._assigntok('angle', 'angles')
+        self.torsiontok =     self._assigntok('torsion', 'torsions')
+        self.origintok =      self._assigntok('origin')
 
-CPKTok =        466
-ShapelyTok =    467
-ResidueTok =    468
-UserTok =       469
-GroupTok =      470
-ChainTok =      471
-TypeTok =       472
-PotentialTok =  473
-ChargeTok =     474
-CpkNewTok =     475
+        ### /* Misc Tokens */
+        self.inlinetok =      self._assigntok('inline')
+        self.vdwtok =         self._assigntok('vdw')
+        self.headertok =      self._assigntok('header')
+        self.cifdatatok =     self._assigntok('data_')
+        self.fstok =          self._assigntok('fs')
 
-### /* Variable Tokens */
-AmbientTok =    480
-AxesTok =       481
-BackFadeTok =   482
-BackgroundTok = 483
-BondModeTok =   484
-BoundBoxTok =   485
-CisAngleTok =   486
-ContourTok =    487
-DepthCueTok =   488
-FontSizeTok =   489
-FontStrokeTok = 490
-HourGlassTok =  491
-LevelTok =      ContourTok
-MenusTok =      493
-MouseTok =      494
-PickingTok =    495
-ResolutionTok = 496
-ShadePowerTok = 497
-ShadowTok =     498
-SlabModeTok =   499
-SpacingTok =    500
-SpecularTok =   501
-SpecPowerTok =  502
-SpreadTok =     503
-StrandsTok =    504
-TransparentTok =505
-UnitCellTok =   506
-WidthTok =      SpreadTok
+        ### /* Clipboard Tokens */
+        self.imagetok =       self._assigntok('image')
+        self.positiontok =    self._assigntok('position')
+        self.copytok =        self._assigntok('copy')
+        self.pastetok =       self._assigntok('paste')
 
-### /* SlabMode Tokens */
-RejectTok =     510
-HalfTok =       511
-HollowTok =     512
-SolidTok =      513
-SectionTok =    514
+        ### /* Language Tokens */
+        self.englishtok =     self._assigntok('english')
+        self.frenchtok =      self._assigntok('french')
+        self.germantok =      self._assigntok('german')
+        self.italiantok =     self._assigntok('italian')
+        self.spanishtok =     self._assigntok('spanish')
+        self.russiantok =     self._assigntok('russian')
+        self.chinesetok =     self._assigntok('chinese')
+        self.japanesetok =    self._assigntok('japanese')
+        self.bulgariantok =   self._assigntok('bulgarian')
 
-### /* MouseMode Tokens */
-RasMolTok =     520
-InsightTok =    521
-QuantaTok =     522
-SybylTok =      523
+        self.errsyntax   =    0
+        self.errbignum   =    1
+        self.errbadopt   =    2
+        self.errparam    =    3
+        self.errfilnam   =    4
+        self.errbadload  =    5
+        self.errnotnum   =    6
+        self.errnotsep   =    7
+        self.errnotbrac  =    8
+        self.errnocol    =    9
+        self.errcolour   =   10
+        self.errbadarg   =   11
+        self.errbadexpr  =   12
+        self.errparen    =   13
+        self.errscript   =   14
+        self.errfunc     =   15
+        self.errsetname  =   16
+        self.errbadset   =   17
+        self.errinscrpt  =   18
+        self.erroutscrpt =   19
+        self.errbadmoldb =   20
+        self.errnobond   =   21
+        self.errblocsel  =   22
 
-### /* Information Tokens */
-InfoTok =       524
-SequenceTok =   525
-VersionTok =    526
-PhiPsiTok =     527
+        self.msgstrs = {}
+        self.msgstrs[self.errsyntax]  = "Invalid command syntax!"
+        self.msgstrs[self.errbignum]  = "Parameter value too large!"
+        self.msgstrs[self.errbadopt]  = "Invalid parameter setting!"
+        self.msgstrs[self.errparam]  = "Invalid parameter name!"
+        self.msgstrs[self.errfilnam]  = "Filename string expected!"
+        self.msgstrs[self.errbadload]  = "Molecule database loaded!"
+        self.msgstrs[self.errnotnum]  = "Integer value expected!"
+        self.msgstrs[self.errnotsep]  = "Comma separator missing!"
+        self.msgstrs[self.errnotbrac]  = "Close bracket ']' expected!"
+        self.msgstrs[self.errnocol]  = "No colour specified!"
+        self.msgstrs[self.errcolour]  = "Unknown or incorrect colour!"
+        self.msgstrs[self.errbadarg]  = "Invalid command argument!"
+        self.msgstrs[self.errbadexpr]  = "Syntax error in expression!"
+        self.msgstrs[self.errparen]  = "Close parenthesis ')' expected!"
+        self.msgstrs[self.errscript]  = "Script command stack too deep!"
+        self.msgstrs[self.errfunc]  = "Open parenthesis '(' expected!"
+        self.msgstrs[self.errsetname]  = "Invalid or missing atom set name!"
+        self.msgstrs[self.errbadset]  = "Not enough memory to define set!"
+        self.msgstrs[self.errinscrpt]  = "Command disabled in script file!"
+        self.msgstrs[self.erroutscrpt]  = "Command only within a script!"
+        self.msgstrs[self.errbadmoldb]  = "Molecule database not loaded!"
+        self.msgstrs[self.errnobond]  = "Bond for rotation not picked!"
 
-### /* Display Mode Tokens */
-NormalTok =     528
-StereoTok =     529
-MonoTok =       530
-HardwareTok =   531
+        self.vslcolourtable = {}
+        self.vslcolourtable[self.blacktok] =      [  0/255.,   0/255.,   0/255.]
+        self.vslcolourtable[self.bluetok] =       [  0/255.,   0/255., 255/255.]
+        self.vslcolourtable[self.bluetinttok] =   [175/255., 214/255., 255/255.]
+        self.vslcolourtable[self.browntok] =      [175/255., 117/255.,  89/255.]
+        self.vslcolourtable[self.cyantok] =       [  0/255., 255/255., 255/255.]
+        self.vslcolourtable[self.goldtok] =       [255/255., 156/255.,   0/255.]
+        self.vslcolourtable[self.graytok] =       [125/255., 125/255., 125/255.]
+        self.vslcolourtable[self.greentok] =      [  0/255., 255/255.,   0/255.]
+        self.vslcolourtable[self.greenbluetok] =  [ 46/255., 139/255.,  87/255.]
+        self.vslcolourtable[self.greentinttok] =  [152/255., 255/255., 179/255.]
+        self.vslcolourtable[self.hotpinktok] =    [255/255.,   0/255., 101/255.]
+        self.vslcolourtable[self.magentatok] =    [255/255.,   0/255., 255/255.]
+        self.vslcolourtable[self.orangetok] =     [255/255., 165/255.,   0/255.]
+        self.vslcolourtable[self.pinktok] =       [255/255., 101/255., 117/255.]
+        self.vslcolourtable[self.pinktinttok] =   [255/255., 171/255., 187/255.]
+        self.vslcolourtable[self.purpletok] =     [160/255.,  32/255., 240/255.]
+        self.vslcolourtable[self.redtok] =        [255/255.,   0/255.,   0/255.]
+        self.vslcolourtable[self.redorangetok] =  [255/255.,  69/255.,   0/255.]
+        self.vslcolourtable[self.seagreentok] =   [  0/255., 250/255., 109/255.]
+        self.vslcolourtable[self.skybluetok] =    [ 58/255., 144/255., 255/255.]
+        self.vslcolourtable[self.violettok] =     [238/255., 130/255., 238/255.]
+        self.vslcolourtable[self.whitetok] =      [255/255., 255/255., 255/255.]
+        self.vslcolourtable[self.yellowtok] =     [255/255., 255/255.,   0/255.]
+        self.vslcolourtable[self.yellowtinttok] = [246/255., 246/255., 117/255.]
 
-### /* Axis Tokens */
-XTok =          532
-YTok =          533
-ZTok =          534
-
-### /* Picking Tokens */
-IdentifyTok =   535
-CoordTok =      536
-DistanceTok =   537
-AngleTok =      538
-TorsionTok =    539
-OriginTok =     540
-
-### /* Misc Tokens */
-InLineTok =     541
-VDWTok =        542
-HeaderTok =     543
-CIFDataTok =    544
-FSTok =         545
-PSTok =         EPSFTok
-
-### /* Clipboard Tokens */
-ImageTok =      546
-PositionTok =   547
-CopyTok =       548
-PasteTok =      549
-
-### /* Language Tokens */
-EnglishTok =    600
-FrenchTok =     601
-GermanTok =     602
-ItalianTok =    603
-SpanishTok =    604
-RussianTok =    605
-ChineseTok =    606
-JapaneseTok =   607
-BulgarianTok =  608
-
-
-def IsPredTok( x ):
-    if (((x)>=AlphaTok) and ((x)<=SmallTok)):
-        return True
-    else:
-        return False
-      
-def PredTokOrd( x ):
-     if  ((x)-AlphaTok):
-        return True
-     else:
-        return False
+        self.vslcpktable = {}
+        self.vslcpktable[0] =   "[ .7843, .7843, .7843 ]" #/*  0 Light Grey   */
+        self.vslcpktable[1] =   "[ .5607, .5607, 1.    ]" #/*  1 Sky Blue     */
+        self.vslcpktable[2] =   "[ .9411, 0.,    0.    ]" #/*  2 Red          */
+        self.vslcpktable[3] =   "[ 1.,    .7843, .1960 ]" #/*  3 Yellow       */
+        self.vslcpktable[4] =   "[ 1.,    1.,    1.    ]" #/*  4 White        */
+        self.vslcpktable[5] =   "[ 1.,    .7529, .7960 ]" #/*  5 Pink         */
+        self.vslcpktable[6] =   "[ .8549, .6470, .1254 ]" #/*  6 Golden Rod   */
+        self.vslcpktable[7] =   "[ 0.,    0.,    1.    ]" #/*  7 Blue         */
+        self.vslcpktable[8] =   "[ 1.,    .6470, 0.    ]" #/*  8 Orange       */
+        self.vslcpktable[9] =   "[ .5019, .5019, .5647 ]" #/*  9 Dark Grey    */
+        self.vslcpktable[10] =  "[ .6470, .1647, .1647 ]" #/* 10 Brown        */
+        self.vslcpktable[11] =  "[ .6274, .1254, .9411 ]" #/* 11 Purple       */
+        self.vslcpktable[12] =  "[ 1.,    .0784, .5764 ]" #/* 12 Deep Pink    */
+        self.vslcpktable[13] =  "[ 0.,    1.,    0.    ]" #/* 13 Green        */
+        self.vslcpktable[14] =  "[ .6980, .1333, .1333 ]" #/* 14 Fire Brick   */
+        self.vslcpktable[15] =  "[ .1333, .5450, .1333 ]" #/* 15 Forest Green */
         
-def PredTokChr( x ):
-     if ((x)+AlphaTok):
-         return True
-     else:
-         return False
-
-def IsPropTok( x ):
-    if  (((x)>=TemperatureTok) and ((x)<=AltlTok)):
-        return True
-    else:
-        return False
-
-def IsColourToken( x ):
-    if (((x)>=BlackTok) and ((x)<=YellowTintTok)):
-        return True
-    else:
-        return False
-
-def Token2Colour( x ):
-    return  ((x)-BlackTok)
-
-def IsImageToken( x ):
-    if (((((x)>=GIFTok) and ((x)<=RamPrintTok)) or ((x) == PhiPsiTok))):
-        return True
-    else:
-        return False
-
-def IsMoleculeToken( x ):  
-    if (((x)>=PDBTok) and ((x)<=CEXTok)):
-        return True
-    else:
-        return False
-
-VSLTok = {}
-
-VSLTok["ACIDIC"] = AcidicTok
-VSLTok["ACYCLIC"] = AcyclicTok 
-VSLTok["ALCHEMY"] = AlchemyTok
-VSLTok["ALIPHATIC"] = AliphaticTok
-VSLTok["ALL"] = AllTok 
-VSLTok["ALPHA"] = AlphaTok
-VSLTok["ALT"] = AltlTok
-VSLTok["AMBIENT"] = AmbientTok
-VSLTok["AMINO"] = AminoTok
-VSLTok["AND"] = AndTok
-VSLTok["ANGLE"] = AngleTok
-VSLTok["ANGLES"] = AngleTok
-VSLTok["AROMATIC"] = AromaticTok
-VSLTok["ASSE"] = AxesTok
-VSLTok["ASSI"] = AxesTok
-VSLTok["AT"] = ATTok
-VSLTok["ATOM"] = AtomTok
-VSLTok["ATOMNO"] = AtomNoTok
-VSLTok["ATOMNUMBER"] = AtomNoTok
-VSLTok["ATOMS"] = AtomTok
-VSLTok["AXES"] = AxesTok
-VSLTok["AXIS"] = AxesTok
-VSLTok["AVERAGE"] = MeanTok
-VSLTok["BACKBONE"] = BackboneTok
-VSLTok["BACKFADE"] = BackFadeTok
-VSLTok["BACKGROUND"] = BackgroundTok
-VSLTok["BASIC"] = BasicTok
-VSLTok["BIOSYM"] = BiosymTok
-VSLTok["BLACK"] = BlackTok
-VSLTok["BLUE"] = BlueTok
-VSLTok["BLUETINT"] = BlueTintTok
-VSLTok["BMP"] = BMPTok
-VSLTok["BOND"] = BondTok
-VSLTok["BONDED"] = BondedTok
-VSLTok["BONDMODE"] = BondModeTok
-VSLTok["BONDS"] = BondTok
-VSLTok["BOUNDBOX"] = BoundBoxTok
-VSLTok["BOUNDINGBOX"] = BoundBoxTok
-VSLTok["BROWN"] = BrownTok
-VSLTok["BURIED"] = BuriedTok
-VSLTok["CADENA"] = ChainTok
-VSLTok["CADENAS"] = ChainTok
-VSLTok["CARTOON"] = CartoonTok
-VSLTok["CARTOONS"] = CartoonTok
-VSLTok["CATENA"] = ChainTok
-VSLTok["CATENE"] = ChainTok
-VSLTok["CENTER"] = CentreTok
-VSLTok["CENTRE"] = CentreTok
-VSLTok["CEX"] = CEXTok
-VSLTok["CG"] = CGTok
-VSLTok["CHAIN"] = ChainTok
-VSLTok["CHAINS"] = ChainTok
-VSLTok["CHARGE"] = ChargeTok
-VSLTok["CHARGED"] = ChargedTok
-VSLTok["CHARGES"] = ChargeTok
-VSLTok["CHARMM"] = CharmmTok
-VSLTok["CHINESE"] = ChineseTok
-VSLTok["CIF"] = CIFTok
-VSLTok["CISANGLE"] = CisAngleTok
-VSLTok["CISBONDED"] = CisBondedTok
-VSLTok["CLIPBOARD"] = ClipboardTok
-VSLTok["COLOR"] = ColourTok
-VSLTok["COLORMODE"] = ColourModeTok
-VSLTok["COLORS"] = ColourTok
-VSLTok["COLOUR"] = ColourTok
-VSLTok["COLOURMODE"] = ColourModeTok
-VSLTok["COLOURS"] = ColourTok
-VSLTok["CONNECT"] = ConnectTok
-VSLTok["CONTOUR"] = ContourTok
-VSLTok["COORDINATE"] = CoordTok
-VSLTok["COORDINATES"] = CoordTok
-VSLTok["COORD"] = CoordTok
-VSLTok["COORDS"] = CoordTok
-VSLTok["COPY"] = CopyTok
-VSLTok["CPK"] = CPKTok
-VSLTok["CPKNEW"] = CpkNewTok
-VSLTok["CYAN"] = CyanTok
-VSLTok["CYCLIC"] = CyclicTok
-VSLTok["CYSTINE"] = CystineTok
-VSLTok["DASH"] = DashTok
-VSLTok["DASHES"] = DashTok
-VSLTok["DATA_"] = CIFDataTok
-VSLTok["DEFINE"] = DefineTok
-VSLTok["DEPTH"] = DepthTok
-VSLTok["DEPTHCUE"] = DepthCueTok
-VSLTok["DIBUJO"] = CartoonTok
-VSLTok["DIBUJOS"] = CartoonTok
-VSLTok["DISPLAY"] = DisplayTok
-VSLTok["DISTANCE"] = DistanceTok
-VSLTok["DISTANCES"] = DistanceTok
-VSLTok["DNA"] = DNATok
-VSLTok["DOTS"] = DotsTok
-VSLTok["E"] = AndTok
-VSLTok["ECHO"] = EchoTok
-VSLTok["EJE"] = AxesTok
-VSLTok["EJES"] = AxesTok
-VSLTok["ELANCE"] = BondTok
-VSLTok["ELANCES"] = BondTok
-VSLTok["ELEMNO"] = ElemNoTok
-VSLTok["ELEMENTNUMBER"] = ElemNoTok
-VSLTok["ELICHE"] = HelixTok
-VSLTok["ENGLISH"] = EnglishTok
-VSLTok["EPSF"] = EPSFTok
-VSLTok["ELICHE"] = HelixTok
-VSLTok["ESQUELETO"] = BackboneTok
-VSLTok["ETIQUETA"] = LabelTok
-VSLTok["ETIQUETAS"] = LabelTok
-VSLTok["ETICHETTA"] = LabelTok
-VSLTok["ETICHETTE"] = LabelTok  
-VSLTok["EXIT"] = ExitTok
-VSLTok["FALSE"] = FalseTok
-VSLTok["FDAT"] = FDATTok
-VSLTok["FILODIFERRO"] = WireframeTok
-VSLTok["FILDIFERRO"] = WireframeTok
-VSLTok["FILI"] = StrandsTok  
-VSLTok["FONTSIZE"] = FontSizeTok
-VSLTok["FONTSTROKE"] = FontStrokeTok
-VSLTok["FRENCH"] = FrenchTok
-VSLTok["FS"] = FSTok
-VSLTok["GAUSSIAN"] = GaussianTok
-VSLTok["GENERATE"] = GenerateTok   
-VSLTok["GIF"] = GIFTok
-VSLTok["GIRO"] = TurnTok
-VSLTok["GIROS"] = TurnTok
-VSLTok["GOLD"] = GoldTok
-VSLTok["GRAY"] = GrayTok
-VSLTok["GREEN"] = GreenTok
-VSLTok["GREENBLUE"] = GreenBlueTok
-VSLTok["GREENTINT"] = GreenTintTok
-VSLTok["GREY"] = GrayTok
-VSLTok["GROUP"] = GroupTok
-VSLTok["GRUPO"] = GroupTok
-VSLTok["GRUPPO"] = GroupTok 
-VSLTok["HALF"] = HalfTok
-VSLTok["HARDWARE"] = HardwareTok
-VSLTok["HBOND"] = HBondTok
-VSLTok["HBONDS"] = HBondTok
-VSLTok["HEADER"] = HeaderTok
-VSLTok["HEBRAS"] = StrandsTok
-VSLTok["HELICES"] = HelixTok
-VSLTok["HELIX"] = HelixTok
-VSLTok["HELP"] = HelpTok
-VSLTok["HETERO"] = HeteroTok
-VSLTok["HOLLOW"] = HollowTok
-VSLTok["HOTPINK"] = HotPinkTok
-VSLTok["HOURGLASS"] = HourGlassTok
-VSLTok["HYDROGEN"] = HydrogenTok
-VSLTok["HYDROPHOBIC"] = HydrophobicTok
-VSLTok["IDENT"] = IdentifyTok
-VSLTok["IDENTIFY"] = IdentifyTok
-VSLTok["IMAGE"] = ImageTok
-VSLTok["INFO"] = InfoTok
-VSLTok["INFORMATION"] = InfoTok
-VSLTok["INLINE"] = InLineTok
-VSLTok["INSIGHT"] = InsightTok
-VSLTok["ION"] = IonTok
-VSLTok["IONS"] = IonTok
-VSLTok["IRIS"] = IRISTok
-VSLTok["ITALIAN"] = ItalianTok
-VSLTok["JAPANESE"] = JapaneseTok
-VSLTok["JPEG"] = JPEGTok
-VSLTok["KINEMAGE"] = KinemageTok
-VSLTok["LABEL"] = LabelTok
-VSLTok["LABELS"] = LabelTok
-VSLTok["LARGE"] = LargeTok
-VSLTok["LEVEL"] = LevelTok
-VSLTok["LIGAND"] = LigandTok
-VSLTok["LIGANDS"] = LigandTok
-VSLTok["LOAD"] = LoadTok
-VSLTok["MACROMODEL"] = MacroModelTok
-VSLTok["MAGENTA"] = MagentaTok
-VSLTok["MAINCHAIN"] = MainChainTok
-VSLTok["MAP"] = MapTok
-VSLTok["MASK"] = MaskTok
-VSLTok["MDL"] = MDLTok
-VSLTok["MEAN"] = MeanTok
-VSLTok["MEDIUM"] = MediumTok
-VSLTok["MENUS"] = MenusTok
-VSLTok["MESH"] = WireframeTok
-VSLTok["MIRROR"] = MirrorTok
-VSLTok["MMDB"] = MMDBTok
-VSLTok["MODEL"] = ModelTok
-VSLTok["MOL2"] = Mol2Tok
-VSLTok["MOLECULE"] = MoleculeTok
-VSLTok["MOLSCRIPT"] = MolScriptTok
-VSLTok["MOLSURF"] = MolSurfTok
-VSLTok["MONITOR"] = MonitorTok
-VSLTok["MONITORS"] = MonitorTok
-VSLTok["MONO"] = MonoTok
-VSLTok["MONOCHROME"] = MonoTok
-VSLTok["MONOPS"] = MonoPSTok
-VSLTok["MOPAC"] = MOPACTok
-VSLTok["MOSTRAR"] = DisplayTok
-VSLTok["MOUSE"] = MouseTok
-VSLTok["MOUSEMODE"] = MouseTok
-VSLTok["NASTRO"] = RibbonTok 
-VSLTok["NASTRI"] = RibbonTok 
-VSLTok["NEGATIVE"] = AcidicTok
-VSLTok["NEW"] = NewTok
-VSLTok["NEUTRAL"] = NeutralTok
-VSLTok["NEXT"] = NextTok
-VSLTok["NMRPDB"] = NMRPDBTok
-VSLTok["NONE"] = NoneTok
-VSLTok["NORMAL"] = NormalTok
-VSLTok["NOT"] = NotTok
-VSLTok["NOTOGGLE"] = NoToggleTok
-VSLTok["NUCLEIC"] = NucleicTok
-VSLTok["OFF"] = FalseTok
-VSLTok["ON"] = TrueTok
-VSLTok["OR"] = OrTok
-VSLTok["ORANGE"] = OrangeTok
-VSLTok["ORIGIN"] = OriginTok
-VSLTok["PASTE"] = PasteTok
-VSLTok["PAUSE"] = WaitTok
-VSLTok["PDB"] = PDBTok
-VSLTok["PHIPSI"] = PhiPsiTok
-VSLTok["PICK"] = PickingTok
-VSLTok["PICKING"] = PickingTok
-VSLTok["PICT"] = PICTTok
-VSLTok["PINK"] = PinkTok
-VSLTok["PINKTINT"] = PinkTintTok
-VSLTok["PNG"] = PNGTok
-VSLTok["POLAR"] = PolarTok
-VSLTok["POSITIVE"] = BasicTok
-VSLTok["POSITION"] = PositionTok
-VSLTok["POTENTIAL"] = PotentialTok
-VSLTok["POVRAY"] = POVRayTok
-VSLTok["POVRAY2"] = POVRay2Tok
-VSLTok["POVRAY3"] = POVRay3Tok
-VSLTok["PPM"] = PPMTok
-VSLTok["PRINT"] = PrintTok
-VSLTok["PROTEIN"] = ProteinTok
-VSLTok["PS"] = EPSFTok
-VSLTok["PURINE"] = PurineTok
-VSLTok["PURINES"] = PurineTok
-VSLTok["PURPLE"] = PurpleTok
-VSLTok["PYRIMIDINE"] = PyrimidineTok
-VSLTok["PYRIMIDINES"] = PyrimidineTok
-VSLTok["QUANTA"] = QuantaTok
-VSLTok["QUIT"] = QuitTok
-VSLTok["R3D"] = Raster3DTok
-VSLTok["RADIUS"] = RadiusTok
-VSLTok["RAMACHAN"] = RamachanTok
-VSLTok["RAMACHANDRANDATAFILE"] = RamachanTok
-VSLTok["RAMACHANDRANPRINTERPLOT"] = RamPrintTok
-VSLTok["RAMDATA"] = RamachanTok
-VSLTok["RAMPRINT"] = RamPrintTok
-VSLTok["RASMAC"] = RasMolTok
-VSLTok["RASMOL"] = RasMolTok
-VSLTok["RASTER3D"] = Raster3DTok
-VSLTok["RASWIN"] = RasMolTok
-VSLTok["RDF"] = RamachanTok
-VSLTok["RED"] = RedTok
-VSLTok["REDORANGE"] = RedOrangeTok
-VSLTok["REFRESH"] = RefreshTok
-VSLTok["REJECT"] = RejectTok
-VSLTok["RENUM"] = RenumTok
-VSLTok["RENUMBER"] = RenumTok
-VSLTok["RESET"] = ResetTok
-VSLTok["RESIDUE"] = ResidueTok
-VSLTok["RESIDUENUMBER"] = ResNoTok
-VSLTok["RESIZE"] = ResizeTok
-VSLTok["RESNO"] = ResNoTok
-VSLTok["RESOLUTION"] = ResolutionTok
-VSLTok["RESTRICT"] = RestrictTok
-VSLTok["RGB"] = IRISTok
-VSLTok["RIBBON"] = RibbonTok
-VSLTok["RIBBON1"] = Ribbon1Tok
-VSLTok["RIBBON2"] = Ribbon2Tok
-VSLTok["RIBBONS"] = RibbonTok
-VSLTok["RIBBONS1"] = Ribbon1Tok
-VSLTok["RIBBONS2"] = Ribbon2Tok
-VSLTok["RIEMPIMENTO"] = SpacefillTok
-VSLTok["RNA"] = RNATok
-VSLTok["ROT"] = RotateTok
-VSLTok["ROTATE"] = RotateTok
-VSLTok["ROTATION"] = RotateTok
-VSLTok["RPP"] = RamPrintTok
-VSLTok["SALIR"] = ExitTok
-VSLTok["SAVE"] = SaveTok
-VSLTok["SCHELETRO"] = BackboneTok
-VSLTok["SCRIPT"] = ScriptTok
-VSLTok["SECTION"] = SectionTok
-VSLTok["SEAGREEN"] = SeaGreenTok
-VSLTok["SELECT"] = SelectTok
-VSLTok["SELECTED"] = SelectedTok
-VSLTok["SELECTION"] = SelectedTok
-VSLTok["SEQUENCE"] = SequenceTok
-VSLTok["SET"] = SetTok
-VSLTok["SHADEPOWER"] = ShadePowerTok
-VSLTok["SHADOW"] = ShadowTok
-VSLTok["SHADOWS"] = ShadowTok
-VSLTok["SHAPELY"] = ShapelyTok
-VSLTok["SHEET"] = SheetTok
-VSLTok["SHEETS"] = SheetTok
-VSLTok["SHELX"] = SHELXTok
-VSLTok["SHOW"] = ShowTok
-VSLTok["SIDECHAIN"] = SidechainTok
-VSLTok["SKYBLUE"] = SkyBlueTok
-VSLTok["SLAB"] = SlabTok
-VSLTok["SLABMODE"] = SlabModeTok
-VSLTok["SMALL"] = SmallTok
-VSLTok["SOLID"] = SolidTok
-VSLTok["SOLVENT"] = SolventTok
-VSLTok["SOLVENTS"] = SolventTok
-VSLTok["SOURCE"] = SourceTok
-VSLTok["SPACEFILL"] = SpacefillTok
-VSLTok["SPACING"] = SpacingTok
-VSLTok["SPANISH"] = SpanishTok
-VSLTok["SPECPOWER"] = SpecPowerTok
-VSLTok["SPECULAR"] = SpecularTok
-VSLTok["SPREAD"] = SpreadTok
-VSLTok["SSBOND"] = SSBondTok
-VSLTok["SSBONDS"] = SSBondTok
-VSLTok["STAR"] = StarTok
-VSLTok["STARS"] = StarTok
-VSLTok["STEREO"] = StereoTok
-VSLTok["STRANDS"] = StrandsTok
-VSLTok["STRUCTURE"] = StructureTok
-VSLTok["SUN"] = SUNTok
-VSLTok["SUNRLE"] = SUNRLETok
-VSLTok["SURFACE"] = SurfaceTok
-VSLTok["SYBYL"] = SybylTok
-VSLTok["SYMMETRY"] = SymmetryTok
-VSLTok["TEMPERATURE"] = TemperatureTok
-VSLTok["TITLE"] = TitleTok
-VSLTok["TODO"] = AllTok
-VSLTok["TORSION"] = TorsionTok
-VSLTok["TORSIONS"] = TorsionTok
-VSLTok["TRACE"] = TraceTok
-VSLTok["TRANSLATE"] = TranslateTok
-VSLTok["TRANSLATION"] = TranslateTok
-VSLTok["TRANSPARENT"] = TransparentTok
-VSLTok["TRUE"] = TrueTok
-VSLTok["TURN"] = TurnTok
-VSLTok["TURNS"] = TurnTok
-VSLTok["TUTTO"] = AllTok 
-VSLTok["TYPE"] = TypeTok
-VSLTok["UNBOND"] = UnBondTok
-VSLTok["UNITCELL"] = UnitCellTok
-VSLTok["USER"] = UserTok
-VSLTok["VDW"] = VDWTok
-VSLTok["VECTPS"] = VectPSTok
-VSLTok["VIEW"] = ViewTok
-VSLTok["VIGNETTA"] = CartoonTok
-VSLTok["VIOLET"] = VioletTok
-VSLTok["VISUALIZZA"] = DisplayTok 
-VSLTok["VRML"] = VRMLTok
-VSLTok["WAIT"] = WaitTok
-VSLTok["WATER"] = WaterTok
-VSLTok["WATERS"] = WaterTok
-VSLTok["WHITE"] = WhiteTok
-VSLTok["WIDTH"] = WidthTok
-VSLTok["WIREFRAME"] = WireframeTok
-VSLTok["WITHIN"] = WithinTok
-VSLTok["WRITE"] = WriteTok
-VSLTok["X"] = XTok
-VSLTok["XYZ"] = XYZTok
-VSLTok["Y"] = YTok
-VSLTok["YELLOW"] = YellowTok
-VSLTok["YELLOWTINT"] = YellowTintTok
-VSLTok["Z"] = ZTok
-VSLTok["ZAP"] = ZapTok
-VSLTok["ZOOM"] = ZoomTok
-
-
-ErrSyntax   =    0
-ErrBigNum   =    1
-ErrBadOpt   =    2
-ErrParam    =    3
-ErrFilNam   =    4
-ErrBadLoad  =    5
-ErrNotNum   =    6
-ErrNotSep   =    7
-ErrNotBrac  =    8
-ErrNoCol    =    9
-ErrColour   =   10
-ErrBadArg   =   11
-ErrBadExpr  =   12
-ErrParen    =   13
-ErrScript   =   14
-ErrFunc     =   15
-ErrSetName  =   16
-ErrBadSet   =   17
-ErrInScrpt  =   18
-ErrOutScrpt =   19
-ErrBadMolDB =   20
-ErrNoBond   =   21
-ErrBlocSel  =   22
-
-MsgStrs = {}
-
-MsgStrs[ErrSyntax]  = "Invalid command syntax!"
-MsgStrs[ErrBigNum]  = "Parameter value too large!"
-MsgStrs[ErrBadOpt]  = "Invalid parameter setting!"
-MsgStrs[ErrParam]  = "Invalid parameter name!"
-MsgStrs[ErrFilNam]  = "Filename string expected!"
-MsgStrs[ErrBadLoad]  = "Molecule database loaded!"
-MsgStrs[ErrNotNum]  = "Integer value expected!"
-MsgStrs[ErrNotSep]  = "Comma separator missing!"
-MsgStrs[ErrNotBrac]  = "Close bracket ']' expected!"
-MsgStrs[ErrNoCol]  = "No colour specified!"
-MsgStrs[ErrColour]  = "Unknown or incorrect colour!"
-MsgStrs[ErrBadArg]  = "Invalid command argument!"
-MsgStrs[ErrBadExpr]  = "Syntax error in expression!"
-MsgStrs[ErrParen]  = "Close parenthesis ')' expected!"
-MsgStrs[ErrScript]  = "Script command stack too deep!"
-MsgStrs[ErrFunc]  = "Open parenthesis '(' expected!"
-MsgStrs[ErrSetName]  = "Invalid or missing atom set name!"
-MsgStrs[ErrBadSet]  = "Not enough memory to define set!"
-MsgStrs[ErrInScrpt]  = "Command disabled in script file!"
-MsgStrs[ErrOutScrpt]  = "Command invalid (valid only within a script)!"
-MsgStrs[ErrBadMolDB]  = "Molecule database not loaded!"
-MsgStrs[ErrNoBond]  = "Bond for rotation not picked!"
-
-
-VSLColourTable = {}
-
-VSLColourTable[BlackTok] =      [   0/255.,   0/255.,   0/255. ]
-VSLColourTable[BlueTok] =       [   0/255.,   0/255., 255/255. ]
-VSLColourTable[BlueTintTok] =   [ 175/255., 214/255., 255/255. ]
-VSLColourTable[BrownTok] =      [ 175/255., 117/255.,  89/255. ]
-VSLColourTable[CyanTok] =       [   0/255., 255/255., 255/255. ]
-VSLColourTable[GoldTok] =       [ 255/255., 156/255.,   0/255. ]
-VSLColourTable[GrayTok] =       [ 125/255., 125/255., 125/255. ]
-VSLColourTable[GreenTok] =      [   0/255., 255/255.,   0/255. ]
-VSLColourTable[GreenBlueTok] =  [  46/255., 139/255.,  87/255. ]
-VSLColourTable[GreenTintTok] =  [ 152/255., 255/255., 179/255. ]
-VSLColourTable[HotPinkTok] =    [ 255/255.,   0/255., 101/255. ]
-VSLColourTable[MagentaTok] =    [ 255/255.,   0/255., 255/255. ]
-VSLColourTable[OrangeTok] =     [ 255/255., 165/255.,   0/255. ]
-VSLColourTable[PinkTok] =       [ 255/255., 101/255., 117/255. ]
-VSLColourTable[PinkTintTok] =   [ 255/255., 171/255., 187/255. ]
-VSLColourTable[PurpleTok] =     [ 160/255.,  32/255., 240/255. ]
-VSLColourTable[RedTok] =        [ 255/255.,   0/255.,   0/255. ]
-VSLColourTable[RedOrangeTok] =  [ 255/255.,  69/255.,   0/255. ]
-VSLColourTable[SeaGreenTok] =   [   0/255., 250/255., 109/255. ]
-VSLColourTable[SkyBlueTok] =    [  58/255., 144/255., 255/255. ]
-VSLColourTable[VioletTok] =     [ 238/255., 130/255., 238/255. ]
-VSLColourTable[WhiteTok] =      [ 255/255., 255/255., 255/255. ]
-VSLColourTable[YellowTok] =     [ 255/255., 255/255.,   0/255. ]
-VSLColourTable[YellowTintTok] = [ 246/255., 246/255., 117/255. ]
-
-VSLCPKTable = {}
-
-VSLCPKTable[0] =   "[ .7843, .7843, .7843 ]" #/*  0 Light Grey   */
-VSLCPKTable[1] =   "[ .5607, .5607, 1.    ]" #/*  1 Sky Blue     */
-VSLCPKTable[2] =   "[ .9411, 0.,    0.    ]" #/*  2 Red          */
-VSLCPKTable[3] =   "[ 1.,    .7843, .1960 ]" #/*  3 Yellow       */
-VSLCPKTable[4] =   "[ 1.,    1.,    1.    ]" #/*  4 White        */
-VSLCPKTable[5] =   "[ 1.,    .7529, .7960 ]" #/*  5 Pink         */
-VSLCPKTable[6] =   "[ .8549, .6470, .1254 ]" #/*  6 Golden Rod   */
-VSLCPKTable[7] =   "[ 0.,    0.,    1.    ]" #/*  7 Blue         */
-VSLCPKTable[8] =   "[ 1.,    .6470, 0.    ]" #/*  8 Orange       */
-VSLCPKTable[9] =   "[ .5019, .5019, .5647 ]" #/*  9 Dark Grey    */
-VSLCPKTable[10] =  "[ .6470, .1647, .1647 ]" #/* 10 Brown        */
-VSLCPKTable[11] =  "[ .6274, .1254, .9411 ]" #/* 11 Purple       */
-VSLCPKTable[12] =  "[ 1.,    .0784, .5764 ]" #/* 12 Deep Pink    */
-VSLCPKTable[13] =  "[ 0.,    1.,    0.    ]" #/* 13 Green        */
-VSLCPKTable[14] =  "[ .6980, .1333, .1333 ]" #/* 14 Fire Brick   */
-VSLCPKTable[15] =  "[ .1333, .5450, .1333 ]" #/* 15 Forest Green */
-
-
-
-
-def LookUpKeyword( kw ):
-    if kw.upper() in VSLTok:
-      return VSLTok[ kw.upper() ]
-    else:
-      return IdentTok
-      
-##  Command Line Lexical Analysis  */
-
-def IsIdentChar( c ):
-    if c.isalnum() or c=='$' or c== '_' :
-      return True
-    else:
-      return False
-
-def VSLFetchToken( p, baseTokenPtr):
-    TokenPtr = baseTokenPtr
-    TokenStart = TokenPtr
-    CurToken = 0
-    TokenIdent = ""
-    TokenValue = 0
-    if TokenPtr >= len(p):
-        ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
-        return (TokenPtr, 0, TokenStart, TokenIdent, TokenValue)
-    while TokenPtr < len(p) :
-        ch =  p[TokenPtr:TokenPtr+1]
-        if not ch.isspace() :
-            break
-        TokenPtr = TokenPtr+1
-    TokenStart = TokenPtr
-    ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
-    if TokenPtr < len(p) :
-        ch = p[TokenPtr]
-        ### debug: print 'Starting scan with ch ='+ch
-        if ch == '#' :
-            ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
-            return (TokenPtr, 0, TokenStart, TokenIdent, TokenValue)
-        TokenPtr = TokenPtr+1
-        if  ch.isalpha() :
-             ### debug: print ' First character is alpha'
-             TokenLength = 1
-             TokenIdentL = []
-             TokenIdentL.append(ch.upper())
-             while IsIdentChar(p[TokenPtr])==True and TokenLength < 32 :
-                 ch = p[TokenPtr]
-                 TokenPtr = TokenPtr+1
-                 TokenIdentL.append(ch.upper())
-                 TokenLength = TokenLength+1
-                 if TokenPtr >= len(p):
-                     break
-             if TokenLength==32 :
-                 ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
-                 return (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
-             else:
-                 TokenIdent = ''.join(TokenIdentL)
-                 CurToken = LookUpKeyword(TokenIdent)
-                 ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
-                 return (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
-        elif ch.isdigit() :
-            ### debug: print ' First character is digit '
-            TokenValue = int(ch)
-            while TokenPtr < len(p):
-                ch = p[TokenPtr]
-                if ch == '#' or not ch.isdigit():
-                    break
-                TokenPtr = TokenPtr+1
-                TokenValue = 10*TokenValue + int(ch)
-            CurToken = NumberTok
-            ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
-            return (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
-        elif  (ch=='\'') or (ch=='\"') or (ch=='`') :
-            ### debug: print ' First character is quot '
-            TokenLength = 0
-            TokenIdentL = []
-            TokenIdentL.append(ch)
-            while  (TokenPtr < len(p)) and (TokenLength<128) and (p[TokenPtr]!=ch) :
-                TokenIdentL.append(p[TokenPtr])
-                TokenPtr = TokenPtr+1
-            if ch != p[TokenPtr] :
-                ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
-                return (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
-            else:
-                TokenPtr = TokenPtr+1
-                TokenIdent = ''.join(TokenIdentL)
-                CurToken = StringTok
-                ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
-                return (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
-        else :
-            CurToken = -ord(ch)
-            ### debug:  print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
-            return (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
-    ### debug: print 'CurToken, TokenPtr, TokenStart ' + str(CurToken) + ' '+str(TokenPtr)+' '+str(TokenStart)
-    return (TokenPtr, 0, TokenStart, TokenIdent, TokenValue)
-
-
-def VSLNextIf( tok, err, p, TokenPtr ) :
-
-    ### debug: print 'VSLNextIf TokenPtr, p ' + str(TokenPtr) + ' ' +p
-    (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr) 
-    if CurToken != tok :
-       print MsgStrs[err]
-       return (True,  TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
-    else:
-       return (False, TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue)
-
-
-def VSLParseColour( p, baseTokenPtr, baseCurToken ):
-
-
-    TokenPtr = baseTokenPtr
-    CurToken = baseCurToken
-    ### debug: print 'VSLParseColour TokenPtr, CurToken, p ' + str(TokenPtr) + ' ' +str(CurToken) + ' ' + p
+    def gettok(self, tok):
+        return self.vsltok[tok.lower()]
     
-    if IsColourToken(CurToken) == True :
-        rgb = VSLColourTable[CurToken]        
-        ### debug: print ' rgb '+str(rgb)
-        return (True, rgb)
+    def _assigntok(self, *args):
+        self.assign += 1
+        for arg in args:
+            self.vsltok[arg.lower()] = self.assign
+        return self.assign
 
-    elif  CurToken == -ord('[') :
-        rgb = [0., 0., 0.]
-
-        (result,  TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLNextIf(NumberTok, ErrNotNum, p, TokenPtr)
-        if result==True :
-            return (False, rgb)
+    ##---Apply Color to Selection--##
+    def _ispredtok(self, abc):
+        '''banana banana banana'''
+        if (((abc)>=self.alphatok) and ((abc)<=self.smalltok)):
+            return True
         else:
-            if TokenValue > 255:
-                print MsgStrs[ErrBigNum]
-                return (False, rgb)
+            return False
+
+    def _predtokord(self, abc):
+        '''banana banana banana'''
+        if  ((abc)-self.alphatok):
+            return True
+        else:
+            return False
+
+    def _predtokchr(self, abc):
+        '''banana banana banana'''
+        if ((abc)+self.alphatok):
+            return True
+        else:
+            return False
+
+    def _isproptok(self, abc):
+        '''banana banana banana'''
+        if  (((abc)>=self.temperaturetok) and ((abc)<=self.altltok)):
+            return True
+        else:
+            return False
+
+    def _iscolourtoken(self, abc):
+        '''banana banana banana'''
+        if (((abc)>=self.blacktok) and ((abc)<=self.yellowtinttok)):
+            return True
+        else:
+            return False
+
+    def _token2colour(self, abc):
+        '''banana banana banana'''
+        return  ((abc)-self.blacktok)
+
+    def _isimagetoken(self, abc):
+        '''banana banana banana'''
+        if (((((abc)>=self.giftok) and ((abc)<=self.ramprinttok)) or
+            ((abc) == self.phipsitok))):
+            return True
+        else:
+            return False
+
+    def _ismoleculetoken(self, abc):
+        '''banana banana banana'''
+        if (((abc)>=self.pdbtok) and ((abc)<=self.cextok)):
+            return True
+        else:
+            return False
+
+    def _lookupkeyword(self, keyw):
+        '''banana banana banana'''
+        if keyw.lower() in self.vsltok:
+            return self.vsltok[ keyw.lower() ]
+        else:
+            return self.identtok
+
+    def _isidentchar(self, abc):
+        '''banana banana banana'''
+        if abc.isalnum() or abc == '$' or abc== '_':
+            return True
+        else:
+            return False
+
+    def _vslfetchtoken(self, commands):
+        '''banana banana banana'''
+        def debug():
+            '''banana banana banana'''
+            ###debug print 'curtoken, tokenptr, tokenstart %s %s %s' % (self.curtoken,
+                ###debug self.tokenptr, self.tokenstart)
+        self.tokenstart = self.tokenptr
+        self.curtoken = 0
+        self.tokenident = ""
+        self.tokenvalue = 0
+        if self.tokenptr >= len(commands):
+            debug()
+            self.curtoken = 0
+            return False
+        while self.tokenptr < len(commands):
+            ch =  commands[self.tokenptr:self.tokenptr+1]
+            if not ch.isspace():
+                break
+            self.tokenptr += 1
+        self.tokenstart = self.tokenptr
+        debug()
+        if self.tokenptr < len(commands):
+            ch = commands[self.tokenptr]
+            ###debug print 'Starting scan with ch ='+ch
+            if ch == '#':
+                debug()
+                self.curtoken = 0
+                return False
+            self.tokenptr += 1
+            if ch.isalpha():
+                ###debug print ' First character is alpha'
+                tokenlength = 1
+                tokenidentl = []
+                tokenidentl.append(ch.upper())
+                while self.tokenptr < len(commands) and tokenlength < 32 and\
+                    self._isidentchar(commands[self.tokenptr]) == True:
+                    ch = commands[self.tokenptr]
+                    self.tokenptr += 1
+                    tokenidentl.append(ch.upper())
+                    tokenlength += 1
+                if tokenlength != 32:
+                    self.tokenident = ''.join(tokenidentl)
+                    self.curtoken = self._lookupkeyword(self.tokenident)
+                    debug()
+                else:
+                    debug()
+            elif ch.isdigit():
+                ###debug print ' First character is digit '
+                self.tokenvalue = int(ch)
+                while self.tokenptr < len(commands):
+                    ch = commands[self.tokenptr]
+                    if ch == '#' or not ch.isdigit():
+                        break
+                    self.tokenptr += 1
+                    self.tokenvalue = 10*self.tokenvalue + int(ch)
+                self.curtoken = self.numbertok
+                debug()
+            elif (ch == '\'') or (ch == '\"') or (ch == '`'):
+                ###debug print ' First character is quot '
+                tokenlength = 0
+                tokenidentl = []
+                tokenidentl.append(ch)
+                while  (self.tokenptr < len(commands)) and (tokenlength<128) and\
+                    (commands[self.tokenptr]!=ch):
+                    tokenidentl.append(commands[self.tokenptr])
+                    self.tokenptr += 1
+                if ch == commands[self.tokenptr]:
+                    self.tokenptr += 1
+                    self.tokenident = ''.join(tokenidentl)
+                    self.curtoken = self.stringtok
+                    debug()
+                else:
+                    debug()
             else:
-                RVal = TokenValue
-                
-        (result,  TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLNextIf(-ord(','), ErrNotSep, p, TokenPtr)
-        if result==True :
-            return (False, rgb)
-
-        (result,  TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLNextIf(NumberTok, ErrNotNum, p, TokenPtr)
-        if result==True :
-            return (False, rgb)
+                self.curtoken = -ord(ch)
+                debug()
         else:
-            if TokenValue > 255:
-                print MsgStrs[ErrBigNum]
-                return (False, rgb)
-            else:
-                GVal = TokenValue
+            debug()
+            self.curtoken = 0
+            return False
 
-        (result,  TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLNextIf(-ord(','), ErrNotSep, p, TokenPtr)
-        if result==True :
-            return (False, rgb)
+    def _vslparsecolour(self, commands):
+        '''banana banana banana'''
+        ###debug print 'vslparsecolour tokenptr, curtoken, p %s %s %s' % (self.tokenptr,
+            ###debug self.curtoken, commands)
 
-        (result,  TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLNextIf(NumberTok, ErrNotNum, p, TokenPtr)
-        if result==True :
-            return (False, rgb)
-        else:
-            if TokenValue > 255:
-                print MsgStrs[ErrBigNum]
-                return (False, rgb)
-            else:
-                BVal = TokenValue
-
-        (result,  TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLNextIf(-ord(']'), ErrNotBrac, p, TokenPtr)
-        if result==True :
-            return (False, rgb)
-        else:
-            rgb = []
-            rgb.append(RVal/255.)
-            rgb.append(GVal/255.)
-            rgb.append(BVal/255.)
+        if self._iscolourtoken(self.curtoken) == True:
+            rgb = self.vslcolourtable[self.curtoken]
+            ###debug print ' rgb '+str(rgb)
             return (True, rgb)
-            
-    else:
+        elif self.curtoken == -ord('['):
+            rgb = []
+            for i in range(5):
+                self._vslfetchtoken(commands)
+                if i % 2 == 0:
+                    if self.curtoken != self.numbertok:
+                        print self.msgstrs[self.errnotnum]
+                        break
+                    elif self.tokenvalue > 255:
+                        print self.msgstrs[self.errbignum]
+                        break
+                    rgb.append(self.tokenvalue/255.)
+                elif self.curtoken != -ord(','):
+                    print self.msgstrs[self.errnotsep]
+                    break
+            else:
+                self._vslfetchtoken(commands)
+                if self.curtoken != -ord(']'):
+                    print self.msgstrs[self.errnotbrac]
+                else:
+                    return (True, rgb)
         return (False, [0., 0., 0.])
+
+    def _apply_color(self, rgb, selection):
+        '''banana banana banana'''
+        rgb = rgb.replace(' ', '')
+        cmd.set_color("vslc_%s" % rgb, rgb)
+        cmd.color("vslc_%s" % rgb, selection)
+        return
+
+    ##-----Color CPK-----------##
+    def _color_cpk(self, selection):
+        '''banana banana banana'''
+        colstr = ' and (%s)' % selection
+        self._apply_color(self.vslcpktable[12],  selection)
+        self._apply_color(self.vslcpktable[4],  "(elem H)%s" % colstr)
+        self._apply_color(self.vslcpktable[14], "(elem He)%s" % colstr)
+        self._apply_color(self.vslcpktable[13], "(elem He)%s" % colstr)
+        self._apply_color(self.vslcpktable[0],  "(elem C)%s" % colstr)
+        self._apply_color(self.vslcpktable[1],  "(elem N)%s" % colstr)
+        self._apply_color(self.vslcpktable[2],  "(elem O)%s" % colstr)
+        self._apply_color(self.vslcpktable[6],  "(elem Au+F+Si)%s" % colstr)
+        self._apply_color(self.vslcpktable[7],  "(elem Na)%s" % colstr)
+        self._apply_color(self.vslcpktable[15], "(elem Mg)%s" % colstr)
+        self._apply_color(self.vslcpktable[9],  "(elem Ca+Mn+Al+Ti+Cr+Ag)%s" % colstr)
+        self._apply_color(self.vslcpktable[8],  "(elem P+Fe+Ba)%s" % colstr)
+        self._apply_color(self.vslcpktable[3],  "(elem S)%s" % colstr)
+        self._apply_color(self.vslcpktable[11], "(elem I)%s" % colstr)
+        self._apply_color(self.vslcpktable[10], "(elem Br+Zn+Cu+Ni)%s" % colstr)
+        return
+
+    def _preselect(self, presel):
+        selection = ''
+        ###debug print presel
+        preseldict = {}
+        preselpos = 0
+        curpos = 0
+        skiplist = ['not', 'and', 'or', '(', ')', ' ']
+        andin = [i for i in xrange(len(presel)) if presel.startswith('and', i)]
+        orin = [i for i in xrange(len(presel)) if presel.startswith('or', i)]
+        notin = [i for i in xrange(len(presel)) if presel.startswith('not', i)]
+
+        for iii in presel:
+            if preselpos not in preseldict:
+                preseldict[preselpos] = ''
+            if iii == '(':
+                preselpos += preseldict[preselpos] == '' and 0 or 1
+                preseldict[preselpos] = ''
+                preseldict[preselpos] += iii
+                preselpos += 1
+            elif iii == ')':
+                preselpos += preseldict[preselpos] == '' and 0 or 1
+                preseldict[preselpos] = ''
+                preseldict[preselpos] += iii
+                preselpos += 1
+            elif curpos in andin:
+                preselpos += preseldict[preselpos] == '' and 0 or 1
+                preseldict[preselpos] = ''
+                preseldict[preselpos] += iii
+            elif curpos-1 in andin:
+                preseldict[preselpos] += iii
+            elif curpos-2 in andin:
+                preseldict[preselpos] += iii
+                preselpos += 1
+            elif curpos in notin:
+                preselpos += preseldict[preselpos] == '' and 0 or 1
+                preseldict[preselpos] = ''
+                preseldict[preselpos] += iii
+            elif curpos-1 in notin:
+                preseldict[preselpos] += iii
+            elif curpos-2 in notin:
+                preseldict[preselpos] += iii
+                preselpos += 1
+            elif curpos in orin:
+                preselpos += preseldict[preselpos] == '' and 0 or 1
+                preseldict[preselpos] = ''
+                preseldict[preselpos] += iii
+            elif curpos-1 in orin:
+                preseldict[preselpos] += iii
+                preselpos += 1
+            else:
+                preseldict[preselpos] += iii
+            curpos += 1
         
-    ### Warning, need to hook to locally named colors
-    
+        ###debug import pprint
+        ###debug pprint.pprint(preseldict)
+        if len(preseldict) == 0:
+            return self._select('')
+        restrict = -1
+        for abc in preseldict:
+            if 'within' in preseldict[abc]:
+                if preseldict[abc+1] == '(':
+                    if ',' in preseldict[abc+2]:
+                        within = preseldict[abc+2].split(',')
+                        if preseldict[abc+3] == ')':
+                            restrict = abc+3
+                            selection = '%s%s expand %s ' % (selection,
+                                self._select(within[1]), within[0])
+            if abc <= restrict:
+                continue
+            if preseldict[abc] in skiplist:
+                selection = '%s%s ' % (selection, preseldict[abc].strip())
+            else:
+                selection = '%s%s ' % (selection, self._select(preseldict[abc]))
+        return selection
 
+    ##-----Select Function-----##
+    def _select(self, allparameters):
+        '''banana banana banana'''
+        allparameters = allparameters.strip()
+        if allparameters == 'false':
+            return allparameters
 
+        ## list of elements in the periodic table how they are entered in
+        ## RasMol and PyMOL
+        ## dictionary data structure { RasMol: PyMOL }
+        periodictable = {}
+        periodictable['gold'] = 'au'
+        periodictable['neon'] = 'ne'
+        periodictable['cobalt'] = 'co'
+        periodictable['germanium'] = 'ge'
+        periodictable['fermium'] = 'fm'
+        periodictable['gadolinium'] = 'gd'
+        periodictable['zinc'] = 'zn'
+        periodictable['neodymium'] = 'nd'
+        periodictable['sodium'] = 'na'
+        periodictable['selenium'] = 'se'
+        periodictable['technetium'] = 'tc'
+        periodictable['meitnerium'] = 'mt'
+        periodictable['sulfur'] = 's'
+        periodictable['beryllium'] = 'be'
+        periodictable['americium'] = 'am'
+        periodictable['barium'] = 'ba'
+        periodictable['californium'] = 'cf'
+        periodictable['tungsten'] = 'w'
+        periodictable['protactinium'] = 'pa'
+        periodictable['silver'] = 'ag'
+        periodictable['terbium'] = 'tb'
+        periodictable['aluminum'] = 'al'
+        periodictable['molybdenum'] = 'mo'
+        periodictable['hassium'] = 'hs'
+        periodictable['lawrencium'] = 'lr'
+        periodictable['indium'] = 'in'
+        periodictable['krypton'] = 'kr'
+        periodictable['rubidium'] = 'rb'
+        periodictable['nitrogen'] = 'n'
+        periodictable['radium'] = 'ra'
+        periodictable['astatine'] = 'at'
+        periodictable['berkelium'] = 'bk'
+        periodictable['antimony'] = 'sb'
+        periodictable['europium'] = 'eu'
+        periodictable['lead'] = 'pb'
+        periodictable['lutetium'] = 'lu'
+        periodictable['nobelium'] = 'no'
+        periodictable['flourine'] = 'f'
+        periodictable['cerium'] = 'ce'
+        periodictable['osmium'] = 'os'
+        periodictable['rhodium'] = 'rh'
+        periodictable['curium'] = 'cm'
+        periodictable['mercury'] = 'hg'
+        periodictable['yttrium'] = 'y'
+        periodictable['samarium'] = 'sm'
+        periodictable['thorium'] = 'th'
+        periodictable['strontium'] = 'sr'
+        periodictable['bromine'] = 'br'
+        periodictable['boron'] = 'b'
+        periodictable['carbon'] = 'c'
+        periodictable['chlorine'] = 'cl'
+        periodictable['ytterbium'] = 'yb'
+        periodictable['gallium'] = 'ga'
+        periodictable['silicon'] = 'si'
+        periodictable['tantalum'] = 'ta'
+        periodictable['cadmium'] = 'cd'
+        periodictable['cesium'] = 'cs'
+        periodictable['copper'] = 'cu'
+        periodictable['oxygen'] = 'o'
+        periodictable['praseodymium'] = 'pr'
+        periodictable['arsenic'] = 'as'
+        periodictable['chromium'] = 'cr'
+        periodictable['platinum'] = 'pt'
+        periodictable['mendelevium'] = 'md'
+        periodictable['actinium'] = 'ac'
+        periodictable['thulium'] = 'tm'
+        periodictable['nickel'] = 'ni'
+        periodictable['ruthenium'] = 'ru'
+        periodictable['potassium'] = 'k'
+        periodictable['dubnium'] = 'db'
+        periodictable['argon'] = 'ar'
+        periodictable['palladium'] = 'pd'
+        periodictable['promethium'] = 'pm'
+        periodictable['bismuth'] = 'bi'
+        periodictable['neptunium'] = 'np'
+        periodictable['lanthanum'] = 'la'
+        periodictable['francium'] = 'fr'
+        periodictable['zirconium'] = 'zr'
+        periodictable['erbium'] = 'er'
+        periodictable['radon'] = 'rn'
+        periodictable['niobium'] = 'nb'
+        periodictable['calcium'] = 'ca'
+        periodictable['iridium'] = 'ir'
+        periodictable['magnesium'] = 'mg'
+        periodictable['iron'] = 'fe'
+        periodictable['plutonium'] = 'pu'
+        periodictable['dysprosium'] = 'dy'
+        periodictable['iodine'] = 'i'
+        periodictable['rhenium'] = 're'
+        periodictable['titanium'] = 'ti'
+        periodictable['hydrogen'] = 'h'
+        periodictable['thallium'] = 'tl'
+        periodictable['helium'] = 'he'
+        periodictable['uranium'] = 'u'
+        periodictable['seaborgium'] = 'sg'
+        periodictable['tin'] = 'sn'
+        periodictable['holmium'] = 'ho'
+        periodictable['lithium'] = 'li'
+        periodictable['polonium'] = 'po'
+        periodictable['bohrium'] = 'bh'
+        periodictable['hafnium'] = 'hf'
+        periodictable['scandium'] = 'sc'
+        periodictable['einsteinium'] = 'es'
+        periodictable['phosphorus'] = 'p'
+        periodictable['rutherfordium'] = 'rf'
+        periodictable['vanadium'] = 'v'
+        periodictable['manganese'] = 'mn'
+        periodictable['tellurium'] = 'te'
+        periodictable['xenon'] = 'xe'
+        ## RasMol's predefined sets and PyMOL's equivalents
+        ## dictionary data structure { RasMol: PyMOL }
+        predefinedlists = {}
+        predefinedlists['selected'] = ' vslselection '
+        predefinedlists['sidechain'] = ' resn asp+glu+arg+lys+his+asn+thr+cys+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro+a+t+c+g and not name o1p+o2p+o3p+p+c1*+c2*+c3*+c4*+c5*+o2*+o3*+o4*+o5*+c+o+n+ca '
+        predefinedlists['surface'] = ' resn gly+ser+thr+lys+asp+asn+glu+pro+arg+gln+tyr+his '
+        predefinedlists['nucleic'] = ' resn a+t+c+g '
+        predefinedlists['aliphatic'] = ' resn gly+ala+leu+val+ile '
+        predefinedlists['pyrimidine'] = ' resn c+t '
+        predefinedlists['buried'] = ' resn ala+leu+val+ile+phe+cys+met+trp '
+        predefinedlists['protein'] = ' resn asp+glu+arg+lys+his+asn+thr+cys+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro '
+        predefinedlists['purine'] = ' resn a+g '
+        predefinedlists['sheet'] = ' ss s '
+        predefinedlists['hetero'] = ' hetatm '
+        predefinedlists['aromatic'] = ' resn his+tyr+tr+phe+pro '
+        predefinedlists['helix'] = ' ss h '
+        predefinedlists['basic'] = ' resn arg+lys+his '
+        predefinedlists['acidic'] = ' resn asp+glu '
+        predefinedlists['amino'] = ' resn gln+asn+asp+glu+arg+lys+his+thr+cys+tyr+ser+gly+trp+phe+pro+leu+val+ile+met'
+        predefinedlists['cystine'] = ' (byres (((all) & r. CYS+CYX & n. SG) & bound_to ((all) & r. CYS+CYX & n. SG))) & n. CA+CB+SG'
+        predefinedlists['polar'] = ' resn asp+glu+arg+lys+his+asn+thr+cys+gln+ser+gly+tyr '
+        predefinedlists['medium'] = ' resn val+thr+asp+asn+pro+cys '
+        predefinedlists['backbone'] = ' name o1p+o2p+o3p+p+c1*+c2*+c3*+c4*+c5*+o2*+o3*+o4*+o5*+c+o+n+ca '
+        predefinedlists['hoh'] = ' resn hoh '
+        predefinedlists['water'] = ' resn hoh '
+        predefinedlists['neutral'] = ' resn asn+thr+cys+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro '
+        predefinedlists['alpha'] = ' name ca '
+        predefinedlists['cyclic'] = ' resn pro+phe+trp+tyr+his '
+        predefinedlists['large'] = ' resn glu+arg+lys+his+gln+tyr+leu+ile+met+trp+phe '
+        predefinedlists['turn'] = ' ss 1 '
+        predefinedlists['small'] = ' resn gly+ala+ser '
+        predefinedlists['acyclic'] = ' resn met+ile+val+leu+ala+gly+ser+gln+thr+asn+cys+lys+arg+asp+glu '
+        predefinedlists['hydrophobic'] = ' resn ala+leu+val+ile+met+trp+phe+pro '
+        predefinedlists['charged'] = ' resn asp+glu+arg+lys+his '
+        ## Amino Acids as they appear in both RasMol and PyMOL
+        aminolist = ['gly', 'ala', 'val', 'leu', 'ile', 'met', 'pro', 'phe',
+            'tyr', 'trp', 'ser', 'thr', 'cys', 'lys', 'arg', 'his', 'asp',
+            'glu', 'asn', 'gln']
 
-Pmw.initialise()
-
-#Add it to the PyMOL menu Bar
-def __init__(self):
-    self.menuBar.addmenuitem('Plugin', 'command',
-                             'VSL Script Loader',
-                             label = 'ConSCRIPT 18 June 2010',    
-                             command = lambda s=self : converter(s))
-
-class converter:
-    def __init__(self, app):
-
-        # create the dialog box which contains the GUI
-        parent = app.root
-        self.dialog = Pmw.Dialog(parent, title = 'ConSCRIPT 18 June 2010')
-        
-        # set the size of the 
-        #self.dialog.geometry('550x550')
-        interior = self.dialog.interior()
-            
-        #TITLE BAR
-        lab = Label(interior, 
-            text='ConSCRIPT (C) Copyright 2007-2010\nS. Mottarella, P. Craig, H. Bernstein\nGPL, No Warranty', 
-            background='#000066', foreground='white')
-                        
-        lab.pack(expand=0, fill='x', padx=4, pady=0)
-	    #Makes pages possible
-        notebook = Pmw.NoteBook(interior)
-        notebook.pack(fill='both', expand=1, padx=10, pady=10)
-
-        page = notebook.add('VSL Script Loader')
-        notebook.tab('VSL Script Loader').focus_set()
-        group = Pmw.Group(page, tag_text = ' SBEVSL ')
-        group.grid(row=0, column=0, padx=0, pady=0)
-        interior = group.interior()
-                
-        #Run the Boffo Function	
-        openbtn = Button(interior, text = 'Open Script')
-        openbtn.grid()
-        
-        pagecmd = notebook.add('VSL Command Enable')
-        notebook.tab('VSL Command Enable').focus_set()
-        groupcmd = Pmw.Group(pagecmd, tag_text = ' SBEVSL ')
-        groupcmd.grid(row=0, column=0, padx=0, pady=0)
-        interiorcmd = groupcmd.interior()
-                
-        #Run the Boffocmd Function	
-        openbtncmd = Button(interiorcmd, text = 'Enable VSL')
-        openbtncmd.grid()
-        
-        ##---Apply Color to Selection--##
-        def apply_color(rgbcolor,selection):
-            sc = rgbcolor
-            sc = sc.replace(' ','')
-            cmd.set_color("vslc_"+sc,rgbcolor)
-            cmd.color("vslc_"+sc,selection)
-            return
-        
-        ##-----Color CPK-----------##
-        def color_cpk( selection ):
-            global VSLCPKTable
-            colstr = ' and ( ' + selection + ')'
-            apply_color(VSLCPKTable[12],  selection)
-            apply_color(VSLCPKTable[4],  "(elem H)" + colstr)
-            apply_color(VSLCPKTable[14], "(elem He)" + colstr)
-            apply_color(VSLCPKTable[13], "(elem He)" + colstr)
-            apply_color(VSLCPKTable[0],  "(elem C)" + colstr)
-            apply_color(VSLCPKTable[1],  "(elem N)" + colstr)
-            apply_color(VSLCPKTable[2],  "(elem O)" + colstr)
-            apply_color(VSLCPKTable[6],  "(elem Au+F+Si)" + colstr)
-            apply_color(VSLCPKTable[7],  "(elem Na)" + colstr)
-            apply_color(VSLCPKTable[15], "(elem Mg)" + colstr)
-            apply_color(VSLCPKTable[9],  "(elem Ca+Mn+Al+Ti+Cr+Ag)" + colstr )
-            apply_color(VSLCPKTable[8],  "(elem P+Fe+Ba)" + colstr)
-            apply_color(VSLCPKTable[3],  "(elem S)" + colstr)
-            apply_color(VSLCPKTable[11], "(elem I)" + colstr)
-            apply_color(VSLCPKTable[10], "(elem Br+Zn+Cu+Ni)" + colstr)
-            return
-
-
-
-        ##-----Select Function-----##
-        def select( allparameters ):
-        
-            global UserDefinedGroups, hydrogen, hetero
-
-            selection = ''
-            
-            if allparameters=='false':
-                return allparameters
-
-            ## list of elements in the periodic table how they are entered in RasMol and PyMOL
-            ## dictionary data structure { RasMol: PyMOL }
-            
-            periodictable = {'hydrogen': 'h','helium': 'he','lithium': 'li','beryllium': 'be','boron': 'b','carbon': 'c',
-                             'nitrogen': 'n','oxygen': 'o','flourine': 'f','neon': 'ne','sodium': 'na','magnesium': 'mg',
-                             'aluminum': 'al','silicon': 'si','phosphorus': 'p','sulfur': 's','chlorine': 'cl','argon': 'ar',
-                             'potassium': 'k','calcium': 'ca','scandium': 'sc','titanium': 'ti','vanadium': 'v',
-                             'chromium': 'cr','manganese': 'mn','iron': 'fe','cobalt': 'co','nickel': 'ni','copper': 'cu',
-                             'zinc': 'zn','gallium': 'ga','germanium': 'ge','arsenic': 'as','selenium': 'se','bromine': 'br',
-                             'krypton': 'kr','rubidium': 'rb','strontium': 'sr','yttrium': 'y','zirconium': 'zr',
-                             'niobium': 'nb','molybdenum': 'mo','technetium': 'tc','ruthenium': 'ru','rhodium': 'rh',
-                             'palladium': 'pd','silver': 'ag','cadmium': 'cd','indium': 'in','tin': 'sn','antimony': 'sb',
-                             'tellurium': 'te','iodine': 'i','xenon': 'xe','cesium': 'cs','barium': 'ba','lanthanum': 'la',
-                             'cerium': 'ce','praseodymium': 'pr','neodymium': 'nd','promethium': 'pm','samarium': 'sm',
-                             'europium': 'eu','gadolinium': 'gd','terbium': 'tb','dysprosium': 'dy','holmium': 'ho',
-                             'erbium': 'er','thulium': 'tm','ytterbium': 'yb','lutetium': 'lu','hafnium': 'hf',
-                             'tantalum': 'ta','tungsten': 'w','rhenium': 're','osmium': 'os','iridium': 'ir','platinum': 'pt',
-                             'gold': 'au','mercury': 'hg','thallium': 'tl','lead': 'pb','bismuth': 'bi','polonium': 'po',
-                             'astatine': 'at','radon': 'rn','francium': 'fr','radium': 'ra','actinium': 'ac','thorium': 'th',
-                             'protactinium': 'pa','uranium': 'u','neptunium': 'np','plutonium': 'pu','americium': 'am',
-                             'curium': 'cm','berkelium': 'bk','californium': 'cf','einsteinium': 'es',
-                             'fermium': 'fm','mendelevium': 'md','nobelium': 'no','lawrencium': 'lr',
-                             'rutherfordium': 'rf','dubnium': 'db','seaborgium': 'sg','bohrium': 'bh','hassium': 'hs',
-                             'meitnerium': 'mt'}
-            
-            ## RasMol's predefined sets and PyMOL's equivalents
-            ## dictionary data structure { RasMol: PyMOL }
-            
-            predefinedlists = {'acidic': ' resn asp+glu ',
-                               'acyclic': ' resn met+ile+val+leu+ala+gly+ser+gln+thr+asn+cys+lys+arg+asp+glu ',
-                               'aliphatic': ' resn gly+ala+leu+val+ile ',
-                               'alpha': ' name ca ',
-                               'amino': ' resn gln+asn+asp+glu+arg+lys+his+thr+cys+tyr+ser+gly+trp+phe+pro+leu+val+ile+met',
-                               'aromatic': ' resn his+tyr+tr+phe+pro ',
-                               'basic': ' resn arg+lys+his ',
-                               'buried': ' resn ala+leu+val+ile+phe+cys+met+trp ',
-                               'charged': ' resn asp+glu+arg+lys+his ',
-                               'cyclic': ' resn pro+phe+trp+tyr+his ',
-                               'cystine': ' (byres (((all) & r. CYS+CYX & n. SG) & bound_to ((all) & r. CYS+CYX & n. SG))) & n. CA+CB+SG',
-                               'helix': ' ss h ',
-                               'hetero': ' hetatm ',
-                               'hydrophobic': ' resn ala+leu+val+ile+met+trp+phe+pro ',
-                               'large': ' resn glu+arg+lys+his+gln+tyr+leu+ile+met+trp+phe ',
-                               'medium': ' resn val+thr+asp+asn+pro+cys ',
-                               'small': ' resn gly+ala+ser ',
-                               'neutral': ' resn asn+thr+cys+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro ',
-                               'nucleic': ' resn a+t+c+g ',
-                               'polar': ' resn asp+glu+arg+lys+his+asn+thr+cys+gln+ser+gly+tyr ',
-                               'protein': ' resn asp+glu+arg+lys+his+asn+thr+cys+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro ',
-                               'purine': ' resn a+g ',
-                               'pyrimidine': ' resn c+t ',
-                               'selected': ' VSLselection ',
-                               'sheet': ' ss s ',
-                               'backbone': ' name o1p+o2p+o3p+p+c1*+c2*+c3*+c4*+c5*+o2*+o3*+o4*+o5*+c+o+n+ca ',
-                               'sidechain': ' resn asp+glu+arg+lys+his+asn+thr+cys+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro+a+t+c+g and not name o1p+o2p+o3p+p+c1*+c2*+c3*+c4*+c5*+o2*+o3*+o4*+o5*+c+o+n+ca ',
-                               'surface': ' resn gly+ser+thr+lys+asp+asn+glu+pro+arg+gln+tyr+his ',
-                               'turn': ' ss 1 ',
-                               'water': ' resn hoh '}
-            ## Amino Acids as they appear in both RasMol and PyMOL
-            aminolist = ['gly', 'ala', 'val','leu', 'ile', 'met','pro', 'phe', 'tyr',
-                         'trp', 'ser', 'thr', 'cys', 'lys', 'arg', 'his', 'asp', 'glu',
-                         'asn', 'gln']
-
-            try:
-
-                selection = 'false'
-                f = '('
-
-                ##if parentheses are used
-                if '(' in allparameters:
-                    indicies = [i for i in xrange(len(allparameters)) if allparameters.startswith(f, i)]
-                    for x in indicies:
-                            if allparameters[x-6:x]=='within' or allparameters[x-7:x]=='within ':
-                                    indicies.remove(x)
-                    if not indicies==[]:
-                        selection = selectpar( allparameters + ' ' )
-                        x = len( allparameters )
-                    else:
-                        selection = selectwithin( allparameters )
-                        x = len( allparameters )
-                                
-                ##if an or is used
-                elif ' or ' in allparameters:
-                    found = allparameters.find( ' or ' )
-                    selection = select( allparameters[:found] ) + ' or ' + select( allparameters[found+4:] )
-
-                ##if an and is used
-                elif ' and ' in allparameters:
-                    found = allparameters.find( ' and ' )
-                    selection = select( allparameters[:found] ) + ' and ' + select( allparameters[found+5:] )
-
-                ##The only possibility remaining is a single command.
-                else:
-                    if allparameters[:4]=='not ':
-                        selection = 'not ' + select( allparameters[4:] )
-                    elif '.' in allparameters:
-                        found = allparameters.find('.')
-                        selection = select( allparameters[:found] ) + ' and name ' + select( allparameters[found+1:] )
-                    elif ':' in allparameters:
-                        found = allparameters.find(':')
-                        if len( allparameters[:found] )>0:
-                            selection = select( allparameters[:found] ) + ' and chain ' + allparameters[found+1:]
-                        else:
-                            selection = ' chain ' + allparameters[found+1:]
-                    elif allparameters=='all' or allparameters=='*':
-                        selection = 'all'
-                    elif allparameters=='':
-                        if hydrogen:
-                            cmd.h_add('all')
-                            if hetero:
-                                selection = 'all'
-                            else:
-                                select = 'all and not hetero'
-                        else:
-                            if hetero:
-                                selection = 'all and not hydrogen'
-                            else:
-                                selection = 'all and not hydrogen or hetero'
-                    elif predefinedlists.has_key( allparameters ):
-                        selection = predefinedlists[allparameters]
-                    elif UserDefinedGroups.has_key( allparameters ):
-                        selection = select( UserDefinedGroups[allparameters] )
-                    elif periodictable.has_key( allparameters ):
-                        selection = 'symbol ' + periodictable[allparameters]
-                    elif allparameters in aminolist:
-                        selection = 'resn ' + allparameters
-                    elif allparameters[:6]=='atomno':
-                        lower = 1
-                        upper = 999999999
-                        if '>' in allparameters:
-                            found = allparameters.find('>')
-                            if allparameters[found+1:found+2]=='=':
-                                lower = int( allparameters[found+2:] )
-                            else:
-                                lower = int( allparameters[found+1:] ) + 1
-                        elif '<' in allparameters:
-                            found = allparameters.find('<')
-                            if allparameters[found+1:found+2]=='=':
-                                upper = int( allparameters[found+2:] )
-                            else:
-                                upper = int( allparameters[found+1:] ) - 1
-                        elif '=' in allparameters:
-                            found = allparameters.find('=')
-                            upper = int( allparameters[found+1:] )
-                            lower = int( allparameters[found+1:] )
-                        selection = 'id ' + str( lower ) + '-' + str( upper )
-                    else:
-                        selection = 'resi ' + allparameters.replace( ',', '+' )
-                            
-            except:
-                selection = 'false'
-
-            return selection 
-
-        ## Select method when parentheses are used.  This method removes each object in the parantheses and performs the select method on them.
-        def selectpar( allparameters ):
-
-            selection = ''
-
-            first = 0
-            x = allparameters.find('(')
-            if x>-1:
-                if not ( allparameters[x-6:x]=='within' or allparameters[x-7:x]=='within ' ):
-                    first = x
-            
-            stack = []
-            for x in range(first+1, len( allparameters )):
-                if allparameters[x:x+1] == '(':
-                    stack.append('(')
-                if allparameters[x:x+1] == ')':
-                    if stack == []:
-                        last = x
-                        x = len( allparameters )
-                    else:
-                        stack.pop()
-
-            stack = []
-            temp = first
-            for x in range( first, last+1 ):
-                if allparameters[x:x+1]=='(':
-                    stack.append('(')
-                    if allparameters[x+1:x+2]==' ':
-                        allparameters[x+1:x+2].replace( ' ', '' )
-                elif allparameters[x:x+1]==')':
-                    if stack==[]:
-                        selection = 'false'
-                    elif stack==['(']:
-                        if len( selection )==0:
-                            selection = select( allparameters[:first] ) + select( allparameters[temp+1:x] ) + select( allparameters[last+1:] )
-                            if allparameters[x+1:x+2]==' ':
-                                temp = x+1
-                            else:
-                                temp = x
-                        else:
-                            selection = selection + ' or ' + select( allparameters[:first] ) + select( allparameters[temp+1:x] ) + select( allparameters[last+1:] )
-                            if allparameters[x+1:x+2]==' ':
-                                temp = x+1
-                            else:
-                                temp = x
-                    else:
-                        stack.pop()
-                elif allparameters[x:x+1]==',':
-                    if stack==['(']:
-                        if len( selection )==0:
-                            selection = select( allparameters[:first] ) + select( allparameters[temp+1:x] ) + select( allparameters[last+1:] )
-                            if allparameters[x+1:x+2]==' ':
-                                temp = x+1
-                            else:
-                                temp = x
-                        else:
-                            selection = selection + ' or ' + select( allparameters[:first] ) + select( allparameters[temp+1:x] ) + select( allparameters[last+1:] )
-                            if allparameters[x+1:x+2]==' ':
-                                temp = x+1
-                            else:
-                                temp = x
-                    else:
-                        pass
-                    if allparameters[x+1:x+2]==' ':
-                        allparameters[x+1:x+2].replace( ' ', '' )
-                else:
-                    pass
-
-            return selection
-
-        ## Handles Select Within options
-        def selectwithin( allparameters ):
-            
-            try:
-                selection = 'false'
-                found = allparameters.find( 'within' )
-                begin = allparameters[found:].find( '(' )
-
-                stack = []
-                for x in range( begin + 1, len( allparameters ) ):
-                    if allparameters[x:x+1] == '(':
-                        stack.append('(')
-                    if allparameters[x:x+1] == ')':
-                        if stack == []:
-                            end = x
-                            x = len( allparameters )
-                        else:
-                            stack.pop()
-                            
-                comma = allparameters[found:].find( ',' )
-                if allparameters[comma+1:comma+2]==' ':
-                    selection = select( allparameters[:found] ) + select( allparameters[comma+2:end] ) + ' expand ' + allparameters[begin+1:comma] + select( allparameters[end+1:] )
-                else:
-                    selection = select( allparameters[:found] ) + select( allparameters[comma+1:end] ) + ' expand ' + allparameters[begin+1:comma] + select( allparameters[end+1:] ) 
-
-            except:
-                selection = 'false'
-
-            return selection
-
-        ## Handles all map commands
-        def mapsupport( parameters ):
-            parameterslist = parameters.split( ' ' )
-            global map_name, map_type, map_grid, map_level, map_selection, centerselection, zoomnum, map_unspecified_selection
-            try:
-                if int(parameterslist[0]):
-                    map_selection = int(parameterslist[0])
-                    map_unspecified_selection = False
-                    print 'You gave a number: ' + str(map_selection)
-                    if map_selection > map_name:
-                        map_name = map_selection
-                    handlemap( parameterslist[1:] )
-            except:
-                print 'Map command'
-                map_unspecified_selection = True
-                handlemap( parameterslist )
-
-        ## Handles all map commands.
-        def handlemap( parameterslist ):
-            goodlist = ['generate', 'level', 'color', 'zap']
-            badlist = ['load', 'mask', 'resolution', 'restrict', 'save', 'select', 'show', 'spacing', 'spread']
-            global map_name, map_type, map_grid, map_level, map_selection, centerselection, zoomnum, map_unspecified_selection
-            try:
-                if parameterslist[0] in goodlist:
-                    if parameterslist[0] == 'generate':
-                        if parameterslist[1] == 'mesh':
-                            if map_unspecified_selection:
-                                map_selection = map_name
-                            map_name += 1
-                            cmd.do( 'map_new ' + str(map_selection)+ ', ' + map_type + ', ' + str(map_grid) + ', VSLselection' )
-                            cmd.do( 'isomesh mesh_' + str(map_selection) + ', ' + str(map_selection) + ', ' + str(map_level) )
-                            cmd.do( 'zoom ' + centerselection + ', ' + str(zoomnum) )
-                            print 'Mesh map complete'
-                        elif parameterslist[1] == 'dots':
-                            if map_unspecified_selection:
-                                map_selection = map_name
-                            map_name += 1
-                            cmd.do( 'map_new ' + str(map_selection)+ ', ' + map_type + ', ' + str(map_grid) + ', VSLselection' )
-                            cmd.do( 'isodot dot_' + str(map_selection) + ', ' + str(map_selection) + ', ' + str(map_level) )
-                            cmd.do( 'zoom ' + centerselection + ', ' + str(zoomnum) )
-                            print 'Dots map complete'
-                        elif parameterslist[1] == 'surface':
-                            if map_unspecified_selection:
-                                map_selection = map_name
-                            map_name += 1
-                            cmd.select( str(map_selection), 'VSLselection' )
-                            cmd.show( 'surface', map_selection )
-                            cmd.do( 'set surface_color, white' )
-                            cmd.do( 'zoom ' + centerselection + ', ' + str(zoomnum) )
-                            print 'Surface map complete'
-                    elif parameterslist[0] == 'level':
-                        if parameterslist[1] == 'mean':
-                            print 'The MEAN function is not supported by PyMOL.'
-                        else:
-                            map_level = int(parameterslist[1])
-                    elif parameterslist[0] == 'color':
-                        if map_unspecified_selection:
-                            cmd.do( 'color ' + parameterslist[1] + ', mesh_*' )
-                            cmd.do( 'color ' + parameterslist[1] + ', dot_*' )
-                            cmd.do( 'set surface_color, ' + parameterslist[1] )
-                        else:
-                            cmd.do( 'color ' + parameterslist[1] + ', mesh_' + str(map_selection) )
-                            cmd.do( 'color ' + parameterslist[1] + ', dot_' + str(map_selection) )
-                            cmd.do( 'set surface_color, ' + parameterslist[1] )
-                    elif parameterslist[0] == 'zap':
-                        cmd.delete( 'mesh_*' )
-                        cmd.delete( 'dot_*' )
-                        cmd.hide( 'surface' )
-                        for i in range(0, map_name):
-                            cmd.delete( str(i) )
-            except:
-                print 'An error has occured with a map command.'
-
-        ##Handles parameters that can be changed using the 'set' command
-        def set_parameters( parameters ):
-            global hydrogen, hetero, hbonds_backbone, ssbonds_backbone, solvent, radius, set_monitor
-            global VSLVerbose
-            not_coded = ['backfade','bondmode','bonds','cisangle','fontstroke','hourglass ','kinemage','menus','strands','transparent','vectps','write',
-                        'boundbox','display','mouse','picking','shadepower','slabmode','specpower',
-                        'cartoon','hbonds','radius','ssbonds']
-            try:
-                parameters = parameters.split( ' ' )
-                ##Check the parameter to see if it something that will convert in the first place
-                if parameters[0].rstrip() in not_coded:
-                    print 'That setting does not translate into PyMOL.'
-                else:
-                    ##Seperate the parameter by spaces for ease of recalling them later
-                    first = parameters[0].rstrip().lower()
-                    if len(parameters) > 1:
-                        second = parameters[1].rstrip().lower()
-                    ##PARAMETER: background - complete
-                    if first == 'background':
-                        cmd.bg_color( second )
-                    ##PARAMETER: ambient - PyMOL ambient only seems noticable on some views
-                    elif first == 'ambient':
-                        light = int(second)/50 - 1
-                        cmd.set( 'ambient', light )
-                    ##PARAMETER: unitcell - Uses PyMOL's view 'cell'
-                    elif first == 'unitcell':
-                        if second == 'on' or second == 'true':
-                            cmd.show( 'cell' )
-                        elif second == 'false' or second == 'off':
-                            cmd.hide( 'cell' )
-                        else:
-                            print 'An error has occured with unitcell parameter.'
-                    ##PARAMETER: cartoon
-                    elif first == 'cartoon':
-                        cmd.cartoon( 'rectangle', '( all )')
-                        if len(parameters) == 1:
-                            cmd.set( 'cartoon_fancy_sheets', 1)
-                            cmd.set( 'cartoon_rect_length', 1.5 )
-                        else:
-                            if second == 'on' or second == 'true':
-                                cmd.set( 'cartoon_fancy_sheets', 1 )
-                                cmd.set( 'cartoon_rect_length', 1.5 )
-                            elif second == 'off' or second == 'false':
-                                cmd.set( 'cartoon_fancy_sheets', 0 )
-                            else:
-                                ##cmd.set( 'cartoon_rect_length', 
-                                pass
-                    ##PARAMETER: axes - produces axes at origin showing x, y and z planes, lines center at origin, not center of molecule
-                    elif first == 'axes':
-                        if second == 'on' or second == 'true':
-                            #Credit goes to the contributors of the PyMOLwiki (pymolwiki.org) on the article 'Axes': Krother, Tree and Inchoate  Thank you
-                            # create the axes object, draw axes with cylinders coloured red, green,
-                            #blue for X, Y and Z
- 
-                            obj = [
-                               CYLINDER, 0., 0., 0., 10., 0., 0., 0.2, 1.0, 1.0, 1.0, 1.0, 0.0, 0.,
-                               CYLINDER, 0., 0., 0., 0., 10., 0., 0.2, 1.0, 1.0, 1.0, 0., 1.0, 0.,
-                               CYLINDER, 0., 0., 0., 0., 0., 10., 0.2, 1.0, 1.0, 1.0, 0., 0.0, 1.0,
-                               ]
-                             
-                            # add labels to axes object (requires pymol version 0.8 or greater, I
-                            # believe
-                             
-                            cyl_text(obj,plain,[-5.,-5.,-1],'Origin',0.20,axes=[[3,0,0],[0,3,0],[0,0,3]])
-                            cyl_text(obj,plain,[10.,0.,0.],'X',0.20,axes=[[3,0,0],[0,3,0],[0,0,3]])
-                            cyl_text(obj,plain,[0.,10.,0.],'Y',0.20,axes=[[3,0,0],[0,3,0],[0,0,3]])
-                            cyl_text(obj,plain,[0.,0.,10.],'Z',0.20,axes=[[3,0,0],[0,3,0],[0,0,3]])
-                             
-                            # then we load it into PyMOL
-                            cmd.load_cgo(obj,'axes')
-                            cmd.zoom( 'all' )
-                        elif second == 'false' or second == 'off':
-                            cmd.delete('axes')
-                            cmd.zoom( 'all' )
-                        else:
-                            print 'An error occured with the axes command.'
-                    ##PARAMETER: fontsize - complete
-                    elif first == 'fontsize':
-                        cmd.set( 'label_size', int(second) )
-                    ##PARAMETER: stereo - stereo angle is not the same between the programs, PyMOL shifts the images, RasMol rotates them
-                    elif first == 'stereo':
-                        if second == 'on' or second == 'true' or second == '':
-                            cmd.set( 'stereo', 1 )
-                        elif second == 'false' or second == 'off':
-                            cmd.set( 'stereo', 0 )
-                        else:
-                            print 'ConSCRIPT does not support this setting.'
-                    ##PARAMETER: hbonds
-                    elif first == 'hbonds':
-                        if second == 'sidechain':
-                            hbonds_backbone = False
-                        elif second == 'backbone':
-                            hbonds_backbone = True
-                        else:
-                            print 'That parameter is not a valid RasMol parameter.'
-                    ##PARAMETER: ssbonds
-                    elif first == 'ssbonds':
-                        if second == 'sidechain':
-                            ssbonds_backbone = False
-                        elif second == 'backbone':
-                            ssbonds_backbone = True
-                        else:
-                            print 'That parameter is not a valid RasMol parameter.'
-                    ##PARAMETER: hydrogen - complete
-                    elif first == 'hydrogen':
-                        if second == 'on' or second == 'true':
-                            hydrogen = True
-                        elif second == 'off' or second == 'false':
-                            hydrogen = 'False'
-                        else:
-                            print 'An error has occured with the hydrogen setting.'
-                    ##PARAMETER: hetero - complete
-                    elif first == 'hetero':
-                        if second == 'on' or second == 'true':
-                            hetero = True
-                        elif second == 'off' or second == 'false':
-                            hetero = 'False'
-                        else:
-                            print 'An error has occured with the hetero setting.'
-                    ##PARAMETER: solvent - complete
-                    elif first == 'solvent':
-                        if second == 'on' or second == 'true':
-                            solvent = True
-                            radius = 1.2
-                        elif second == 'off' or second == 'false':
-                            solvent = False
-                            radius = 0.0
-                        else:
-                            print 'An error has occured with the solvent setting.'
-                    ##PARAMETER: radius - failed to get PyMOL dot-radius setting to work, unable to determine setting ratio
-                    elif first == 'radius':
-                        cmd.set( 'dot_radius', int(second) )
-                    ##PARAMETER: monitor - complete
-                    elif first == 'monitor':
-                        if second == 'on' or second == 'true':
-                            set_monitor = True
-                            cmd.show( 'labels' )
-                        elif second == 'off' or second == 'false':
-                            set_monitor = False
-                            cmd.hide( 'labels' )
-                        else:
-                            print 'An error occured with the monitor setting.'
-                    ##PARAMETER: specular - does not work with version 0.99, requires 1.0 or newer
-                    elif first == 'specular':
-                        if second == 'on' or second == 'true':
-                            cmd.set( 'specular', 'on' )
-                        elif second == 'off' or second == 'false':
-                            cmd.set( 'specular', 'off' )
-                        else:
-                            print 'An error has occured with the specular setting.'
-                    ##PARAMETER: shadow - cant get this to work in PyMOL but this what should work
-                    elif first == 'shadow':
-                        if second == 'on' or second == 'true':
-                            cmd.set( 'ray_shadows', 'on' )
-                        elif second == 'off' or second == 'false':
-                            cmd.set( 'ray_shadows', 'off' )
-                        else:
-                            print 'An error has occured with the Shadows setting.'
-                    ##PARAMETER: verbose -- set the VSLVerbose flag 
-                    elif first == 'verbose':
-                        if second == 'on' or second == 'true':
-                            VSLVerbose = 1;
-                        elif second == 'off' or second == 'false':
-                            VSLVerbose = 0;
-                        else:
-                            print 'An error has occured with the Verbose setting.'                   
-                    else:
-                        print 'That setting is not a valid RasMol setting.'
-            except:
-                print 'An error has occured with a setting.'
-
-        ## Handles RGB Triplet for colors
-        def RGBTriplet(name, triplet):
-
-            try:
-                cmd.set_color( name, triplet )
-
-            except:
-                print "RGB Triplet not valid."
-
-            return name
-
-        ## Defines HBonds for a structure
-        def HBonds():
-
-            try:
+        selection = 'false'
+        if '.' in allparameters:
+            found = allparameters.split('.')
+            selection = '%s and name %s' % (self._select(found[0]),
+                self._select(found[1]))
+        elif ':' in allparameters:
+            found = allparameters.split(':')
+            if len(found[0])>0:
+                selection = '%s and chain %s' % (self._select(found[0]),
+                    found[1])
+            else:
+                selection = 'chain %s' % found[1]
+        elif allparameters == 'all' or allparameters == '*':
+            selection = 'all'
+        elif allparameters == '':
+            if self.hydrogen:
                 cmd.h_add('all')
- 
-                cmd.select( 'don', '(elem n,o and (neighbor elem h) and VSLselection)' )
-                cmd.select( 'acc', '(elem o or (elem n and not (neighbor elem h))) and VSLselection' )
-                cmd.distance( 'HBA', '(acc)','(don)', '3.2' )
-                cmd.distance( 'HBD', '(don)','(acc)', '3.2' )
-                cmd.delete( 'don' )
-                cmd.delete( 'acc' )
-                cmd.hide( '(elem h)' )
-                 
-                cmd.hide( 'labels','HBA' )
-                cmd.hide( 'labels','HBD' )
-            except:
-                print 'Error occured with calculating HBonds.'
-
-        ## Defines SSBonds for a structure
-        def SSBonds():
-
-            try:
-                cmd.h_add('all')
- 
-                cmd.select( 'SSCys', '(elem S and resn Cys) and VSLselection' )
-                cmd.distance( 'SSCysteines', '(SSCys)','(SSCys)', '3.0' )
-                cmd.delete( 'SSCys' )
-                cmd.hide( '(elem h)' )
-                 
-                cmd.hide( 'labels','SSCysteines' )
-            except:
-                print 'Error occured with calculating SSBonds.'
-        
-        ## Handle a command line
-        def handlecommand( p ):
-        
-            global VSLselection
-            global VSLselectionsaved
-            global VSLVerbose
-            global clip_dist_near
-            global clip_dist_far
-            global centerselection
-            global zoomnum
-            global set_monitor
-
-            if( p.replace( ' ', '' )=="\n" ):
-                return 0
-
-            if( p.replace( ' ', '' )[:1]=='#' ):
-                print p
-                return 0
-            
-            TokenPtr = 0
-            TokenStart = 0
-            CurToken = 0
-            TokenIdent = ""
-            TokenValue = 0
-            
-            try:
-              (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
-            except:
-              print 'VSLFetchToken failed TokenPtr = ' + str(TokenPtr)
-              
-            # handle temporary selection
-            VSLselectionsaved = VSLselection
-            if CurToken == -ord('('):
-              stack = []
-              end = -1
-              for x in range( TokenStart + 1, len( p ) ):
-                if p[x:x+1] == '(':
-                  stack.append('(')
-                if p[x:x+1] == ')':
-                  if stack == []:
-                    end = x
-                    x = len(p)
-                  else:
-                    stack.pop()
-              if end != -1:
-                q = p[TokenStart:end+1]
-                q = q.lower() 
-                VSLselection = select(q)
-                if VSLVerbose > 0:
-                  print 'VSLselection: ' + VSLselection
-                if end < len(p)-1 and p[end+1:end+2] == '.':
-                  end = end+1
-                TokenPtr = 0
-                TokenStart = 0
-                CurToken = 0
-                TokenIdent = ""
-                TokenValue = 0
-                p = p[end+1:len(p)]
-                try:
-                  (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
-                except:
-                  print 'VSLFetchToken failed TokenPtr = ' + str(TokenPtr)
-
-            selected = VSLselection           
-            cmd.select('VSLselection',VSLselection)
-            if VSLVerbose > 0:
-              print os.times()
-              print 'VSLselection: ' + VSLselection
-              print 'VSLcommand: ' + p
-
-
-            ##---------------Script---------------##
-
-            if CurToken == ScriptTok or CurToken == SourceTok:
-                try:
-                  (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
-                except:
-                  print 'VSLFetchToken failed TokenPtr = ' + str(TokenPtr)
-                if CurToken == 0:
-                    print p
-                    print 'Does not contain a valid filename'
-                elif CurToken == StringTok:
-                    try:
-                        print '\"'+TokenIdent+'\"' + '<--SCRIPTFILE'
-                        return processVSLscript( TokenIdent )
-                    except:
-                        print '\"'+TokenIdent+'\"' + '<--SCRIPTFILE'
-                        print 'EXCEPTION THROWN'                    
+                if self.hetero:
+                    selection = 'all'
                 else:
-                    ts = p[TokenStart:len(p)]
-                    try:
-                        print ts + '<--SCRIPTFILE'
-                        return processVSLscript( ts )
-                    except:
-                        print ts + '<--SCRIPTFILE'
-                        print 'EXCEPTION THROWN'
-                return 0            
-
-
-
-            ##---------------Load---------------##
-
-            if CurToken == LoadTok:
-                try:
-                  (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
-                except:
-                  print 'VSLFetchToken failed TokenPtr = ' + str(TokenPtr)
-                if IsMoleculeToken(CurToken):
-                    try:
-                      (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
-                    except:
-                      print 'VSLFetchToken failed TokenPtr = ' + str(TokenPtr)
-                if CurToken == 0:
-                    print p
-                    print 'Does not contain a valid filename'
-                elif CurToken == StringTok:
-                    try:
-                        TokenIdent = TokenIdent.strip('"\'')
-                        print TokenIdent + '<--LOADFILE'
-                        cmd.load( TokenIdent )
-                        cmd.rotate( 'x', 180 )
-                        cmd.select('VSLselection','( all )')
-                        cmd.select('VSLCenterSelection', centerselection)
-                        cmd.center( centerselection )
-                        VSLselection = '( all )'
-                        color_cpk( VSLselection )
-                        if VSLVerbose > 0:
-                          print 'VSLselection: ' + VSLselection
-                    except:
-                        print '\"'+TokenIdent+'\"' + '<--LOADFILE'
-                        print 'EXCEPTION THROWN'                    
+                    select = 'all and not hetero'
+            else:
+                if self.hetero:
+                    selection = 'all and not hydrogen'
                 else:
-                    ts = p[TokenStart:len(p)]
-                    try:
-                        ts = ts.strip('"\'')
-                        print ts + '<--LOADFILE'
-                        cmd.load( ts )
-                        cmd.rotate( 'x', 180 )
-                        cmd.select('VSLselection','( all )')
-                        cmd.select('VSLCenterSelection', centerselection)
-                        cmd.center( centerselection )
-                        VSLselection = '( all )'
-                        color_cpk( VSLselection )
-                        if VSLVerbose > 0:
-                          print 'VSLselection: ' + VSLselection
-                    except:
-                        print ts + '<--LOADFILE'
-                        print 'EXCEPTION THROWN'
-                return 0            
-
-            ##---------------Save---------------##
-
-            firstword = p.split( ' ', 1 )[0].upper()
-            saveCmd = ['WRITE', 'SAVE']
-            
-            if firstword in saveCmd:
-                s = ''
-                for i in p.split( ' ', 1 )[1]:
-                    s = s + i
-                print s + '<--SAVEFILE'
-                if s[-3:]=='bmp' or s[-3:]=='gif':
-                    cmd.png( s )
+                    selection = 'all and not hydrogen or hetero'
+        elif allparameters in predefinedlists:
+            selection = predefinedlists[allparameters]
+        elif allparameters in self.userdefinedgroups:
+            selection = self._select(self.userdefinedgroups[allparameters])
+        elif allparameters in periodictable:
+            selection = 'symbol %s' % periodictable[allparameters]
+        elif allparameters in aminolist:
+            selection = 'resn %s' % allparameters
+        elif allparameters[:6] == 'atomno':
+            lower = 1
+            upper = 999999999
+            if '>' in allparameters:
+                found = allparameters.split('>=')
+                if len(found) == 2:
+                    lower = int(found[1])
                 else:
-                    cmd.save( s )
-                return 0
-
-            ##---------------Echo---------------##
-
-            if p[:4]=='echo':
-                returnval = p[5:]
-                if returnval[:1]=='"':
-                    returnval = returnval[1:]
-                if returnval[-1:]=='"':
-                    returnval = returnval[:-1]
-                print returnval
-                return 0
-
-            ##---------------Label---------------##
-
-            if p[:5].lower()=='label':
-                p += ' '
-                labeltext = p.split( ' ', 1 )[1]
-                specifier_conv = {'a':'name', 'b':'b', 't':'b', 'c':'chain', 's':'chain', 'e':'type', 'i':'ID', 'n':'resn', 'r':'resi'}
-                specifiers = []
-                if labeltext[:4].rstrip()=='off' or labeltext[:5].rstrip()=='false':
-                    cmd.do( 'label VSLselection,' )
-                elif labeltext[:2].rstrip()=='on' or labeltext[:4].rstrip()=='true' or labeltext.rstrip()=='':
-                    labeltext = '%s%s:%s.%s'
-                    specifiers = ['resn','resi','chain','name']
-                    cmd.do( 'label VSLselection, "' + labeltext + '" % (' + str(specifiers)[1:-1].replace('\'','') + ')' )
+                    lower = int(found[0].split('>')[1]) + 1
+            elif '<' in allparameters:
+                found = allparameters.split('<=')
+                if len(found) == 2:
+                    upper = int(found[1])
                 else:
-                    for i in range(0, len(labeltext)-1):
-                        if labeltext[i]=='%':
-                            if str(labeltext[i+1]) in specifier_conv:
-                                specifiers += [specifier_conv[str(labeltext[i+1])]]
-                                labeltext = labeltext[:i] + '%s' + labeltext[i+2:]
-                            else:
-                                print 'That expansion specifier is not supported.'
-                    cmd.do( 'label VSLselection, "' + labeltext + '" % (' + str(specifiers)[1:-1].replace('\'','') + ')' )
+                    upper = int(found[0].split('<')[1]) - 1
+            elif '=' in allparameters:
+                found = allparameters.split('=')
+                upper = int(found[1])
+                lower = int(found[1])
+            selection = 'id %s-%s' % lower, upper
+        else:
+            selection = 'resi %s' % allparameters.replace(',', '+')
+        return selection
 
-            ##---------LOWER-----------##
-            p = p.lower()
+    ## Handles all map commands
+    def _mapsupport(self, parameters):
+        '''banana banana banana'''
+        parameterslist = parameters.split(' ')
+        try:
+            if int(parameterslist[0]):
+                self.map_selection = int(parameterslist[0])
+                self.map_unspecified_selection = False
+                print 'You gave a number: ' + str(self.map_selection)
+                if self.map_selection > self.map_name:
+                    self.map_name = self.map_selection
+                self._handlemap(parameterslist[1:])
+        except:
+            print 'Map command'
+            self.map_unspecified_selection = True
+            self._handlemap(parameterslist)
 
-            #-----------Background color------------#
-            
-            if CurToken == BackgroundTok:
-                try:
-                  (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
-                except:
-                  print 'VSLFetchToken failed TokenPtr = ' + str(TokenPtr)
-                (result, rgb) = VSLParseColour( p, TokenPtr, CurToken )
-                if result == True:
-                    colorx = RGBTriplet( 'VSLColor', rgb)
-                    cmd.bg_color(colorx)
+    ## Handles all map commands.
+    def _handlemap(self, parameterslist):
+        '''banana banana banana'''
+        goodlist = ['generate', 'level', 'color', 'zap']
+        badlist = ['load', 'mask', 'resolution', 'restrict', 'save', 'select',
+            'show', 'spacing', 'spread']
+        try:
+            if parameterslist[0] == 'generate':
+                if parameterslist[1] == 'mesh':
+                    if self.map_unspecified_selection:
+                        self.map_selection = self.map_name
+                    self.map_name += 1
+                    cmd.do('map_new %s, %s, %s, vslselection' % (
+                        self.map_selection, self.map_type, self.map_grid))
+                    cmd.do('isomesh mesh_%s, %s, %s' % (self.map_selection,
+                        self.map_selection, self.map_level))
+                    cmd.do('zoom %s, %s' % (self.centerselection, self.zoomnum))
+                    print 'Mesh map complete'
+                elif parameterslist[1] == 'dots':
+                    if self.map_unspecified_selection:
+                        self.map_selection = self.map_name
+                    self.map_name += 1
+                    cmd.do('map_new %s, %s, %s, vslselection' % (
+                        self.map_selection, self.map_type, self.map_grid))
+                    cmd.do('isomesh dot_%s, %s, %s' % (self.map_selection,
+                        self.map_selection, self.map_level))
+                    cmd.do('zoom %s, %s' % (self.centerselection, self.zoomnum))
+                    print 'Dots map complete'
+                elif parameterslist[1] == 'surface':
+                    if self.map_unspecified_selection:
+                        self.map_selection = self.map_name
+                    self.map_name += 1
+                    cmd.select(str(self.map_selection), 'vslselection')
+                    cmd.show('surface', self.map_selection)
+                    cmd.do('set surface_color, white')
+                    cmd.do('zoom %s, %s' % (self.centerselection, self.zoomnum))
+                    print 'Surface map complete'
+            elif parameterslist[0] == 'level':
+                if parameterslist[1] == 'mean':
+                    print 'The MEAN function is not supported by PyMOL.'
                 else:
-                    print MsgStrs[ErrSyntax]
-                return 0
-            
-            #----------------Select-----------------#
-                    
-            if p[:6]=='select':
-                selected = select( p[7:].lower() )                            
-                print selected + '<--SELECTED'
-                try:
-                    cmd.select( 'VSLselection', selected)
-                    pmg_tk.startup.ConSCRIPT.VSLselection = selected
-                    if VSLVerbose > 0:
-                      print 'VSLselection: ' + VSLselection
-                except:
-                    print 'No selection was made for select, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
-                return 0
-               
-            #----------------Restrict-----------------#
-                    
-            if p[:8]=='restrict':
-                selected = select( p[9:].lower() )
-                restricted = 'all and not (' + selected + ')'
-                print selected + '<--RESTRICTED'
-                try:
-                    cmd.select( 'VSLselection', selected )
-                    pmg_tk.startup.ConSCRIPT.VSLselection = selected
-                    if VSLVerbose > 0:
-                      print 'VSLselection: ' + VSLselection
-                    cmd.hide( 'everything', restricted )
-                except:
-                    print 'No selection was made for restrict, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
-                return 0
+                    self.map_level = int(parameterslist[1])
+            elif parameterslist[0] == 'color':
+                if self.map_unspecified_selection:
+                    cmd.do('color %s, mesh_*' % parameterslist[1])
+                    cmd.do('color %s, dot_*' % parameterslist[1])
+                    cmd.do('set surface_color, %s' % parameterslist[1])
+                else:
+                    cmd.do('color %s, mesh_%s' % (parameterslist[1], self.map_selection))
+                    cmd.do('color %s, dot_%s' % (parameterslist[1], self.map_selection))
+                    cmd.do('set surface_color, %s' % parameterslist[1])
+            elif parameterslist[0] == 'zap':
+                cmd.delete('mesh_*')
+                cmd.delete('dot_*')
+                cmd.hide('surface')
+                for i in range(0, self.map_name):
+                    cmd.delete(str(i))
+        except:
+            print 'An error has occured with a map command.'
 
-            ##---------------Center---------------##
-
-            if p[:6]=='center' or p[:6]=='centre':
-                centerselection = select( p[7:].lower() )   
-                print centerselection + '<--CENTER'
-                try:
-                    cmd.select( 'VSLCenterSelection', centerselection)
-                    cmd.center( centerselection )
-                except:
-                    print 'No selection was made for center, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
-                return 0
-                 
-            ##---------------Color---------------##
-                        
-            if CurToken == ColourTok:
-                (TokenPtr, CurToken, TokenStart, TokenIdent, TokenValue) = VSLFetchToken( p, TokenPtr)
-                print str(CurToken)+' vs '+str(CPKTok)
-                if CurToken == CPKTok:
-                    color_cpk(VSLselection)
-                    return 0
-                if p[TokenStart] != '[':
-                    colory = p.split( ' ', 1)[1].lower()
-                    colory = colory.replace( ' ', '' )
-                    try:
-                        cmd.color( colory, '( '+ VSLselection +' )' )
-                        return 0
-                    except:
-                        print 'VSL color name '+colory+' not recognized'
-                (xresult, rgb) = VSLParseColour( p, TokenPtr, CurToken )
-                if xresult != True:
-                    print MsgStrs[ErrSyntax]
-                    return 0
-                colorx = RGBTriplet( 'VSLColor', rgb)
-                if VSLVerbose > 0:
-                    print 'VSLselection: ' + VSLselection
-                cmd.color( 'VSLColor', '( '+ VSLselection +' )' )
-
-                return 0
-
-            ##---------------Spacefill/CPK---------------##
-
-            if p[:9]=='spacefill' or p[:3]=='cpk' or p[:6]=='cpknew':
-                try:
-                    p = p + ' '
-                    command = p.split( ' ', 1 )[1].rstrip()
-                    if command=='false' or command=='off':
-                        cmd.hide( 'spheres', 'VSLselection' )
-                        print 'Spacefill off complete'
-                    elif command=='true' or command=='on' or command=='':
-                        cmd.show( 'spheres', 'VSLselection' )
-                        print 'Spacefill on complete'
-                    elif float(command)>=0 and float(command)<=1500:
-                        cmd.show( 'spheres', 'VSLselection' )
-                        if '.' in command:
-                            command = float(command)
-                        else:
-                            command = float(command)/250
-                        cmd.set( 'sphere_scale', command )
-                except:
-                    print 'An error occured with the spacefill/cpk command'
-                return 0
-
-            ##---------------Cartoon---------------##
-
-            if p[:7]=='cartoon':
-                try:
-                    p = p + ' '
-                    command = p.split( ' ', 1 )[1].rstrip()
-                    if command=='false' or command=='off':
-                        cmd.hide( 'cartoon', 'VSLselection' )
-                        cmd.hide( 'ribbon', 'VSLselection' )
-                        print 'Cartoon off complete'
-                    elif command=='true' or command=='on' or command=='':
-                        cmd.hide( 'ribbon', 'VSLselection' )
-                        cmd.cartoon( 'rectangle', 'VSLselection' )
-                        cmd.show( 'cartoon', 'VSLselection' )
-                        print 'Cartoon on complete'
-                    elif float(command)>=0 and float(command)<=500:
-                        if '.' in command:
-                            command = float(command)
-                        else:
-                            command = float(command)/250
-                        cmd.cartoon( 'rectangle', 'VSLselection' )
-                        cmd.hide( 'ribbon', 'VSLselection' )
-                        cmd.set( 'cartoon_rect_length', command )
-                        cmd.show( 'cartoon', 'VSLselection' )
-                        print 'Cartoon on complete'
-                except:
-                    print 'An error occured with the cartoon command'
-                return 0
-
-            ##---------------Trace---------------##
-
-            if p[:5]=='trace':
-                try:
-                    p = p + ' '
-                    command = p.split( ' ', 1 )[1].rstrip()
-                    if command=='false' or command=='off':
-                        cmd.hide( 'cartoon', 'VSLselection' )
-                        cmd.hide( 'ribbon', 'VSLselection' )
-                        print 'Trace off complete'
-                    elif command=='true' or command=='on' or command=='':
-                        cmd.cartoon( 'tube', 'VSLselection' )
-                        cmd.hide( 'ribbon', 'VSLselection' )
-                        cmd.show( 'cartoon', 'VSLselection' )
-                        print 'Trace on complete'
-                    elif float(command)>=0 and float(command)<=500:
-                        if '.' in command:
-                            command = float(command) * 10
-                        else:
-                            command = ( float(command)/250 ) * 10
-                        cmd.cartoon( 'tube', 'VSLselection' )
-                        cmd.hide( 'ribbon', 'VSLselection' )
-                        cmd.show( 'cartoon', 'VSLselection' )
-                        cmd.set( 'cartoon_tube_radius', command )
-                        print 'Trace on complete'
-                except:
-                    print 'An error occured with the trace command'
-                return 0
-
-            ##---------------Ribbon---------------##
-
-            if p[:6]=='ribbon':
-                try:
-                    p = p + ' '
-                    command = p.split( ' ', 1 )[1].rstrip()
-                    if command=='false' or command=='off':
-                        cmd.hide( 'cartoon', 'VSLselection' )
-                        cmd.hide( 'ribbon', 'VSLselection' )
-                        print 'Ribbon off complete'
-                    elif command=='true' or command=='on' or command=='':
-                        cmd.hide( 'cartoon', 'VSLselection' )
-                        cmd.show( 'ribbon', 'VSLselection' )
-                        print 'Ribbon on complete'
-                    elif float(command)>=0 and float(command)<=500:
-                        if '.' in command:
-                            command = float(command)
-                        else:
-                            command = float(command)/250
-                        cmd.hide( 'cartoon', 'VSLselection' )
-                        cmd.show( 'ribbon', 'VSLselection' )
-                        cmd.set( 'ribbon_width', command )
-                        print 'Ribbon on complete'
-                except:
-                    print 'An error occured with the ribbon command'
-                return 0
-
-            ##---------------Wireframe---------------##
-
-            if p[:9]=='wireframe':
-                try:
-                    p = p + ' '
-                    command = p.split( ' ', 1 )[1].rstrip()
-                    if command=='false' or command=='off':
-                        cmd.hide( 'lines', 'VSLselection' )
-                        print 'Wireframe off complete'
-                    elif command=='true' or command=='on' or command=='':
-                        cmd.show( 'lines', 'VSLselection' )
-                        print 'Wireframe on complete'
-                    elif float(command)>=0 and float(command)<=1500:
-                        if '.' in command:
-                            command =  float(command)
-                        else:
-                            command =  float(command)/ 250  
-                        cmd.show( 'sticks', 'VSLselection' )
-                        cmd.set( 'stick_radius', command )
-                        print 'Wireframe on complete'
-                except:
-                    print 'An error occured with the wireframe command'
-                    return 0
-                return 0
-
-            ##---------------Dots---------------##
-
-            if p[:4]=='dots':
-                try:
-                    p = p + ' '
-                    command = p.split( ' ', 1 )[1].rstrip()
-                    if command=='false' or command=='off' or command=='0':
-                        cmd.hide( 'dots', 'VSLselection' )
-                        print 'Dots off complete'
-                    elif command=='true' or command=='on' or command=='':
-                        cmd.show( 'dots', 'VSLselection' )
-                        if solvent:
-                            cmd.set( 'dot_solvent', 'on' )
-                        else:
-                            cmd.set( 'dot_solvent', 'off' )
-                        cmd.set( 'dot_radius', radius )
-                        print 'Dots on complete'
-                    elif int(command)>0 and int(command)<=1000:
-                        command = int(command)
-                        cmd.show( 'dots', 'VSLselection' )
-                        if solvent:
-                            cmd.set( 'dot_solvent', 'on' )
-                        else:
-                            cmd.set( 'dot_solvent', 'off' )
-                        cmd.set( 'dot_radius', radius )
-                        if command in range(1, 5):
-                            cmd.set( 'dot_density', 0 )
-                        elif command in range(5, 20):
-                            cmd.set( 'dot_density', 1 )
-                        elif command in range(20, 140):
-                            cmd.set( 'dot_density', 2 )
-                        elif command in range(140, 625):
-                            cmd.set( 'dot_density', 3 )
-                        elif command in range(325, 1000):
-                            cmd.set( 'dot_density', 4 )
-                        print 'Dots on complete'
-                except:
-                    print 'An error occured with the dots command'
-                return 0
-
-            ##---------------Surface--------------##
-
-            if p[:7]=='surface':
-                #print 'PyMOL only supports the Connolly type of surface.  Try the command \' generate map surface\' to generate that type.  Pymol does not support Lee-Richards molecular surface.'
-                try:
-                    cmd.show('surface', 'VSLselection')
-                except:
-                    print 'An error has occurred with the surface command'
-                return 0
-
-            ##---------------Bond---------------##
-            if p[:4]=='bond':
-                try:
-                    p = p + ' '
-                    firstatom = p.split( ' ' )[1].rstrip()
-                    secondatom = p.split( ' ' )[2].rstrip()
-                    if p.rstrip()[-1]=='+':
-                        cmd.bond( 'id ' + firstatom, 'id ' + secondatom )
-                        print 'To create a new bond, use bond <number> <number>.  Increasing bond order is not currently supported.  The bond specified has been created if it did not already exist'
-                    elif p.rstrip()[-4:]=='pick':
-                        bondfirstatom = firstatom
-                        bondsecondatom = secondatom
-                    elif firstatom == 'rotate':
-                        print 'PyMOL does not support rotation of bonds'
-                    elif (int(firstatom) > 0 and int(secondatom) > 0):
-                        cmd.bond( 'id ' + firstatom, 'id ' + secondatom )    
+    ##Handles parameters that can be changed using the 'set' command
+    def _set_parameters(self, parameters):
+        '''banana banana banana'''
+        not_coded = ['backfade', 'bondmode', 'bonds', 'cisangle', 'fontstroke',
+            'hourglass ', 'kinemage', 'menus', 'strands', 'transparent',
+            'vectps', 'write', 'boundbox', 'display', 'mouse', 'picking',
+            'shadepower', 'slabmode', 'specpower', 'cartoon', 'hbonds',
+            'radius', 'ssbonds']
+        try:
+            parameters = parameters.split(' ')
+            ##Check the parameter to see if it something that will convert in
+            #the first place
+            if parameters[0].rstrip() in not_coded:
+                print 'That setting does not translate into PyMOL.'
+            else:
+                ##Seperate the parameter by spaces for ease of recalling them
+                #later
+                first = parameters[0].rstrip().lower()
+                if len(parameters) > 1:
+                    second = parameters[1].rstrip().lower()
+                ##PARAMETER: background - complete
+                if first == 'background':
+                    cmd.bg_color(second)
+                ##PARAMETER: ambient - PyMOL ambient only seems noticable on
+                #some views
+                elif first == 'ambient':
+                    light = int(second)/50 - 1
+                    cmd.set('ambient', light)
+                ##PARAMETER: unitcell - Uses PyMOL's view 'cell'
+                elif first == 'unitcell':
+                    if second == 'on' or second == 'true':
+                        cmd.show('cell')
+                    elif second == 'false' or second == 'off':
+                        cmd.hide('cell')
                     else:
-                        print 'That function is not supported by PyMOL'
-                except:
-                    print 'An error has occurred with the bond command'
-                return 0
-
-            ##---------------Unbond---------------##
-            if p[:4]=='unbond':
-                try:
-                    if int(p.rstrip()[-1])>0:
-                        firstatom = p.split( ' ' )[1].rstrip()
-                        secondatom = p.split( ' ' )[2].rstrip()
-                        cmd.unbond( 'id ' + firstatom, 'id ' + secondatom )
-                    elif bondfirstatom > 0 and bondsecondatom > 0:
-                        cmd.unbond( bondfirstatom, bondsecondatom )
+                        print 'An error has occured with unitcell parameter.'
+                ##PARAMETER: cartoon
+                elif first == 'cartoon':
+                    cmd.cartoon('rectangle', '(all)')
+                    if len(parameters) == 1:
+                        cmd.set('cartoon_fancy_sheets', 1)
+                        cmd.set('cartoon_rect_length', 1.5)
                     else:
-                        print 'No selection was made.'
-                except:
-                    'An error has occured with the unbond command'
-                return 0
-
-            ##---------------Zoom---------------##
-
-            if p[:4]=='zoom':
-                try:
-                    p = p + ' '
-                    command = p.split( ' ', 1 )[1].rstrip()
-                    cmd.select( 'VSLCenterSelection', centerselection )
-                    if command=='false' or command=='off' or command=='':
-                        zoomnum = 0
-                        cmd.zoom( 'all', zoomnum )
-                        cmd.center( centerselection )
-                        print 'Zoom off complete'
-                    elif command=='true' or command=='on':
-                        zoomnum = -25
-                        cmd.zoom( 'all', zoomnum )
-                        cmd.center( centerselection )
-                        print 'Zoom on complete'
-                    elif int(command) in range(0, 100):
-                        zoomnum = int(command)
-                        zoomnum = -( (zoomnum-100) )
-                        print 'Zoom ' + str(zoomnum)
-                        cmd.zoom( 'all', zoomnum )
-                        cmd.center( centerselection )
-                    elif int(command) in range(100, 5000):
-                        zoomnum = int(command)
-                        zoomnum = -( (zoomnum-100)/20 )
-                        print 'Zoom ' + str(zoomnum)
-                        cmd.zoom( 'all', zoomnum )
-                        cmd.center( centerselection )
-                    else:
-                        print 'That function is not supported by PyMOL.'
-                except:
-                    print 'Zoom did not execute properly.  Please revise your zoom command'
-                return 0
-
-            ##---------------Rotate--------------##		
-            
-            rotateCmd = 'rotate'
-            if rotateCmd==p[:6]:
-                axis = p.split()[1]
-                rotation = p.split()[2]
-                if axis == 'z':
-                    rotation = '-' + rotation
-                try:
-                    cmd.rotate( axis, rotation )
-                except:
-                    print 'The parameters you have given for the rotate command have been entered improperly.  Please rewrite them as rotate (axis) (rotation in degrees)'
-                return 0
-
-            ##---------------Translate---------------##
-
-            if p[:9]=='translate':
-                try:
-                    commandlist = p.split( ' ' )
-                    if commandlist[1]=='x':
-                        cmd.center( 'VSLCenterSelection' )
-                        cmd.translate( [int(commandlist[2]),0,0] )
-                    elif commandlist[1]=='y':
-                        cmd.center( 'VSLCenterSelection' )
-                        cmd.translate( '[0,-' + commandlist[2] + ',0]' )
-                    elif commandlist[1]=='z':
-                        cmd.center( 'VSLCenterSelection' )
-                        cmd.translate( '[0,0,-' + commandlist[2] + ']' )
-                    else:
-                        print 'That function is not supported by PyMOL at all'
-                except:
-                    print 'Translate did not execute properly.  Please revise your translate command'
-                return 0
-
-            ##---------------Slab---------------##
-
-            if p[:4]=='slab':
-                try:
-                    cmd.clip( 'near', -clip_dist_near )
-                    p = p + ' '
-                    command = p.split( ' ', 1 )[1].rstrip()
-                    if command=='false' or command=='off':
-                        clip_dist_near = 0
-                        print 'Slab off complete'
-                    elif command=='true' or command=='on' or command=='':
-                        print clip_dist_near
-                        cmd.clip( 'near', clip_dist_near )
-                        print 'Slab on complete'
-                    elif float(command)>=0 and float(command)<=100:
-                        command = float(command)
-                        clip_dist_near = command-100
-                        cmd.clip( 'near', clip_dist_near )
-                        print 'Slab on complete'
-                except:
-                    print 'An error occured with the slab command'
-                return 0
-
-            ##---------------Depth---------------##
-
-            if p[:5]=='depth':
-                try:
-                    cmd.clip( 'far', -clip_dist_far )
-                    p = p + ' '
-                    command = p.split( ' ', 1 )[1].rstrip()
-                    if command=='false' or command=='off':
-                        clip_dist_far = 0
-                        print 'Depth off complete'
-                    elif command=='true' or command=='on' or command=='':
-                        cmd.clip( 'far', clip_dist_far )
-                        print 'Depth on complete'
-                    elif float(command)>=0 and float(command)<=100:
-                        command = float(command)
-                        clip_dist_far = command
-                        cmd.clip( 'far', clip_dist_far )
-                        print 'Depth on complete'
-                except:
-                    print 'An error occured with the depth command'
-                return 0
-                
-            ##---------------HBonds---------------##
-
-            if p[:6]=='hbonds':
-                try:
-                    p = p + ' '
-                    command = p.split( ' ', 1 )[1].rstrip()
-                    if command=='false' or command=='off':
-                        HBonds()
-                        print 'HBonds off complete'
-                    elif command=='true' or command=='on' or command=='':
-                        print 'Starting HBonds on:'
-                        HBonds()
-                        print 'HBonds on complete'
-                    else:
-                        print 'That function is not supported by PyMOL'
-                except:
-                    print 'HBonds did not execute properly.  Check spelling and implementation of this HBonds command.'        
-                return 0
-
-            ##---------------SSBonds---------------##
-
-            if p[:6]=='ssbonds':
-                try:
-                    p = p + ' '
-                    command = p.split( ' ', 1 )[1].rstrip()
-                    if command=='false' or command=='off':
-                        SSBonds()
-                        print 'SSBonds off complete'
-                    elif command=='true' or command=='on' or command=='':
-                        print 'Starting HBonds on:'
-                        SSBonds()
-                        print 'SSBonds on complete'
-                    else:
-                        print 'That function is not supported by PyMOL'
-                except:
-                    print 'SSBonds did not execute properly.  Check spelling and implementation of this SSBonds command.'
-                return 0
-
-            ##---------------Backbone--------------##
-
-            if p[:8]=='backbone':
-                try:
-                    p = p + ' '
-                    command = p.split( ' ', 1 )[1].rstrip()
-                    cmd.set( 'ribbon_sampling', 20 )
-                    cmd.set( 'ribbon_smooth', 1 )
-                    cmd.set( 'ribbon_width', 0.02 )
-                    if command=='false' or command=='off':
-                        cmd.hide( 'ribbon' , 'VSLselection')
-                        print 'Backbone off complete'
-                    elif command=='true' or command=='on' or command=='':
-                        cmd.show( 'ribbon', 'VSLselection')
-                        print 'Backbone on complete'
-                    elif command=='dash':
-                        print 'PyMOL does not include funcionality for this command.'
-                    elif float(command)>=0 and float(command)<=500:
-                        if '.' in command:
-                            command = float(command) * 5
+                        if second == 'on' or second == 'true':
+                            cmd.set('cartoon_fancy_sheets', 1)
+                            cmd.set('cartoon_rect_length', 1.5)
+                        elif second == 'off' or second == 'false':
+                            cmd.set('cartoon_fancy_sheets', 0)
                         else:
-                            command = float(command)/50
-                        cmd.show( 'ribbon' , 'VSLselection')
-                        cmd.set( 'ribbon_width', command )
-                        print 'Backbone on complete'
-                    else:
-                        print 'That function is not supported by PyMOL.'
-                except:
-                    print 'An error occured while trying to display the backbone.'
-                return 0
-
-            ##---------------Monitor---------------##
-
-            if p[:7]=='monitor':
-                try:
-                    parameters = p.split( ' ' )
-                    if len(parameters) == 3:
-                        cmd.distance( 'monitor', 'id ' + parameters[1],  'id ' + parameters[2] )
-                        if not set_monitor:
-                            cmd.hide( 'labels' , 'VSLselection')
-                    elif len(parameters) == 2:
-                        command = parameters[1]
-                        if command=='false' or command=='off':
-                            cmd.hide( 'labels' , 'VSLselection')
-                            cmd.hide( 'dashes' , 'VSLselection' )
-                            print 'Monitor off complete'
-                        elif command=='true' or command=='on' or command=='':
+                            ##cmd.set( 'cartoon_rect_length',
                             pass
-                        else:
-                            print 'That function is not supported by PyMOL'
+                ##PARAMETER: axes - produces axes at origin showing x, y and z
+                ##planes, lines center at origin, not center of molecule
+                elif first == 'axes':
+                    if second == 'on' or second == 'true':
+                        #Credit goes to the contributors of the PyMOLwiki
+                        # (pymolwiki.org) on the article 'Axes': Krother, Tree
+                        # and Inchoate  Thank you
+                        # create the axes object, draw axes with cylinders
+                        # coloured red, green, blue for X, Y and Z
+
+                        obj = [
+                            CYLINDER, 0., 0., 0., 10., 0., 0., 0.2, 1.0, 1.0,
+                                1.0, 1.0, 0.0, 0.,
+                            CYLINDER, 0., 0., 0., 0., 10., 0., 0.2, 1.0, 1.0,
+                                1.0, 0., 1.0, 0.,
+                            CYLINDER, 0., 0., 0., 0., 0., 10., 0.2, 1.0, 1.0,
+                                1.0, 0., 0.0, 1.0,
+                            ]
+                        # add labels to axes object (requires pymol version
+                        # 0.8 or greater, I believe
+                        cyl_text(obj, plain, [-5., -5., -1], 'Origin', 0.20,
+                            axes=[[3, 0, 0], [0, 3, 0], [0, 0, 3]])
+                        cyl_text(obj, plain, [10., 0., 0.], 'X', 0.20,
+                            axes=[[3, 0, 0], [0, 3, 0], [0, 0, 3]])
+                        cyl_text(obj, plain, [0., 10., 0.], 'Y', 0.20,
+                            axes=[[3, 0, 0], [0, 3, 0], [0, 0, 3]])
+                        cyl_text(obj, plain, [0., 0., 10.], 'Z', 0.20,
+                            axes=[[3, 0, 0], [0, 3, 0], [0, 0, 3]])
+                        # then we load it into PyMOL
+                        cmd.load_cgo(obj, 'axes')
+                        cmd.zoom('all')
+                    elif second == 'false' or second == 'off':
+                        cmd.delete('axes')
+                        cmd.zoom('all')
                     else:
-                        print 'That function is not supported by PyMOL'
-                except:
-                    print 'An error occured while trying to display the labels.'
-                return 0
-
-            ##---------------Zap---------------##
-
-            if p.rstrip()=='zap':
-                print 'reinitialize'
-                cmd.reinitialize()
-                return 0
-
-            ##---------------Stereo---------------##
-      
-            if p[:6]=='stereo':
-                tmpstring = p.split()[1]
-                if 'on' in tmpstring:
-                    cmd.stereo('on')
-                elif 'off' in tmpstring:
-                        cmd.stereo('off')
+                        print 'An error occured with the axes command.'
+                ##PARAMETER: fontsize - complete
+                elif first == 'fontsize':
+                    cmd.set('label_size', int(second))
+                ##PARAMETER: stereo - stereo angle is not the same between the
+                ##programs, PyMOL shifts the images, RasMol rotates them
+                elif first == 'stereo':
+                    if second == 'on' or second == 'true' or second == '':
+                        cmd.set('stereo', 1)
+                    elif second == 'false' or second == 'off':
+                        cmd.set('stereo', 0)
+                    else:
+                        print 'ConSCRIPT does not support this setting.'
+                ##PARAMETER: hbonds
+                elif first == 'hbonds':
+                    if second == 'sidechain':
+                        self.hbonds_backbone = False
+                    elif second == 'backbone':
+                        self.hbonds_backbone = True
+                    else:
+                        print 'That parameter is not a valid RasMol parameter.'
+                ##PARAMETER: ssbonds
+                elif first == 'ssbonds':
+                    if second == 'sidechain':
+                        self.ssbonds_backbone = False
+                    elif second == 'backbone':
+                        self.ssbonds_backbone = True
+                    else:
+                        print 'That parameter is not a valid RasMol parameter.'
+                ##PARAMETER: hydrogen - complete
+                elif first == 'hydrogen':
+                    if second == 'on' or second == 'true':
+                        self.hydrogen = True
+                    elif second == 'off' or second == 'false':
+                        self.hydrogen = False
+                    else:
+                        print 'An error has occured with the hydrogen setting.'
+                ##PARAMETER: hetero - complete
+                elif first == 'hetero':
+                    if second == 'on' or second == 'true':
+                        self.hetero = True
+                    elif second == 'off' or second == 'false':
+                        self.hetero = False
+                    else:
+                        print 'An error has occured with the hetero setting.'
+                ##PARAMETER: solvent - complete
+                elif first == 'solvent':
+                    if second == 'on' or second == 'true':
+                        self.solvent = True
+                        self.radius = 1.2
+                    elif second == 'off' or second == 'false':
+                        self.solvent = False
+                        self.radius = 0.0
+                    else:
+                        print 'An error has occured with the solvent setting.'
+                ##PARAMETER: radius - failed to get PyMOL dot-radius setting to
+                ##work, unable to determine setting ratio
+                elif first == 'radius':
+                    cmd.set('dot_radius', int(second))
+                ##PARAMETER: monitor - complete
+                elif first == 'monitor':
+                    if second == 'on' or second == 'true':
+                        self.set_monitor = True
+                        cmd.show('labels')
+                    elif second == 'off' or second == 'false':
+                        self.set_monitor = False
+                        cmd.hide('labels')
+                    else:
+                        print 'An error occured with the monitor setting.'
+                ##PARAMETER: specular - does not work with version 0.99,
+                ##requires 1.0 or newer
+                elif first == 'specular':
+                    if second == 'on' or second == 'true':
+                        cmd.set('specular', 'on')
+                    elif second == 'off' or second == 'false':
+                        cmd.set('specular', 'off')
+                    else:
+                        print 'An error has occured with the specular setting.'
+                ##PARAMETER: shadow - cant get this to work in PyMOL but this
+                ##what should work
+                elif first == 'shadow':
+                    if second == 'on' or second == 'true':
+                        cmd.set('ray_shadows', 'on')
+                    elif second == 'off' or second == 'false':
+                        cmd.set('ray_shadows', 'off')
+                    else:
+                        print 'An error has occured with the Shadows setting.'
+                ##PARAMETER: verbose -- set the self.vslverbose flag
+                elif first == 'verbose':
+                    if second == 'on' or second == 'true':
+                        self.vslverbose = 1
+                    elif second == 'off' or second == 'false':
+                        self.vslverbose = 0
+                    else:
+                        print 'An error has occured with the Verbose setting.'
                 else:
-                    print 'That function is not supported by PyMOL.'
-                return 0
+                    print 'That setting is not a valid RasMol setting.'
+        except:
+            print 'An error has occured with a setting.'
 
-            ##---------------Map---------------##
+    ## Handles RGB Triplet for colors
+    def _rgbtriplet(self, name, triplet):
+        '''banana banana banana'''
+        try:
+            cmd.set_color(name, triplet)
+        except:
+            print "RGB Triplet not valid."
+        return name
 
-            if p[:3]=='map':
-                try:
-                    parameters = p[4:]
-                    mapsupport( parameters )
-                    return 0
-                except:
-                    print 'An error occured with a map command.'
+    ## Defines hbonds for a structure
+    def _hbonds(self):
+        '''banana banana banana'''
+        try:
+            cmd.h_add('all')
+            cmd.select('don',
+                '(elem n,o and (neighbor elem h) and vslselection)')
+            cmd.select('acc',
+                '(elem o or (elem n and not (neighbor elem h))) and vslselection')
+            cmd.distance('HBA', '(acc)', '(don)', '3.2')
+            cmd.distance('HBD', '(don)', '(acc)', '3.2')
+            cmd.delete('don')
+            cmd.delete('acc')
+            cmd.hide('(elem h)')
+            cmd.hide('labels', 'HBA')
+            cmd.hide('labels', 'HBD')
+        except:
+            print 'Error occured with calculating hbonds.'
 
-            ##---------------Set---------------##
+    ## Defines ssbonds for a structure
+    def _ssbonds(self):
+        '''banana banana banana'''
+        try:
+            cmd.h_add('all')
+            cmd.select('SSCys', '(elem S and resn Cys) and vslselection')
+            cmd.distance('SSCysteines', '(SSCys)', '(SSCys)', '3.0')
+            cmd.delete('SSCys')
+            cmd.hide('(elem h)')
+            cmd.hide('labels', 'SSCysteines')
+        except:
+            print 'Error occured with calculating ssbonds.'
 
-            if p[:3]=='set':
-                try:
-                    parameters = p[4:]
-                    set_parameters( parameters )
-                    return 0
-                except:
-                    print 'An error occured with a set command.'
-
-            ##---------------Refresh---------------##
-
-            if 'refresh' in p:
-                print 'refresh'
-                cmd.refresh()
-                return 0
-
-            ##---------------Reset---------------##
-
-            if 'reset' in p:
-                print 'reset'
-                cmd.reset()
-                return 0
-
-            ##---------------Define---------------##
-
-            if p[:6]=='define':
-                defparams = p[7:].split( ' ', 1 )
-                cmd.select( defparams[0], select(defparams[1]) )
-                UserDefinedGroups[ defparams[0] ] =  defparams[1]
-                return 0
-                
-            ##-----------Pause/Wait---------------------##
-
-            if p[:5]=='pause':
-                keystroke=False
-                while not keystroke:
-                    if event.char==event.keysym:
-                        keystroke=True
-                return 0
-                
-            ##-------Quit/Exit/blank/comment------------##
-
-            if CurToken == ExitTok or CurToken == QuitTok or CurToken == 0 :
-                return CurToken
-
-            ##---------------Not-Coded---------------##
-
-            Not_coded = ['bulgarian','chinese','english','french','italian','japanese','russian','spanish',
-                         'clipboard','colourmode','connect','help','molecule','notoggle','pause','wait','print','renumber','show','star','strands','structure']
-
-            if p.split( ' ', 1 )[0] in Not_coded:
-                print 'That command is not coded for using ConSCRIPT.  Support for that function may be added at a later date.'
-
-            print p
-            print 'not implemented as a VSL command'
+    ## Handle a command line
+    def handlecommand(self, commands):
+        '''banana banana banana'''
+        self.tokenstart = 0 
+        self.tokenptr = 0
+        self.curtoken = 0
+        self.tokenident = ""
+        self.tokenvalue = 0
+        if(commands.replace(' ', '') == "\n"):
             return 0
 
+        if(commands.replace(' ', '')[:1] == '#'):
+            print p
+            return 0
+        commands = commands.lower()
+        self._vslfetchtoken(commands)
 
-    ## Handler for SBEVSL commands from the command line
-        def VSL( *args, **kwargs  ):
-          p = ' '.join(args)
-          donext = handlecommand(p.rstrip())
-          if VSLVerbose > 0:
-              print os.times()
-          if donext == QuitTok or donext == ExitTok:
-              cmd.quit()
-          return donext
-
-
-    
-    ## Handler for processing a script from a file
-        def processVSLscript( Q ):
-
-            global filelevel
-            global filestack
-            
-            #Open the script 
-            f = open(Q, 'rU')
-            filestack.append(f)
-            filelevel = filelevel+1
-            
-            #Make a loop
-            try:
-                for p in f:
-                    donext = handlecommand(p.rstrip())
-                    if donext == ExitTok or donext == QuitTok:
-                      f.close()
-                      filelevel = filelevel-1
-                      if donext == QuitTok:
-                        return QuitTok
-                      else:
-                        return 0  
-            finally:
-                #Close the file
-                f.close()
-                filelevel = filelevel-1
-                if VSLVerbose > 0:
-                  print os.times()
-                return 0
-            
-        #Define the Boffo Function
-        def Boffo(Event):
-        
-            global filelevel
-            global filestack
-
-            try:
-                openbtn.config(relief=SUNKEN)
-                Q = tkFileDialog.askopenfilename(initialdir=HOME)
-                filelevel = 0
-                filestack = []
-                donext = processVSLscript(Q)
-                if donext == QuitTok:
-                    cmd.quit()
-                #Reset the GUI
-                openbtn.config(relief=RAISED)
-                interior.mainloop()
-            except:
-                openbtn.config(relief=RAISED)
-                interior.mainloop()
-
-        #Define the Boffocmd Function
-        def Boffocmd(Event):
-        
-            cmd.extend('VSL', VSL)
-            cmd.extend('vsl', VSL)
-            cmd.extend('SBEVSL', VSL)
-            cmd.extend('sbevsl', VSL)
-            cmd.extend('R', VSL)
-            cmd.extend('r', VSL)
-            cmd.extend('RASMOL', VSL)
-            cmd.extend('rasmol', VSL)
-            openbtncmd.config(relief=SUNKEN)
-            openbtncmd.config(text="VSL enabled")
-            interiorcmd.mainloop()
-            #Reset the GUI
-            interior.mainloop()
-
-
-
-        #Bind buttons to the functions
-        openbtn.bind('<Button-1>', Boffo)
-        openbtncmd.bind('<Button-1>', Boffocmd)
-                    
-                    
-
+        # handle temporary selection
+        self.vslselectionsaved = self.vslselection
+        if self.curtoken == -ord('('):
+            stack = []
+            end = -1
+            for x in range(self.tokenstart + 1, len(commands)):
+                if commands[x:x+1] == '(':
+                    stack.append('(')
+                if commands[x:x+1] == ')':
+                    if stack == []:
+                        end = x
+                        x = len(commands)
+                    else:
+                        stack.pop()
+            if end != -1:
+                q = commands[self.tokenstart:end+1]
+                q = q.lower()
+                self.vslselection = self._preselect(q)
+                if self.vslverbose > 0:
+                    print 'vslselection: ' + self.vslselection
+                if end < len(commands)-1 and commands[end+1:end+2] == '.':
+                    end = end+1
+                self.tokenptr = 0
+                self.tokenstart = 0
+                self.curtoken = 0
+                self.tokenident = ""
+                self.tokenvalue = 0
+                commands = commands[end+1:len(commands)]
+                try:
+                    self._vslfetchtoken(commands)
+                except:
+                    print 'vslfetchtoken failed tokenptr = %s' % (self.tokenptr)
  
-                                
+        if self.vslverbose > 0:
+            print os.times()
+            print 'vslselection: ' + self.vslselection
+            print 'VSLcommand: ' + p
+
+        ##---------------Script---------------##
+
+        if self.curtoken == self.scripttok or self.curtoken == self.sourcetok:
+            self._vslfetchtoken(commands)
+            if self.curtoken == 0:
+                print p
+                print 'Does not contain a valid filename'
+            elif self.curtoken == self.stringtok:
+                try:
+                    print '\"'+self.tokenident+'\"' + '<--SCRIPTFILE'
+                    return processVSLscript(self.tokenident)
+                except:
+                    print '\"'+self.tokenident+'\"' + '<--SCRIPTFILE'
+                    print 'EXCEPTION THROWN'
+            else:
+                ts = commands[self.tokenstart:len(commands)]
+                try:
+                    print ts + '<--SCRIPTFILE'
+                    return processVSLscript(ts)
+                except:
+                    print ts + '<--SCRIPTFILE'
+                    print 'EXCEPTION THROWN'
+            return 0
+        ##---------------Load---------------##
+
+        if self.curtoken == self.loadtok:
+            self._vslfetchtoken(commands)
+            if self._ismoleculetoken(self.curtoken):
+                try:
+                    self._vslfetchtoken(commands)
+                except:
+                    print 'vslfetchtoken failed tokenptr = %s' % (self.tokenptr)
+            if self.curtoken == 0:
+                print p
+                print 'Does not contain a valid filename'
+            elif self.curtoken == self.stringtok:
+                try:
+                    self.tokenident = self.tokenident.strip('"\'')
+                    print self.tokenident + '<--LOADFILE'
+                    cmd.load(self.tokenident)
+                    cmd.rotate('x', 180)
+                    cmd.select('vslselection', '(all)')
+                    cmd.select('VSLCenterSelection', self.centerselection)
+                    cmd.center(self.centerselection)
+                    self.vslselection = '(all)'
+                    self._color_cpk(self.vslselection)
+                    if self.vslverbose > 0:
+                        print 'vslselection: ' + self.vslselection
+                except:
+                    print '\"'+self.tokenident+'\"' + '<--LOADFILE'
+                    print 'EXCEPTION THROWN'
+            else:
+                ts = commands[self.tokenstart:len(commands)]
+                try:
+                    ts = ts.strip('"\'')
+                    print ts + '<--LOADFILE'
+                    cmd.load(ts)
+                    cmd.rotate('x', 180)
+                    cmd.select('vslselection', '(all)')
+                    cmd.select('VSLCenterSelection', self.centerselection)
+                    cmd.center(self.centerselection)
+                    self.vslselection = '(all)'
+                    self._color_cpk(self.vslselection)
+                    if self.vslverbose > 0:
+                        print 'vslselection: %s' % self.vslselection
+                except:
+                    print ts + '<--LOADFILE'
+                    print 'EXCEPTION THROWN'
+            return 0
+
+        ##---------------Save---------------##
+
+        if self.curtoken == self.writetok or self.curtoken == self.savetok:
+            s = ''
+            for i in commands.split(' ', 1)[1]:
+                s = s + i
+            print s + '<--SAVEFILE'
+            if s[-3:] == 'bmp' or s[-3:] == 'gif':
+                cmd.png(s)
+            else:
+                cmd.save(s)
+            return 0
+
+        ##---------------Echo---------------##
+
+        if self.curtoken == self.echotok:
+            returnval = commands[len(self.tokenident)+1:]
+            if returnval[:1] == '"':
+                returnval = returnval[1:]
+            if returnval[-1:] == '"':
+                returnval = returnval[:-1]
+            print returnval
+            return 0
+
+        ##---------------Label---------------##
+
+        if self.curtoken == self.labeltok:
+            commands += ' '
+            labeltext = commands.split(' ', 1)[1]
+            specifier_conv = {'a':'name', 'b':'b', 't':'b', 'c':'chain',
+                's':'chain', 'e':'type', 'i':'ID', 'n':'resn', 'r':'resi'}
+            specifiers = []
+            if labeltext[:4].rstrip() == 'off' or\
+                labeltext[:5].rstrip() == 'false':
+                cmd.do('label vslselection,')
+            elif labeltext[:2].rstrip() == 'on' or\
+                labeltext[:4].rstrip() == 'true' or labeltext.rstrip() == '':
+                labeltext = '%s%s:%s.%s'
+                specifiers = ['resn', 'resi', 'chain', 'name']
+                cmd.do('label vslselection, "%s" % (%s)' % (labeltext, str(specifiers)[1:-1].replace('\'', '')))
+            else:
+                for i in range(0, len(labeltext)-1):
+                    if labeltext[i] == '%':
+                        if str(labeltext[i+1]) in specifier_conv:
+                            specifiers += [specifier_conv[str(labeltext[i+1])]]
+                            labeltext = labeltext[:i] + '%s' + labeltext[i+2:]
+                        else:
+                            print 'That expansion specifier is not supported.'
+                cmd.do('label vslselection, "%s" % (%s)' % (labeltext, str(specifiers)[1:-1].replace('\'', '')))
+
+        #-----------Background color------------#
+
+        if self.curtoken == self.backgroundtok:
+            self._vslfetchtoken(commands)
+            (result, rgb) = self._vslparsecolour(commands)
+            if result == True:
+                colorx = self._rgbtriplet('VSLColor', rgb)
+                cmd.bg_color(colorx)
+            else:
+                print self.msgstrs[self.errsyntax]
+            return 0
+
+        #----------------Select-----------------#
+
+        if self.curtoken == self.selecttok:
+            selected = self._preselect(commands[len(self.tokenident)+1:].lower())
+            print selected + '<--SELECTED'
+            try:
+                cmd.select('vslselection', selected)
+                self.vslselection = selected
+                if self.vslverbose > 0:
+                    print 'vslselection: ' + self.vslselection
+            except:
+                print 'No selection was made for select, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
+            return 0
+
+        #----------------Restrict-----------------#
+
+        if self.curtoken == self.restricttok:
+            selected = self._preselect(commands[len(self.tokenident)+1:].lower())
+            restricted = 'all and not (' + selected + ')'
+            print selected + '<--RESTRICTED'
+            try:
+                cmd.select('vslselection', selected)
+                self.vslselection = selected
+                if self.vslverbose > 0:
+                    print 'vslselection: ' + self.vslselection
+                cmd.hide('everything', restricted)
+            except:
+                print 'No selection was made for restrict, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
+            return 0
+
+        ##---------------Center---------------##
+
+        if self.curtoken == self.centretok:
+            self.centerselection = self._preselect(commands[len(self.tokenident)+1:].lower())
+            print self.centerselection + '<--CENTER'
+            try:
+                cmd.select('VSLCenterSelection', self.centerselection)
+                cmd.center(self.centerselection)
+            except:
+                print 'No selection was made for center, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
+            return 0
+
+        ##---------------Color---------------##
+
+        if self.curtoken == self.colourtok:
+            self._vslfetchtoken(commands)
+            print str(self.curtoken)+' vs '+str(self.cpktok)
+            if self.curtoken == self.cpktok:
+                self._color_cpk(self.vslselection)
+                return 0
+            if commands[self.tokenstart] != '[':
+                colory = commands.split(' ', 1)[1].lower()
+                colory = colory.replace(' ', '')
+                try:
+                    cmd.color(colory, '('+ self.vslselection +')')
+                    return 0
+                except:
+                    print 'VSL color name '+colory+' not recognized'
+            (xresult, rgb) = self._vslparsecolour(commands)
+            if xresult != True:
+                print self.msgstrs[self.errsyntax]
+                return 0
+            colorx = self._rgbtriplet('VSLColor', rgb)
+            if self.vslverbose > 0:
+                print 'vslselection: ' + self.vslselection
+            cmd.color('VSLColor', '('+ self.vslselection +')')
+
+            return 0
+
+        ##---------------Spacefill/CPK---------------##
+
+        if self.curtoken == self.spacefilltok or self.curtoken == self.cpktok or\
+            self.curtoken == self.cpknewtok:
+            try:
+                commands = commands + ' '
+                command = commands.split(' ', 1)[1].rstrip()
+                if command == 'false' or command == 'off':
+                    cmd.hide('spheres', 'vslselection')
+                    print 'Spacefill off complete'
+                elif command == 'true' or command == 'on' or command == '':
+                    cmd.show('spheres', 'vslselection')
+                    print 'Spacefill on complete'
+                elif float(command)>=0 and float(command)<=1500:
+                    cmd.show('spheres', 'vslselection')
+                    if '.' in command:
+                        command = float(command)
+                    else:
+                        command = float(command)/250
+                    cmd.set('sphere_scale', command)
+            except:
+                print 'An error occured with the spacefill/cpk command'
+            return 0
+
+        ##---------------Cartoon---------------##
+
+        if self.curtoken == self.cartoontok:
+            try:
+                commands = commands + ' '
+                command = commands.split(' ', 1)[1].rstrip()
+                if command == 'false' or command == 'off':
+                    cmd.hide('cartoon', 'vslselection')
+                    cmd.hide('ribbon', 'vslselection')
+                    print 'Cartoon off complete'
+                elif command == 'true' or command == 'on' or command == '':
+                    cmd.hide('ribbon', 'vslselection')
+                    cmd.cartoon('rectangle', 'vslselection')
+                    cmd.show('cartoon', 'vslselection')
+                    print 'Cartoon on complete'
+                elif float(command)>=0 and float(command)<=500:
+                    if '.' in command:
+                        command = float(command)
+                    else:
+                        command = float(command)/250
+                    cmd.cartoon('rectangle', 'vslselection')
+                    cmd.hide('ribbon', 'vslselection')
+                    cmd.set('cartoon_rect_length', command)
+                    cmd.show('cartoon', 'vslselection')
+                    print 'Cartoon on complete'
+            except:
+                print 'An error occured with the cartoon command'
+            return 0
+
+        ##---------------Trace---------------##
+
+        if self.curtoken == self.tracetok:
+            try:
+                commands = commands + ' '
+                command = commands.split(' ', 1)[1].rstrip()
+                if command == 'false' or command == 'off':
+                    cmd.hide('cartoon', 'vslselection')
+                    cmd.hide('ribbon', 'vslselection')
+                    print 'Trace off complete'
+                elif command == 'true' or command == 'on' or command == '':
+                    cmd.cartoon('tube', 'vslselection')
+                    cmd.hide('ribbon', 'vslselection')
+                    cmd.show('cartoon', 'vslselection')
+                    print 'Trace on complete'
+                elif float(command)>=0 and float(command)<=500:
+                    if '.' in command:
+                        command = float(command) * 10
+                    else:
+                        command = (float(command)/250) * 10
+                    cmd.cartoon('tube', 'vslselection')
+                    cmd.hide('ribbon', 'vslselection')
+                    cmd.show('cartoon', 'vslselection')
+                    cmd.set('cartoon_tube_radius', command)
+                    print 'Trace on complete'
+            except:
+                print 'An error occured with the trace command'
+            return 0
+
+        ##---------------Ribbon---------------##
+
+        if self.curtoken == self.ribbontok or self.curtoken == self.ribbon1tok\
+            or self.curtoken == self.ribbon2tok:
+            try:
+                commands = commands + ' '
+                command = commands.split(' ', 1)[1].rstrip()
+                if command == 'false' or command == 'off':
+                    cmd.hide('cartoon', 'vslselection')
+                    cmd.hide('ribbon', 'vslselection')
+                    print 'Ribbon off complete'
+                elif command == 'true' or command == 'on' or command == '':
+                    cmd.hide('cartoon', 'vslselection')
+                    cmd.show('ribbon', 'vslselection')
+                    print 'Ribbon on complete'
+                elif float(command)>=0 and float(command)<=500:
+                    if '.' in command:
+                        command = float(command)
+                    else:
+                        command = float(command)/250
+                    cmd.hide('cartoon', 'vslselection')
+                    cmd.show('ribbon', 'vslselection')
+                    cmd.set('ribbon_width', command)
+                    print 'Ribbon on complete'
+            except:
+                print 'An error occured with the ribbon command'
+            return 0
+
+        ##---------------Wireframe---------------##
+
+        if self.curtoken == self.wireframetok:
+            try:
+                commands = commands + ' '
+                command = commands.split(' ', 1)[1].rstrip()
+                if command == 'false' or command == 'off':
+                    cmd.hide('lines', 'vslselection')
+                    print 'Wireframe off complete'
+                elif command == 'true' or command == 'on' or command == '':
+                    cmd.show('lines', 'vslselection')
+                    print 'Wireframe on complete'
+                elif float(command)>=0 and float(command)<=1500:
+                    if '.' in command:
+                        command =  float(command)
+                    else:
+                        command =  float(command)/ 250
+                    cmd.show('sticks', 'vslselection')
+                    cmd.set('stick_radius', command)
+                    print 'Wireframe on complete'
+            except:
+                print 'An error occured with the wireframe command'
+                return 0
+            return 0
+
+        ##---------------Dots---------------##
+
+        if self.curtoken == self.dotstok:
+            try:
+                commands = commands + ' '
+                command = commands.split(' ', 1)[1].rstrip()
+                if command == 'false' or command == 'off' or command == '0':
+                    cmd.hide('dots', 'vslselection')
+                    print 'Dots off complete'
+                elif command == 'true' or command == 'on' or command == '':
+                    cmd.show('dots', 'vslselection')
+                    if self.solvent:
+                        cmd.set('dot_solvent', 'on')
+                    else:
+                        cmd.set('dot_solvent', 'off')
+                    cmd.set('dot_radius', self.radius)
+                    print 'Dots on complete'
+                elif int(command)>0 and int(command)<=1000:
+                    command = int(command)
+                    cmd.show('dots', 'vslselection')
+                    if self.solvent:
+                        cmd.set('dot_solvent', 'on')
+                    else:
+                        cmd.set('dot_solvent', 'off')
+                    cmd.set('dot_radius', self.radius)
+                    if command in range(1, 5):
+                        cmd.set('dot_density', 0)
+                    elif command in range(5, 20):
+                        cmd.set('dot_density', 1)
+                    elif command in range(20, 140):
+                        cmd.set('dot_density', 2)
+                    elif command in range(140, 625):
+                        cmd.set('dot_density', 3)
+                    elif command in range(325, 1000):
+                        cmd.set('dot_density', 4)
+                    print 'Dots on complete'
+            except:
+                print 'An error occured with the dots command'
+            return 0
+
+        ##---------------Surface--------------##
+
+        if self.curtoken == self.surfacetok:
+            try:
+                cmd.show('surface', 'vslselection')
+            except:
+                print 'An error has occurred with the surface command'
+            return 0
+
+        ##---------------Bond---------------##
+        if self.curtoken == self.bondtok:
+            try:
+                commands = commands + ' '
+                firstatom = commands.split(' ')[1].rstrip()
+                secondatom = commands.split(' ')[2].rstrip()
+                if commands.rstrip()[-1] == '+':
+                    cmd.bond('id ' + firstatom, 'id ' + secondatom)
+                    print 'To create a new bond, use bond <number> <number>.  Increasing bond order is not currently supported.  The bond specified has been created if it did not already exist'
+                elif commands.rstrip()[-4:] == 'pick':
+                    self.bondfirstatom = firstatom
+                    self.bondsecondatom = secondatom
+                elif firstatom == 'rotate':
+                    print 'PyMOL does not support rotation of bonds'
+                elif (int(firstatom) > 0 and int(secondatom) > 0):
+                    cmd.bond('id ' + firstatom, 'id ' + secondatom)
+                else:
+                    print 'That function is not supported by PyMOL'
+            except:
+                print 'An error has occurred with the bond command'
+            return 0
+
+        ##---------------Unbond---------------##
+        if self.curtoken == self.unbondtok:
+            try:
+                if int(commands.rstrip()[-1])>0:
+                    firstatom = commands.split(' ')[1].rstrip()
+                    secondatom = commands.split(' ')[2].rstrip()
+                    cmd.unbond('id ' + firstatom, 'id ' + secondatom)
+                elif self.bondfirstatom > 0 and self.bondsecondatom > 0:
+                    cmd.unbond(self.bondfirstatom, self.bondsecondatom)
+                else:
+                    print 'No selection was made.'
+            except:
+                print 'An error has occured with the unbond command'
+            return 0
+
+        ##---------------Zoom---------------##
+
+        if self.curtoken == self.zoomtok:
+            try:
+                commands = commands + ' '
+                command = commands.split(' ', 1)[1].rstrip()
+                cmd.select('VSLCenterSelection', self.centerselection)
+                if command == 'false' or command == 'off' or command == '':
+                    self.zoomnum = 0
+                    cmd.zoom('all', self.zoomnum)
+                    cmd.center(self.centerselection)
+                    print 'Zoom off complete'
+                elif command == 'true' or command == 'on':
+                    self.zoomnum = -25
+                    cmd.zoom('all', self.zoomnum)
+                    cmd.center(self.centerselection)
+                    print 'Zoom on complete'
+                elif int(command) in range(0, 100):
+                    self.zoomnum = int(command)
+                    self.zoomnum = -((self.zoomnum-100))
+                    print 'Zoom ' + str(self.zoomnum)
+                    cmd.zoom('all', self.zoomnum)
+                    cmd.center(self.centerselection)
+                elif int(command) in range(100, 5000):
+                    self.zoomnum = int(command)
+                    self.zoomnum = -((self.zoomnum-100)/20)
+                    print 'Zoom ' + str(self.zoomnum)
+                    cmd.zoom('all', self.zoomnum)
+                    cmd.center(self.centerselection)
+                else:
+                    print 'That function is not supported by PyMOL.'
+            except:
+                print 'Zoom did not execute properly.  Please revise your zoom command'
+            return 0
+
+        ##---------------Rotate--------------##		
+
+        if self.curtoken == self.rotatetok:
+            axis = commands.split()[1]
+            rotation = commands.split()[2]
+            if axis == 'z':
+                rotation = '-' + rotation
+            try:
+                cmd.rotate(axis, rotation)
+            except:
+                print 'The parameters you have given for the rotate command have been entered improperly.  Please rewrite them as rotate (axis) (rotation in degrees)'
+            return 0
+
+        ##---------------Translate---------------##
+
+        if self.curtoken == self.translatetok:
+            try:
+                commandlist = commands.split(' ')
+                if commandlist[1] == 'x':
+                    cmd.center('VSLCenterSelection')
+                    cmd.translate([int(commandlist[2]), 0, 0])
+                elif commandlist[1] == 'y':
+                    cmd.center('VSLCenterSelection')
+                    cmd.translate('[0,-' + commandlist[2] + ',0]')
+                elif commandlist[1] == 'z':
+                    cmd.center('VSLCenterSelection')
+                    cmd.translate('[0,0,-' + commandlist[2] + ']')
+                else:
+                    print 'That function is not supported by PyMOL at all'
+            except:
+                print 'Translate did not execute properly.  Please revise your translate command'
+            return 0
+
+        ##---------------Slab---------------##
+
+        if self.curtoken == self.slabtok:
+            try:
+                cmd.clip('near', -self.clip_dist_near)
+                commands = commands + ' '
+                command = commands.split(' ', 1)[1].rstrip()
+                if command == 'false' or command == 'off':
+                    self.clip_dist_near = 0
+                    print 'Slab off complete'
+                elif command == 'true' or command == 'on' or command == '':
+                    print self.clip_dist_near
+                    cmd.clip('near', self.clip_dist_near)
+                    print 'Slab on complete'
+                elif float(command)>=0 and float(command)<=100:
+                    command = float(command)
+                    self.clip_dist_near = command-100
+                    cmd.clip('near', self.clip_dist_near)
+                    print 'Slab on complete'
+            except:
+                print 'An error occured with the slab command'
+            return 0
+
+        ##---------------Depth---------------##
+
+        if self.curtoken == self.depthtok:
+            try:
+                cmd.clip('far', -self.clip_dist_far)
+                commands = commands + ' '
+                command = commands.split(' ', 1)[1].rstrip()
+                if command == 'false' or command == 'off':
+                    self.clip_dist_far = 0
+                    print 'Depth off complete'
+                elif command == 'true' or command == 'on' or command == '':
+                    cmd.clip('far', self.clip_dist_far)
+                    print 'Depth on complete'
+                elif float(command)>=0 and float(command)<=100:
+                    command = float(command)
+                    self.clip_dist_far = command
+                    cmd.clip('far', self.clip_dist_far)
+                    print 'Depth on complete'
+            except:
+                print 'An error occured with the depth command'
+            return 0
+
+        ##---------------hbonds---------------##
+
+        if self.curtoken == self.hbondtok:
+            try:
+                commands = commands + ' '
+                command = commands.split(' ', 1)[1].rstrip()
+                if command == 'false' or command == 'off':
+                    self._hbonds()
+                    print 'hbonds off complete'
+                elif command == 'true' or command == 'on' or command == '':
+                    print 'Starting hbonds on:'
+                    self._hbonds()
+                    print 'hbonds on complete'
+                else:
+                    print 'That function is not supported by PyMOL'
+            except:
+                print 'hbonds did not execute properly.  Check spelling and implementation of this hbonds command.'  
+            return 0
+
+        ##---------------ssbonds---------------##
+
+        if self.curtoken == self.ssbondtok:
+            try:
+                commands = commands + ' '
+                command = commands.split(' ', 1)[1].rstrip()
+                if command == 'false' or command == 'off':
+                    self._ssbonds()
+                    print 'ssbonds off complete'
+                elif command == 'true' or command == 'on' or command == '':
+                    print 'Starting hbonds on:'
+                    self._ssbonds()
+                    print 'ssbonds on complete'
+                else:
+                    print 'That function is not supported by PyMOL'
+            except:
+                print 'ssbonds did not execute properly.  Check spelling and implementation of this ssbonds command.'
+            return 0
+
+        ##---------------Backbone--------------##
+
+        if self.curtoken == self.backbonetok:
+            try:
+                commands = commands + ' '
+                command = commands.split(' ', 1)[1].rstrip()
+                cmd.set('ribbon_sampling', 20)
+                cmd.set('ribbon_smooth', 1)
+                cmd.set('ribbon_width', 0.02)
+                if command == 'false' or command == 'off':
+                    cmd.hide('ribbon' , 'vslselection')
+                    print 'Backbone off complete'
+                elif command == 'true' or command == 'on' or command == '':
+                    cmd.show('ribbon', 'vslselection')
+                    print 'Backbone on complete'
+                elif command == 'dash':
+                    print 'PyMOL does not include funcionality for this command.'
+                elif float(command)>=0 and float(command)<=500:
+                    if '.' in command:
+                        command = float(command) * 5
+                    else:
+                        command = float(command)/50
+                    cmd.show('ribbon' , 'vslselection')
+                    cmd.set('ribbon_width', command)
+                    print 'Backbone on complete'
+                else:
+                    print 'That function is not supported by PyMOL.'
+            except:
+                print 'An error occured while trying to display the backbone.'
+            return 0
+
+        ##---------------Monitor---------------##
+
+        if self.curtoken == self.monitortok:
+            try:
+                parameters = commands.split(' ')
+                if len(parameters) == 3:
+                    cmd.distance('monitor', 'id %s' % parameters[1],
+                        'id %s' % parameters[2])
+                    if not self.set_monitor:
+                        cmd.hide('labels' , 'vslselection')
+                elif len(parameters) == 2:
+                    command = parameters[1]
+                    if command == 'false' or command == 'off':
+                        cmd.hide('labels' , 'vslselection')
+                        cmd.hide('dashes' , 'vslselection')
+                        print 'Monitor off complete'
+                    elif command == 'true' or command == 'on' or command == '':
+                        pass
+                    else:
+                        print 'That function is not supported by PyMOL'
+                else:
+                    print 'That function is not supported by PyMOL'
+            except:
+                print 'An error occured while trying to display the labels.'
+            return 0
+
+        ##---------------Zap---------------##
+
+        if self.curtoken == self.zaptok:
+            print 'reinitialize'
+            cmd.reinitialize()
+            return 0
+
+        ##---------------Stereo---------------##
+
+        if self.curtoken == self.stereotok:
+            tmpstring = commands.split()[1]
+            if 'on' in tmpstring:
+                cmd.stereo('on')
+            elif 'off' in tmpstring:
+                cmd.stereo('off')
+            else:
+                print 'That function is not supported by PyMOL.'
+            return 0
+
+        ##---------------Map---------------##
+
+        if self.curtoken == self.maptok:
+            try:
+                parameters = commands[len(self.tokenident)+1:]
+                self._mapsupport(parameters)
+                return 0
+            except:
+                print 'An error occured with a map command.'
+
+        ##---------------Set---------------##
+
+        if self.curtoken == self.settok:
+            try:
+                parameters = commands[len(self.tokenident)+1:]
+                self._set_parameters(parameters)
+                return 0
+            except:
+                print 'An error occured with a set command.'
+
+        ##---------------Refresh---------------##
+
+        if 'refresh' in commands:
+            print 'refresh'
+            cmd.refresh()
+            return 0
+
+        ##---------------Reset---------------##
+
+        if 'reset' in commands:
+            print 'reset'
+            cmd.reset()
+            return 0
+
+        ##---------------Define---------------##
+
+        if self.curtoken == self.definetok:
+            defparams = commands[len(self.tokenident)+1:].split(' ', 1)
+            cmd.select(defparams[0], self._preselect(defparams[1]))
+            self.userdefinedgroups[ defparams[0] ] =  defparams[1]
+            return 0
+
+        ##-----------Pause/Wait---------------------##
+
+        if self.curtoken == self.pausetok:
+            keystroke = False
+            while not keystroke:
+                if event.char == event.keysym:
+                    keystroke = True
+            return 0
+
+        ##-------Quit/Exit/blank/comment------------##
+
+        if self.curtoken == self.exittok or self.curtoken == self.quittok or\
+            self.curtoken == 0:
+            return self.curtoken
+
+        ##---------------Not-Coded---------------##
+
+        not_coded = ['bulgarian', 'chinese', 'english', 'french', 'italian',
+            'japanese', 'russian', 'spanish', 'clipboard', 'colourmode',
+            'connect', 'help', 'molecule', 'notoggle', 'pause', 'wait', 'print',
+            'renumber', 'show', 'star', 'strands', 'structure']
+
+        if commands.split(' ', 1)[0] in not_coded:
+            print 'That command is not coded for using ConSCRIPT.  Support for that function may be added at a later date.'
+
+        print commands
+        print 'not implemented as a VSL command'
+        return 0
+
+CSC = ConSCRIPTConverter()
+
+def __init__(self):
+    '''banana banana banana'''
+    self.menuBar.addmenuitem('Plugin', 'command',
+                             'VSL Script Loader',
+                             label = 'ConSCRIPT 29 June 2010',
+                             command = vslcmd)
+
+def vslcmd(commands=None, args=None):
+    '''Handler for SBEVSL commands'''
+    if commands == None:
+        filename = tkFileDialog.askopenfilename(initialdir=HOME,
+            filetypes=[('Text Files', '.txt')], title='Run a RasMol script')
+        if filename:
+            fileobj = open(filename, 'rbU')
+            for line in fileobj:
+                CSC.handlecommand(line.rstrip())
+            fileobj.close()
+    else:
+        if args == ():
+            CSC.handlecommand(commands)
+        else:
+            CSC.handlecommand('%s %s' % (commands, ','.join(args).rstrip()))
+            
+def gettok(tok):
+    print CSC.gettok(tok)
+cmd.extend('gettok',gettok)
+
+def r(commands, *args, **keys):
+    '''banana banana banana'''
+    vslcmd(commands, args)
+
+def R(commands, *args, **keys):
+    '''banana banana banana'''
+    vslcmd(commands, args)
+
+def vsl(commands, *args, **keys):
+    '''banana banana banana'''
+    vslcmd(commands, args)
+
+def VSL(commands, *args, **keys):
+    '''banana banana banana'''
+    vslcmd(commands, args)
+
+def SBEVSL(commands, *args, **keys):
+    '''banana banana banana'''
+    vslcmd(commands, args)
+
+def sbevsl(commands, *args, **keys):
+    '''banana banana banana'''
+    vslcmd(commands, args)
+
+def RASMOL(commands, *args, **keys):
+    '''banana banana banana'''
+    vslcmd(commands, args)
+
+def rasmol(commands, *args, **keys):
+    '''banana banana banana'''
+    vslcmd(commands, args)
+
+cmd.extend('R', R)
+cmd.extend('r', r)
+cmd.extend('VSL', VSL)
+cmd.extend('vsl', vsl)
+cmd.extend('SBEVSL', SBEVSL)
+cmd.extend('sbevsl', sbevsl)
+cmd.extend('RASMOL', RASMOL)
+cmd.extend('rasmol', rasmol)
