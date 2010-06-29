@@ -836,10 +836,10 @@ def makemotif(mode):
     skip[0] = 0
     for i in range(1,11):
         g = pglob.GUI['motif_maker']['curorder'][i]
-        resi[g] = pglob.GUI['motif_maker']['resi'][g].get()
+        resi[g] = pglob.GUI['motif_maker']['resi'][g].get().strip()
         backbone[g] = pglob.GUI['motif_maker']['backbone'][g].get()
-        chain[g] = pglob.GUI['motif_maker']['chain'][g].get()
-        resn[g] = acceptresn(pglob.GUI['motif_maker']['resn'][g].get(),resi[g],chain[g])
+        chain[g] = pglob.GUI['motif_maker']['chain'][g].get().strip()
+        resn[g] = acceptresn(pglob.GUI['motif_maker']['resn'][g].get().strip(),resi[g],chain[g])
         skip[g] = False
         if resn[g] == '' and resi[g] == '' and chain[g] == '':
             ### this gives us the ability to skip whole blocks
@@ -874,13 +874,13 @@ def makemotif(mode):
                     pglob.GUI['motif_maker']['resi'][i]['state'] = tk.DISABLED
                     pglob.GUI['motif_maker']['chain'][i]['state'] = tk.DISABLED
                     pglob.GUI['motif_maker']['backbone'][i]['state'] = tk.DISABLED
-                    pglob.GUI['motif_maker']['canvas'].itemconfigure('resn%s'%pglob.GUI['motif_maker']['neworder'][i],
+                    pglob.GUI['motif_maker']['canvas'].itemconfigure('resn%s' % pglob.GUI['motif_maker']['neworder'][i],
                         text=pglob.GUI['motif_maker']['resn'][i].get())
-                    pglob.GUI['motif_maker']['canvas'].itemconfigure('chain%s'%pglob.GUI['motif_maker']['neworder'][i],
+                    pglob.GUI['motif_maker']['canvas'].itemconfigure('chain%s' % pglob.GUI['motif_maker']['neworder'][i],
                         text=pglob.GUI['motif_maker']['chain'][i].get())
-                    pglob.GUI['motif_maker']['canvas'].itemconfigure('resi%s'%pglob.GUI['motif_maker']['neworder'][i],
+                    pglob.GUI['motif_maker']['canvas'].itemconfigure('resi%s' % pglob.GUI['motif_maker']['neworder'][i],
                         text=pglob.GUI['motif_maker']['resi'][i].get())
-                    pglob.GUI['motif_maker']['canvas'].itemconfigure('back%s'%pglob.GUI['motif_maker']['neworder'][i],
+                    pglob.GUI['motif_maker']['canvas'].itemconfigure('back%s' % pglob.GUI['motif_maker']['neworder'][i],
                         text=pglob.GUI['motif_maker']['backbone'][i].get())
                 pglob.GUI['motif_maker']['canvas'].grid()
                 pglob.GUI['motif_maker']['canvas'].tag_bind('up','<Button-1>', pressup)
