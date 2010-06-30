@@ -1,4 +1,26 @@
-'''ConSCRIPT a Rasmol to Pymol converter'''
+'''ConSCRIPT a Rasmol to Pymol converter
+   ConSCRIPT (C) Copyright 2007-2010
+   S. Mottarella, P. Craig, H. Bernstein
+   GPL, No Warranty
+   
+/*************************** GPL NOTICES ******************************
+ *                                                                    *
+ * This program is free software; you can redistribute it and/or      *
+ * modify it under the terms of the GNU General Public License as     *
+ * published by the Free Software Foundation; either version 2 of     *
+ * (the License, or (at your option) any later version.               *
+ *                                                                    *
+ * This program is distributed in the hope that it will be useful,    *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of     *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the      *
+ * GNU General Public License for more details.                       *
+ *                                                                    *
+ * You should have received a copy of the GNU General Public License  *
+ * along with this program; if not, write to the Free Software        *
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA           *
+ * 02111-1307  USA                                                    *
+ *                                                                    *
+ **********************************************************************/'''
 from pymol import cmd
 import os
 import tkFileDialog
@@ -486,46 +508,46 @@ class ConSCRIPTConverter:
 
     ##---Apply Color to Selection--##
     def _ispredtok(self, abc):
-        '''banana banana banana'''
+        '''************************'''
         if (((abc)>=self.alphatok) and ((abc)<=self.smalltok)):
             return True
         else:
             return False
 
     def _predtokord(self, abc):
-        '''banana banana banana'''
+        '''************************'''
         if  ((abc)-self.alphatok):
             return True
         else:
             return False
 
     def _predtokchr(self, abc):
-        '''banana banana banana'''
+        '''************************'''
         if ((abc)+self.alphatok):
             return True
         else:
             return False
 
     def _isproptok(self, abc):
-        '''banana banana banana'''
+        '''************************'''
         if  (((abc)>=self.temperaturetok) and ((abc)<=self.altltok)):
             return True
         else:
             return False
 
     def _iscolourtoken(self, abc):
-        '''banana banana banana'''
+        '''************************'''
         if (((abc)>=self.blacktok) and ((abc)<=self.yellowtinttok)):
             return True
         else:
             return False
 
     def _token2colour(self, abc):
-        '''banana banana banana'''
+        '''************************'''
         return  ((abc)-self.blacktok)
 
     def _isimagetoken(self, abc):
-        '''banana banana banana'''
+        '''************************'''
         if (((((abc)>=self.giftok) and ((abc)<=self.ramprinttok)) or
             ((abc) == self.phipsitok))):
             return True
@@ -533,30 +555,30 @@ class ConSCRIPTConverter:
             return False
 
     def _ismoleculetoken(self, abc):
-        '''banana banana banana'''
+        '''************************'''
         if (((abc)>=self.pdbtok) and ((abc)<=self.cextok)):
             return True
         else:
             return False
 
     def _lookupkeyword(self, keyw):
-        '''banana banana banana'''
+        '''************************'''
         if keyw.lower() in self.vsltok:
             return self.vsltok[ keyw.lower() ]
         else:
             return self.identtok
 
     def _isidentchar(self, abc):
-        '''banana banana banana'''
+        '''************************'''
         if abc.isalnum() or abc == '$' or abc== '_':
             return True
         else:
             return False
 
     def _vslfetchtoken(self, commands):
-        '''banana banana banana'''
+        '''************************'''
         def debug():
-            '''banana banana banana'''
+            '''************************'''
             ###debug print 'curtoken, tokenptr, tokenstart %s %s %s' % (self.curtoken,
                 ###debug self.tokenptr, self.tokenstart)
         self.tokenstart = self.tokenptr
@@ -635,7 +657,7 @@ class ConSCRIPTConverter:
             return False
 
     def _vslparsecolour(self, commands):
-        '''banana banana banana'''
+        '''************************'''
         ###debug print 'vslparsecolour tokenptr, curtoken, p %s %s %s' % (self.tokenptr,
             ###debug self.curtoken, commands)
 
@@ -667,7 +689,7 @@ class ConSCRIPTConverter:
         return (False, [0., 0., 0.])
 
     def _apply_color(self, rgb, selection):
-        '''banana banana banana'''
+        '''************************'''
         rgb = rgb.replace(' ', '')
         cmd.set_color("vslc_%s" % rgb, rgb)
         cmd.color("vslc_%s" % rgb, selection)
@@ -675,7 +697,7 @@ class ConSCRIPTConverter:
 
     ##-----Color CPK-----------##
     def _color_cpk(self, selection):
-        '''banana banana banana'''
+        '''************************'''
         colstr = ' and (%s)' % selection
         self._apply_color(self.vslcpktable[12],  selection)
         self._apply_color(self.vslcpktable[4],  "(elem H)%s" % colstr)
@@ -771,7 +793,7 @@ class ConSCRIPTConverter:
 
     ##-----Select Function-----##
     def _select(self, allparameters):
-        '''banana banana banana'''
+        '''************************'''
         allparameters = allparameters.strip()
         if allparameters == 'false':
             return allparameters
@@ -981,14 +1003,14 @@ class ConSCRIPTConverter:
                 found = allparameters.split('=')
                 upper = int(found[1])
                 lower = int(found[1])
-            selection = 'id %s-%s' % lower, upper
+            selection = 'id %s-%s' % (lower, upper)
         else:
             selection = 'resi %s' % allparameters.replace(',', '+')
         return selection
 
     ## Handles all map commands
     def _mapsupport(self, parameters):
-        '''banana banana banana'''
+        '''************************'''
         parameterslist = parameters.split(' ')
         try:
             if int(parameterslist[0]):
@@ -1005,7 +1027,7 @@ class ConSCRIPTConverter:
 
     ## Handles all map commands.
     def _handlemap(self, parameterslist):
-        '''banana banana banana'''
+        '''************************'''
         goodlist = ['generate', 'level', 'color', 'zap']
         badlist = ['load', 'mask', 'resolution', 'restrict', 'save', 'select',
             'show', 'spacing', 'spread']
@@ -1065,7 +1087,7 @@ class ConSCRIPTConverter:
 
     ##Handles parameters that can be changed using the 'set' command
     def _set_parameters(self, parameters):
-        '''banana banana banana'''
+        '''************************'''
         not_coded = ['backfade', 'bondmode', 'bonds', 'cisangle', 'fontstroke',
             'hourglass ', 'kinemage', 'menus', 'strands', 'transparent',
             'vectps', 'write', 'boundbox', 'display', 'mouse', 'picking',
@@ -1251,7 +1273,7 @@ class ConSCRIPTConverter:
 
     ## Handles RGB Triplet for colors
     def _rgbtriplet(self, name, triplet):
-        '''banana banana banana'''
+        '''************************'''
         try:
             cmd.set_color(name, triplet)
         except:
@@ -1260,7 +1282,7 @@ class ConSCRIPTConverter:
 
     ## Defines hbonds for a structure
     def _hbonds(self):
-        '''banana banana banana'''
+        '''************************'''
         try:
             cmd.h_add('all')
             cmd.select('don',
@@ -1279,7 +1301,7 @@ class ConSCRIPTConverter:
 
     ## Defines ssbonds for a structure
     def _ssbonds(self):
-        '''banana banana banana'''
+        '''************************'''
         try:
             cmd.h_add('all')
             cmd.select('SSCys', '(elem S and resn Cys) and vslselection')
@@ -1292,7 +1314,7 @@ class ConSCRIPTConverter:
 
     ## Handle a command line
     def handlecommand(self, commands):
-        '''banana banana banana'''
+        '''************************'''
         self.tokenstart = 0 
         self.tokenptr = 0
         self.curtoken = 0
@@ -1302,7 +1324,7 @@ class ConSCRIPTConverter:
             return 0
 
         if(commands.replace(' ', '')[:1] == '#'):
-            print p
+            print commands
             return 0
         commands = commands.lower()
         self._vslfetchtoken(commands)
@@ -2068,7 +2090,7 @@ class ConSCRIPTConverter:
 CSC = ConSCRIPTConverter()
 
 def __init__(self):
-    '''banana banana banana'''
+    '''************************'''
     self.menuBar.addmenuitem('Plugin', 'command',
                              'VSL Script Loader',
                              label = 'ConSCRIPT 29 June 2010',
@@ -2078,7 +2100,8 @@ def vslcmd(commands=None, args=None):
     '''Handler for SBEVSL commands'''
     if commands == None:
         filename = tkFileDialog.askopenfilename(initialdir=HOME,
-            filetypes=[('Text Files', '.txt')], title='Run a RasMol script')
+            filetypes=[('RasMol Script', '.scr'),('Text Files', '.txt')], 
+            title='ConSCRIPT (C)Copyright 2007-10 GPL No Warranty')
         if filename:
             fileobj = open(filename, 'rbU')
             for line in fileobj:
@@ -2095,35 +2118,35 @@ def gettok(tok):
 cmd.extend('gettok',gettok)
 
 def r(commands, *args, **keys):
-    '''banana banana banana'''
+    '''************************'''
     vslcmd(commands, args)
 
 def R(commands, *args, **keys):
-    '''banana banana banana'''
+    '''************************'''
     vslcmd(commands, args)
 
 def vsl(commands, *args, **keys):
-    '''banana banana banana'''
+    '''************************'''
     vslcmd(commands, args)
 
 def VSL(commands, *args, **keys):
-    '''banana banana banana'''
+    '''************************'''
     vslcmd(commands, args)
 
 def SBEVSL(commands, *args, **keys):
-    '''banana banana banana'''
+    '''************************'''
     vslcmd(commands, args)
 
 def sbevsl(commands, *args, **keys):
-    '''banana banana banana'''
+    '''************************'''
     vslcmd(commands, args)
 
 def RASMOL(commands, *args, **keys):
-    '''banana banana banana'''
+    '''************************'''
     vslcmd(commands, args)
 
 def rasmol(commands, *args, **keys):
-    '''banana banana banana'''
+    '''************************'''
     vslcmd(commands, args)
 
 cmd.extend('R', R)
