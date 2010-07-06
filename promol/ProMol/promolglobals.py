@@ -5,7 +5,7 @@ import os
 import math
 import platform
 import cPickle
-VERSION = '4.0rc3.1'
+VERSION = '4.0rc3.2'
 PLATFORM = platform.system()
 PROMOL_DIR_PATH = os.path.dirname(__file__)
 try:
