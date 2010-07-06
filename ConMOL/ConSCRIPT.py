@@ -22,6 +22,8 @@
  *                                                                    *
  **********************************************************************/'''
 from pymol import cmd
+from pymol import util
+from pymol import stored
 import os
 import tkFileDialog
 from pymol.cgo import *
@@ -82,7 +84,11 @@ class ConSCRIPTConverter:
         self.curtoken = 0
         self.tokenident = ""
         self.tokenvalue = 0
-
+        self.not_coded = ['bulgarian', 'chinese', 'english', 'french', 'pause',
+            'italian', 'japanese', 'russian', 'spanish', 'clipboard', 'wait',
+            'colourmode', 'connect', 'help', 'molecule', 'notoggle', 'print',
+            'renumber', 'show', 'star', 'strands', 'structure']
+        
         ### /* Lexeme Tokens */
         self.identtok =       self._assigntok('ident')
         self.numbertok =      self._assigntok('number')
@@ -105,7 +111,8 @@ class ConSCRIPTConverter:
         self.definetok =      self._assigntok('define')
         self.delaytok =       self._assigntok('delay')
         self.depthtok =       self._assigntok('depth')
-        self.displaytok =     self._assigntok('display', 'mostrar', 'visualizza')
+        self.displaytok =     self._assigntok('display', 'mostrar',
+            'visualizza')
         self.echotok =        self._assigntok('echo')
         self.exittok =        self._assigntok('exit', 'salir')
         self.generatetok =    self._assigntok('generate')
@@ -121,7 +128,7 @@ class ConSCRIPTConverter:
         self.monitortok =     self._assigntok('monitor', 'monitors')
         self.movetok =        self._assigntok('move')
         self.notoggletok =    self._assigntok('notoggle')
-        self.pausetok =       self._assigntok('pause')
+        self.pausetok =       self._assigntok('pause', 'wait')
         self.printtok =       self._assigntok('print')
         self.quittok =        self._assigntok('quit')
         self.refreshtok =     self._assigntok('refresh')
@@ -147,7 +154,6 @@ class ConSCRIPTConverter:
         self.tracetok =       self._assigntok('trace')
         self.translatetok =   self._assigntok('translate', 'translation')
         self.viewtok =        self._assigntok('view')
-        self.waittok =        self._assigntok('wait', 'pause')
         self.wireframetok =   self._assigntok('wireframe', 'filodiferro',
             'fildiferro', 'mesh')
         self.writetok =       self._assigntok('write')
@@ -311,6 +317,7 @@ class ConSCRIPTConverter:
         self.typetok =        self._assigntok('type')
         self.potentialtok =   self._assigntok('potential')
         self.chargetok =      self._assigntok('charge', 'charges')
+        self.eastertok =      self._assigntok('easter')
         self.cpknewtok =      self._assigntok('cpknew')
 
         ### /* Variable Tokens */
@@ -427,7 +434,7 @@ class ConSCRIPTConverter:
         self.erroutscrpt =   19
         self.errbadmoldb =   20
         self.errnobond   =   21
-        self.errblocsel  =   22
+        self.errnosuppt  =   22
 
         self.msgstrs = {}
         self.msgstrs[self.errsyntax]  = "Invalid command syntax!"
@@ -452,6 +459,7 @@ class ConSCRIPTConverter:
         self.msgstrs[self.erroutscrpt]  = "Command only within a script!"
         self.msgstrs[self.errbadmoldb]  = "Molecule database not loaded!"
         self.msgstrs[self.errnobond]  = "Bond for rotation not picked!"
+        self.msgstrs[self.errnosuppt] = "That command is not supported!"
 
         self.vslcolourtable = {}
         self.vslcolourtable[self.blacktok] =      [  0/255.,   0/255.,   0/255.]
@@ -479,28 +487,131 @@ class ConSCRIPTConverter:
         self.vslcolourtable[self.yellowtok] =     [255/255., 255/255.,   0/255.]
         self.vslcolourtable[self.yellowtinttok] = [246/255., 246/255., 117/255.]
 
-        self.vslcpktable = {}
-        self.vslcpktable[0] =   "[ .7843, .7843, .7843 ]" #/*  0 Light Grey   */
-        self.vslcpktable[1] =   "[ .5607, .5607, 1.    ]" #/*  1 Sky Blue     */
-        self.vslcpktable[2] =   "[ .9411, 0.,    0.    ]" #/*  2 Red          */
-        self.vslcpktable[3] =   "[ 1.,    .7843, .1960 ]" #/*  3 Yellow       */
-        self.vslcpktable[4] =   "[ 1.,    1.,    1.    ]" #/*  4 White        */
-        self.vslcpktable[5] =   "[ 1.,    .7529, .7960 ]" #/*  5 Pink         */
-        self.vslcpktable[6] =   "[ .8549, .6470, .1254 ]" #/*  6 Golden Rod   */
-        self.vslcpktable[7] =   "[ 0.,    0.,    1.    ]" #/*  7 Blue         */
-        self.vslcpktable[8] =   "[ 1.,    .6470, 0.    ]" #/*  8 Orange       */
-        self.vslcpktable[9] =   "[ .5019, .5019, .5647 ]" #/*  9 Dark Grey    */
-        self.vslcpktable[10] =  "[ .6470, .1647, .1647 ]" #/* 10 Brown        */
-        self.vslcpktable[11] =  "[ .6274, .1254, .9411 ]" #/* 11 Purple       */
-        self.vslcpktable[12] =  "[ 1.,    .0784, .5764 ]" #/* 12 Deep Pink    */
-        self.vslcpktable[13] =  "[ 0.,    1.,    0.    ]" #/* 13 Green        */
-        self.vslcpktable[14] =  "[ .6980, .1333, .1333 ]" #/* 14 Fire Brick   */
-        self.vslcpktable[15] =  "[ .1333, .5450, .1333 ]" #/* 15 Forest Green */
+        #the original CPK plastic models developed by Corey, Pauling and Kultun
+        self.cpkdict = {}
+        self.cpkdict['Ni'] =  '[0.647, 0.165, 0.165]'
+        self.cpkdict['S'] =   '[1.000, 1.000, 0.000]'
+        self.cpkdict['Na'] =  '[0.000, 0.000, 1.000]'
+        self.cpkdict['Mg'] =  '[0.133, 0.139, 0.133]'
+        self.cpkdict['Li'] =  '[0.698, 0.133, 0.133]'
+        self.cpkdict['Ti'] =  '[0.502, 0.502, 0.565]'
+        self.cpkdict['Ba'] =  '[1.000, 0.647, 0.000]'
+        self.cpkdict['Fe'] =  '[1.000, 0.647, 0.000]'
+        self.cpkdict['Br'] =  '[0.647, 0.165, 0.165]'
+        self.cpkdict['He'] =  '[1.000, 0.753, 0.796]'
+        self.cpkdict['C'] =   '[0.784, 0.784, 0.784]'
+        self.cpkdict['B'] =   '[0.000, 1.000, 0.000]'
+        self.cpkdict['F'] =   '[0.855, 0.647, 0.125]'
+        self.cpkdict['I'] =   '[0.627, 0.125, 0.941]'
+        self.cpkdict['H'] =   '[1.000, 1.000, 1.000]'
+        self.cpkdict['Mn'] =  '[0.502, 0.502, 0.565]'
+        self.cpkdict['O'] =   '[1.000, 0.000, 0.000]'
+        self.cpkdict['N'] =   '[0.561, 0.561, 1.000]'
+        self.cpkdict['P'] =   '[1.000, 0.647, 0.000]'
+        self.cpkdict['Si'] =  '[0.855, 0.647, 0.125]'
+        self.cpkdict['UNK'] = '[1.000, 0.078, 0.576]'
+        self.cpkdict['Zn'] =  '[0.647, 0.165, 0.165]'
+        self.cpkdict['Ag'] =  '[0.502, 0.502, 0.565]'
+        self.cpkdict['Cl'] =  '[0.000, 1.000, 0.000]'
+        self.cpkdict['Ca'] =  '[0.502, 0.502, 0.565]'
+        self.cpkdict['Al'] =  '[0.502, 0.502, 0.565]'
+        self.cpkdict['Au'] =  '[0.855, 0.647, 0.125]'
+        self.cpkdict['Cr'] =  '[0.502, 0.502, 0.565]'
+        self.cpkdict['Cu'] =  '[0.647, 0.165, 0.165]'
+        #CPKNew Based off the original CPK plastic models
+        self.cpknewdict = {}
+        self.cpknewdict['Ni'] =  '[0.502, 0.157, 0.157]'
+        self.cpknewdict['S'] =   '[1.000, 1.000, 0.000]'
+        self.cpknewdict['Na'] =  '[0.000, 0.000, 1.000]'
+        self.cpknewdict['Mg'] =  '[0.133, 0.139, 0.133]'
+        self.cpknewdict['Li'] =  '[0.698, 0.129, 0.129]'
+        self.cpknewdict['Ti'] =  '[0.412, 0.412, 0.412]'
+        self.cpknewdict['Ba'] =  '[1.000, 0.667, 0.000]'
+        self.cpknewdict['Fe'] =  '[1.000, 0.667, 0.000]'
+        self.cpknewdict['Br'] =  '[0.502, 0.157, 0.157]'
+        self.cpknewdict['He'] =  '[1.000, 0.753, 0.796]'
+        self.cpknewdict['C'] =   '[0.827, 0.827, 0.827]'
+        self.cpknewdict['B'] =   '[0.000, 1.000, 0.000]'
+        self.cpknewdict['F'] =   '[0.855, 0.647, 0.125]'
+        self.cpknewdict['I'] =   '[0.627, 0.125, 0.941]'
+        self.cpknewdict['H'] =   '[1.000, 1.000, 1.000]'
+        self.cpknewdict['Mn'] =  '[0.412, 0.412, 0.412]'
+        self.cpknewdict['O'] =   '[1.000, 0.000, 0.000]'
+        self.cpknewdict['N'] =   '[0.529, 0.808, 0.922]'
+        self.cpknewdict['P'] =   '[1.000, 0.667, 0.000]'
+        self.cpknewdict['Si'] =  '[0.855, 0.647, 0.125]'
+        self.cpknewdict['UNK'] = '[1.000, 0.086, 0.569]'
+        self.cpknewdict['Zn'] =  '[0.502, 0.157, 0.157]'
+        self.cpknewdict['Ag'] =  '[0.412, 0.412, 0.412]'
+        self.cpknewdict['Cl'] =  '[0.000, 1.000, 0.000]'
+        self.cpknewdict['Ca'] =  '[0.412, 0.412, 0.412]'
+        self.cpknewdict['Al'] =  '[0.412, 0.412, 0.412]'
+        self.cpknewdict['Au'] =  '[0.855, 0.647, 0.125]'
+        self.cpknewdict['Cr'] =  '[0.412, 0.412, 0.412]'
+        self.cpknewdict['Cu'] =  '[0.502, 0.157, 0.157]'
+        #Shapely colors based off of Bob Fletterick's "Shapely Models"
+        self.shapelydict = {}
+        self.shapelydict['ILE'] =      '[0.000, 0.298, 0.000]'
+        self.shapelydict['GLN'] =      '[1.000, 0.298, 0.298]'
+        self.shapelydict['GLX'] =      '[1.000, 0.000, 1.000]'
+        self.shapelydict['GLY'] =      '[1.000, 1.000, 1.000]'
+        self.shapelydict['PCA'] =      '[1.000, 0.000, 1.000]'
+        self.shapelydict['GLU'] =      '[0.400, 0.000, 0.000]'
+        self.shapelydict['CYS'] =      '[1.000, 1.000, 0.439]'
+        self.shapelydict['ASP'] =      '[0.627, 0.000, 0.259]'
+        self.shapelydict['SER'] =      '[1.000, 0.439, 0.259]'
+        self.shapelydict['LYS'] =      '[0.278, 0.278, 0.722]'
+        self.shapelydict['PRO'] =      '[0.322, 0.322, 0.322]'
+        self.shapelydict['ASX'] =      '[1.000, 0.000, 1.000]'
+        self.shapelydict['ASN'] =      '[1.000, 0.486, 0.439]'
+        self.shapelydict['A'] =        '[0.627, 0.627, 1.000]'
+        self.shapelydict['C'] =        '[1.000, 0.549, 0.294]'
+        self.shapelydict['Special'] =  '[0.369, 0.000, 0.369]'
+        self.shapelydict['VAL'] =      '[1.000, 0.549, 1.000]'
+        self.shapelydict['Backbone'] = '[0.722, 0.722, 0.722]'
+        self.shapelydict['THR'] =      '[0.722, 0.298, 0.000]'
+        self.shapelydict['HIS'] =      '[0.439, 0.439, 1.000]'
+        self.shapelydict['T'] =        '[0.627, 1.000, 0.627]'
+        self.shapelydict['TRP'] =      '[0.310, 0.275, 0.000]'
+        self.shapelydict['UNK'] =      '[1.000, 0.000, 1.000]'
+        self.shapelydict['HYP'] =      '[1.000, 0.000, 1.000]'
+        self.shapelydict['G'] =        '[1.000, 0.439, 0.439]'
+        self.shapelydict['PHE'] =      '[0.325, 0.298, 0.259]'
+        self.shapelydict['ALA'] =      '[0.549, 1.000, 0.549]'
+        self.shapelydict['MET'] =      '[0.722, 0.627, 0.259]'
+        self.shapelydict['LEU'] =      '[0.271, 0.369, 0.271]'
+        self.shapelydict['ARG'] =      '[0.000, 0.000, 0.486]'
+        self.shapelydict['TYR'] =      '[0.549, 0.439, 0.298]'
+        #amino colors according to traditional amino acid properties
+        self.aminodict = {}
+        self.aminodict['CYS'] = '[0.902, 0.902, 0.000]'
+        self.aminodict['UNK'] = '[0.745, 0.627, 0.431]'
+        self.aminodict['ASP'] = '[0.902, 0.902, 0.039]'
+        self.aminodict['SER'] = '[0.980, 0.588, 0.000]'
+        self.aminodict['GLN'] = '[0.000, 0.863, 0.863]'
+        self.aminodict['LYS'] = '[0.078, 0.353, 1.000]'
+        self.aminodict['PRO'] = '[0.863, 0.588, 0.510]'
+        self.aminodict['GLY'] = '[0.922, 0.922, 0.922]'
+        self.aminodict['THR'] = '[0.980, 0.588, 0.000]'
+        self.aminodict['PHE'] = '[0.196, 0.196, 0.667]'
+        self.aminodict['ASN'] = '[0.000, 0.863, 0.863]'
+        self.aminodict['HIS'] = '[0.510, 0.510, 0.824]'
+        self.aminodict['MET'] = '[0.902, 0.902, 0.000]'
+        self.aminodict['ILE'] = '[0.059, 0.510, 0.059]'
+        self.aminodict['LEU'] = '[0.059, 0.510, 0.059]'
+        self.aminodict['ARG'] = '[0.078, 0.353, 1.000]'
+        self.aminodict['TRP'] = '[0.706, 0.353, 0.706]'
+        self.aminodict['ALA'] = '[0.784, 0.784, 0.784]'
+        self.aminodict['VAL'] = '[0.059, 0.510, 0.059]'
+        self.aminodict['GLU'] = '[0.902, 0.902, 0.039]'
+        self.aminodict['TYR'] = '[0.196, 0.196, 0.667]'
         
     def gettok(self, tok):
+        '''returns token number of a specified command'''
         return self.vsltok[tok.lower()]
     
     def _assigntok(self, *args):
+        '''assigns tokens incrementally and assigns args to a dictionary'''
         self.assign += 1
         for arg in args:
             self.vsltok[arg.lower()] = self.assign
@@ -579,92 +690,92 @@ class ConSCRIPTConverter:
         '''************************'''
         def debug():
             '''************************'''
-            ###debug print 'curtoken, tokenptr, tokenstart %s %s %s' % (self.curtoken,
-                ###debug self.tokenptr, self.tokenstart)
+            print 'curtoken, tokenptr, tokenstart %s %s %s' % (self.curtoken,
+                self.tokenptr, self.tokenstart)
         self.tokenstart = self.tokenptr
         self.curtoken = 0
         self.tokenident = ""
         self.tokenvalue = 0
         if self.tokenptr >= len(commands):
-            debug()
+            #**debug()
             self.curtoken = 0
             return False
         while self.tokenptr < len(commands):
-            ch =  commands[self.tokenptr:self.tokenptr+1]
-            if not ch.isspace():
+            chm =  commands[self.tokenptr:self.tokenptr+1]
+            if not chm.isspace():
                 break
             self.tokenptr += 1
         self.tokenstart = self.tokenptr
-        debug()
+        #**debug()
         if self.tokenptr < len(commands):
-            ch = commands[self.tokenptr]
-            ###debug print 'Starting scan with ch ='+ch
-            if ch == '#':
-                debug()
+            chm = commands[self.tokenptr]
+            #**print 'Starting scan with chm ='+chm
+            if chm == '#':
+                #**debug()
                 self.curtoken = 0
                 return False
             self.tokenptr += 1
-            if ch.isalpha():
-                ###debug print ' First character is alpha'
+            if chm.isalpha():
+                #**print ' First character is alpha'
                 tokenlength = 1
                 tokenidentl = []
-                tokenidentl.append(ch.upper())
+                tokenidentl.append(chm.upper())
                 while self.tokenptr < len(commands) and tokenlength < 32 and\
                     self._isidentchar(commands[self.tokenptr]) == True:
-                    ch = commands[self.tokenptr]
+                    chm = commands[self.tokenptr]
                     self.tokenptr += 1
-                    tokenidentl.append(ch.upper())
+                    tokenidentl.append(chm.upper())
                     tokenlength += 1
                 if tokenlength != 32:
                     self.tokenident = ''.join(tokenidentl)
                     self.curtoken = self._lookupkeyword(self.tokenident)
-                    debug()
+                    #**debug()
                 else:
-                    debug()
-            elif ch.isdigit():
-                ###debug print ' First character is digit '
-                self.tokenvalue = int(ch)
+                    #**debug()
+                    pass
+            elif chm.isdigit():
+                #**print ' First character is digit '
+                self.tokenvalue = int(chm)
                 while self.tokenptr < len(commands):
-                    ch = commands[self.tokenptr]
-                    if ch == '#' or not ch.isdigit():
+                    chm = commands[self.tokenptr]
+                    if chm == '#' or not chm.isdigit():
                         break
                     self.tokenptr += 1
-                    self.tokenvalue = 10*self.tokenvalue + int(ch)
+                    self.tokenvalue = 10*self.tokenvalue + int(chm)
                 self.curtoken = self.numbertok
-                debug()
-            elif (ch == '\'') or (ch == '\"') or (ch == '`'):
-                ###debug print ' First character is quot '
+                #**debug()
+            elif (chm == '\'') or (chm == '\"') or (chm == '`'):
+                #**print ' First character is quot '
                 tokenlength = 0
                 tokenidentl = []
-                tokenidentl.append(ch)
-                while  (self.tokenptr < len(commands)) and (tokenlength<128) and\
-                    (commands[self.tokenptr]!=ch):
+                tokenidentl.append(chm)
+                while self.tokenptr < len(commands) and tokenlength < 128 and\
+                    (commands[self.tokenptr]!=chm):
                     tokenidentl.append(commands[self.tokenptr])
                     self.tokenptr += 1
-                if ch == commands[self.tokenptr]:
+                if chm == commands[self.tokenptr]:
                     self.tokenptr += 1
                     self.tokenident = ''.join(tokenidentl)
                     self.curtoken = self.stringtok
-                    debug()
+                    #**debug()
                 else:
-                    debug()
+                    #**debug()
+                    pass
             else:
-                self.curtoken = -ord(ch)
-                debug()
+                self.curtoken = -ord(chm)
+                #**debug()
         else:
-            debug()
+            #**debug()
             self.curtoken = 0
             return False
 
-    def _vslparsecolour(self, commands):
+    def _vslparsecolour(self, commands, tok=False):
         '''************************'''
-        ###debug print 'vslparsecolour tokenptr, curtoken, p %s %s %s' % (self.tokenptr,
-            ###debug self.curtoken, commands)
-
+        #**print 'parsecolour tokenptr, curtoken, p %s %s %s' % (self.tokenptr,
+            #**self.curtoken, commands)
         if self._iscolourtoken(self.curtoken) == True:
             rgb = self.vslcolourtable[self.curtoken]
-            ###debug print ' rgb '+str(rgb)
-            return (True, rgb)
+            #**print ' rgb '+str(rgb)
         elif self.curtoken == -ord('['):
             rgb = []
             for i in range(5):
@@ -684,41 +795,220 @@ class ConSCRIPTConverter:
                 self._vslfetchtoken(commands)
                 if self.curtoken != -ord(']'):
                     print self.msgstrs[self.errnotbrac]
-                else:
-                    return (True, rgb)
-        return (False, [0., 0., 0.])
+        elif tok == self.atomtok:
+            if self.curtoken == self.altltok:
+                stored.alternate = []
+                set_colors = []
+                conformers = {}
+                cmd.iterate(self.vslselectionsaved,
+                    'stored.alternate.append((resi, alt))')
+                altlcolors = [self.cyantok, self.greentok, self.magentatok, 
+                    self.orangetok, self.redtok, self.violettok, self.purpletok,
+                    self.yellowtok]
+                cmd.set_color('NoConformer', self.vslcolourtable[self.bluetok])
+                cmd.color('NoConformer', self.vslselectionsaved)
+                for alt in stored.alternate:
+                    if alt[0] not in conformers:
+                        conformers[alt[0]] = []
+                    if alt[1] != '' and alt[1] not in conformers[alt[0]]:
+                        conformers[alt[0]].append(alt[1])
+                for alternate in conformers:
+                    if conformers[alternate] == []:
+                        continue
+                    colrsi = 0
+                    for alt in conformers[alternate]:
+                        if alt == '':
+                            continue
+                        color_to_set = 'Con%s' % alt
+                        if color_to_set not in set_colors:
+                            cmd.set_color(color_to_set,
+                                self.vslcolourtable[altlcolors[colrsi]])
+                            set_colors.append(color_to_set)
+                        cmd.color(color_to_set, '%s and alt %s' % (
+                            self.vslselectionsaved, alt))
+                        colrsi += 1
+                        if colrsi == 8:
+                            colrsi = 0
+            elif self.curtoken == self.aminotok:
+                self._shapely(amino=True)
+            elif self.curtoken == self.chaintok:
+                util.cbc(self.vslselectionsaved)
+            elif self.curtoken == self.chargetok:
+                cmd.spectrum('b', 'rainbow_rev', 
+                    '%s and not r. hoh' % self.vslselectionsaved)
+            elif self.curtoken == self.cpktok:
+                self._cpk()
+            elif self.curtoken == self.cpknewtok:
+                self._cpk(True)
+            elif self.curtoken == self.grouptok:
+                util.chainbow(self.vslselectionsaved)
+            elif self.curtoken == self.modeltok:
+                states = cmd.count_states()
+                cmd.select('states', 'all')
+                try:
+                    cmd.split_states('states')
+                except:
+                    pass
+                tocolour = self._interpolate_colour(1, states)
+                for toc in tocolour:
+                    zeros = 4-len(str(tocolour[toc][0]))
+                    cselec = 'states_%s%s' % ('0'*zeros, tocolour[toc][0])
+                    cmd.color(tocolour[toc][1], cselec)
+            elif self.curtoken == self.shapelytok:
+                self._shapely()
+            elif self.curtoken == self.structuretok:
+                cmd.set_color('helix', [.941, 0., .502])
+                cmd.set_color('sheet', [1., 1., 0.])
+                cmd.set_color('turn', [.376, .502, 1.])
+                cmd.color('helix', 'ss h')
+                cmd.color('sheet', 'ss s')
+                cmd.color('turn', "ss ''")
+                cmd.color('white', "not (ss h or ss s or ss '')")
+            elif self.curtoken == self.temperaturetok:
+                stored.temp = []
+                cmd.iterate(self.vslselectionsaved,'stored.temp.append(b)')
+                try:
+                    cmd.spectrum('b', 'rainbow', 
+                        '%s and not r. hoh' % self.vslselectionsaved)
+                except ValueError:
+                    return False
+            elif self.curtoken == self.eastertok:
+                stored.temp = []
+                cmd.iterate(self.vslselectionsaved,'stored.temp.append(b)')
+                try:
+                    import math
+                    minn = int(math.floor(min(stored.temp)))
+                    maxx = int(math.ceil(max(stored.temp)))
+                    tocolour = {}
+                    itr = 0
+                    for col in range(minn, maxx + 1, 2):
+                        tocolour[itr] = col
+                        itr += 1
+                except ValueError:
+                    return False
+                for toc in tocolour:
+                    if (toc+1) not in tocolour:
+                        cselec = '(b = %s) or (b > %s)' % (tocolour[toc],
+                            tocolour[toc])
+                    else:
+                        cselec = '(b = %s) or (b > %s and b < %s)' % (
+                            tocolour[toc], tocolour[toc], tocolour[toc+1])
+                    cmd.color(tocolour[toc], cselec)
+            elif self.curtoken == self.usertok:
+                return False
+            return True
+        else:
+            return False
+        try:
+            name = ('vslc_%s' % rgb).replace(' ','')
+            cmd.set_color(name, rgb)
+            return name
+        except:
+            print "RGB Triplet not valid."
+            return False
+    
+    def _interpolate_colour(self, minn, maxx):
+        """Interpolates from red to blue"""
+        minn = int(minn)
+        maxx = int(maxx)
+        steps = []
+        tocol = {}
+        intrp = {}
+        colours = [1., 0., 0.], [0., 1., 0.], [0., 0., 1.]
+        stti, midi, endi = 0, 1, 2
+        stt, mid, end = colours
+        for step in range(minn, maxx + 1):
+            steps.append(step)
+        stepsl = len(steps)/4.
+        cnt = .5
+        for step in steps:
+            if cnt <= stepsl:
+                abc = 1.
+                efg = mid[midi]*(cnt/stepsl)
+                hij = 0.
+            elif cnt <= stepsl*2.:
+                abc = 1. - stt[stti]*((cnt-stepsl)/stepsl)
+                efg = 1.
+                hij = 0.
+            elif cnt <= stepsl*3.:
+                abc = 0.
+                efg = 1.
+                hij = end[endi]*((cnt-(stepsl*2.))/stepsl)
+            else:
+                abc = 0
+                efg = 1. - mid[midi]*((cnt-(stepsl*3.))/stepsl)
+                hij = 1.
+            intrp[step] = [abc, efg, hij]
+            cnt += 1.
+        #**import pprint
+        #**pprint.pprint(intrp)
+        itr = 0
+        for trp in intrp:
+            fstr = 'itp%.f' % (trp)
+            cmd.set_color(fstr, intrp[trp])
+            tocol[itr] = (trp, fstr)
+            itr += 1
+        return tocol
+    
+    def _shapely(self, amino=False):
+        '''Color by shapely or amino'''
+        colorindex = {}
+        selection = self.vslselectionsaved
+        for i in cmd.get_color_indices():
+            key, val = i
+            colorindex[key] = val
+        if amino:
+            shp = self.aminodict
+            suffix = 'ami'
+        else:
+            shp = self.shapelydict
+            suffix = 'shp'
+        for key in shp:
+            color = '%s%s' % (key, suffix)
+            if color not in colorindex:
+                cmd.set_color(color, shp[key])
+        unk = 'not r. '
+        for key in shp:
+            if key == 'Backbone':
+                continue
+            if key == 'Special':
+                continue
+            if key != 'UNK':
+                cmd.color('%s%s' % (key, suffix),
+                    '(r. %s & %s)' % (key, selection))
+                unk += '%s+' % key
+        cmd.color('UNK%s' % suffix, '((%s) & %s)' % (unk[:-1], selection))
 
-    def _apply_color(self, rgb, selection):
-        '''************************'''
-        rgb = rgb.replace(' ', '')
-        cmd.set_color("vslc_%s" % rgb, rgb)
-        cmd.color("vslc_%s" % rgb, selection)
-        return
-
-    ##-----Color CPK-----------##
-    def _color_cpk(self, selection):
-        '''************************'''
-        colstr = ' and (%s)' % selection
-        self._apply_color(self.vslcpktable[12],  selection)
-        self._apply_color(self.vslcpktable[4],  "(elem H)%s" % colstr)
-        self._apply_color(self.vslcpktable[14], "(elem He)%s" % colstr)
-        self._apply_color(self.vslcpktable[13], "(elem He)%s" % colstr)
-        self._apply_color(self.vslcpktable[0],  "(elem C)%s" % colstr)
-        self._apply_color(self.vslcpktable[1],  "(elem N)%s" % colstr)
-        self._apply_color(self.vslcpktable[2],  "(elem O)%s" % colstr)
-        self._apply_color(self.vslcpktable[6],  "(elem Au+F+Si)%s" % colstr)
-        self._apply_color(self.vslcpktable[7],  "(elem Na)%s" % colstr)
-        self._apply_color(self.vslcpktable[15], "(elem Mg)%s" % colstr)
-        self._apply_color(self.vslcpktable[9],  "(elem Ca+Mn+Al+Ti+Cr+Ag)%s" % colstr)
-        self._apply_color(self.vslcpktable[8],  "(elem P+Fe+Ba)%s" % colstr)
-        self._apply_color(self.vslcpktable[3],  "(elem S)%s" % colstr)
-        self._apply_color(self.vslcpktable[11], "(elem I)%s" % colstr)
-        self._apply_color(self.vslcpktable[10], "(elem Br+Zn+Cu+Ni)%s" % colstr)
-        return
+    def _cpk(self, cpknew=False):
+        '''Color in cpk or cpknew'''
+        colorindex = {}
+        selection = self.vslselectionsaved
+        for i in cmd.get_color_indices():
+            key, val = i
+            colorindex[key] = val
+        if cpknew:
+            cpk = self.cpknewdict
+            suffix = 'cpknew'
+        else:
+            cpk = self.cpkdict
+            suffix = 'cpk'
+        for key in cpk:
+            color = '%s%s' % (key, suffix)
+            if color not in colorindex:
+                cmd.set_color(color, cpk[key])
+        unk = 'not e. '
+        for key in cpk:
+            if key != 'UNK':
+                cmd.color('%s%s' % (key, suffix),
+                    '(e. %s & %s)' % (key, selection))
+                unk += '%s+' % key
+        cmd.color('UNK%s' % suffix, '((%s) & %s)' % (unk[:-1], selection))
 
     def _preselect(self, presel):
+        '''Run before _select to seperate commands 
+           from parentheses and others'''
         selection = ''
-        ###debug print presel
+        #**print presel
         preseldict = {}
         preselpos = 0
         curpos = 0
@@ -769,8 +1059,8 @@ class ConSCRIPTConverter:
                 preseldict[preselpos] += iii
             curpos += 1
         
-        ###debug import pprint
-        ###debug pprint.pprint(preseldict)
+        #**import pprint
+        #**pprint.pprint(preseldict)
         if len(preseldict) == 0:
             return self._select('')
         restrict = -1
@@ -915,13 +1205,17 @@ class ConSCRIPTConverter:
         ## dictionary data structure { RasMol: PyMOL }
         predefinedlists = {}
         predefinedlists['selected'] = ' vslselection '
-        predefinedlists['sidechain'] = ' resn asp+glu+arg+lys+his+asn+thr+cys+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro+a+t+c+g and not name o1p+o2p+o3p+p+c1*+c2*+c3*+c4*+c5*+o2*+o3*+o4*+o5*+c+o+n+ca '
-        predefinedlists['surface'] = ' resn gly+ser+thr+lys+asp+asn+glu+pro+arg+gln+tyr+his '
+        predefinedlists['sidechain'] = ' resn asp+glu+arg+lys+his+asn+thr+cys+\
+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro+a+t+c+g and not name o1p+o2p+\
+o3p+p+c1*+c2*+c3*+c4*+c5*+o2*+o3*+o4*+o5*+c+o+n+ca '
+        predefinedlists['surface'] = ' resn gly+ser+thr+lys+asp+asn+glu+pro+arg\
++gln+tyr+his '
         predefinedlists['nucleic'] = ' resn a+t+c+g '
         predefinedlists['aliphatic'] = ' resn gly+ala+leu+val+ile '
         predefinedlists['pyrimidine'] = ' resn c+t '
         predefinedlists['buried'] = ' resn ala+leu+val+ile+phe+cys+met+trp '
-        predefinedlists['protein'] = ' resn asp+glu+arg+lys+his+asn+thr+cys+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro '
+        predefinedlists['protein'] = ' resn asp+glu+arg+lys+his+asn+thr+cys+gln\
++tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro '
         predefinedlists['purine'] = ' resn a+g '
         predefinedlists['sheet'] = ' ss s '
         predefinedlists['hetero'] = ' hetatm '
@@ -929,20 +1223,27 @@ class ConSCRIPTConverter:
         predefinedlists['helix'] = ' ss h '
         predefinedlists['basic'] = ' resn arg+lys+his '
         predefinedlists['acidic'] = ' resn asp+glu '
-        predefinedlists['amino'] = ' resn gln+asn+asp+glu+arg+lys+his+thr+cys+tyr+ser+gly+trp+phe+pro+leu+val+ile+met'
-        predefinedlists['cystine'] = ' (byres (((all) & r. CYS+CYX & n. SG) & bound_to ((all) & r. CYS+CYX & n. SG))) & n. CA+CB+SG'
-        predefinedlists['polar'] = ' resn asp+glu+arg+lys+his+asn+thr+cys+gln+ser+gly+tyr '
+        predefinedlists['amino'] = ' resn gln+asn+asp+glu+arg+lys+his+thr+cys+\
+tyr+ser+gly+trp+phe+pro+leu+val+ile+met'
+        predefinedlists['cystine'] = ' (byres (((all) & r. CYS+CYX & n. SG) & \
+bound_to ((all) & r. CYS+CYX & n. SG))) & n. CA+CB+SG'
+        predefinedlists['polar'] = ' resn asp+glu+arg+lys+his+asn+thr+cys+gln+\
+ser+gly+tyr '
         predefinedlists['medium'] = ' resn val+thr+asp+asn+pro+cys '
-        predefinedlists['backbone'] = ' name o1p+o2p+o3p+p+c1*+c2*+c3*+c4*+c5*+o2*+o3*+o4*+o5*+c+o+n+ca '
+        predefinedlists['backbone'] = ' name o1p+o2p+o3p+p+c1*+c2*+c3*+c4*+c5*+\
+o2*+o3*+o4*+o5*+c+o+n+ca '
         predefinedlists['hoh'] = ' resn hoh '
         predefinedlists['water'] = ' resn hoh '
-        predefinedlists['neutral'] = ' resn asn+thr+cys+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro '
+        predefinedlists['neutral'] = ' resn asn+thr+cys+gln+tyr+ser+gly+ala+leu\
++val+ile+met+trp+phe+pro '
         predefinedlists['alpha'] = ' name ca '
         predefinedlists['cyclic'] = ' resn pro+phe+trp+tyr+his '
-        predefinedlists['large'] = ' resn glu+arg+lys+his+gln+tyr+leu+ile+met+trp+phe '
+        predefinedlists['large'] = ' resn glu+arg+lys+his+gln+tyr+leu+ile+met+\
+trp+phe '
         predefinedlists['turn'] = ' ss 1 '
         predefinedlists['small'] = ' resn gly+ala+ser '
-        predefinedlists['acyclic'] = ' resn met+ile+val+leu+ala+gly+ser+gln+thr+asn+cys+lys+arg+asp+glu '
+        predefinedlists['acyclic'] = ' resn met+ile+val+leu+ala+gly+ser+gln+thr\
++asn+cys+lys+arg+asp+glu '
         predefinedlists['hydrophobic'] = ' resn ala+leu+val+ile+met+trp+phe+pro '
         predefinedlists['charged'] = ' resn asp+glu+arg+lys+his '
         ## Amino Acids as they appear in both RasMol and PyMOL
@@ -970,7 +1271,7 @@ class ConSCRIPTConverter:
                 if self.hetero:
                     selection = 'all'
                 else:
-                    select = 'all and not hetero'
+                    selection = 'all and not hetero'
             else:
                 if self.hetero:
                     selection = 'all and not hydrogen'
@@ -1057,7 +1358,7 @@ class ConSCRIPTConverter:
                     if self.map_unspecified_selection:
                         self.map_selection = self.map_name
                     self.map_name += 1
-                    cmd.select(str(self.map_selection), 'vslselection')
+                    cmd.select(str(self.map_selection), self.vslselectionsaved)
                     cmd.show('surface', self.map_selection)
                     cmd.do('set surface_color, white')
                     cmd.do('zoom %s, %s' % (self.centerselection, self.zoomnum))
@@ -1073,8 +1374,10 @@ class ConSCRIPTConverter:
                     cmd.do('color %s, dot_*' % parameterslist[1])
                     cmd.do('set surface_color, %s' % parameterslist[1])
                 else:
-                    cmd.do('color %s, mesh_%s' % (parameterslist[1], self.map_selection))
-                    cmd.do('color %s, dot_%s' % (parameterslist[1], self.map_selection))
+                    cmd.do('color %s, mesh_%s' % (parameterslist[1],
+                        self.map_selection))
+                    cmd.do('color %s, dot_%s' % (parameterslist[1],
+                        self.map_selection))
                     cmd.do('set surface_color, %s' % parameterslist[1])
             elif parameterslist[0] == 'zap':
                 cmd.delete('mesh_*')
@@ -1271,15 +1574,6 @@ class ConSCRIPTConverter:
         except:
             print 'An error has occured with a setting.'
 
-    ## Handles RGB Triplet for colors
-    def _rgbtriplet(self, name, triplet):
-        '''************************'''
-        try:
-            cmd.set_color(name, triplet)
-        except:
-            print "RGB Triplet not valid."
-        return name
-
     ## Defines hbonds for a structure
     def _hbonds(self):
         '''************************'''
@@ -1288,7 +1582,7 @@ class ConSCRIPTConverter:
             cmd.select('don',
                 '(elem n,o and (neighbor elem h) and vslselection)')
             cmd.select('acc',
-                '(elem o or (elem n and not (neighbor elem h))) and vslselection')
+              '(elem o or (elem n and not (neighbor elem h))) and vslselection')
             cmd.distance('HBA', '(acc)', '(don)', '3.2')
             cmd.distance('HBD', '(don)', '(acc)', '3.2')
             cmd.delete('don')
@@ -1334,19 +1628,19 @@ class ConSCRIPTConverter:
         if self.curtoken == -ord('('):
             stack = []
             end = -1
-            for x in range(self.tokenstart + 1, len(commands)):
-                if commands[x:x+1] == '(':
+            for per in range(self.tokenstart + 1, len(commands)):
+                if commands[per:per+1] == '(':
                     stack.append('(')
-                if commands[x:x+1] == ')':
+                if commands[per:per+1] == ')':
                     if stack == []:
-                        end = x
-                        x = len(commands)
+                        end = per
+                        per = len(commands)
                     else:
                         stack.pop()
             if end != -1:
-                q = commands[self.tokenstart:end+1]
-                q = q.lower()
-                self.vslselection = self._preselect(q)
+                chm = commands[self.tokenstart:end+1]
+                chm = chm.lower()
+                self.vslselection = self._preselect(chm)
                 if self.vslverbose > 0:
                     print 'vslselection: ' + self.vslselection
                 if end < len(commands)-1 and commands[end+1:end+2] == '.':
@@ -1365,29 +1659,29 @@ class ConSCRIPTConverter:
         if self.vslverbose > 0:
             print os.times()
             print 'vslselection: ' + self.vslselection
-            print 'VSLcommand: ' + p
+            print 'VSLcommand: ' + commands
 
         ##---------------Script---------------##
 
         if self.curtoken == self.scripttok or self.curtoken == self.sourcetok:
             self._vslfetchtoken(commands)
             if self.curtoken == 0:
-                print p
+                print commands
                 print 'Does not contain a valid filename'
             elif self.curtoken == self.stringtok:
                 try:
                     print '\"'+self.tokenident+'\"' + '<--SCRIPTFILE'
-                    return processVSLscript(self.tokenident)
+                    return vslcmd(filename=self.tokenident)
                 except:
                     print '\"'+self.tokenident+'\"' + '<--SCRIPTFILE'
                     print 'EXCEPTION THROWN'
             else:
-                ts = commands[self.tokenstart:len(commands)]
+                chm = commands[self.tokenstart:len(commands)]
                 try:
-                    print ts + '<--SCRIPTFILE'
-                    return processVSLscript(ts)
+                    print chm + '<--SCRIPTFILE'
+                    return vslcmd(filename=chm)
                 except:
-                    print ts + '<--SCRIPTFILE'
+                    print chm + '<--SCRIPTFILE'
                     print 'EXCEPTION THROWN'
             return 0
         ##---------------Load---------------##
@@ -1412,42 +1706,44 @@ class ConSCRIPTConverter:
                     cmd.select('VSLCenterSelection', self.centerselection)
                     cmd.center(self.centerselection)
                     self.vslselection = '(all)'
-                    self._color_cpk(self.vslselection)
+                    self.vslselectionsaved = self.vslselection
+                    self._cpk()
                     if self.vslverbose > 0:
                         print 'vslselection: ' + self.vslselection
                 except:
                     print '\"'+self.tokenident+'\"' + '<--LOADFILE'
                     print 'EXCEPTION THROWN'
             else:
-                ts = commands[self.tokenstart:len(commands)]
+                chm = commands[self.tokenstart:len(commands)]
                 try:
-                    ts = ts.strip('"\'')
-                    print ts + '<--LOADFILE'
-                    cmd.load(ts)
+                    chm = chm.strip('"\'')
+                    print chm + '<--LOADFILE'
+                    cmd.load(chm)
                     cmd.rotate('x', 180)
                     cmd.select('vslselection', '(all)')
                     cmd.select('VSLCenterSelection', self.centerselection)
                     cmd.center(self.centerselection)
                     self.vslselection = '(all)'
-                    self._color_cpk(self.vslselection)
+                    self.vslselectionsaved = self.vslselection
+                    self._cpk()
                     if self.vslverbose > 0:
                         print 'vslselection: %s' % self.vslselection
                 except:
-                    print ts + '<--LOADFILE'
+                    print chm + '<--LOADFILE'
                     print 'EXCEPTION THROWN'
             return 0
 
         ##---------------Save---------------##
 
         if self.curtoken == self.writetok or self.curtoken == self.savetok:
-            s = ''
+            sav = ''
             for i in commands.split(' ', 1)[1]:
-                s = s + i
-            print s + '<--SAVEFILE'
-            if s[-3:] == 'bmp' or s[-3:] == 'gif':
-                cmd.png(s)
+                sav = '%s%s' % (sav, i)
+            print sav + '<--SAVEFILE'
+            if sav[-3:] == 'bmp' or sav[-3:] == 'gif':
+                cmd.png(sav)
             else:
-                cmd.save(s)
+                cmd.save(sav)
             return 0
 
         ##---------------Echo---------------##
@@ -1474,9 +1770,8 @@ class ConSCRIPTConverter:
                 cmd.do('label vslselection,')
             elif labeltext[:2].rstrip() == 'on' or\
                 labeltext[:4].rstrip() == 'true' or labeltext.rstrip() == '':
-                labeltext = '%s%s:%s.%s'
-                specifiers = ['resn', 'resi', 'chain', 'name']
-                cmd.do('label vslselection, "%s" % (%s)' % (labeltext, str(specifiers)[1:-1].replace('\'', '')))
+                cmd.do('label vslselection, "%s%s:%s.%s"' % ('resn', 'resi',
+                    'chain', 'name'))
             else:
                 for i in range(0, len(labeltext)-1):
                     if labeltext[i] == '%':
@@ -1485,16 +1780,16 @@ class ConSCRIPTConverter:
                             labeltext = labeltext[:i] + '%s' + labeltext[i+2:]
                         else:
                             print 'That expansion specifier is not supported.'
-                cmd.do('label vslselection, "%s" % (%s)' % (labeltext, str(specifiers)[1:-1].replace('\'', '')))
+                cmd.do('label vslselection, "%s" % (%s)' % (labeltext,
+                    str(specifiers)[1:-1].replace('\'', '')))
 
         #-----------Background color------------#
 
         if self.curtoken == self.backgroundtok:
             self._vslfetchtoken(commands)
-            (result, rgb) = self._vslparsecolour(commands)
-            if result == True:
-                colorx = self._rgbtriplet('VSLColor', rgb)
-                cmd.bg_color(colorx)
+            result = self._vslparsecolour(commands)
+            if result != False:
+                cmd.bg_color(result)
             else:
                 print self.msgstrs[self.errsyntax]
             return 0
@@ -1510,7 +1805,10 @@ class ConSCRIPTConverter:
                 if self.vslverbose > 0:
                     print 'vslselection: ' + self.vslselection
             except:
-                print 'No selection was made for select, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
+                print '''No selection was made for select, please specify a
+                    selection.  If you have specified a selection, please 
+                    check your selection for errors.  If no error can be found, 
+                    try rewriting your selections a different way.'''
             return 0
 
         #----------------Restrict-----------------#
@@ -1526,8 +1824,11 @@ class ConSCRIPTConverter:
                     print 'vslselection: ' + self.vslselection
                 cmd.hide('everything', restricted)
             except:
-                print 'No selection was made for restrict, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
-            return 0
+                print '''No selection was made for select, please specify a
+                    selection.  If you have specified a selection, please 
+                    check your selection for errors.  If no error can be found, 
+                    try rewriting your selections a different way.'''
+                return 0
 
         ##---------------Center---------------##
 
@@ -1538,51 +1839,117 @@ class ConSCRIPTConverter:
                 cmd.select('VSLCenterSelection', self.centerselection)
                 cmd.center(self.centerselection)
             except:
-                print 'No selection was made for center, please specify a selection.  If you have specified a selection, please check your selection for errors.  If no error can be found, try rewriting your selections a different way.'
-            return 0
+                print '''No selection was made for select, please specify a
+                    selection.  If you have specified a selection, please 
+                    check your selection for errors.  If no error can be found, 
+                    try rewriting your selections a different way.'''
+                return 0
 
         ##---------------Color---------------##
 
         if self.curtoken == self.colourtok:
             self._vslfetchtoken(commands)
-            print str(self.curtoken)+' vs '+str(self.cpktok)
-            if self.curtoken == self.cpktok:
-                self._color_cpk(self.vslselection)
-                return 0
-            if commands[self.tokenstart] != '[':
-                colory = commands.split(' ', 1)[1].lower()
-                colory = colory.replace(' ', '')
-                try:
-                    cmd.color(colory, '('+ self.vslselection +')')
-                    return 0
-                except:
-                    print 'VSL color name '+colory+' not recognized'
-            (xresult, rgb) = self._vslparsecolour(commands)
-            if xresult != True:
-                print self.msgstrs[self.errsyntax]
-                return 0
-            colorx = self._rgbtriplet('VSLColor', rgb)
-            if self.vslverbose > 0:
-                print 'vslselection: ' + self.vslselection
-            cmd.color('VSLColor', '('+ self.vslselection +')')
-
+            if self.curtoken == self.bondtok:
+                self._vslfetchtoken(commands)
+                result = self._vslparsecolour(commands, self.bondtok)
+                if result == False:
+                    print self.msgstrs[self.errsyntax]
+                else:
+                    try:
+                        cmd.set_bond('stick_color', result, 
+                            self.vslselectionsaved)
+                    except AttributeError:
+                        print 'ERROR: colour bond requires pymol 1.0 or higher'
+            elif self.curtoken == self.backbonetok:
+                self._vslfetchtoken(commands)
+                result = self._vslparsecolour(commands, self.backbonetok)
+                if result == False:
+                    print self.msgstrs[self.errsyntax]
+                elif result == True:
+                    pass
+                else:
+                    print self.msgstrs[self.errnosuppt]
+            elif self.curtoken == self.ribbontok:
+                self._vslfetchtoken(commands)
+                result = self._vslparsecolour(commands, self.ribbontok)
+                if result == False:
+                    print self.msgstrs[self.errsyntax]
+                elif result == True:
+                    pass
+                else:
+                    print self.msgstrs[self.errnosuppt]
+            elif self.curtoken == self.labeltok:
+                self._vslfetchtoken(commands)
+                result = self._vslparsecolour(commands, self.labeltok)
+                if result == False:
+                    print self.msgstrs[self.errsyntax]
+                elif result == True:
+                    pass
+                else:
+                    print self.msgstrs[self.errnosuppt]
+            elif self.curtoken == self.dotstok:
+                self._vslfetchtoken(commands)
+                result = self._vslparsecolour(commands, self.dotstok)
+                if result == False:
+                    print self.msgstrs[self.errsyntax]
+                elif result == True:
+                    pass
+                else:
+                    print self.msgstrs[self.errnosuppt]
+            elif self.curtoken == self.hbondtok:
+                self._vslfetchtoken(commands)
+                result = self._vslparsecolour(commands, self.hbondtok)
+                if result == False:
+                    print self.msgstrs[self.errsyntax]
+                elif result == True:
+                    pass
+                else:
+                    print self.msgstrs[self.errnosuppt]
+            elif self.curtoken == self.maptok:
+                self._vslfetchtoken(commands)
+                result = self._vslparsecolour(commands, self.maptok)
+                if result == False:
+                    print self.msgstrs[self.errsyntax]
+                elif result == True:
+                    pass
+                else:
+                    print self.msgstrs[self.errnosuppt]
+            elif self.curtoken == self.ssbondtok:
+                self._vslfetchtoken(commands)
+                result = self._vslparsecolour(commands, self.ssbondtok)
+                if result == False:
+                    print self.msgstrs[self.errsyntax]
+                elif result == True:
+                    pass
+                else:
+                    print self.msgstrs[self.errnosuppt]
+            else:
+                if self.curtoken == self.atomtok:
+                    self._vslfetchtoken(commands)
+                result = self._vslparsecolour(commands, self.atomtok)
+                if result == False:
+                    print self.msgstrs[self.errsyntax]
+                elif result == True:
+                    pass
+                else:
+                    cmd.color(result, self.vslselectionsaved)
             return 0
 
         ##---------------Spacefill/CPK---------------##
 
-        if self.curtoken == self.spacefilltok or self.curtoken == self.cpktok or\
-            self.curtoken == self.cpknewtok:
+        if self.curtoken == self.spacefilltok or self.curtoken == self.cpktok \
+            or self.curtoken == self.cpknewtok:
             try:
                 commands = commands + ' '
                 command = commands.split(' ', 1)[1].rstrip()
                 if command == 'false' or command == 'off':
-                    cmd.hide('spheres', 'vslselection')
+                    cmd.hide('spheres', self.vslselectionsaved)
                     print 'Spacefill off complete'
                 elif command == 'true' or command == 'on' or command == '':
-                    cmd.show('spheres', 'vslselection')
+                    cmd.show('spheres', self.vslselectionsaved)
                     print 'Spacefill on complete'
                 elif float(command)>=0 and float(command)<=1500:
-                    cmd.show('spheres', 'vslselection')
+                    cmd.show('spheres', self.vslselectionsaved)
                     if '.' in command:
                         command = float(command)
                     else:
@@ -1599,23 +1966,23 @@ class ConSCRIPTConverter:
                 commands = commands + ' '
                 command = commands.split(' ', 1)[1].rstrip()
                 if command == 'false' or command == 'off':
-                    cmd.hide('cartoon', 'vslselection')
-                    cmd.hide('ribbon', 'vslselection')
+                    cmd.hide('cartoon', self.vslselectionsaved)
+                    cmd.hide('ribbon', self.vslselectionsaved)
                     print 'Cartoon off complete'
                 elif command == 'true' or command == 'on' or command == '':
-                    cmd.hide('ribbon', 'vslselection')
-                    cmd.cartoon('rectangle', 'vslselection')
-                    cmd.show('cartoon', 'vslselection')
+                    cmd.hide('ribbon', self.vslselectionsaved)
+                    cmd.cartoon('rectangle', self.vslselectionsaved)
+                    cmd.show('cartoon', self.vslselectionsaved)
                     print 'Cartoon on complete'
                 elif float(command)>=0 and float(command)<=500:
                     if '.' in command:
                         command = float(command)
                     else:
                         command = float(command)/250
-                    cmd.cartoon('rectangle', 'vslselection')
-                    cmd.hide('ribbon', 'vslselection')
+                    cmd.cartoon('rectangle', self.vslselectionsaved)
+                    cmd.hide('ribbon', self.vslselectionsaved)
                     cmd.set('cartoon_rect_length', command)
-                    cmd.show('cartoon', 'vslselection')
+                    cmd.show('cartoon', self.vslselectionsaved)
                     print 'Cartoon on complete'
             except:
                 print 'An error occured with the cartoon command'
@@ -1628,22 +1995,22 @@ class ConSCRIPTConverter:
                 commands = commands + ' '
                 command = commands.split(' ', 1)[1].rstrip()
                 if command == 'false' or command == 'off':
-                    cmd.hide('cartoon', 'vslselection')
-                    cmd.hide('ribbon', 'vslselection')
+                    cmd.hide('cartoon', self.vslselectionsaved)
+                    cmd.hide('ribbon', self.vslselectionsaved)
                     print 'Trace off complete'
                 elif command == 'true' or command == 'on' or command == '':
-                    cmd.cartoon('tube', 'vslselection')
-                    cmd.hide('ribbon', 'vslselection')
-                    cmd.show('cartoon', 'vslselection')
+                    cmd.cartoon('tube', self.vslselectionsaved)
+                    cmd.hide('ribbon', self.vslselectionsaved)
+                    cmd.show('cartoon', self.vslselectionsaved)
                     print 'Trace on complete'
                 elif float(command)>=0 and float(command)<=500:
                     if '.' in command:
                         command = float(command) * 10
                     else:
                         command = (float(command)/250) * 10
-                    cmd.cartoon('tube', 'vslselection')
-                    cmd.hide('ribbon', 'vslselection')
-                    cmd.show('cartoon', 'vslselection')
+                    cmd.cartoon('tube', self.vslselectionsaved)
+                    cmd.hide('ribbon', self.vslselectionsaved)
+                    cmd.show('cartoon', self.vslselectionsaved)
                     cmd.set('cartoon_tube_radius', command)
                     print 'Trace on complete'
             except:
@@ -1658,20 +2025,20 @@ class ConSCRIPTConverter:
                 commands = commands + ' '
                 command = commands.split(' ', 1)[1].rstrip()
                 if command == 'false' or command == 'off':
-                    cmd.hide('cartoon', 'vslselection')
-                    cmd.hide('ribbon', 'vslselection')
+                    cmd.hide('cartoon', self.vslselectionsaved)
+                    cmd.hide('ribbon', self.vslselectionsaved)
                     print 'Ribbon off complete'
                 elif command == 'true' or command == 'on' or command == '':
-                    cmd.hide('cartoon', 'vslselection')
-                    cmd.show('ribbon', 'vslselection')
+                    cmd.hide('cartoon', self.vslselectionsaved)
+                    cmd.show('ribbon', self.vslselectionsaved)
                     print 'Ribbon on complete'
                 elif float(command)>=0 and float(command)<=500:
                     if '.' in command:
                         command = float(command)
                     else:
                         command = float(command)/250
-                    cmd.hide('cartoon', 'vslselection')
-                    cmd.show('ribbon', 'vslselection')
+                    cmd.hide('cartoon', self.vslselectionsaved)
+                    cmd.show('ribbon', self.vslselectionsaved)
                     cmd.set('ribbon_width', command)
                     print 'Ribbon on complete'
             except:
@@ -1685,17 +2052,17 @@ class ConSCRIPTConverter:
                 commands = commands + ' '
                 command = commands.split(' ', 1)[1].rstrip()
                 if command == 'false' or command == 'off':
-                    cmd.hide('lines', 'vslselection')
+                    cmd.hide('lines', self.vslselectionsaved)
                     print 'Wireframe off complete'
                 elif command == 'true' or command == 'on' or command == '':
-                    cmd.show('lines', 'vslselection')
+                    cmd.show('lines', self.vslselectionsaved)
                     print 'Wireframe on complete'
                 elif float(command)>=0 and float(command)<=1500:
                     if '.' in command:
                         command =  float(command)
                     else:
                         command =  float(command)/ 250
-                    cmd.show('sticks', 'vslselection')
+                    cmd.show('sticks', self.vslselectionsaved)
                     cmd.set('stick_radius', command)
                     print 'Wireframe on complete'
             except:
@@ -1710,10 +2077,10 @@ class ConSCRIPTConverter:
                 commands = commands + ' '
                 command = commands.split(' ', 1)[1].rstrip()
                 if command == 'false' or command == 'off' or command == '0':
-                    cmd.hide('dots', 'vslselection')
+                    cmd.hide('dots', self.vslselectionsaved)
                     print 'Dots off complete'
                 elif command == 'true' or command == 'on' or command == '':
-                    cmd.show('dots', 'vslselection')
+                    cmd.show('dots', self.vslselectionsaved)
                     if self.solvent:
                         cmd.set('dot_solvent', 'on')
                     else:
@@ -1722,7 +2089,7 @@ class ConSCRIPTConverter:
                     print 'Dots on complete'
                 elif int(command)>0 and int(command)<=1000:
                     command = int(command)
-                    cmd.show('dots', 'vslselection')
+                    cmd.show('dots', self.vslselectionsaved)
                     if self.solvent:
                         cmd.set('dot_solvent', 'on')
                     else:
@@ -1747,7 +2114,7 @@ class ConSCRIPTConverter:
 
         if self.curtoken == self.surfacetok:
             try:
-                cmd.show('surface', 'vslselection')
+                cmd.show('surface', self.vslselectionsaved)
             except:
                 print 'An error has occurred with the surface command'
             return 0
@@ -1760,7 +2127,10 @@ class ConSCRIPTConverter:
                 secondatom = commands.split(' ')[2].rstrip()
                 if commands.rstrip()[-1] == '+':
                     cmd.bond('id ' + firstatom, 'id ' + secondatom)
-                    print 'To create a new bond, use bond <number> <number>.  Increasing bond order is not currently supported.  The bond specified has been created if it did not already exist'
+                    print '''To create a new bond, use bond <number> <number>.
+                        Increasing bond order is not currently supported. 
+                        The bond specified has been created if it did not
+                        already exist'''
                 elif commands.rstrip()[-4:] == 'pick':
                     self.bondfirstatom = firstatom
                     self.bondsecondatom = secondatom
@@ -1821,7 +2191,8 @@ class ConSCRIPTConverter:
                 else:
                     print 'That function is not supported by PyMOL.'
             except:
-                print 'Zoom did not execute properly.  Please revise your zoom command'
+                print 'Zoom did not execute properly.'
+                print 'Please revise your zoom command'
             return 0
 
         ##---------------Rotate--------------##		
@@ -1834,7 +2205,9 @@ class ConSCRIPTConverter:
             try:
                 cmd.rotate(axis, rotation)
             except:
-                print 'The parameters you have given for the rotate command have been entered improperly.  Please rewrite them as rotate (axis) (rotation in degrees)'
+                print '''The parameters you have given for the rotate command 
+                    have been entered improperly.  Please rewrite them as rotate
+                    (axis) (rotation in degrees)'''
             return 0
 
         ##---------------Translate---------------##
@@ -1854,7 +2227,8 @@ class ConSCRIPTConverter:
                 else:
                     print 'That function is not supported by PyMOL at all'
             except:
-                print 'Translate did not execute properly.  Please revise your translate command'
+                print '''Translate did not execute properly.
+                    Please revise your translate command'''
             return 0
 
         ##---------------Slab---------------##
@@ -1918,7 +2292,8 @@ class ConSCRIPTConverter:
                 else:
                     print 'That function is not supported by PyMOL'
             except:
-                print 'hbonds did not execute properly.  Check spelling and implementation of this hbonds command.'  
+                print '''hbonds did not execute properly.
+                    Check spelling and implementation of this hbonds command.'''
             return 0
 
         ##---------------ssbonds---------------##
@@ -1937,7 +2312,8 @@ class ConSCRIPTConverter:
                 else:
                     print 'That function is not supported by PyMOL'
             except:
-                print 'ssbonds did not execute properly.  Check spelling and implementation of this ssbonds command.'
+                print '''ssbonds did not execute properly.
+                Check spelling and implementation of this ssbonds command.'''
             return 0
 
         ##---------------Backbone--------------##
@@ -1950,10 +2326,10 @@ class ConSCRIPTConverter:
                 cmd.set('ribbon_smooth', 1)
                 cmd.set('ribbon_width', 0.02)
                 if command == 'false' or command == 'off':
-                    cmd.hide('ribbon' , 'vslselection')
+                    cmd.hide('ribbon' , self.vslselectionsaved)
                     print 'Backbone off complete'
                 elif command == 'true' or command == 'on' or command == '':
-                    cmd.show('ribbon', 'vslselection')
+                    cmd.show('ribbon', self.vslselectionsaved)
                     print 'Backbone on complete'
                 elif command == 'dash':
                     print 'PyMOL does not include funcionality for this command.'
@@ -1962,7 +2338,7 @@ class ConSCRIPTConverter:
                         command = float(command) * 5
                     else:
                         command = float(command)/50
-                    cmd.show('ribbon' , 'vslselection')
+                    cmd.show('ribbon' , self.vslselectionsaved)
                     cmd.set('ribbon_width', command)
                     print 'Backbone on complete'
                 else:
@@ -1980,12 +2356,12 @@ class ConSCRIPTConverter:
                     cmd.distance('monitor', 'id %s' % parameters[1],
                         'id %s' % parameters[2])
                     if not self.set_monitor:
-                        cmd.hide('labels' , 'vslselection')
+                        cmd.hide('labels' , self.vslselectionsaved)
                 elif len(parameters) == 2:
                     command = parameters[1]
                     if command == 'false' or command == 'off':
-                        cmd.hide('labels' , 'vslselection')
-                        cmd.hide('dashes' , 'vslselection')
+                        cmd.hide('labels' , self.vslselectionsaved)
+                        cmd.hide('dashes' , self.vslselectionsaved)
                         print 'Monitor off complete'
                     elif command == 'true' or command == 'on' or command == '':
                         pass
@@ -2058,15 +2434,6 @@ class ConSCRIPTConverter:
             self.userdefinedgroups[ defparams[0] ] =  defparams[1]
             return 0
 
-        ##-----------Pause/Wait---------------------##
-
-        if self.curtoken == self.pausetok:
-            keystroke = False
-            while not keystroke:
-                if event.char == event.keysym:
-                    keystroke = True
-            return 0
-
         ##-------Quit/Exit/blank/comment------------##
 
         if self.curtoken == self.exittok or self.curtoken == self.quittok or\
@@ -2075,33 +2442,29 @@ class ConSCRIPTConverter:
 
         ##---------------Not-Coded---------------##
 
-        not_coded = ['bulgarian', 'chinese', 'english', 'french', 'italian',
-            'japanese', 'russian', 'spanish', 'clipboard', 'colourmode',
-            'connect', 'help', 'molecule', 'notoggle', 'pause', 'wait', 'print',
-            'renumber', 'show', 'star', 'strands', 'structure']
-
-        if commands.split(' ', 1)[0] in not_coded:
-            print 'That command is not coded for using ConSCRIPT.  Support for that function may be added at a later date.'
+        if commands.split(' ', 1)[0] in self.not_coded:
+            print '''That command is not coded for using ConSCRIPT.
+                Support for that function may be added at a later date.'''
 
         print commands
         print 'not implemented as a VSL command'
         return 0
-
-CSC = ConSCRIPTConverter()
+CSC = ConSCRIPTConverter(self)
 
 def __init__(self):
     '''************************'''
     self.menuBar.addmenuitem('Plugin', 'command',
                              'VSL Script Loader',
-                             label = 'ConSCRIPT 29 June 2010',
+                             label = 'ConSCRIPT 2.0rc1',
                              command = vslcmd)
 
-def vslcmd(commands=None, args=None):
+def vslcmd(commands=None, args=None, filename=None):
     '''Handler for SBEVSL commands'''
     if commands == None:
-        filename = tkFileDialog.askopenfilename(initialdir=HOME,
-            filetypes=[('RasMol Script', '.scr'),('Text Files', '.txt')], 
-            title='ConSCRIPT (C)Copyright 2007-10 GPL No Warranty')
+        if filename == None:
+            filename = tkFileDialog.askopenfilename(initialdir=HOME,
+                filetypes=[('RasMol Script', '.scr'),('Text Files', '.txt')], 
+                title='ConSCRIPT (C)Copyright 2007-10 GPL No Warranty')
         if filename:
             fileobj = open(filename, 'rbU')
             for line in fileobj:
@@ -2114,8 +2477,9 @@ def vslcmd(commands=None, args=None):
             CSC.handlecommand('%s %s' % (commands, ','.join(args).rstrip()))
             
 def gettok(tok):
+    '''return token of a command'''
     print CSC.gettok(tok)
-cmd.extend('gettok',gettok)
+#**cmd.extend('gettok', gettok)
 
 def r(commands, *args, **keys):
     '''************************'''
