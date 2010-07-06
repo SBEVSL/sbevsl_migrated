@@ -2449,7 +2449,7 @@ trp+phe '
         print commands
         print 'not implemented as a VSL command'
         return 0
-CSC = ConSCRIPTConverter(self)
+CSC = ConSCRIPTConverter()
 
 def __init__(self):
     '''************************'''
