@@ -8,7 +8,7 @@
  * This program is free software; you can redistribute it and/or      *
  * modify it under the terms of the GNU General Public License as     *
  * published by the Free Software Foundation; either version 2 of     *
- * (the License, or (at your option) any later version.               *
+ * the License, or (at your option) any later version.                *
  *                                                                    *
  * This program is distributed in the hope that it will be useful,    *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of     *
@@ -67,7 +67,6 @@ class ConSCRIPTConverter:
         self.clip_dist_near = -50.0
         self.clip_dist_far = 50.0
         self.userdefinedgroups = {}
-        self.vslselection = "(all)"
         self.vslselectionsaved = "(all)"
         self.vslverbose = 0
         self.bondfirstatom = 0
@@ -605,7 +604,192 @@ class ConSCRIPTConverter:
         self.aminodict['VAL'] = '[0.059, 0.510, 0.059]'
         self.aminodict['GLU'] = '[0.902, 0.902, 0.039]'
         self.aminodict['TYR'] = '[0.196, 0.196, 0.667]'
+       
+        ## list of elements in the periodic table how they are entered in
+        ## RasMol and PyMOL
+        ## dictionary data structure { RasMol: PyMOL }
+        self.periodictable = {}
+        self.periodictable['gold'] = 'au'
+        self.periodictable['neon'] = 'ne'
+        self.periodictable['cobalt'] = 'co'
+        self.periodictable['germanium'] = 'ge'
+        self.periodictable['fermium'] = 'fm'
+        self.periodictable['gadolinium'] = 'gd'
+        self.periodictable['zinc'] = 'zn'
+        self.periodictable['neodymium'] = 'nd'
+        self.periodictable['sodium'] = 'na'
+        self.periodictable['selenium'] = 'se'
+        self.periodictable['technetium'] = 'tc'
+        self.periodictable['meitnerium'] = 'mt'
+        self.periodictable['sulfur'] = 's'
+        self.periodictable['beryllium'] = 'be'
+        self.periodictable['americium'] = 'am'
+        self.periodictable['barium'] = 'ba'
+        self.periodictable['californium'] = 'cf'
+        self.periodictable['tungsten'] = 'w'
+        self.periodictable['protactinium'] = 'pa'
+        self.periodictable['silver'] = 'ag'
+        self.periodictable['terbium'] = 'tb'
+        self.periodictable['aluminum'] = 'al'
+        self.periodictable['molybdenum'] = 'mo'
+        self.periodictable['hassium'] = 'hs'
+        self.periodictable['lawrencium'] = 'lr'
+        self.periodictable['indium'] = 'in'
+        self.periodictable['krypton'] = 'kr'
+        self.periodictable['rubidium'] = 'rb'
+        self.periodictable['nitrogen'] = 'n'
+        self.periodictable['radium'] = 'ra'
+        self.periodictable['astatine'] = 'at'
+        self.periodictable['berkelium'] = 'bk'
+        self.periodictable['antimony'] = 'sb'
+        self.periodictable['europium'] = 'eu'
+        self.periodictable['lead'] = 'pb'
+        self.periodictable['lutetium'] = 'lu'
+        self.periodictable['nobelium'] = 'no'
+        self.periodictable['flourine'] = 'f'
+        self.periodictable['cerium'] = 'ce'
+        self.periodictable['osmium'] = 'os'
+        self.periodictable['rhodium'] = 'rh'
+        self.periodictable['curium'] = 'cm'
+        self.periodictable['mercury'] = 'hg'
+        self.periodictable['yttrium'] = 'y'
+        self.periodictable['samarium'] = 'sm'
+        self.periodictable['thorium'] = 'th'
+        self.periodictable['strontium'] = 'sr'
+        self.periodictable['bromine'] = 'br'
+        self.periodictable['boron'] = 'b'
+        self.periodictable['carbon'] = 'c'
+        self.periodictable['chlorine'] = 'cl'
+        self.periodictable['ytterbium'] = 'yb'
+        self.periodictable['gallium'] = 'ga'
+        self.periodictable['silicon'] = 'si'
+        self.periodictable['tantalum'] = 'ta'
+        self.periodictable['cadmium'] = 'cd'
+        self.periodictable['cesium'] = 'cs'
+        self.periodictable['copper'] = 'cu'
+        self.periodictable['oxygen'] = 'o'
+        self.periodictable['praseodymium'] = 'pr'
+        self.periodictable['arsenic'] = 'as'
+        self.periodictable['chromium'] = 'cr'
+        self.periodictable['platinum'] = 'pt'
+        self.periodictable['mendelevium'] = 'md'
+        self.periodictable['actinium'] = 'ac'
+        self.periodictable['thulium'] = 'tm'
+        self.periodictable['nickel'] = 'ni'
+        self.periodictable['ruthenium'] = 'ru'
+        self.periodictable['potassium'] = 'k'
+        self.periodictable['dubnium'] = 'db'
+        self.periodictable['argon'] = 'ar'
+        self.periodictable['palladium'] = 'pd'
+        self.periodictable['promethium'] = 'pm'
+        self.periodictable['bismuth'] = 'bi'
+        self.periodictable['neptunium'] = 'np'
+        self.periodictable['lanthanum'] = 'la'
+        self.periodictable['francium'] = 'fr'
+        self.periodictable['zirconium'] = 'zr'
+        self.periodictable['erbium'] = 'er'
+        self.periodictable['radon'] = 'rn'
+        self.periodictable['niobium'] = 'nb'
+        self.periodictable['calcium'] = 'ca'
+        self.periodictable['iridium'] = 'ir'
+        self.periodictable['magnesium'] = 'mg'
+        self.periodictable['iron'] = 'fe'
+        self.periodictable['plutonium'] = 'pu'
+        self.periodictable['dysprosium'] = 'dy'
+        self.periodictable['iodine'] = 'i'
+        self.periodictable['rhenium'] = 're'
+        self.periodictable['titanium'] = 'ti'
+        self.periodictable['hydrogen'] = 'h'
+        self.periodictable['thallium'] = 'tl'
+        self.periodictable['helium'] = 'he'
+        self.periodictable['uranium'] = 'u'
+        self.periodictable['seaborgium'] = 'sg'
+        self.periodictable['tin'] = 'sn'
+        self.periodictable['holmium'] = 'ho'
+        self.periodictable['lithium'] = 'li'
+        self.periodictable['polonium'] = 'po'
+        self.periodictable['bohrium'] = 'bh'
+        self.periodictable['hafnium'] = 'hf'
+        self.periodictable['scandium'] = 'sc'
+        self.periodictable['einsteinium'] = 'es'
+        self.periodictable['phosphorus'] = 'p'
+        self.periodictable['rutherfordium'] = 'rf'
+        self.periodictable['vanadium'] = 'v'
+        self.periodictable['manganese'] = 'mn'
+        self.periodictable['tellurium'] = 'te'
+        self.periodictable['xenon'] = 'xe'
         
+        self.sim_periodictable = ('au', 'ne', 'co', 'ge', 'fm', 'gd', 'n', 'nd',
+            'na', 'se', 'tc', 'mt', 's', 'be', 'am', 'ba', 'os', 'w', 'pa',
+            'ag', 'tb', 'mo', 'o', 'rh', 'pr', 'in', 'kr', 'rb', 'zn', 'ra',
+            'at', 'bk', 'sb', 'eu', 'pb', 'hf', 'lu', 'no', 'f', 'ce', 'cf',
+            'hs', 'pt', 'y', 'cm', 'th', 'sr', 'br', 'b', 'c', 'cl', 'yb', 'ga',
+            'si', 'ta', 'cs', 'cu', 'lr', 'as', 'cr', 'hg', 'md', 'ac', 'tm',
+            'sm', 'ni', 'ru', 'k', 'db', 'ar', 'pd', 'al', 'pm', 'bi', 'np',
+            'la', 'fr', 'zr', 'er', 'rn', 'nb', 'ca', 'ir', 'mg', 'fe', 'pu',
+            'dy', 'i', 're', 'ti', 'h', 'tl', 'he', 'u', 'sg', 'sn', 'ho', 'li',
+            'po', 'bh', 'cd', 'sc', 'es', 'p', 'rf', 'v', 'mn', 'te', 'xe') 
+        ## RasMol's predefined sets and PyMOL's equivalents
+        ## dictionary data structure { RasMol: PyMOL }
+        self.predefinedlists = {}
+        self.predefinedlists['selected'] = ' vslselection '
+        self.predefinedlists['sidechain'] = ' resn asp+glu+arg+lys+his+asn+thr+\
+cys+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro+a+t+c+g and not name o1p+\
+o2p+o3p+p+c1*+c2*+c3*+c4*+c5*+o2*+o3*+o4*+o5*+c+o+n+ca '
+        self.predefinedlists['surface'] = ' resn gly+ser+thr+lys+asp+asn+glu+\
+pro+arg+gln+tyr+his '
+        self.predefinedlists['nucleic'] = ' resn a+c+g+t+u+i+da+dc+dg+dt+di+1ma\
++5mc+omc+1mg+2mg+m2g+7mg+omg+yg+h2u+5mu+psu '        
+        self.predefinedlists['rna'] = ' resn u+i+1ma+5mc+omc+1mg+2mg+m2g+7mg+\
+omg+yg+h2u+5mu+psu '
+        self.predefinedlists['dna'] = ' resn a+c+g+t+da+dc+dg+dt+di '
+        self.predefinedlists['aliphatic'] = ' resn gly+ala+leu+val+ile '
+        self.predefinedlists['pyrimidine'] = ' resn c+t '
+        self.predefinedlists['buried'] = ' resn ala+leu+val+ile+phe+cys+met+trp '
+        self.predefinedlists['protein'] = ' resn asp+glu+arg+lys+his+asn+thr+\
+cys+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro '
+        self.predefinedlists['purine'] = ' resn a+g '
+        self.predefinedlists['sheet'] = ' ss s '
+        self.predefinedlists['hetero'] = ' hetatm '
+        self.predefinedlists['aromatic'] = ' resn his+tyr+tr+phe+pro '
+        self.predefinedlists['helix'] = ' ss h '
+        self.predefinedlists['basic'] = ' resn arg+lys+his '
+        self.predefinedlists['acidic'] = ' resn asp+glu '
+        self.predefinedlists['amino'] = ' resn gln+asn+asp+glu+arg+lys+his+thr+\
+cys+tyr+ser+gly+trp+phe+pro+leu+val+ile+met'
+        self.predefinedlists['cystine'] = ' (byres (((all) & r. CYS+CYX & n. SG)\
+ & bound_to ((all) & r. CYS+CYX & n. SG))) & n. CA+CB+SG'
+        self.predefinedlists['polar'] = ' resn asp+glu+arg+lys+his+asn+thr+cys+\
+gln+ser+gly+tyr '
+        self.predefinedlists['medium'] = ' resn val+thr+asp+asn+pro+cys '
+        self.predefinedlists['backbone'] = ' name o1p+o2p+o3p+p+c1*+c2*+c3*+c4*\
++c5*+o2*+o3*+o4*+o5*+c+o+n+ca '
+        self.predefinedlists['hoh'] = ' resn hoh '
+        self.predefinedlists['water'] = ' resn hoh '
+        self.predefinedlists['neutral'] = ' resn asn+thr+cys+gln+tyr+ser+gly+\
+ala+leu+val+ile+met+trp+phe+pro '
+        self.predefinedlists['alpha'] = ' name ca '
+        self.predefinedlists['cyclic'] = ' resn pro+phe+trp+tyr+his '
+        self.predefinedlists['large'] = ' resn glu+arg+lys+his+gln+tyr+leu+ile+\
+met+trp+phe '
+        self.predefinedlists['turn'] = ' ss 1 '
+        self.predefinedlists['small'] = ' resn gly+ala+ser '
+        self.predefinedlists['acyclic'] = ' resn met+ile+val+leu+ala+gly+ser+\
+gln+thr+asn+cys+lys+arg+asp+glu '
+        self.predefinedlists['hydrophobic'] = ' resn ala+leu+val+ile+met+trp+\
+phe+pro '
+        self.predefinedlists['charged'] = ' resn asp+glu+arg+lys+his '
+        for i in range(ord('a'), ord('z')+1):
+            self.predefinedlists['%c' % i] = ' chain %c ' % i
+        ## Amino Acids as they appear in both RasMol and PyMOL
+        aminolist = ['gly', 'ala', 'val', 'leu', 'ile', 'met', 'pro', 'phe',
+            'tyr', 'trp', 'ser', 'thr', 'cys', 'lys', 'arg', 'his', 'asp',
+            'glu', 'asn', 'gln']
+    
+    def getselection(self):
+        '''returns current selection'''
+        return self.vslselectionsaved
+    
     def gettok(self, tok):
         '''returns token number of a specified command'''
         return self.vsltok[tok.lower()]
@@ -696,78 +880,73 @@ class ConSCRIPTConverter:
         self.curtoken = 0
         self.tokenident = ""
         self.tokenvalue = 0
-        if self.tokenptr >= len(commands):
-            #**debug()
-            self.curtoken = 0
-            return False
         while self.tokenptr < len(commands):
-            chm =  commands[self.tokenptr:self.tokenptr+1]
+            chm = commands[self.tokenptr:self.tokenptr+1]
             if not chm.isspace():
                 break
             self.tokenptr += 1
+        else:
+            #**debug()
+            self.curtoken = self.truetok
+            return False
         self.tokenstart = self.tokenptr
         #**debug()
-        if self.tokenptr < len(commands):
-            chm = commands[self.tokenptr]
-            #**print 'Starting scan with chm ='+chm
-            if chm == '#':
-                #**debug()
-                self.curtoken = 0
-                return False
-            self.tokenptr += 1
-            if chm.isalpha():
-                #**print ' First character is alpha'
-                tokenlength = 1
-                tokenidentl = []
-                tokenidentl.append(chm.upper())
-                while self.tokenptr < len(commands) and tokenlength < 32 and\
-                    self._isidentchar(commands[self.tokenptr]) == True:
-                    chm = commands[self.tokenptr]
-                    self.tokenptr += 1
-                    tokenidentl.append(chm.upper())
-                    tokenlength += 1
-                if tokenlength != 32:
-                    self.tokenident = ''.join(tokenidentl)
-                    self.curtoken = self._lookupkeyword(self.tokenident)
-                    #**debug()
-                else:
-                    #**debug()
-                    pass
-            elif chm.isdigit():
-                #**print ' First character is digit '
-                self.tokenvalue = int(chm)
-                while self.tokenptr < len(commands):
-                    chm = commands[self.tokenptr]
-                    if chm == '#' or not chm.isdigit():
-                        break
-                    self.tokenptr += 1
-                    self.tokenvalue = 10*self.tokenvalue + int(chm)
-                self.curtoken = self.numbertok
-                #**debug()
-            elif (chm == '\'') or (chm == '\"') or (chm == '`'):
-                #**print ' First character is quot '
-                tokenlength = 0
-                tokenidentl = []
-                tokenidentl.append(chm)
-                while self.tokenptr < len(commands) and tokenlength < 128 and\
-                    (commands[self.tokenptr]!=chm):
-                    tokenidentl.append(commands[self.tokenptr])
-                    self.tokenptr += 1
-                if chm == commands[self.tokenptr]:
-                    self.tokenptr += 1
-                    self.tokenident = ''.join(tokenidentl)
-                    self.curtoken = self.stringtok
-                    #**debug()
-                else:
-                    #**debug()
-                    pass
-            else:
-                self.curtoken = -ord(chm)
-                #**debug()
-        else:
+        chm = commands[self.tokenptr]
+        #**print 'Starting scan with chm ='+chm
+        if chm == '#':
             #**debug()
             self.curtoken = 0
             return False
+        self.tokenptr += 1
+        if chm.isalpha():
+            #**print ' First character is alpha'
+            tokenlength = 1
+            tokenidentl = []
+            tokenidentl.append(chm.upper())
+            while self.tokenptr < len(commands) and tokenlength < 32 and\
+                self._isidentchar(commands[self.tokenptr]) == True:
+                chm = commands[self.tokenptr]
+                self.tokenptr += 1
+                tokenidentl.append(chm.upper())
+                tokenlength += 1
+            if tokenlength != 32:
+                self.tokenident = ''.join(tokenidentl)
+                self.curtoken = self._lookupkeyword(self.tokenident)
+                #**debug()
+            else:
+                #**debug()
+                pass
+        elif chm.isdigit():
+            #**print ' First character is digit '
+            self.tokenvalue = int(chm)
+            while self.tokenptr < len(commands):
+                chm = commands[self.tokenptr]
+                if chm == '#' or not chm.isdigit():
+                    break
+                self.tokenptr += 1
+                self.tokenvalue = 10*self.tokenvalue + int(chm)
+            self.curtoken = self.numbertok
+            #**debug()
+        elif (chm == '\'') or (chm == '\"') or (chm == '`'):
+            #**print ' First character is quot '
+            tokenlength = 0
+            tokenidentl = []
+            tokenidentl.append(chm)
+            while self.tokenptr < len(commands) and tokenlength < 128 and\
+                (commands[self.tokenptr]!=chm):
+                tokenidentl.append(commands[self.tokenptr])
+                self.tokenptr += 1
+            if chm == commands[self.tokenptr]:
+                self.tokenptr += 1
+                self.tokenident = ''.join(tokenidentl)
+                self.curtoken = self.stringtok
+                #**debug()
+            else:
+                #**debug()
+                pass
+        else:
+            self.curtoken = -ord(chm)
+            #**debug()
 
     def _vslparsecolour(self, commands, tok=False):
         '''************************'''
@@ -982,7 +1161,6 @@ class ConSCRIPTConverter:
     def _cpk(self, cpknew=False):
         '''Color in cpk or cpknew'''
         colorindex = {}
-        selection = self.vslselectionsaved
         for i in cmd.get_color_indices():
             key, val = i
             colorindex[key] = val
@@ -1000,15 +1178,20 @@ class ConSCRIPTConverter:
         for key in cpk:
             if key != 'UNK':
                 cmd.color('%s%s' % (key, suffix),
-                    '(e. %s & %s)' % (key, selection))
-                unk += '%s+' % key
-        cmd.color('UNK%s' % suffix, '((%s) & %s)' % (unk[:-1], selection))
+                    'e. %s & (%s)' % (key, self.vslselectionsaved))
+                unk = '%s%s+' % (unk, key)
+        cmd.color('UNK%s' % suffix, '(%s) & (%s)' % (unk[:-1],
+            self.vslselectionsaved))
 
     def _preselect(self, presel):
         '''Run before _select to seperate commands 
            from parentheses and others'''
+        def emptypos(pos):
+            if preseldict[pos] == '':
+                return 0
+            return 1
         selection = ''
-        #**print presel
+        #**print '%s' % presel
         preseldict = {}
         preselpos = 0
         curpos = 0
@@ -1021,17 +1204,17 @@ class ConSCRIPTConverter:
             if preselpos not in preseldict:
                 preseldict[preselpos] = ''
             if iii == '(':
-                preselpos += preseldict[preselpos] == '' and 0 or 1
+                preselpos += emptypos(preselpos)
                 preseldict[preselpos] = ''
                 preseldict[preselpos] += iii
                 preselpos += 1
             elif iii == ')':
-                preselpos += preseldict[preselpos] == '' and 0 or 1
+                preselpos += emptypos(preselpos)
                 preseldict[preselpos] = ''
                 preseldict[preselpos] += iii
                 preselpos += 1
             elif curpos in andin:
-                preselpos += preseldict[preselpos] == '' and 0 or 1
+                preselpos += emptypos(preselpos)
                 preseldict[preselpos] = ''
                 preseldict[preselpos] += iii
             elif curpos-1 in andin:
@@ -1040,7 +1223,7 @@ class ConSCRIPTConverter:
                 preseldict[preselpos] += iii
                 preselpos += 1
             elif curpos in notin:
-                preselpos += preseldict[preselpos] == '' and 0 or 1
+                preselpos += emptypos(preselpos)
                 preseldict[preselpos] = ''
                 preseldict[preselpos] += iii
             elif curpos-1 in notin:
@@ -1049,7 +1232,7 @@ class ConSCRIPTConverter:
                 preseldict[preselpos] += iii
                 preselpos += 1
             elif curpos in orin:
-                preselpos += preseldict[preselpos] == '' and 0 or 1
+                preselpos += emptypos(preselpos)
                 preseldict[preselpos] = ''
                 preseldict[preselpos] += iii
             elif curpos-1 in orin:
@@ -1060,6 +1243,9 @@ class ConSCRIPTConverter:
             curpos += 1
         
         #**import pprint
+        #**pprint.pprint(andin)
+        #**pprint.pprint(orin)
+        #**pprint.pprint(notin)
         #**pprint.pprint(preseldict)
         if len(preseldict) == 0:
             return self._select('')
@@ -1084,186 +1270,54 @@ class ConSCRIPTConverter:
     ##-----Select Function-----##
     def _select(self, allparameters):
         '''************************'''
-        allparameters = allparameters.strip()
+        allparameters = allparameters.strip().lower()
         if allparameters == 'false':
             return allparameters
 
-        ## list of elements in the periodic table how they are entered in
-        ## RasMol and PyMOL
-        ## dictionary data structure { RasMol: PyMOL }
-        periodictable = {}
-        periodictable['gold'] = 'au'
-        periodictable['neon'] = 'ne'
-        periodictable['cobalt'] = 'co'
-        periodictable['germanium'] = 'ge'
-        periodictable['fermium'] = 'fm'
-        periodictable['gadolinium'] = 'gd'
-        periodictable['zinc'] = 'zn'
-        periodictable['neodymium'] = 'nd'
-        periodictable['sodium'] = 'na'
-        periodictable['selenium'] = 'se'
-        periodictable['technetium'] = 'tc'
-        periodictable['meitnerium'] = 'mt'
-        periodictable['sulfur'] = 's'
-        periodictable['beryllium'] = 'be'
-        periodictable['americium'] = 'am'
-        periodictable['barium'] = 'ba'
-        periodictable['californium'] = 'cf'
-        periodictable['tungsten'] = 'w'
-        periodictable['protactinium'] = 'pa'
-        periodictable['silver'] = 'ag'
-        periodictable['terbium'] = 'tb'
-        periodictable['aluminum'] = 'al'
-        periodictable['molybdenum'] = 'mo'
-        periodictable['hassium'] = 'hs'
-        periodictable['lawrencium'] = 'lr'
-        periodictable['indium'] = 'in'
-        periodictable['krypton'] = 'kr'
-        periodictable['rubidium'] = 'rb'
-        periodictable['nitrogen'] = 'n'
-        periodictable['radium'] = 'ra'
-        periodictable['astatine'] = 'at'
-        periodictable['berkelium'] = 'bk'
-        periodictable['antimony'] = 'sb'
-        periodictable['europium'] = 'eu'
-        periodictable['lead'] = 'pb'
-        periodictable['lutetium'] = 'lu'
-        periodictable['nobelium'] = 'no'
-        periodictable['flourine'] = 'f'
-        periodictable['cerium'] = 'ce'
-        periodictable['osmium'] = 'os'
-        periodictable['rhodium'] = 'rh'
-        periodictable['curium'] = 'cm'
-        periodictable['mercury'] = 'hg'
-        periodictable['yttrium'] = 'y'
-        periodictable['samarium'] = 'sm'
-        periodictable['thorium'] = 'th'
-        periodictable['strontium'] = 'sr'
-        periodictable['bromine'] = 'br'
-        periodictable['boron'] = 'b'
-        periodictable['carbon'] = 'c'
-        periodictable['chlorine'] = 'cl'
-        periodictable['ytterbium'] = 'yb'
-        periodictable['gallium'] = 'ga'
-        periodictable['silicon'] = 'si'
-        periodictable['tantalum'] = 'ta'
-        periodictable['cadmium'] = 'cd'
-        periodictable['cesium'] = 'cs'
-        periodictable['copper'] = 'cu'
-        periodictable['oxygen'] = 'o'
-        periodictable['praseodymium'] = 'pr'
-        periodictable['arsenic'] = 'as'
-        periodictable['chromium'] = 'cr'
-        periodictable['platinum'] = 'pt'
-        periodictable['mendelevium'] = 'md'
-        periodictable['actinium'] = 'ac'
-        periodictable['thulium'] = 'tm'
-        periodictable['nickel'] = 'ni'
-        periodictable['ruthenium'] = 'ru'
-        periodictable['potassium'] = 'k'
-        periodictable['dubnium'] = 'db'
-        periodictable['argon'] = 'ar'
-        periodictable['palladium'] = 'pd'
-        periodictable['promethium'] = 'pm'
-        periodictable['bismuth'] = 'bi'
-        periodictable['neptunium'] = 'np'
-        periodictable['lanthanum'] = 'la'
-        periodictable['francium'] = 'fr'
-        periodictable['zirconium'] = 'zr'
-        periodictable['erbium'] = 'er'
-        periodictable['radon'] = 'rn'
-        periodictable['niobium'] = 'nb'
-        periodictable['calcium'] = 'ca'
-        periodictable['iridium'] = 'ir'
-        periodictable['magnesium'] = 'mg'
-        periodictable['iron'] = 'fe'
-        periodictable['plutonium'] = 'pu'
-        periodictable['dysprosium'] = 'dy'
-        periodictable['iodine'] = 'i'
-        periodictable['rhenium'] = 're'
-        periodictable['titanium'] = 'ti'
-        periodictable['hydrogen'] = 'h'
-        periodictable['thallium'] = 'tl'
-        periodictable['helium'] = 'he'
-        periodictable['uranium'] = 'u'
-        periodictable['seaborgium'] = 'sg'
-        periodictable['tin'] = 'sn'
-        periodictable['holmium'] = 'ho'
-        periodictable['lithium'] = 'li'
-        periodictable['polonium'] = 'po'
-        periodictable['bohrium'] = 'bh'
-        periodictable['hafnium'] = 'hf'
-        periodictable['scandium'] = 'sc'
-        periodictable['einsteinium'] = 'es'
-        periodictable['phosphorus'] = 'p'
-        periodictable['rutherfordium'] = 'rf'
-        periodictable['vanadium'] = 'v'
-        periodictable['manganese'] = 'mn'
-        periodictable['tellurium'] = 'te'
-        periodictable['xenon'] = 'xe'
-        ## RasMol's predefined sets and PyMOL's equivalents
-        ## dictionary data structure { RasMol: PyMOL }
-        predefinedlists = {}
-        predefinedlists['selected'] = ' vslselection '
-        predefinedlists['sidechain'] = ' resn asp+glu+arg+lys+his+asn+thr+cys+\
-gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro+a+t+c+g and not name o1p+o2p+\
-o3p+p+c1*+c2*+c3*+c4*+c5*+o2*+o3*+o4*+o5*+c+o+n+ca '
-        predefinedlists['surface'] = ' resn gly+ser+thr+lys+asp+asn+glu+pro+arg\
-+gln+tyr+his '
-        predefinedlists['nucleic'] = ' resn a+t+c+g '
-        predefinedlists['aliphatic'] = ' resn gly+ala+leu+val+ile '
-        predefinedlists['pyrimidine'] = ' resn c+t '
-        predefinedlists['buried'] = ' resn ala+leu+val+ile+phe+cys+met+trp '
-        predefinedlists['protein'] = ' resn asp+glu+arg+lys+his+asn+thr+cys+gln\
-+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro '
-        predefinedlists['purine'] = ' resn a+g '
-        predefinedlists['sheet'] = ' ss s '
-        predefinedlists['hetero'] = ' hetatm '
-        predefinedlists['aromatic'] = ' resn his+tyr+tr+phe+pro '
-        predefinedlists['helix'] = ' ss h '
-        predefinedlists['basic'] = ' resn arg+lys+his '
-        predefinedlists['acidic'] = ' resn asp+glu '
-        predefinedlists['amino'] = ' resn gln+asn+asp+glu+arg+lys+his+thr+cys+\
-tyr+ser+gly+trp+phe+pro+leu+val+ile+met'
-        predefinedlists['cystine'] = ' (byres (((all) & r. CYS+CYX & n. SG) & \
-bound_to ((all) & r. CYS+CYX & n. SG))) & n. CA+CB+SG'
-        predefinedlists['polar'] = ' resn asp+glu+arg+lys+his+asn+thr+cys+gln+\
-ser+gly+tyr '
-        predefinedlists['medium'] = ' resn val+thr+asp+asn+pro+cys '
-        predefinedlists['backbone'] = ' name o1p+o2p+o3p+p+c1*+c2*+c3*+c4*+c5*+\
-o2*+o3*+o4*+o5*+c+o+n+ca '
-        predefinedlists['hoh'] = ' resn hoh '
-        predefinedlists['water'] = ' resn hoh '
-        predefinedlists['neutral'] = ' resn asn+thr+cys+gln+tyr+ser+gly+ala+leu\
-+val+ile+met+trp+phe+pro '
-        predefinedlists['alpha'] = ' name ca '
-        predefinedlists['cyclic'] = ' resn pro+phe+trp+tyr+his '
-        predefinedlists['large'] = ' resn glu+arg+lys+his+gln+tyr+leu+ile+met+\
-trp+phe '
-        predefinedlists['turn'] = ' ss 1 '
-        predefinedlists['small'] = ' resn gly+ala+ser '
-        predefinedlists['acyclic'] = ' resn met+ile+val+leu+ala+gly+ser+gln+thr\
-+asn+cys+lys+arg+asp+glu '
-        predefinedlists['hydrophobic'] = ' resn ala+leu+val+ile+met+trp+phe+pro '
-        predefinedlists['charged'] = ' resn asp+glu+arg+lys+his '
-        ## Amino Acids as they appear in both RasMol and PyMOL
-        aminolist = ['gly', 'ala', 'val', 'leu', 'ile', 'met', 'pro', 'phe',
-            'tyr', 'trp', 'ser', 'thr', 'cys', 'lys', 'arg', 'his', 'asp',
-            'glu', 'asn', 'gln']
-
         selection = 'false'
-        if '.' in allparameters:
+        if '*' in allparameters:
+            found = allparameters.split('*')
+            if found[0] == '' and found[1] == '':
+                selection = 'all'
+            elif found[0] == '':
+                selection = '%s' % self._select(found[1])
+            else:
+                selection = '%s and %s' % (self._select(found[0]),
+                    self._select(found[1]))
+        elif '.' in allparameters:
             found = allparameters.split('.')
-            selection = '%s and name %s' % (self._select(found[0]),
-                self._select(found[1]))
+            if found[0] == '' and found[1] == '':
+                print self.msgstrs[self.errsyntax]
+            elif found[0] == '':
+                if found[1] in sim_self.periodictable:
+                    selection = 'symbol %s' % found[1]
+                else:
+                    selection = 'name %s' % self._select(found[1])
+            else:
+                if found[1] in sim_self.periodictable:
+                    selection = '%s and symbol %s' % (self._select(found[0]),
+                        found[1])
+                else:
+                    selection = '%s and name %s' % (self._select(found[0]),
+                        self._select(found[1]))
         elif ':' in allparameters:
             found = allparameters.split(':')
-            if len(found[0])>0:
+            if found[0] == '' and found[1] == '':
+                print self.msgstrs[self.errsyntax]
+            elif found[0] == '':
+                selection = 'chain %s' % found[1]
+            else:
                 selection = '%s and chain %s' % (self._select(found[0]),
                     found[1])
+        elif '?' in allparameters:
+            found = allparameters.split('?')
+            if found[0] == '' and found[1] == '':
+                print self.msgstrs[self.errsyntax]
+            elif found[0] == '':
+                print self.msgstrs[self.errsyntax]
             else:
-                selection = 'chain %s' % found[1]
-        elif allparameters == 'all' or allparameters == '*':
+                selection = '%s*' % found[0]
+        elif allparameters == 'all':
             selection = 'all'
         elif allparameters == '':
             if self.hydrogen:
@@ -1277,12 +1331,12 @@ trp+phe '
                     selection = 'all and not hydrogen'
                 else:
                     selection = 'all and not hydrogen or hetero'
-        elif allparameters in predefinedlists:
-            selection = predefinedlists[allparameters]
+        elif allparameters in self.predefinedlists:
+            selection = self.predefinedlists[allparameters]
         elif allparameters in self.userdefinedgroups:
             selection = self._select(self.userdefinedgroups[allparameters])
-        elif allparameters in periodictable:
-            selection = 'symbol %s' % periodictable[allparameters]
+        elif allparameters in self.periodictable:
+            selection = 'symbol %s' % self.periodictable[allparameters]
         elif allparameters in aminolist:
             selection = 'resn %s' % allparameters
         elif allparameters[:6] == 'atomno':
@@ -1624,7 +1678,6 @@ trp+phe '
         self._vslfetchtoken(commands)
 
         # handle temporary selection
-        self.vslselectionsaved = self.vslselection
         if self.curtoken == -ord('('):
             stack = []
             end = -1
@@ -1640,9 +1693,9 @@ trp+phe '
             if end != -1:
                 chm = commands[self.tokenstart:end+1]
                 chm = chm.lower()
-                self.vslselection = self._preselect(chm)
+                self.vslselectionsaved = self._preselect(chm)
                 if self.vslverbose > 0:
-                    print 'vslselection: ' + self.vslselection
+                    print 'vslselection: %s' % self.vslselectionsaved
                 if end < len(commands)-1 and commands[end+1:end+2] == '.':
                     end = end+1
                 self.tokenptr = 0
@@ -1658,7 +1711,7 @@ trp+phe '
  
         if self.vslverbose > 0:
             print os.times()
-            print 'vslselection: ' + self.vslselection
+            print 'vslselection: %s' % self.vslselectionsaved
             print 'VSLcommand: ' + commands
 
         ##---------------Script---------------##
@@ -1705,11 +1758,10 @@ trp+phe '
                     cmd.select('vslselection', '(all)')
                     cmd.select('VSLCenterSelection', self.centerselection)
                     cmd.center(self.centerselection)
-                    self.vslselection = '(all)'
-                    self.vslselectionsaved = self.vslselection
+                    self.vslselectionsaved = '(all)'
                     self._cpk()
                     if self.vslverbose > 0:
-                        print 'vslselection: ' + self.vslselection
+                        print 'vslselection: %s' % self.vslselectionsaved
                 except:
                     print '\"'+self.tokenident+'\"' + '<--LOADFILE'
                     print 'EXCEPTION THROWN'
@@ -1723,11 +1775,10 @@ trp+phe '
                     cmd.select('vslselection', '(all)')
                     cmd.select('VSLCenterSelection', self.centerselection)
                     cmd.center(self.centerselection)
-                    self.vslselection = '(all)'
-                    self.vslselectionsaved = self.vslselection
+                    self.vslselectionsaved = '(all)'
                     self._cpk()
                     if self.vslverbose > 0:
-                        print 'vslselection: %s' % self.vslselection
+                        print 'vslselection: %s' % self.vslselectionsaved
                 except:
                     print chm + '<--LOADFILE'
                     print 'EXCEPTION THROWN'
@@ -1797,13 +1848,12 @@ trp+phe '
         #----------------Select-----------------#
 
         if self.curtoken == self.selecttok:
-            selected = self._preselect(commands[len(self.tokenident)+1:].lower())
-            print selected + '<--SELECTED'
+            self.vslselectionsaved = self._preselect(commands[len(self.tokenident)+1:])
+            print  '%s <--SELECTED' % self.vslselectionsaved
             try:
-                cmd.select('vslselection', selected)
-                self.vslselection = selected
+                cmd.select('vslselection', self.vslselectionsaved)
                 if self.vslverbose > 0:
-                    print 'vslselection: ' + self.vslselection
+                    print 'vslselection: %s' % self.vslselectionsaved
             except:
                 print '''No selection was made for select, please specify a
                     selection.  If you have specified a selection, please 
@@ -1814,15 +1864,14 @@ trp+phe '
         #----------------Restrict-----------------#
 
         if self.curtoken == self.restricttok:
-            selected = self._preselect(commands[len(self.tokenident)+1:].lower())
-            restricted = 'all and not (' + selected + ')'
-            print selected + '<--RESTRICTED'
+            self.vslselectionsaved = 'all and not (%s)' % self._preselect(commands[len(self.tokenident)+1:].lower())
+            print  '%s <--RESTRICTED' % self.vslselectionsaved
             try:
-                cmd.select('vslselection', selected)
-                self.vslselection = selected
+                cmd.select('vslselection', self.vslselectionsaved)
                 if self.vslverbose > 0:
-                    print 'vslselection: ' + self.vslselection
-                cmd.hide('everything', restricted)
+                    print 'vslselection: %s' % self.vslselectionsaved
+                cmd.hide('everything', self.vslselectionsaved)
+                return 0
             except:
                 print '''No selection was made for select, please specify a
                     selection.  If you have specified a selection, please 
@@ -1834,7 +1883,7 @@ trp+phe '
 
         if self.curtoken == self.centretok:
             self.centerselection = self._preselect(commands[len(self.tokenident)+1:].lower())
-            print self.centerselection + '<--CENTER'
+            print '%s <--CENTER' % self.centerselection
             try:
                 cmd.select('VSLCenterSelection', self.centerselection)
                 cmd.center(self.centerselection)
@@ -1936,56 +1985,49 @@ trp+phe '
             return 0
 
         ##---------------Spacefill/CPK---------------##
-
         if self.curtoken == self.spacefilltok or self.curtoken == self.cpktok \
             or self.curtoken == self.cpknewtok:
-            try:
-                commands = commands + ' '
-                command = commands.split(' ', 1)[1].rstrip()
-                if command == 'false' or command == 'off':
-                    cmd.hide('spheres', self.vslselectionsaved)
-                    print 'Spacefill off complete'
-                elif command == 'true' or command == 'on' or command == '':
-                    cmd.show('spheres', self.vslselectionsaved)
-                    print 'Spacefill on complete'
-                elif float(command)>=0 and float(command)<=1500:
-                    cmd.show('spheres', self.vslselectionsaved)
-                    if '.' in command:
-                        command = float(command)
-                    else:
-                        command = float(command)/250
-                    cmd.set('sphere_scale', command)
-            except:
-                print 'An error occured with the spacefill/cpk command'
+            self._vslfetchtoken(commands)
+            if self.curtoken == self.falsetok:
+                cmd.hide('spheres', self.vslselectionsaved)
+                print 'Spacefill off complete'
+            elif self.curtoken == self.truetok:
+                cmd.show('spheres', self.vslselectionsaved)
+                print 'Spacefill on complete'
+            elif self.curtoken == self.numbertok and float(self.tokenvalue)>=0 \
+                and float(self.tokenvalue)<=1500:
+                cmd.show('spheres', self.vslselectionsaved)
+                if '.' in self.tokenvalue:
+                    self.tokenvalue = float(self.tokenvalue)
+                else:
+                    self.tokenvalue = float(self.tokenvalue)/250
+                cmd.set('sphere_scale', self.tokenvalue)
             return 0
 
         ##---------------Cartoon---------------##
 
         if self.curtoken == self.cartoontok:
-            try:
-                commands = commands + ' '
-                command = commands.split(' ', 1)[1].rstrip()
-                if command == 'false' or command == 'off':
-                    cmd.hide('cartoon', self.vslselectionsaved)
-                    cmd.hide('ribbon', self.vslselectionsaved)
-                    print 'Cartoon off complete'
-                elif command == 'true' or command == 'on' or command == '':
-                    cmd.hide('ribbon', self.vslselectionsaved)
-                    cmd.cartoon('rectangle', self.vslselectionsaved)
-                    cmd.show('cartoon', self.vslselectionsaved)
-                    print 'Cartoon on complete'
-                elif float(command)>=0 and float(command)<=500:
-                    if '.' in command:
-                        command = float(command)
-                    else:
-                        command = float(command)/250
-                    cmd.cartoon('rectangle', self.vslselectionsaved)
-                    cmd.hide('ribbon', self.vslselectionsaved)
-                    cmd.set('cartoon_rect_length', command)
-                    cmd.show('cartoon', self.vslselectionsaved)
-                    print 'Cartoon on complete'
-            except:
-                print 'An error occured with the cartoon command'
+            self._vslfetchtoken(commands)
+            if self.curtoken == self.falsetok:
+                cmd.hide('cartoon', self.vslselectionsaved)
+                cmd.hide('ribbon', self.vslselectionsaved)
+                print 'Cartoon off complete'
+            elif self.curtoken == self.truetok:
+                cmd.hide('ribbon', self.vslselectionsaved)
+                cmd.cartoon('rectangle', self.vslselectionsaved)
+                cmd.show('cartoon', self.vslselectionsaved)
+                print 'Cartoon on complete'
+            elif self.curtoken == self.numbertok and float(self.tokenvalue)>=0 \
+                and float(self.tokenvalue)<=500:
+                if '.' in self.tokenvalue:
+                    self.tokenvalue = float(self.tokenvalue)
+                else:
+                    self.tokenvalue = float(self.tokenvalue)/250
+                cmd.cartoon('rectangle', self.vslselectionsaved)
+                cmd.hide('ribbon', self.vslselectionsaved)
+                cmd.set('cartoon_rect_length', self.tokenvalue)
+                cmd.show('cartoon', self.vslselectionsaved)
+                print 'Cartoon on complete'
             return 0
 
         ##---------------Trace---------------##
@@ -2062,8 +2104,8 @@ trp+phe '
                         command =  float(command)
                     else:
                         command =  float(command)/ 250
-                    cmd.show('sticks', self.vslselectionsaved)
-                    cmd.set('stick_radius', command)
+                    cmd.show('lines', self.vslselectionsaved)
+                    cmd.set('line_radius', command)
                     print 'Wireframe on complete'
             except:
                 print 'An error occured with the wireframe command'
@@ -2113,12 +2155,13 @@ trp+phe '
         ##---------------Surface--------------##
 
         if self.curtoken == self.surfacetok:
-            try:
+            self._vslfetchtoken()
+            if self.curtoken == self.truetok:
                 cmd.show('surface', self.vslselectionsaved)
-            except:
-                print 'An error has occurred with the surface command'
+            elif self.curtoken == self.falsetok:
+                cmd.hide('surface', self.vslselectionsaved)
             return 0
-
+        
         ##---------------Bond---------------##
         if self.curtoken == self.bondtok:
             try:
@@ -2455,7 +2498,7 @@ def __init__(self):
     '''************************'''
     self.menuBar.addmenuitem('Plugin', 'command',
                              'VSL Script Loader',
-                             label = 'ConSCRIPT 2.0rc1',
+                             label = 'ConSCRIPT 2.0rc1.5',
                              command = vslcmd)
 
 def vslcmd(commands=None, args=None, filename=None):
@@ -2476,6 +2519,11 @@ def vslcmd(commands=None, args=None, filename=None):
         else:
             CSC.handlecommand('%s %s' % (commands, ','.join(args).rstrip()))
             
+def getselection():
+    '''return current selection'''
+    print CSC.getselection()
+#**cmd.extend('getselection', getselection)
+
 def gettok(tok):
     '''return token of a command'''
     print CSC.gettok(tok)
