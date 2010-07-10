@@ -1,6 +1,9 @@
 '''ConSCRIPT a Rasmol to Pymol converter
    ConSCRIPT (C) Copyright 2007-2010
    S. Mottarella, P. Craig, H. Bernstein
+   
+   Release 2.0 RC 1 by Mario Rosa, 9 July 2010
+   
    GPL, No Warranty
    
 /*************************** GPL NOTICES ******************************
@@ -2498,7 +2501,7 @@ def __init__(self):
     '''************************'''
     self.menuBar.addmenuitem('Plugin', 'command',
                              'VSL Script Loader',
-                             label = 'ConSCRIPT 2.0rc1.5',
+                             label = 'ConSCRIPT 2.0rc2',
                              command = vslcmd)
 
 def vslcmd(commands=None, args=None, filename=None):
