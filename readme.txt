@@ -69,16 +69,16 @@ default location
 
 download ConSCRIPT.py from
 
-http://downloads.sourceforge.net/sbevsl/ConSCRIPT-2.0rc3.tar.gz
+http://downloads.sourceforge.net/sbevsl/ConSCRIPT-2.0rc4.tar.gz
 
 and unpack ConSCRIPT.py from the kit.  On an MS Windows system,
 if you do not have a suitable utility to read "tarballs", when
-you double click ConSCRIPT-2.0rc3.tar.gz, they system should
+you double click ConSCRIPT-2.0rc4.tar.gz, they system should
 suggest a program to download.  If it does not, you may wish to
 consider using Stuffit Expander or WinZip.  On unix systems, or
 using MINGW under windows you may unpack the tarball with
 
-gunzip < ConSCRIPT-2.0rc3.tar.gz | tar xvf -
+gunzip < ConSCRIPT-2.0rc4.tar.gz | tar xvf -
 
 If you have not already done so, first install PyMOL.  Then,
 the simplest way to install ConSCRIPT is by using the
@@ -177,6 +177,13 @@ part by NIGMS grant #1R15GM078077.
 
 
 ChangeLog:
+
+Revision 103  - (view) (download) (as text) (annotate) - [select for diffs]
+Modified Mon Jul 12 22:40:12 2010 UTC (46 minutes, 7 seconds ago) by vinnyrose
+File length: 114804 byte(s)
+Diff to previous 101
+
+Fixed a coloring error. Print number of atoms selected. Version 2.0rc3.1.
 
 Revision 101  - (view) (download) (as text) (annotate) - [select for diffs]
 Modified Mon Jul 12 20:12:30 2010 UTC (45 minutes, 15 seconds ago) by vinnyrose

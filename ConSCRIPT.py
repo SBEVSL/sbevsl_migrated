@@ -2471,7 +2471,7 @@ def __init__(self):
     '''************************'''
     self.menuBar.addmenuitem('Plugin', 'command',
                              'VSL Script Loader',
-                             label = 'ConSCRIPT 2.0rc3.1',
+                             label = 'ConSCRIPT 2.0rc4',
                              command = vslcmd)
 
 def vslcmd(commands=None, args=None, filename=None):
