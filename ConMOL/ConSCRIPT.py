@@ -2,7 +2,7 @@
    ConSCRIPT (C) Copyright 2007-2010
    S. Mottarella, P. Craig, H. Bernstein
    
-   Release 2.0 RC 3 by Mario Rosa, 12 July 2010
+   Release 2.0 RC 3.1 by Mario Rosa, 12 July 2010
    
    GPL, No Warranty
    
@@ -58,6 +58,7 @@ class ConSCRIPTConverter:
         '''Set up some stuff'''
         self.assign = 0
         self.vsltok = {}
+        self.vslci = 0
         self.templist = []
         self.map_name = 0
         self.map_type = 'gaussian'
@@ -1080,8 +1081,10 @@ phe+pro '
         else:
             return False
         try:
-            cmd.set_color('vslc', rgb)
-            return 'vslc'
+            name = 'vslc%s' % self.vslci
+            self.vslci += 1
+            cmd.set_color(name, rgb)
+            return name
         except:
             print "RGB Triplet not valid."
             return False
@@ -1870,6 +1873,7 @@ phe+pro '
         if self.curtoken == self.selecttok:
             self.vslselectionsaved = self._preselect(commands[len(self.tokenident)+1:])
             print  '%s <--SELECTED' % self.vslselectionsaved
+            print '%s atoms selected!' % cmd.count_atoms(self.vslselectionsaved)
             try:
                 cmd.select('vslselection', self.vslselectionsaved)
                 if self.vslverbose > 0:
@@ -1884,8 +1888,9 @@ phe+pro '
         #----------------Restrict-----------------#
 
         if self.curtoken == self.restricttok:
-            self.vslselectionsaved = 'all and not (%s)' % self._preselect(commands[len(self.tokenident)+1:].lower())
+            self.vslselectionsaved = 'not (%s)' % self._preselect(commands[len(self.tokenident)+1:].lower())
             print  '%s <--RESTRICTED' % self.vslselectionsaved
+            print '%s atoms selected!' % cmd.count_atoms(self.vslselectionsaved)
             try:
                 cmd.select('vslselection', self.vslselectionsaved)
                 if self.vslverbose > 0:
@@ -2466,7 +2471,7 @@ def __init__(self):
     '''************************'''
     self.menuBar.addmenuitem('Plugin', 'command',
                              'VSL Script Loader',
-                             label = 'ConSCRIPT 2.0rc3',
+                             label = 'ConSCRIPT 2.0rc3.1',
                              command = vslcmd)
 
 def vslcmd(commands=None, args=None, filename=None):
