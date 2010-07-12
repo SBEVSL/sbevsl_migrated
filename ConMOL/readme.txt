@@ -6,9 +6,9 @@ ConSCRIPT (C) Copyright 2007-2010
 S. Mottarella, P. Craig, H. Bernstein
 GPL, No Warranty
 
-2.0 Release Candidate 2
+2.0 Release Candidate 3
 by Mario Rosa
-9 July 2010
+12 July 2010
 
 /*************************** GPL NOTICES ******************************
  *                                                                    *
@@ -69,16 +69,16 @@ default location
 
 download ConSCRIPT.py from
 
-http://downloads.sourceforge.net/sbevsl/ConSCRIPT-2.0RC2.tar.gz
+http://downloads.sourceforge.net/sbevsl/ConSCRIPT-2.0rc3.tar.gz
 
 and unpack ConSCRIPT.py from the kit.  On an MS Windows system,
 if you do not have a suitable utility to read "tarballs", when
-you double click ConSCRIPT-2.0RC2.tar.gz, they system should
+you double click ConSCRIPT-2.0rc3.tar.gz, they system should
 suggest a program to download.  If it does not, you may wish to
 consider using Stuffit Expander or WinZip.  On unix systems, or
 using MINGW under windows you may unpack the tarball with
 
-gunzip < ConSCRIPT-2.0RC2.tar.gz | tar xvf -
+gunzip < ConSCRIPT-2.0rc3.tar.gz | tar xvf -
 
 If you have not already done so, first install PyMOL.  Then,
 the simplest way to install ConSCRIPT is by using the
@@ -152,32 +152,58 @@ of those programs. The project is funded in part by NIGMS grant
 
 And also at the ACA Conference in Knoxville, TN, June 2008:
 
-A Rasmol to PyMOL Translator. Scott Mottarella, Brett Hanson, Charles Westin, Paul Craig, Herbert Bernstein,
-Biological Sciences, Rochester Inst. of Technology, 85 Lomb Memorial Dr., Rochester, NY 14623 USA.
-For many educators and scientists, PyMOL is the application of choice for preparing images and animations of their
-structures because of the beauty and quality of the images. However, many are most familiar with the scripting
-languages associated with RasMol, Chime and Jmol. The long-range goal of our Structural Biology Extensible
-Visualization Scripting Language project is to make the multiple molecular visualization tools available to the
-broadest possible audience, where each user can use many programs, with knowledge of the scripting language for
-only one of those programs. The first step has been a comparison of the command sets for RasMol and PyMOL,
-followed by creation of a plug-in for PyMOL that will accept RasMol script files, translate the commands into
-PyMOL script and execute the commands. The process involves searching for recognized, valid, RasMol script
-commands and performing its PyMOL equivalent, either as a single command or as a series of commands that
-produce the same result. Future plans include expansion to additional molecular visualization programs and the
-preparation of a web site to provide script translation among the various programs. The project is funded in part by
-NIGMS grant #1R15GM078077.
+A Rasmol to PyMOL Translator. Scott Mottarella, Brett Hanson, Charles Westin, 
+Paul Craig, Herbert Bernstein, Biological Sciences, Rochester Inst. of Technology, 
+85 Lomb Memorial Dr., Rochester, NY 14623 USA.
+
+For many educators and scientists, PyMOL is the application of choice for preparing 
+images and animations of their structures because of the beauty and quality of 
+the images. However, many are most familiar with the scripting languages 
+associated with RasMol, Chime and Jmol. The long-range goal of our Structural 
+Biology Extensible Visualization Scripting Language project is to make the multiple 
+molecular visualization tools available to the broadest possible audience, where 
+each user can use many programs, with knowledge of the scripting language for
+only one of those programs. The first step has been a comparison of the command 
+sets for RasMol and PyMOL, followed by creation of a plug-in for PyMOL that will 
+accept RasMol script files, translate the commands into PyMOL script and execute 
+the commands. The process involves searching for recognized, valid, RasMol script
+commands and performing its PyMOL equivalent, either as a single command or as a 
+series of commands that produce the same result. Future plans include expansion to 
+additional molecular visualization programs and the preparation of a web site to 
+provide script translation among the various programs. The project is funded in 
+part by NIGMS grant #1R15GM078077.
 
 =========================================================================
 
 
 ChangeLog:
 
+Revision 101  - (view) (download) (as text) (annotate) - [select for diffs]
+Modified Mon Jul 12 20:12:30 2010 UTC (45 minutes, 15 seconds ago) by vinnyrose
+File length: 114558 byte(s)
+Diff to previous 100
+
+Version 2.0rc3. Fixed a few typos. Correct handling of floats. More token usage. 
+Several same fixes. Select still needs work on more complicated expressions.
+
+Revision 100 - (view) (download) (as text) (annotate) - [select for diffs]
+Modified Sat Jul 10 03:22:23 2010 UTC (2 days, 17 hours ago) by yaya-hjb
+File length: 116236 byte(s)
+Diff to previous 99
+
+Update version to 2.0rc2
+Update readme.txt
+Add local copy of gpl.txt
+-- HJB
+
+
 Revision 99  - (view) (download) (as text) (annotate) - [select for diffs]
 Modified Fri Jul 9 23:52:12 2010 UTC (3 hours, 20 minutes ago) by vinnyrose
 File length: 116183 byte(s)
 Diff to previous 97
 
-Moved selection dictionary/tuples into the init. Many bug fixes. More token usage. Selection algebra still needs work. Version 2.0rc1.5.
+Moved selection dictionary/tuples into the init. Many bug fixes. More token usage. 
+Selection algebra still needs work. Version 2.0rc1.5.
 
 Revision 97 - (view) (download) (as text) (annotate) - [select for diffs]
 Modified Tue Jul 6 19:10:22 2010 UTC (3 days, 8 hours ago) by vinnyrose
@@ -191,7 +217,9 @@ Modified Tue Jul 6 18:33:40 2010 UTC (3 days, 8 hours ago) by vinnyrose
 File length: 113330 byte(s)
 Diff to previous 95
 
-Updated color functions to support all of "color <atom> <color>" commands except for 'user' color. Can also "color bond". Several small changes to conform to style standards. Version 2.0rc1.
+Updated color functions to support all of "color <atom> <color>" commands 
+except for 'user' color. Can also "color bond". Several small changes to 
+conform to style standards. Version 2.0rc1.
 
 Revision 95 - (view) (download) (as text) (annotate) - [select for diffs]
 Modified Wed Jun 30 01:54:14 2010 UTC (10 days, 1 hour ago) by yaya-hjb
@@ -207,8 +235,15 @@ Modified Tue Jun 29 19:55:13 2010 UTC (10 days, 7 hours ago) by vinnyrose
 File length: 96029 byte(s)
 Diff to previous 91
 
-ConSCRIPT select function fixed. Many changes made to the structure of the code including making the class truly classified. Before all the functions were in the init of the class. The handle command now looks at token equality instead of command substrings. Parsing colors has been modified to a smaller code base.
-Promol: some small bug fixes in the motif maker that occur when unwanted spaces occur in the input fields, a fixed motif was added. A better way of updating motif files is needed when this is all distributed. Version changed to 3.6.2. Version 4.0 candidate 3.2
+ConSCRIPT select function fixed. Many changes made to the structure of the 
+code including making the class truly classified. Before all the functions 
+were in the init of the class. The handle command now looks at token equality 
+instead of command substrings. Parsing colors has been modified to a smaller 
+code base.
+Promol: some small bug fixes in the motif maker that occur when unwanted 
+spaces occur in the input fields, a fixed motif was added. A better way 
+of updating motif files is needed when this is all distributed. Version 
+changed to 3.6.2. Version 4.0 candidate 3.2
 
 Revision 91 - (view) (download) (as text) (annotate) - [select for diffs]
 Modified Fri Jun 18 16:40:23 2010 UTC (3 weeks ago) by yaya-hjb
@@ -233,8 +268,10 @@ Diff to previous 56
 Changes to ConSCRIPT to make it compatible with Linux.
 
 Many changes to ProMol.
-Changed motif maker to have it's own tab, and am still working on making it compatible with motif finder.
-Made changes to make it more compatible with linux and need to make more changes in that area.
+Changed motif maker to have it's own tab, and am still working on making it 
+compatible with motif finder.
+Made changes to make it more compatible with linux and need to make more 
+changes in that area.
 Changed the GUI in many areas.
 Deleted many motifs that don't seem to have a use right now. 
 
@@ -244,13 +281,19 @@ File length: 100866 byte(s)
 Diff to previous 54
 
 -added commands: "map color","map zap", "set", "label", "bond", "unbond"
--added internal parameters: "background", "ambient", "unitcell", "axes", "fontsize", "stereo", "hydrogen", "hetero", "solvent", "monitor", "specular", "shadow"
--determined that these parameters are incompatible: 'backfade','bondmode','bonds','cisangle','fontstroke','hourglass ','kinemage','menus','strands','transparent','vectps','write'
--added support for named maps, still can only be one at a time (ability to select multiple not available yet)
+-added internal parameters: "background", "ambient", "unitcell", "axes",
+ "fontsize", "stereo", "hydrogen", "hetero", "solvent", "monitor",
+ "specular", "shadow"
+-determined that these parameters are incompatible: 'backfade','bondmode',
+'bonds','cisangle','fontstroke','hourglass ','kinemage','menus','strands',
+'transparent','vectps','write'
+-added support for named maps, still can only be one at a time (ability to 
+select multiple not available yet)
 -edited 'load' to allow for parentheses to flank the file name
 -edited 'save' to convert image types into .png if .bmp or .gif is specified
 -edited 'backbone' to display more similar to RasMol's backbone
--edited 'cartoon' to display all cartoon as rectangles as RasMol does instead of ribbons 
+-edited 'cartoon' to display all cartoon as rectangles as RasMol does 
+instead of ribbons 
 -fixed a error that occurred with "zoom" when used before any center command
 -Edited text on ConSCRIPT: correct spelling on P. Craig
 -fixed an error that occurred when 'select' was not followed by any parameters
