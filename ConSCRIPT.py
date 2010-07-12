@@ -2,7 +2,7 @@
    ConSCRIPT (C) Copyright 2007-2010
    S. Mottarella, P. Craig, H. Bernstein
    
-   Release 2.0 RC 1 by Mario Rosa, 9 July 2010
+   Release 2.0 RC 3 by Mario Rosa, 12 July 2010
    
    GPL, No Warranty
    
@@ -785,9 +785,9 @@ phe+pro '
         for i in range(ord('a'), ord('z')+1):
             self.predefinedlists['%c' % i] = ' chain %c ' % i
         ## Amino Acids as they appear in both RasMol and PyMOL
-        aminolist = ['gly', 'ala', 'val', 'leu', 'ile', 'met', 'pro', 'phe',
-            'tyr', 'trp', 'ser', 'thr', 'cys', 'lys', 'arg', 'his', 'asp',
-            'glu', 'asn', 'gln']
+        self.aminolist = ['gly', 'ala', 'val', 'leu', 'ile', 'met', 'pro',
+            'phe', 'tyr', 'trp', 'ser', 'thr', 'cys', 'lys', 'arg', 'his',
+            'asp', 'glu', 'asn', 'gln']
     
     def getselection(self):
         '''returns current selection'''
@@ -915,19 +915,20 @@ phe+pro '
             if tokenlength != 32:
                 self.tokenident = ''.join(tokenidentl)
                 self.curtoken = self._lookupkeyword(self.tokenident)
-                #**debug()
-            else:
-                #**debug()
-                pass
+            #**debug()
         elif chm.isdigit():
             #**print ' First character is digit '
-            self.tokenvalue = int(chm)
+            self.tokenvalue = chm
             while self.tokenptr < len(commands):
                 chm = commands[self.tokenptr]
-                if chm == '#' or not chm.isdigit():
+                if (chm == '#' or not chm.isdigit()) and chm != '.':
                     break
                 self.tokenptr += 1
-                self.tokenvalue = 10*self.tokenvalue + int(chm)
+                self.tokenvalue += chm
+            if '.' in self.tokenvalue:
+                self.tokenvalue = float(self.tokenvalue)
+            else:
+                self.tokenvalue = int(self.tokenvalue)
             self.curtoken = self.numbertok
             #**debug()
         elif (chm == '\'') or (chm == '\"') or (chm == '`'):
@@ -943,10 +944,7 @@ phe+pro '
                 self.tokenptr += 1
                 self.tokenident = ''.join(tokenidentl)
                 self.curtoken = self.stringtok
-                #**debug()
-            else:
-                #**debug()
-                pass
+            #**debug()
         else:
             self.curtoken = -ord(chm)
             #**debug()
@@ -1082,9 +1080,8 @@ phe+pro '
         else:
             return False
         try:
-            name = ('vslc_%s' % rgb).replace(' ','')
-            cmd.set_color(name, rgb)
-            return name
+            cmd.set_color('vslc', rgb)
+            return 'vslc'
         except:
             print "RGB Triplet not valid."
             return False
@@ -1157,9 +1154,9 @@ phe+pro '
                 continue
             if key != 'UNK':
                 cmd.color('%s%s' % (key, suffix),
-                    '(r. %s & %s)' % (key, selection))
-                unk += '%s+' % key
-        cmd.color('UNK%s' % suffix, '((%s) & %s)' % (unk[:-1], selection))
+                    'r. %s & (%s)' % (key, selection))
+                unk = '%s%s+' % (unk, key)
+        cmd.color('UNK%s' % suffix, '(%s) & (%s)' % (unk[:-1], selection))
 
     def _cpk(self, cpknew=False):
         '''Color in cpk or cpknew'''
@@ -1279,7 +1276,7 @@ phe+pro '
 
         selection = 'false'
         if '*' in allparameters:
-            found = allparameters.split('*')
+            found = allparameters.split('*', 1)
             if found[0] == '' and found[1] == '':
                 selection = 'all'
             elif found[0] == '':
@@ -1288,23 +1285,23 @@ phe+pro '
                 selection = '%s and %s' % (self._select(found[0]),
                     self._select(found[1]))
         elif '.' in allparameters:
-            found = allparameters.split('.')
+            found = allparameters.split('.', 1)
             if found[0] == '' and found[1] == '':
                 print self.msgstrs[self.errsyntax]
             elif found[0] == '':
-                if found[1] in sim_self.periodictable:
+                if found[1] in self.sim_periodictable:
                     selection = 'symbol %s' % found[1]
                 else:
                     selection = 'name %s' % self._select(found[1])
             else:
-                if found[1] in sim_self.periodictable:
+                if found[1] in self.sim_periodictable:
                     selection = '%s and symbol %s' % (self._select(found[0]),
                         found[1])
                 else:
                     selection = '%s and name %s' % (self._select(found[0]),
                         self._select(found[1]))
         elif ':' in allparameters:
-            found = allparameters.split(':')
+            found = allparameters.split(':', 1)
             if found[0] == '' and found[1] == '':
                 print self.msgstrs[self.errsyntax]
             elif found[0] == '':
@@ -1313,13 +1310,22 @@ phe+pro '
                 selection = '%s and chain %s' % (self._select(found[0]),
                     found[1])
         elif '?' in allparameters:
-            found = allparameters.split('?')
+            found = allparameters.split('?', 1)
             if found[0] == '' and found[1] == '':
                 print self.msgstrs[self.errsyntax]
             elif found[0] == '':
                 print self.msgstrs[self.errsyntax]
             else:
                 selection = '%s*' % found[0]
+        elif ',' in allparameters:
+            found = allparameters.split(',', 1)
+            if found[0] == '' and found[1] == '':
+                print self.msgstrs[self.errsyntax]
+            elif found[0] == '':
+                print self.msgstrs[self.errsyntax]
+            else:
+                selection = '%s + %s' % (self._select(found[0]),
+                    self._select(found[1]))
         elif allparameters == 'all':
             selection = 'all'
         elif allparameters == '':
@@ -1340,7 +1346,7 @@ phe+pro '
             selection = self._select(self.userdefinedgroups[allparameters])
         elif allparameters in self.periodictable:
             selection = 'symbol %s' % self.periodictable[allparameters]
-        elif allparameters in aminolist:
+        elif allparameters in self.aminolist:
             selection = 'resn %s' % allparameters
         elif allparameters[:6] == 'atomno':
             lower = 1
@@ -1362,8 +1368,10 @@ phe+pro '
                 upper = int(found[1])
                 lower = int(found[1])
             selection = 'id %s-%s' % (lower, upper)
+        elif allparameters[:1].isalpha():
+            selection = 'resn %s' % allparameters
         else:
-            selection = 'resi %s' % allparameters.replace(',', '+')
+            selection = 'resi %s' % allparameters
         return selection
 
     ## Handles all map commands
@@ -1662,7 +1670,16 @@ phe+pro '
             cmd.hide('labels', 'SSCysteines')
         except:
             print 'Error occured with calculating ssbonds.'
-
+    
+    def _angorras(self):
+        '''convert tokenvalue to angstrom'''
+        #**print 'token value %s' % self.tokenvalue
+        if type(self.tokenvalue).__name__ == 'float':
+            self.tokenvalue = self.tokenvalue
+        else:
+            self.tokenvalue = self.tokenvalue/250.
+        #**print 'token value %s' % self.tokenvalue
+    
     ## Handle a command line
     def handlecommand(self, commands):
         '''************************'''
@@ -1995,16 +2012,14 @@ phe+pro '
                 cmd.hide('spheres', self.vslselectionsaved)
                 print 'Spacefill off complete'
             elif self.curtoken == self.truetok:
+                cmd.set('sphere_scale', 1.0, self.vslselectionsaved)
                 cmd.show('spheres', self.vslselectionsaved)
                 print 'Spacefill on complete'
-            elif self.curtoken == self.numbertok and float(self.tokenvalue)>=0 \
-                and float(self.tokenvalue)<=1500:
+            elif self.curtoken == self.numbertok and self.tokenvalue>=0 \
+                and self.tokenvalue<=1500:
+                self._angorras()
+                cmd.set('sphere_scale', self.tokenvalue, self.vslselectionsaved)
                 cmd.show('spheres', self.vslselectionsaved)
-                if '.' in self.tokenvalue:
-                    self.tokenvalue = float(self.tokenvalue)
-                else:
-                    self.tokenvalue = float(self.tokenvalue)/250
-                cmd.set('sphere_scale', self.tokenvalue)
             return 0
 
         ##---------------Cartoon---------------##
@@ -2016,19 +2031,17 @@ phe+pro '
                 cmd.hide('ribbon', self.vslselectionsaved)
                 print 'Cartoon off complete'
             elif self.curtoken == self.truetok:
-                cmd.hide('ribbon', self.vslselectionsaved)
                 cmd.cartoon('rectangle', self.vslselectionsaved)
+                cmd.hide('ribbon', self.vslselectionsaved)
+                cmd.set('cartoon_rect_length', 1.4, self.vslselectionsaved)
                 cmd.show('cartoon', self.vslselectionsaved)
                 print 'Cartoon on complete'
-            elif self.curtoken == self.numbertok and float(self.tokenvalue)>=0 \
-                and float(self.tokenvalue)<=500:
-                if '.' in self.tokenvalue:
-                    self.tokenvalue = float(self.tokenvalue)
-                else:
-                    self.tokenvalue = float(self.tokenvalue)/250
+            elif self.curtoken == self.numbertok and self.tokenvalue>=0 \
+                and self.tokenvalue<=500:
+                self._angorras()
                 cmd.cartoon('rectangle', self.vslselectionsaved)
                 cmd.hide('ribbon', self.vslselectionsaved)
-                cmd.set('cartoon_rect_length', self.tokenvalue)
+                cmd.set('cartoon_rect_length', self.tokenvalue, self.vslselectionsaved)
                 cmd.show('cartoon', self.vslselectionsaved)
                 print 'Cartoon on complete'
             return 0
@@ -2036,123 +2049,106 @@ phe+pro '
         ##---------------Trace---------------##
 
         if self.curtoken == self.tracetok:
-            try:
-                commands = commands + ' '
-                command = commands.split(' ', 1)[1].rstrip()
-                if command == 'false' or command == 'off':
-                    cmd.hide('cartoon', self.vslselectionsaved)
-                    cmd.hide('ribbon', self.vslselectionsaved)
-                    print 'Trace off complete'
-                elif command == 'true' or command == 'on' or command == '':
-                    cmd.cartoon('tube', self.vslselectionsaved)
-                    cmd.hide('ribbon', self.vslselectionsaved)
-                    cmd.show('cartoon', self.vslselectionsaved)
-                    print 'Trace on complete'
-                elif float(command)>=0 and float(command)<=500:
-                    if '.' in command:
-                        command = float(command) * 10
-                    else:
-                        command = (float(command)/250) * 10
-                    cmd.cartoon('tube', self.vslselectionsaved)
-                    cmd.hide('ribbon', self.vslselectionsaved)
-                    cmd.show('cartoon', self.vslselectionsaved)
-                    cmd.set('cartoon_tube_radius', command)
-                    print 'Trace on complete'
-            except:
-                print 'An error occured with the trace command'
+            self._vslfetchtoken(commands)
+            if self.curtoken == self.falsetok:
+                cmd.hide('cartoon', self.vslselectionsaved)
+                cmd.hide('ribbon', self.vslselectionsaved)
+                print 'Trace off complete'
+            elif self.curtoken == self.truetok:
+                cmd.cartoon('tube', self.vslselectionsaved)
+                cmd.hide('ribbon', self.vslselectionsaved)
+                cmd.set('cartoon_tube_radius', 0.5, self.vslselectionsaved)
+                cmd.show('cartoon', self.vslselectionsaved)
+                print 'Trace on complete'
+            elif self.curtoken == self.numbertok and self.tokenvalue>=0 \
+                and self.tokenvalue<=500:
+                self._angorras()
+                cmd.cartoon('tube', self.vslselectionsaved)
+                cmd.hide('ribbon', self.vslselectionsaved)
+                cmd.set('cartoon_tube_radius', self.tokenvalue * 10, self.vslselectionsaved)
+                cmd.show('cartoon', self.vslselectionsaved)
+                print 'Trace on complete'
             return 0
 
         ##---------------Ribbon---------------##
 
         if self.curtoken == self.ribbontok or self.curtoken == self.ribbon1tok\
             or self.curtoken == self.ribbon2tok:
-            try:
-                commands = commands + ' '
-                command = commands.split(' ', 1)[1].rstrip()
-                if command == 'false' or command == 'off':
-                    cmd.hide('cartoon', self.vslselectionsaved)
-                    cmd.hide('ribbon', self.vslselectionsaved)
-                    print 'Ribbon off complete'
-                elif command == 'true' or command == 'on' or command == '':
-                    cmd.hide('cartoon', self.vslselectionsaved)
-                    cmd.show('ribbon', self.vslselectionsaved)
-                    print 'Ribbon on complete'
-                elif float(command)>=0 and float(command)<=500:
-                    if '.' in command:
-                        command = float(command)
-                    else:
-                        command = float(command)/250
-                    cmd.hide('cartoon', self.vslselectionsaved)
-                    cmd.show('ribbon', self.vslselectionsaved)
-                    cmd.set('ribbon_width', command)
-                    print 'Ribbon on complete'
-            except:
-                print 'An error occured with the ribbon command'
+            self._vslfetchtoken(commands)
+            if self.curtoken == self.falsetok:
+                cmd.hide('cartoon', self.vslselectionsaved)
+                cmd.hide('ribbon', self.vslselectionsaved)
+                print 'Ribbon off complete'
+            elif self.curtoken == self.truetok:
+                cmd.hide('cartoon', self.vslselectionsaved)
+                cmd.set('ribbon_width', 3.0, self.vslselectionsaved)
+                cmd.show('ribbon', self.vslselectionsaved)
+                print 'Ribbon on complete'
+            elif self.curtoken == self.numbertok and self.tokenvalue>=0 \
+                and self.tokenvalue<=500:
+                self._angorras()
+                cmd.hide('cartoon', self.vslselectionsaved)
+                cmd.set('ribbon_width', self.tokenvalue, self.vslselectionsaved)
+                cmd.show('ribbon', self.vslselectionsaved)
+                print 'Ribbon on complete'
             return 0
 
         ##---------------Wireframe---------------##
 
         if self.curtoken == self.wireframetok:
-            try:
-                commands = commands + ' '
-                command = commands.split(' ', 1)[1].rstrip()
-                if command == 'false' or command == 'off':
-                    cmd.hide('lines', self.vslselectionsaved)
-                    print 'Wireframe off complete'
-                elif command == 'true' or command == 'on' or command == '':
-                    cmd.show('lines', self.vslselectionsaved)
-                    print 'Wireframe on complete'
-                elif float(command)>=0 and float(command)<=1500:
-                    if '.' in command:
-                        command =  float(command)
-                    else:
-                        command =  float(command)/ 250
-                    cmd.show('lines', self.vslselectionsaved)
-                    cmd.set('line_radius', command)
-                    print 'Wireframe on complete'
-            except:
-                print 'An error occured with the wireframe command'
-                return 0
+            self._vslfetchtoken(commands)
+            if self.curtoken == self.falsetok:
+                cmd.hide('lines', self.vslselectionsaved)
+                cmd.hide('sticks', self.vslselectionsaved)
+                print 'Wireframe off complete'
+            elif self.curtoken == self.truetok:
+                cmd.set('stick_radius', 0.1, self.vslselectionsaved)
+                cmd.show('sticks', self.vslselectionsaved)
+                print 'Wireframe on complete'
+            elif self.curtoken == self.numbertok and self.tokenvalue>=0 \
+                and self.tokenvalue<=500:
+                self._angorras()
+                cmd.set('stick_radius', self.tokenvalue * 2, self.vslselectionsaved)
+                cmd.show('sticks', self.vslselectionsaved)
+                print 'Wireframe on complete'
             return 0
 
         ##---------------Dots---------------##
 
         if self.curtoken == self.dotstok:
-            try:
-                commands = commands + ' '
-                command = commands.split(' ', 1)[1].rstrip()
-                if command == 'false' or command == 'off' or command == '0':
-                    cmd.hide('dots', self.vslselectionsaved)
-                    print 'Dots off complete'
-                elif command == 'true' or command == 'on' or command == '':
-                    cmd.show('dots', self.vslselectionsaved)
-                    if self.solvent:
-                        cmd.set('dot_solvent', 'on')
-                    else:
-                        cmd.set('dot_solvent', 'off')
-                    cmd.set('dot_radius', self.radius)
-                    print 'Dots on complete'
-                elif int(command)>0 and int(command)<=1000:
-                    command = int(command)
-                    cmd.show('dots', self.vslselectionsaved)
-                    if self.solvent:
-                        cmd.set('dot_solvent', 'on')
-                    else:
-                        cmd.set('dot_solvent', 'off')
-                    cmd.set('dot_radius', self.radius)
-                    if command in range(1, 5):
-                        cmd.set('dot_density', 0)
-                    elif command in range(5, 20):
-                        cmd.set('dot_density', 1)
-                    elif command in range(20, 140):
-                        cmd.set('dot_density', 2)
-                    elif command in range(140, 625):
-                        cmd.set('dot_density', 3)
-                    elif command in range(325, 1000):
-                        cmd.set('dot_density', 4)
-                    print 'Dots on complete'
-            except:
-                print 'An error occured with the dots command'
+            self._vslfetchtoken(commands)
+            if self.curtoken == self.falsetok:
+                cmd.hide('dots', self.vslselectionsaved)
+                print 'Dots off complete'
+            elif self.curtoken == self.truetok:
+                cmd.set('dot_radius', self.radius, self.vslselectionsaved)
+                cmd.set('dot_density', 2, self.vslselectionsaved)
+                cmd.show('dots', self.vslselectionsaved)
+                if self.solvent:
+                    cmd.set('dot_solvent', 'on', self.vslselectionsaved)
+                else:
+                    cmd.set('dot_solvent', 'off', self.vslselectionsaved)
+                print 'Dots on complete'
+            elif self.curtoken == self.numbertok and self.tokenvalue>0\
+                and self.tokenvalue<=1000:
+                self._angorras()
+                if self.solvent:
+                    cmd.set('dot_solvent', 'on', self.vslselectionsaved)
+                else:
+                    cmd.set('dot_solvent', 'off', self.vslselectionsaved)
+                cmd.set('dot_radius', self.radius, self.vslselectionsaved)
+                if self.tokenvalue in range(1, 5):
+                    cmd.set('dot_density', 0, self.vslselectionsaved)
+                elif self.tokenvalue in range(5, 20):
+                    cmd.set('dot_density', 1, self.vslselectionsaved)
+                elif self.tokenvalue in range(20, 140):
+                    cmd.set('dot_density', 2, self.vslselectionsaved)
+                elif self.tokenvalue in range(140, 625):
+                    cmd.set('dot_density', 3, self.vslselectionsaved)
+                elif self.tokenvalue in range(325, 1000):
+                    cmd.set('dot_density', 4, self.vslselectionsaved)
+                cmd.show('dots', self.vslselectionsaved)
+                print 'Dots on complete'
             return 0
 
         ##---------------Surface--------------##
@@ -2208,37 +2204,35 @@ phe+pro '
         ##---------------Zoom---------------##
 
         if self.curtoken == self.zoomtok:
-            try:
-                commands = commands + ' '
-                command = commands.split(' ', 1)[1].rstrip()
-                cmd.select('VSLCenterSelection', self.centerselection)
-                if command == 'false' or command == 'off' or command == '':
+            self._vslfetchtoken(commands)
+            cmd.select('VSLCenterSelection', self.centerselection)
+            if self.curtoken == self.falsetok:
+                self.zoomnum = 0
+                cmd.zoom('all', self.zoomnum)
+                cmd.center(self.centerselection)
+                print 'Zoom off complete'
+            elif self.curtoken == self.truetok:
+                self.zoomnum = -25
+                if self.tokenident == '':
                     self.zoomnum = 0
-                    cmd.zoom('all', self.zoomnum)
-                    cmd.center(self.centerselection)
-                    print 'Zoom off complete'
-                elif command == 'true' or command == 'on':
-                    self.zoomnum = -25
-                    cmd.zoom('all', self.zoomnum)
-                    cmd.center(self.centerselection)
-                    print 'Zoom on complete'
-                elif int(command) in range(0, 100):
-                    self.zoomnum = int(command)
-                    self.zoomnum = -((self.zoomnum-100))
+                cmd.zoom('all', self.zoomnum)
+                cmd.center(self.centerselection)
+                print 'Zoom on complete'
+            elif self.curtoken == self.numbertok:
+                if self.tokenvalue in range(0, 100):
+                    self.zoomnum = self.tokenvalue
+                    self.zoomnum = -((self.zoomnum)/20)
                     print 'Zoom ' + str(self.zoomnum)
                     cmd.zoom('all', self.zoomnum)
                     cmd.center(self.centerselection)
-                elif int(command) in range(100, 5000):
-                    self.zoomnum = int(command)
-                    self.zoomnum = -((self.zoomnum-100)/20)
+                elif self.tokenvalue in range(100, 5000):
+                    self.zoomnum = self.tokenvalue
+                    self.zoomnum = -((self.zoomnum)/20)
                     print 'Zoom ' + str(self.zoomnum)
                     cmd.zoom('all', self.zoomnum)
                     cmd.center(self.centerselection)
-                else:
-                    print 'That function is not supported by PyMOL.'
-            except:
-                print 'Zoom did not execute properly.'
-                print 'Please revise your zoom command'
+            else:
+                print 'That function is not supported by PyMOL.'
             return 0
 
         ##---------------Rotate--------------##		
@@ -2247,7 +2241,7 @@ phe+pro '
             axis = commands.split()[1]
             rotation = commands.split()[2]
             if axis == 'z':
-                rotation = '-' + rotation
+                rotation = '-%s' % rotation
             try:
                 cmd.rotate(axis, rotation)
             except:
@@ -2280,143 +2274,114 @@ phe+pro '
         ##---------------Slab---------------##
 
         if self.curtoken == self.slabtok:
-            try:
-                cmd.clip('near', -self.clip_dist_near)
-                commands = commands + ' '
-                command = commands.split(' ', 1)[1].rstrip()
-                if command == 'false' or command == 'off':
-                    self.clip_dist_near = 0
-                    print 'Slab off complete'
-                elif command == 'true' or command == 'on' or command == '':
-                    print self.clip_dist_near
-                    cmd.clip('near', self.clip_dist_near)
-                    print 'Slab on complete'
-                elif float(command)>=0 and float(command)<=100:
-                    command = float(command)
-                    self.clip_dist_near = command-100
-                    cmd.clip('near', self.clip_dist_near)
-                    print 'Slab on complete'
-            except:
-                print 'An error occured with the slab command'
+            cmd.clip('near', -self.clip_dist_near)
+            self._vslfetchtoken(commands)
+            if self.curtoken == self.falsetok:
+                self.clip_dist_near = 0
+                print 'Slab off complete'
+            elif self.curtoken == self.truetok:
+                print self.clip_dist_near
+                cmd.clip('near', self.clip_dist_near)
+                print 'Slab on complete'
+            elif self.curtoken == self.numbertok and self.tokenvalue>=0 \
+                and self.tokenvalue<=100:
+                self.clip_dist_near = self.tokenvalue-100
+                cmd.clip('near', self.clip_dist_near)
+                print 'Slab on complete'
             return 0
 
         ##---------------Depth---------------##
 
         if self.curtoken == self.depthtok:
-            try:
-                cmd.clip('far', -self.clip_dist_far)
-                commands = commands + ' '
-                command = commands.split(' ', 1)[1].rstrip()
-                if command == 'false' or command == 'off':
-                    self.clip_dist_far = 0
-                    print 'Depth off complete'
-                elif command == 'true' or command == 'on' or command == '':
-                    cmd.clip('far', self.clip_dist_far)
-                    print 'Depth on complete'
-                elif float(command)>=0 and float(command)<=100:
-                    command = float(command)
-                    self.clip_dist_far = command
-                    cmd.clip('far', self.clip_dist_far)
-                    print 'Depth on complete'
-            except:
-                print 'An error occured with the depth command'
+            cmd.clip('far', -self.clip_dist_far)
+            self._vslfetchtoken(commands)
+            if self.curtoken == self.falsetok:
+                self.clip_dist_far = 0
+                print 'Depth off complete'
+            elif self.curtoken == self.truetok:
+                cmd.clip('far', self.clip_dist_far)
+                print 'Depth on complete'
+            elif self.curtoken == self.numbertok and self.tokenvalue>=0 \
+                and self.tokenvalue<=100:
+                self.clip_dist_far = self.tokenvalue
+                cmd.clip('far', self.clip_dist_far)
+                print 'Depth on complete'
             return 0
 
         ##---------------hbonds---------------##
 
         if self.curtoken == self.hbondtok:
-            try:
-                commands = commands + ' '
-                command = commands.split(' ', 1)[1].rstrip()
-                if command == 'false' or command == 'off':
-                    self._hbonds()
-                    print 'hbonds off complete'
-                elif command == 'true' or command == 'on' or command == '':
-                    print 'Starting hbonds on:'
-                    self._hbonds()
-                    print 'hbonds on complete'
-                else:
-                    print 'That function is not supported by PyMOL'
-            except:
-                print '''hbonds did not execute properly.
-                    Check spelling and implementation of this hbonds command.'''
+            self._vslfetchtoken(commands)
+            if self.curtoken == self.falsetok:
+                self._hbonds()
+                print 'hbonds off complete'
+            elif self.curtoken == self.truetok:
+                print 'Starting hbonds on:'
+                self._hbonds()
+                print 'hbonds on complete'
+            else:
+                print 'That function is not supported by PyMOL'
             return 0
 
         ##---------------ssbonds---------------##
 
         if self.curtoken == self.ssbondtok:
-            try:
-                commands = commands + ' '
-                command = commands.split(' ', 1)[1].rstrip()
-                if command == 'false' or command == 'off':
-                    self._ssbonds()
-                    print 'ssbonds off complete'
-                elif command == 'true' or command == 'on' or command == '':
-                    print 'Starting hbonds on:'
-                    self._ssbonds()
-                    print 'ssbonds on complete'
-                else:
-                    print 'That function is not supported by PyMOL'
-            except:
-                print '''ssbonds did not execute properly.
-                Check spelling and implementation of this ssbonds command.'''
+            self._vslfetchtoken(commands)
+            if self.curtoken == self.falsetok:
+                self._ssbonds()
+                print 'ssbonds off complete'
+            elif self.curtoken == self.truetok:
+                print 'Starting hbonds on:'
+                self._ssbonds()
+                print 'ssbonds on complete'
+            else:
+                print 'That function is not supported by PyMOL'
             return 0
 
         ##---------------Backbone--------------##
 
         if self.curtoken == self.backbonetok:
-            try:
-                commands = commands + ' '
-                command = commands.split(' ', 1)[1].rstrip()
-                cmd.set('ribbon_sampling', 20)
-                cmd.set('ribbon_smooth', 1)
-                cmd.set('ribbon_width', 0.02)
-                if command == 'false' or command == 'off':
-                    cmd.hide('ribbon' , self.vslselectionsaved)
-                    print 'Backbone off complete'
-                elif command == 'true' or command == 'on' or command == '':
-                    cmd.show('ribbon', self.vslselectionsaved)
-                    print 'Backbone on complete'
-                elif command == 'dash':
-                    print 'PyMOL does not include funcionality for this command.'
-                elif float(command)>=0 and float(command)<=500:
-                    if '.' in command:
-                        command = float(command) * 5
-                    else:
-                        command = float(command)/50
-                    cmd.show('ribbon' , self.vslselectionsaved)
-                    cmd.set('ribbon_width', command)
-                    print 'Backbone on complete'
-                else:
-                    print 'That function is not supported by PyMOL.'
-            except:
-                print 'An error occured while trying to display the backbone.'
+            self._vslfetchtoken(commands)
+            cmd.set('ribbon_sampling', 20, self.vslselectionsaved)
+            cmd.set('ribbon_smooth', 1, self.vslselectionsaved)
+            cmd.set('ribbon_width', 0.02, self.vslselectionsaved)
+            if self.curtoken == self.falsetok:
+                cmd.hide('ribbon' , self.vslselectionsaved)
+                print 'Backbone off complete'
+            elif self.curtoken == self.truetok:
+                cmd.set('ribbon_width', 3.0, self.vslselectionsaved)
+                cmd.show('ribbon', self.vslselectionsaved)
+                print 'Backbone on complete'
+            elif command == 'dash':
+                print 'PyMOL does not include funcionality for this command.'
+            elif self.curtoken == self.numbertok and self.tokenvalue>=0 \
+                and self.tokenvalue<=500:
+                self.angorras()
+                cmd.set('ribbon_width', self.tokenvalue * 5, self.vslselectionsaved)
+                cmd.show('ribbon' , self.vslselectionsaved)
+                print 'Backbone on complete'
+            else:
+                print 'That function is not supported by PyMOL.'
             return 0
 
         ##---------------Monitor---------------##
 
         if self.curtoken == self.monitortok:
-            try:
-                parameters = commands.split(' ')
-                if len(parameters) == 3:
-                    cmd.distance('monitor', 'id %s' % parameters[1],
-                        'id %s' % parameters[2])
-                    if not self.set_monitor:
-                        cmd.hide('labels' , self.vslselectionsaved)
-                elif len(parameters) == 2:
-                    command = parameters[1]
-                    if command == 'false' or command == 'off':
-                        cmd.hide('labels' , self.vslselectionsaved)
-                        cmd.hide('dashes' , self.vslselectionsaved)
-                        print 'Monitor off complete'
-                    elif command == 'true' or command == 'on' or command == '':
-                        pass
-                    else:
-                        print 'That function is not supported by PyMOL'
-                else:
-                    print 'That function is not supported by PyMOL'
-            except:
-                print 'An error occured while trying to display the labels.'
+            self._vslfetchtoken(commands)
+            if self.curtoken == self.falsetok:
+                cmd.hide('labels' , self.vslselectionsaved)
+                cmd.hide('dashes' , self.vslselectionsaved)
+                print 'Monitor off complete'
+            elif self.curtoken == self.truetok:
+                pass
+            else:
+                one = self.tokenident
+                self._vslfetchtoken(commands)
+                two = self.tokenident
+                cmd.distance('monitor', 'id %s' % one,
+                    'id %s' % two)
+                if not self.set_monitor:
+                    cmd.hide('labels' , self.vslselectionsaved)
             return 0
 
         ##---------------Zap---------------##
@@ -2501,7 +2466,7 @@ def __init__(self):
     '''************************'''
     self.menuBar.addmenuitem('Plugin', 'command',
                              'VSL Script Loader',
-                             label = 'ConSCRIPT 2.0rc2',
+                             label = 'ConSCRIPT 2.0rc3',
                              command = vslcmd)
 
 def vslcmd(commands=None, args=None, filename=None):
@@ -2520,7 +2485,7 @@ def vslcmd(commands=None, args=None, filename=None):
         if args == ():
             CSC.handlecommand(commands)
         else:
-            CSC.handlecommand('%s %s' % (commands, ','.join(args).rstrip()))
+            CSC.handlecommand('%s,%s' % (commands, ','.join(args).rstrip()))
             
 def getselection():
     '''return current selection'''
