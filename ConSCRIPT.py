@@ -2,7 +2,7 @@
    ConSCRIPT (C) Copyright 2007-2010
    S. Mottarella, P. Craig, H. Bernstein
    
-   Release 2.0 RC 3.1 by Mario Rosa, 12 July 2010
+   Release 2.0 RC 4.1 by Mario Rosa, 13 July 2010
    
    GPL, No Warranty
    
@@ -736,55 +736,55 @@ class ConSCRIPTConverter:
         ## RasMol's predefined sets and PyMOL's equivalents
         ## dictionary data structure { RasMol: PyMOL }
         self.predefinedlists = {}
-        self.predefinedlists['selected'] = ' vslselection '
-        self.predefinedlists['sidechain'] = ' resn asp+glu+arg+lys+his+asn+thr+\
+        self.predefinedlists['selected'] = 'vslselection'
+        self.predefinedlists['sidechain'] = 'resn asp+glu+arg+lys+his+asn+thr+\
 cys+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro+a+t+c+g and not name o1p+\
-o2p+o3p+p+c1*+c2*+c3*+c4*+c5*+o2*+o3*+o4*+o5*+c+o+n+ca '
-        self.predefinedlists['surface'] = ' resn gly+ser+thr+lys+asp+asn+glu+\
-pro+arg+gln+tyr+his '
-        self.predefinedlists['nucleic'] = ' resn a+c+g+t+u+i+da+dc+dg+dt+di+1ma\
-+5mc+omc+1mg+2mg+m2g+7mg+omg+yg+h2u+5mu+psu '        
-        self.predefinedlists['rna'] = ' resn u+i+1ma+5mc+omc+1mg+2mg+m2g+7mg+\
-omg+yg+h2u+5mu+psu '
-        self.predefinedlists['dna'] = ' resn a+c+g+t+da+dc+dg+dt+di '
-        self.predefinedlists['aliphatic'] = ' resn gly+ala+leu+val+ile '
-        self.predefinedlists['pyrimidine'] = ' resn c+t '
-        self.predefinedlists['buried'] = ' resn ala+leu+val+ile+phe+cys+met+trp '
-        self.predefinedlists['protein'] = ' resn asp+glu+arg+lys+his+asn+thr+\
-cys+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro '
-        self.predefinedlists['purine'] = ' resn a+g '
-        self.predefinedlists['sheet'] = ' ss s '
-        self.predefinedlists['hetero'] = ' hetatm '
-        self.predefinedlists['aromatic'] = ' resn his+tyr+tr+phe+pro '
-        self.predefinedlists['helix'] = ' ss h '
-        self.predefinedlists['basic'] = ' resn arg+lys+his '
-        self.predefinedlists['acidic'] = ' resn asp+glu '
-        self.predefinedlists['amino'] = ' resn gln+asn+asp+glu+arg+lys+his+thr+\
+o2p+o3p+p+c1*+c2*+c3*+c4*+c5*+o2*+o3*+o4*+o5*+c+o+n+ca'
+        self.predefinedlists['surface'] = 'resn gly+ser+thr+lys+asp+asn+glu+\
+pro+arg+gln+tyr+his'
+        self.predefinedlists['nucleic'] = 'resn a+c+g+t+u+i+da+dc+dg+dt+di+1ma\
++5mc+omc+1mg+2mg+m2g+7mg+omg+yg+h2u+5mu+psu'       
+        self.predefinedlists['rna'] = 'resn u+i+1ma+5mc+omc+1mg+2mg+m2g+7mg+\
+omg+yg+h2u+5mu+psu'
+        self.predefinedlists['dna'] = 'resn a+c+g+t+da+dc+dg+dt+di'
+        self.predefinedlists['aliphatic'] = 'resn gly+ala+leu+val+ile'
+        self.predefinedlists['pyrimidine'] = 'resn c+t'
+        self.predefinedlists['buried'] = 'resn ala+leu+val+ile+phe+cys+met+trp'
+        self.predefinedlists['protein'] = 'resn asp+glu+arg+lys+his+asn+thr+\
+cys+gln+tyr+ser+gly+ala+leu+val+ile+met+trp+phe+pro'
+        self.predefinedlists['purine'] = 'resn a+g'
+        self.predefinedlists['sheet'] = 'ss s'
+        self.predefinedlists['hetero'] = 'hetatm'
+        self.predefinedlists['aromatic'] = 'resn his+tyr+tr+phe+pro'
+        self.predefinedlists['helix'] = 'ss h'
+        self.predefinedlists['basic'] = 'resn arg+lys+his'
+        self.predefinedlists['acidic'] = 'resn asp+glu'
+        self.predefinedlists['amino'] = 'resn gln+asn+asp+glu+arg+lys+his+thr+\
 cys+tyr+ser+gly+trp+phe+pro+leu+val+ile+met'
-        self.predefinedlists['cystine'] = ' (byres (((all) & r. CYS+CYX & n. SG)\
+        self.predefinedlists['cystine'] = '(byres (((all) & r. CYS+CYX & n. SG)\
  & bound_to ((all) & r. CYS+CYX & n. SG))) & n. CA+CB+SG'
-        self.predefinedlists['polar'] = ' resn asp+glu+arg+lys+his+asn+thr+cys+\
-gln+ser+gly+tyr '
-        self.predefinedlists['medium'] = ' resn val+thr+asp+asn+pro+cys '
-        self.predefinedlists['backbone'] = ' name o1p+o2p+o3p+p+c1*+c2*+c3*+c4*\
-+c5*+o2*+o3*+o4*+o5*+c+o+n+ca '
-        self.predefinedlists['hoh'] = ' resn hoh '
-        self.predefinedlists['water'] = ' resn hoh '
-        self.predefinedlists['neutral'] = ' resn asn+thr+cys+gln+tyr+ser+gly+\
-ala+leu+val+ile+met+trp+phe+pro '
-        self.predefinedlists['alpha'] = ' name ca '
-        self.predefinedlists['cyclic'] = ' resn pro+phe+trp+tyr+his '
-        self.predefinedlists['large'] = ' resn glu+arg+lys+his+gln+tyr+leu+ile+\
-met+trp+phe '
-        self.predefinedlists['turn'] = ' ss 1 '
-        self.predefinedlists['small'] = ' resn gly+ala+ser '
-        self.predefinedlists['acyclic'] = ' resn met+ile+val+leu+ala+gly+ser+\
-gln+thr+asn+cys+lys+arg+asp+glu '
-        self.predefinedlists['hydrophobic'] = ' resn ala+leu+val+ile+met+trp+\
-phe+pro '
-        self.predefinedlists['charged'] = ' resn asp+glu+arg+lys+his '
+        self.predefinedlists['polar'] = 'resn asp+glu+arg+lys+his+asn+thr+cys+\
+gln+ser+gly+tyr'
+        self.predefinedlists['medium'] = 'resn val+thr+asp+asn+pro+cys'
+        self.predefinedlists['backbone'] = 'name o1p+o2p+o3p+p+c1*+c2*+c3*+c4*\
++c5*+o2*+o3*+o4*+o5*+c+o+n+ca'
+        self.predefinedlists['hoh'] = 'resn hoh'
+        self.predefinedlists['water'] = 'resn hoh'
+        self.predefinedlists['neutral'] = 'resn asn+thr+cys+gln+tyr+ser+gly+\
+ala+leu+val+ile+met+trp+phe+pro'
+        self.predefinedlists['alpha'] = 'name ca'
+        self.predefinedlists['cyclic'] = 'resn pro+phe+trp+tyr+his'
+        self.predefinedlists['large'] = 'resn glu+arg+lys+his+gln+tyr+leu+ile+\
+met+trp+phe'
+        self.predefinedlists['turn'] = 'ss 1'
+        self.predefinedlists['small'] = 'resn gly+ala+ser'
+        self.predefinedlists['acyclic'] = 'resn met+ile+val+leu+ala+gly+ser+\
+gln+thr+asn+cys+lys+arg+asp+glu'
+        self.predefinedlists['hydrophobic'] = 'resn ala+leu+val+ile+met+trp+\
+phe+pro'
+        self.predefinedlists['charged'] = 'resn asp+glu+arg+lys+his'
         for i in range(ord('a'), ord('z')+1):
-            self.predefinedlists['%c' % i] = ' chain %c ' % i
+            self.predefinedlists['%c' % i] = 'chain %c' % i
         ## Amino Acids as they appear in both RasMol and PyMOL
         self.aminolist = ['gly', 'ala', 'val', 'leu', 'ile', 'met', 'pro',
             'phe', 'tyr', 'trp', 'ser', 'thr', 'cys', 'lys', 'arg', 'his',
@@ -1190,6 +1190,7 @@ phe+pro '
         '''Run before _select to seperate commands 
            from parentheses and others'''
         def emptypos(pos):
+            '''whether to move forward on character or to stay'''
             if preseldict[pos] == '':
                 return 0
             return 1
@@ -1770,7 +1771,7 @@ phe+pro '
                 except:
                     print 'vslfetchtoken failed tokenptr = %s' % (self.tokenptr)
             if self.curtoken == 0:
-                print p
+                print commands
                 print 'Does not contain a valid filename'
             elif self.curtoken == self.stringtok:
                 try:
@@ -2020,8 +2021,8 @@ phe+pro '
                 cmd.set('sphere_scale', 1.0, self.vslselectionsaved)
                 cmd.show('spheres', self.vslselectionsaved)
                 print 'Spacefill on complete'
-            elif self.curtoken == self.numbertok and self.tokenvalue>=0 \
-                and self.tokenvalue<=1500:
+            elif self.curtoken == self.numbertok and self.tokenvalue >= 0 \
+                and self.tokenvalue <= 1500:
                 self._angorras()
                 cmd.set('sphere_scale', self.tokenvalue, self.vslselectionsaved)
                 cmd.show('spheres', self.vslselectionsaved)
@@ -2041,8 +2042,8 @@ phe+pro '
                 cmd.set('cartoon_rect_length', 1.4, self.vslselectionsaved)
                 cmd.show('cartoon', self.vslselectionsaved)
                 print 'Cartoon on complete'
-            elif self.curtoken == self.numbertok and self.tokenvalue>=0 \
-                and self.tokenvalue<=500:
+            elif self.curtoken == self.numbertok and self.tokenvalue >= 0 \
+                and self.tokenvalue <= 500:
                 self._angorras()
                 cmd.cartoon('rectangle', self.vslselectionsaved)
                 cmd.hide('ribbon', self.vslselectionsaved)
@@ -2065,8 +2066,8 @@ phe+pro '
                 cmd.set('cartoon_tube_radius', 0.5, self.vslselectionsaved)
                 cmd.show('cartoon', self.vslselectionsaved)
                 print 'Trace on complete'
-            elif self.curtoken == self.numbertok and self.tokenvalue>=0 \
-                and self.tokenvalue<=500:
+            elif self.curtoken == self.numbertok and self.tokenvalue >= 0 \
+                and self.tokenvalue <= 500:
                 self._angorras()
                 cmd.cartoon('tube', self.vslselectionsaved)
                 cmd.hide('ribbon', self.vslselectionsaved)
@@ -2089,8 +2090,8 @@ phe+pro '
                 cmd.set('ribbon_width', 3.0, self.vslselectionsaved)
                 cmd.show('ribbon', self.vslselectionsaved)
                 print 'Ribbon on complete'
-            elif self.curtoken == self.numbertok and self.tokenvalue>=0 \
-                and self.tokenvalue<=500:
+            elif self.curtoken == self.numbertok and self.tokenvalue >= 0 \
+                and self.tokenvalue <= 500:
                 self._angorras()
                 cmd.hide('cartoon', self.vslselectionsaved)
                 cmd.set('ribbon_width', self.tokenvalue, self.vslselectionsaved)
@@ -2110,8 +2111,8 @@ phe+pro '
                 cmd.set('stick_radius', 0.1, self.vslselectionsaved)
                 cmd.show('sticks', self.vslselectionsaved)
                 print 'Wireframe on complete'
-            elif self.curtoken == self.numbertok and self.tokenvalue>=0 \
-                and self.tokenvalue<=500:
+            elif self.curtoken == self.numbertok and self.tokenvalue >= 0 \
+                and self.tokenvalue <= 500:
                 self._angorras()
                 cmd.set('stick_radius', self.tokenvalue * 2, self.vslselectionsaved)
                 cmd.show('sticks', self.vslselectionsaved)
@@ -2134,8 +2135,8 @@ phe+pro '
                 else:
                     cmd.set('dot_solvent', 'off', self.vslselectionsaved)
                 print 'Dots on complete'
-            elif self.curtoken == self.numbertok and self.tokenvalue>0\
-                and self.tokenvalue<=1000:
+            elif self.curtoken == self.numbertok and self.tokenvalue > 0\
+                and self.tokenvalue <= 1000:
                 self._angorras()
                 if self.solvent:
                     cmd.set('dot_solvent', 'on', self.vslselectionsaved)
@@ -2159,7 +2160,7 @@ phe+pro '
         ##---------------Surface--------------##
 
         if self.curtoken == self.surfacetok:
-            self._vslfetchtoken()
+            self._vslfetchtoken(commands)
             if self.curtoken == self.truetok:
                 cmd.show('surface', self.vslselectionsaved)
             elif self.curtoken == self.falsetok:
@@ -2288,8 +2289,8 @@ phe+pro '
                 print self.clip_dist_near
                 cmd.clip('near', self.clip_dist_near)
                 print 'Slab on complete'
-            elif self.curtoken == self.numbertok and self.tokenvalue>=0 \
-                and self.tokenvalue<=100:
+            elif self.curtoken == self.numbertok and self.tokenvalue >= 0 \
+                and self.tokenvalue <= 100:
                 self.clip_dist_near = self.tokenvalue-100
                 cmd.clip('near', self.clip_dist_near)
                 print 'Slab on complete'
@@ -2306,8 +2307,8 @@ phe+pro '
             elif self.curtoken == self.truetok:
                 cmd.clip('far', self.clip_dist_far)
                 print 'Depth on complete'
-            elif self.curtoken == self.numbertok and self.tokenvalue>=0 \
-                and self.tokenvalue<=100:
+            elif self.curtoken == self.numbertok and self.tokenvalue >= 0 \
+                and self.tokenvalue <= 100:
                 self.clip_dist_far = self.tokenvalue
                 cmd.clip('far', self.clip_dist_far)
                 print 'Depth on complete'
@@ -2357,11 +2358,11 @@ phe+pro '
                 cmd.set('ribbon_width', 3.0, self.vslselectionsaved)
                 cmd.show('ribbon', self.vslselectionsaved)
                 print 'Backbone on complete'
-            elif command == 'dash':
+            elif self.curtoken == self.dashtok:
                 print 'PyMOL does not include funcionality for this command.'
-            elif self.curtoken == self.numbertok and self.tokenvalue>=0 \
-                and self.tokenvalue<=500:
-                self.angorras()
+            elif self.curtoken == self.numbertok and self.tokenvalue >= 0 \
+                and self.tokenvalue <= 500:
+                self._angorras()
                 cmd.set('ribbon_width', self.tokenvalue * 5, self.vslselectionsaved)
                 cmd.show('ribbon' , self.vslselectionsaved)
                 print 'Backbone on complete'
@@ -2471,7 +2472,7 @@ def __init__(self):
     '''************************'''
     self.menuBar.addmenuitem('Plugin', 'command',
                              'VSL Script Loader',
-                             label = 'ConSCRIPT 2.0rc4',
+                             label = 'ConSCRIPT 2.0rc4.1',
                              command = vslcmd)
 
 def vslcmd(commands=None, args=None, filename=None):
