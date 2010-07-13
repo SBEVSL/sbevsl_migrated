@@ -1,7 +1,7 @@
 from pymol import cmd
 from Tkinter import *
 import Pmw
-from pmg_tk.startup.ProMol import promolglobals as pglob
+from pmg_tk.startup.ProMol import promolglobals as glb
 Pmw.initialise()
 
 # ADD RADIO BUTTONS
@@ -739,7 +739,7 @@ def loadmapps(event):
     loadbtn = Button(interior, text = "Load Map")
     loadbtn.grid(row=5, column=2, padx=4, pady=2, sticky=W)
     def loadccp4(event):      
-        file = askopenfilename(defaultextension=".ccp4", initialdir=pglob.HOME)
+        file = askopenfilename(defaultextension=".ccp4", initialdir=glb.HOME)
         if len(file)>0:
             cmd.load(file)
         interior.mainloop()
@@ -771,7 +771,7 @@ def loadmapps(event):
     
     def elhelp(event):
         import webbrowser
-        webbrowser.open(pglob.pathmaker('EDMHelp.htm'))
+        webbrowser.open(glb.pathmaker('EDMHelp.htm'))
     ehelp.bind('<Button-1>', elhelp)
      #---isomesh function
     def emesh(event):

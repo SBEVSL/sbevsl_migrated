@@ -1,18 +1,13 @@
 from pymol import cmd
 from pymol import stored
-from urllib import urlretrieve
 import Tkinter as tk
 import Pmw
-import linecache
-import random
 import os
 import re
-import tempfile
-import time
 from tkFileDialog import asksaveasfile, askdirectory
 from tkSimpleDialog import askstring
 from tkMessageBox import showinfo, showerror, askyesno
-from pmg_tk.startup.ProMol import promolglobals as pglob
+from pmg_tk.startup.ProMol import promolglobals as glb
 from pmg_tk.startup.ProMol.remote_pdb_load import fetch
 
 #print dir(motcod)
@@ -45,7 +40,7 @@ def surfmotifer():
         cmd.hide('cartoon', 'all')
         if 'Adjacent' in objects:
             adjacent = ' and !Adjacent'
-        for motif in pglob.MOTIFS.keys():
+        for motif in glb.MOTIFS:
             if motif in objects:
                 cmd.color('white', '!%s%s'%(motif,adjacent))
         cpksubstrate()
@@ -378,18 +373,18 @@ def resetmotif():
     selCD.set(4.0)
 
 def MotifCaller(motif, camera=True):
-    d = float(pglob.GUI['motifs']['delta'].get())
+    d = float(glb.GUI.motifs['delta'].get())
     if camera:
-        pglob.deletemotif()
-        pglob.update()
+        glb.deletemotif()
+        glb.update()
     try:
-        if execfile(pglob.MOTIFS[motif]['path']) != False:
+        if execfile(glb.MOTIFS[motif]['path']) != False:
             if motif not in cmd.get_names('all'):
                 raise Warning
             if cmd.count_atoms(motif) == 0:
                 raise Warning
             if camera:
-                pglob.procolor(motif, show_all='cartoon',color_all='gray')
+                glb.procolor(motif, show_all='cartoon',color_all='gray')
                 cmd.orient(motif)
                 cmd.deselect()
         else:
@@ -403,15 +398,15 @@ def MotifCaller(motif, camera=True):
 
 def dbckmotif(event):
     '''allows user to click on motif search field items and run the motif function'''
-    motif = pglob.GUI['motifs']['motifbox'].curselection()[0]
-    tag = pglob.GUI['motifs']['motifbox'].get(motif).split('-')
-    pdb = pglob.GUI['motifs']['hidmotif'].get(motif)
+    motif = glb.GUI.motifs['motifbox'].curselection()[0]
+    tag = glb.GUI.motifs['motifbox'].get(motif).split('-')
+    pdb = glb.GUI.motifs['hidmotif'].get(motif)
     cmd.reinitialize()
     fetch(pdb)
-    if len(tag) == 2 and tag[1] in pglob.MOTIFS:
+    if len(tag) == 2 and tag[1] in glb.MOTIFS:
         MotifCaller(tag[1])
     else:
-        pglob.update()
+        glb.update()
 
 def export2ods():
     pass
@@ -419,8 +414,8 @@ def export2ods():
 def export2csv():
     csv = ['PDB Entry,PDB Homologue,Motifs,Rank,Residues',
         ',,,,Chain,Name,Number']
-    motifs = pglob.GUI['motifs']['motifbox'].get(0,tk.END)
-    pdbs = pglob.GUI['motifs']['hidmotif'].get(0,tk.END)
+    motifs = glb.GUI.motifs['motifbox'].get(0,tk.END)
+    pdbs = glb.GUI.motifs['hidmotif'].get(0,tk.END)
     lastpdb = None
     motifl = 0
     motifsl = len(motifs)
@@ -431,14 +426,14 @@ def export2csv():
             motifl += 1
             continue
         pdb = pdbs[motifl]
-        x = pglob.GUI['motifs']['csvprep'][pdb][motif]['x']
-        pf = pglob.GUI['motifs']['csvprep'][pdb][motif]['pf']
+        x = glb.GUI.motifs['csvprep'][pdb][motif]['x']
+        pf = glb.GUI.motifs['csvprep'][pdb][motif]['pf']
         pdbstr = '%s@PF%s'%(pdb,pf)
-        if 'hom' in pglob.GUI['motifs']['csvprep'][pdb][motif]:
-            hom = '%s@PF%s'%(pglob.GUI['motifs']['csvprep'][pdb][motif]['hom'],pf)
+        if 'hom' in glb.GUI.motifs['csvprep'][pdb][motif]:
+            hom = '%s@PF%s'%(glb.GUI.motifs['csvprep'][pdb][motif]['hom'],pf)
         else:
             hom = ''
-        residues = pglob.GUI['motifs']['csvprep'][pdb][motif]['res']
+        residues = glb.GUI.motifs['csvprep'][pdb][motif]['res']
         same = {}
         motifline = True
         for residue in residues:
@@ -471,26 +466,26 @@ def export2csv():
         csvhandle.close()
 
 def motifcancel():
-    pglob.GUI['motifs']['cancel'] = True
+    glb.GUI.motifs['cancel'] = True
 
 def motifchecker():
-    pglob.GUI['motifs']['cancel'] = False
-    pglob.GUI['motifs']['motifbox'].delete(0,tk.END)
-    pglob.GUI['motifs']['hidmotif'].delete(0,tk.END)
-    pglob.GUI['motifs']['csvprep'] = {}
-    pglob.GUI['motifs']['cancelbutton']['state'] = tk.NORMAL
-    pglob.GUI['motifs']['delta']['state'] = tk.DISABLED
-    pglob.GUI['motifs']['csv']['state'] = tk.DISABLED
-    pglob.GUI['motifs']['findmotif']['state'] = tk.DISABLED
-    pglob.GUI['motifs']['multipdb']['state'] = tk.DISABLED
-    pdbs = pglob.GUI['motifs']['multipdb'].get(1.0,'1.end').split(',')
+    glb.GUI.motifs['cancel'] = False
+    glb.GUI.motifs['motifbox'].delete(0,tk.END)
+    glb.GUI.motifs['hidmotif'].delete(0,tk.END)
+    glb.GUI.motifs['csvprep'] = {}
+    glb.GUI.motifs['cancelbutton']['state'] = tk.NORMAL
+    glb.GUI.motifs['delta']['state'] = tk.DISABLED
+    glb.GUI.motifs['csv']['state'] = tk.DISABLED
+    glb.GUI.motifs['findmotif']['state'] = tk.DISABLED
+    glb.GUI.motifs['multipdb']['state'] = tk.DISABLED
+    pdbs = glb.GUI.motifs['multipdb'].get(1.0,'1.end').split(',')
     pdbsl = len(pdbs)
     if pdbsl == 1 and pdbs[0] == '':
         showerror('No PDB Entered',"Enter a PDB or a comma separated list of PDB's to search")
-        pglob.GUI['motifs']['delta']['state'] = tk.NORMAL
-        pglob.GUI['motifs']['findmotif']['state'] = tk.NORMAL
-        pglob.GUI['motifs']['multipdb']['state'] = tk.NORMAL
-        pglob.GUI['motifs']['cancelbutton']['state'] = tk.DISABLED
+        glb.GUI.motifs['delta']['state'] = tk.NORMAL
+        glb.GUI.motifs['findmotif']['state'] = tk.NORMAL
+        glb.GUI.motifs['multipdb']['state'] = tk.NORMAL
+        glb.GUI.motifs['cancelbutton']['state'] = tk.DISABLED
         return False
     
     def LevenshteinDistance(x,y):
@@ -525,10 +520,10 @@ def motifchecker():
             ii = 0
             for i in tup:
                 h = 2**(ii+1)               
-                if 's' in pglob.AminoHashTable[i]:
+                if 's' in glb.AminoHashTable[i]:
                     for g in range(n/h):
                         for j in range(h):
-                            matrix[g+(j*(n/h))][ii] = j%2 and pglob.AminoHashTable[i]['s'] or i
+                            matrix[g+(j*(n/h))][ii] = j%2 and glb.AminoHashTable[i]['s'] or i
                 else:
                     for g in range(n):
                         matrix[g][ii] = i
@@ -542,14 +537,14 @@ def motifchecker():
         stored.motif = []
         editdist = []
         cmd.iterate(motif, 'stored.motif.append((chain,resn,resi))')
-        residues = pglob.MOTIFS[motif]['resi']
+        residues = glb.MOTIFS[motif]['resi']
         residuesl = len(residues)*2
-        pglob.GUI['motifs']['csvprep'][pdb][motif] = {}
-        pglob.GUI['motifs']['csvprep'][pdb][motif]['res'] = []
+        glb.GUI.motifs['csvprep'][pdb][motif] = {}
+        glb.GUI.motifs['csvprep'][pdb][motif]['res'] = []
         for iteration in stored.motif:
             if last != iteration:
                 last = iteration
-                pglob.GUI['motifs']['csvprep'][pdb][motif]['res'].append(iteration)
+                glb.GUI.motifs['csvprep'][pdb][motif]['res'].append(iteration)
                 ordered.append(iteration[1].lower())
                 if iteration[0] not in orderedchain:
                     if iteration[0] not in bannedchain:
@@ -557,10 +552,10 @@ def motifchecker():
                     else:
                         continue
                 orderedchain[iteration[0]].append(iteration[1].lower())
-                if residuesl < len(orderedchain[iteration[0]]):
+                if residuesl <= len(orderedchain[iteration[0]]):
                     bannedchain.append(iteration[0])
                     del orderedchain[iteration[0]]
-        if len(orderedchain) == 0 and residuesl < len(ordered):
+        if len(orderedchain) == 0 and residuesl <= len(ordered):
             return None
         substitutions = [None]
         if motif[0] == 'J':
@@ -581,32 +576,33 @@ def motifchecker():
             editdist.append(LevenshteinDistance(sub,ordered))
         mini = min(editdist)
         maxi = max(editdist)
-        pglob.GUI['motifs']['csvprep'][pdb][motif]['x'] = mini<maxi and '%s/%s'%(mini,maxi) or mini
-        pglob.GUI['motifs']['csvprep'][pdb][motif]['pf'] = pglob.GUI['motifs']['delta'].get()
-        return pglob.GUI['motifs']['csvprep'][pdb][motif]['x']
+        glb.GUI.motifs['csvprep'][pdb][motif]['x'] = mini<maxi and '%s/%s'%(mini,maxi) or mini
+        glb.GUI.motifs['csvprep'][pdb][motif]['pf'] = glb.GUI.motifs['delta'].get()
+        return glb.GUI.motifs['csvprep'][pdb][motif]['x']
 
     lasto = 0.0
     founds = {}
     foundso = []
     for pdb in pdbs:
-        if pglob.GUI['motifs']['cancel'] == True:
-            pglob.GUI['motifs']['single']['text'] = 'Click Start to begin'
-            pglob.GUI['motifs']['overall']['text'] = 'Cancelled... %.3s%% Complete'%baro
-            pglob.GUI['motifs']['single'].update()
+        pdb = pdb.strip()
+        if glb.GUI.motifs['cancel'] == True:
+            glb.GUI.motifs['single']['text'] = 'Click Start to begin'
+            glb.GUI.motifs['overall']['text'] = 'Cancelled... %.3s%% Complete'%baro
+            glb.GUI.motifs['single'].update()
             break
         found = []
         last = 0.0
-        keys = pglob.MOTIFS.keys()
+        keys = glb.MOTIFS.keys()
         keysL = len(keys)-1
         keysLo = keysL*len(pdbs)
-        pglob.GUI['motifs']['csvprep'][pdb] = {}
+        glb.GUI.motifs['csvprep'][pdb] = {}
         cmd.reinitialize()
         fetchresult = fetch(pdb,True)
         if fetchresult != '':
             founds[pdb] = ['    %s'%fetchresult]
             lasto += keysL
-            pglob.GUI['motifs']['singlestatus'].SetProgressPercent(100)
-            pglob.GUI['motifs']['overallstatus'].SetProgressPercent((lasto/keysLo)*100)
+            glb.GUI.motifs['singlestatus'].SetProgressPercent(100)
+            glb.GUI.motifs['overallstatus'].SetProgressPercent((lasto/keysLo)*100)
             continue
         cmd.hide('everything', 'all')
         cmd.remove("all and hydro")
@@ -618,19 +614,19 @@ def motifchecker():
             lasto += 1
             bar = (last/keysL)*100
             baro = (lasto/keysLo)*100
-            if pglob.GUI['motifs']['cancel'] == True:
+            if glb.GUI.motifs['cancel'] == True:
                 break
             if len(str(bar).split('.')[0]) < 3:
-                pglob.GUI['motifs']['single']['text'] = 'Searching... %.2s%% Complete'%(bar)
+                glb.GUI.motifs['single']['text'] = 'Searching... %.2s%% Complete'%(bar)
             else:
-                pglob.GUI['motifs']['single']['text'] = '%.3s%% Complete'%(bar)
+                glb.GUI.motifs['single']['text'] = '%.3s%% Complete'%(bar)
             if len(str(baro).split('.')[0]) < 3:
-                pglob.GUI['motifs']['overall']['text'] = 'Overall... %.2s%% Complete'%(baro)
+                glb.GUI.motifs['overall']['text'] = 'Overall... %.2s%% Complete'%(baro)
             else:
-                pglob.GUI['motifs']['overall']['text'] = '%.3s%% Complete'%(baro)
-            pglob.GUI['motifs']['singlestatus'].SetProgressPercent(bar)
-            pglob.GUI['motifs']['overallstatus'].SetProgressPercent(baro)
-            pglob.GUI['motifs']['single'].update()
+                glb.GUI.motifs['overall']['text'] = '%.3s%% Complete'%(baro)
+            glb.GUI.motifs['singlestatus'].SetProgressPercent(bar)
+            glb.GUI.motifs['overallstatus'].SetProgressPercent(baro)
+            glb.GUI.motifs['single'].update()
             if MotifCaller(motif,False):
                 x = count(motif,pdb)
                 if x != None:
@@ -643,49 +639,30 @@ def motifchecker():
     for f in founds:
         foundso.extend([f])
         foundso.extend(founds[f])
-    pglob.GUI['motifs']['single']['text'] = 'Click Start to begin'
-    pglob.GUI['motifs']['overall']['text'] = 'Motif Finder finished with %s results.'%(len(foundso)-len(pdbs))
+    glb.GUI.motifs['single']['text'] = 'Click Start to begin'
+    glb.GUI.motifs['overall']['text'] = 'Motif Finder finished with %s results.'%(len(foundso)-len(pdbs))
     cmd.orient('all')
     for foundo in foundso:
         if len(foundo) == 4:
             pdb = foundo
-        pglob.GUI['motifs']['motifbox'].insert(tk.END,foundo)
-        pglob.GUI['motifs']['hidmotif'].insert(tk.END,pdb)
+        glb.GUI.motifs['motifbox'].insert(tk.END,foundo)
+        glb.GUI.motifs['hidmotif'].insert(tk.END,pdb)
     cmd.show('cartoon', 'all')
     cmd.color('gray', 'all')
-    pglob.GUI['motifs']['csv']['state'] = tk.NORMAL
-    pglob.GUI['motifs']['findmotif']['state'] = tk.NORMAL
-    pglob.GUI['motifs']['delta']['state'] = tk.NORMAL
-    pglob.GUI['motifs']['multipdb']['state'] = tk.NORMAL
-    pglob.GUI['motifs']['cancelbutton']['state'] = tk.DISABLED
-
-def randompdb():
-    cmd.reinitialize()
-    lineFile = pglob.pathmaker('pdb_entry_type.txt',root=pglob.OFFSITE)
-    while os.path.exists(lineFile):
-        expiration = (os.path.getmtime(lineFile)+864000)
-        if expiration <= time.time():
-            os.remove(lineFile)
-        else:
-            lines = sum([1 for line in lineFile])
-            pdbCode = linecache.getline(lineFile,random.randint(1, lines))[0:4]
-            fetch(pdbCode)
-            break
-    else:
-        urlretrieve('ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_entry_type.txt',
-            lineFile)
-        randompdb()
-    pglob.update()
-cmd.extend('randompdb',random)
+    glb.GUI.motifs['csv']['state'] = tk.NORMAL
+    glb.GUI.motifs['findmotif']['state'] = tk.NORMAL
+    glb.GUI.motifs['delta']['state'] = tk.NORMAL
+    glb.GUI.motifs['multipdb']['state'] = tk.NORMAL
+    glb.GUI.motifs['cancelbutton']['state'] = tk.DISABLED
         
 def makemotif(mode):
-    pglob.GUI['motif_maker']['file'] = None
-    pglob.GUI['motif_maker']['wait'] = []
-    pglob.GUI['motif_maker']['motif'] = []
-    pglob.GUI['motif_maker']['resnstr'] = {}
-    pf = pglob.GUI['motif_maker']['pf'].get()
-    pdb = pglob.GUI['motif_maker']['pdb'].get().lower()
-    ecen = pglob.GUI['motif_maker']['ec'].get()
+    glb.GUI.motif_maker['file'] = None
+    glb.GUI.motif_maker['wait'] = []
+    glb.GUI.motif_maker['motif'] = []
+    glb.GUI.motif_maker['resnstr'] = {}
+    pf = glb.GUI.motif_maker['pf'].get()
+    pdb = glb.GUI.motif_maker['pdb'].get().lower()
+    ecen = glb.GUI.motif_maker['ec'].get()
     resn = {}
     resi = {}
     backbone = {}
@@ -697,29 +674,29 @@ def makemotif(mode):
     
     if mode == 3:
         for i in range(1,11):
-            pglob.GUI['motif_maker']['resn'][i].delete(0,tk.END)
-            pglob.GUI['motif_maker']['resi'][i].delete(0,tk.END)
-            pglob.GUI['motif_maker']['chain'][i].delete(0,tk.END)
-            if pglob.GUI['motif_maker']['backbone'][i].get() == 'On':
-                pglob.GUI['motif_maker']['backbone'][i].invoke('buttonup')
-        pglob.GUI['motif_maker']['pdb'].delete(0,tk.END)
-        pglob.GUI['motif_maker']['ec'].delete(0,tk.END)
-        pglob.GUI['motif_maker']['pf'].delete(0,tk.END)
-        pglob.GUI['motif_maker']['pf'].insert(0,'2.00')
+            glb.GUI.motif_maker['resn'][i].delete(0,tk.END)
+            glb.GUI.motif_maker['resi'][i].delete(0,tk.END)
+            glb.GUI.motif_maker['chain'][i].delete(0,tk.END)
+            if glb.GUI.motif_maker['backbone'][i].get() == 'On':
+                glb.GUI.motif_maker['backbone'][i].invoke('buttonup')
+        glb.GUI.motif_maker['pdb'].delete(0,tk.END)
+        glb.GUI.motif_maker['ec'].delete(0,tk.END)
+        glb.GUI.motif_maker['pf'].delete(0,tk.END)
+        glb.GUI.motif_maker['pf'].insert(0,'2.00')
         return True
     
     def press(event,y):
-        oldg = pglob.GUI['motif_maker']['maker'].grid_location(0,event.y)[1]+1
-        newg = pglob.GUI['motif_maker']['maker'].grid_location(0,event.y+y)[1]+1
-        i = pglob.GUI['motif_maker']['neworder'][oldg]
+        oldg = glb.GUI.motif_maker['maker'].grid_location(0,event.y)[1]+1
+        newg = glb.GUI.motif_maker['maker'].grid_location(0,event.y+y)[1]+1
+        i = glb.GUI.motif_maker['neworder'][oldg]
         try:
-            h = pglob.GUI['motif_maker']['neworder'][newg]
+            h = glb.GUI.motif_maker['neworder'][newg]
         except KeyError:
             return False
-        pglob.GUI['motif_maker']['canvas'].move('row%s'%i,0,y)
-        pglob.GUI['motif_maker']['canvas'].move('row%s'%h,0,-y)
-        pglob.GUI['motif_maker']['neworder'][newg] = i
-        pglob.GUI['motif_maker']['neworder'][oldg] = h
+        glb.GUI.motif_maker['canvas'].move('row%s'%i,0,y)
+        glb.GUI.motif_maker['canvas'].move('row%s'%h,0,-y)
+        glb.GUI.motif_maker['neworder'][newg] = i
+        glb.GUI.motif_maker['neworder'][oldg] = h
             
     def pressup(event):
         press(event,-22)
@@ -732,75 +709,75 @@ def makemotif(mode):
     
     def write(string=None,**options):
         if string != None:
-            pglob.GUI['motif_maker']['motif'].append(string)
+            glb.GUI.motif_maker['motif'].append(string)
         if 'open' in options:
             if mode == 0 or mode == 4:
-                pglob.GUI['motif_maker']['motif'] = []
+                glb.GUI.motif_maker['motif'] = []
             if mode == 1:
-                if os.path.exists(pglob.pathmaker((name,'.py'),root=pglob.USRMOTIFSFOLDER)) or os.path.exists(pglob.pathmaker((name,'.py'),root=pglob.MOTIFSFOLDER)):
+                if os.path.exists(glb.pathmaker((name,'.py'),root=glb.USRMOTIFSFOLDER)) or os.path.exists(glb.pathmaker((name,'.py'),root=glb.MOTIFSFOLDER)):
                     answer = askyesno('Motif Exist', 
                     'A motif has already been made for EC:%s on PDB:%s.\n'%(ec,pdb)+
                     'Are you sure you want to replace it?')
                     if answer == False:
                         return False
-                pglob.GUI['motif_maker']['file'] = open(pglob.pathmaker((name,'.py'),root=pglob.USRMOTIFSFOLDER), 'wb')
+                glb.GUI.motif_maker['file'] = open(glb.pathmaker((name,'.py'),root=glb.USRMOTIFSFOLDER), 'wb')
             if mode == 2:
-                pref = askdirectory(initialdir=pglob.HOME)
+                pref = askdirectory(initialdir=glb.HOME)
                 if os.access(pref,os.W_OK | os.X_OK):
-                    if os.path.exists(pglob.pathmaker('Motifs',(name,'.py'),root=pref)):
+                    if os.path.exists(glb.pathmaker('Motifs',(name,'.py'),root=pref)):
                         answer = askyesno('Motif Exist', 
                         'This file exist at this location.\n'+
                         'Are you sure you want to replace it?')
                         if answer == False:
                             return False
-                    pglob.GUI['motif_maker']['file'] = open(pglob.pathmaker((name,'.py'),root=pref), 'wb')
+                    glb.GUI.motif_maker['file'] = open(glb.pathmaker((name,'.py'),root=pref), 'wb')
                 else:
                     showerror('Access Denied','You do not have access to write to this folder.')
                     return False
         if 'close' in options:
             if mode == 4:
-                if pglob.GUI['motif_maker']['radio'].get() == 1:
+                if glb.GUI.motif_maker['radio'].get() == 1:
                     cmd.reinitialize()
-                    fetch(pglob.GUI['motif_maker']['testpdb'].get())
-                    pglob.update()
-                elif pglob.GUI['motif_maker']['radio'].get() == 2:
-                    randompdb()
+                    fetch(glb.GUI.motif_maker['testpdb'].get())
+                    glb.update()
+                elif glb.GUI.motif_maker['radio'].get() == 2:
+                    glb.randompdb()
             if mode == 0 or mode == 4:
                 d = 1
-                lines = ''.join(pglob.GUI['motif_maker']['motif']).split('\n')
+                lines = ''.join(glb.GUI.motif_maker['motif']).split('\n')
                 for line in lines:
                     if line != '':
                         eval(line)
-                pglob.procolor(name, show_all='cartoon', color_all='gray')
+                glb.procolor(name, show_all='cartoon', color_all='gray')
                 cmd.orient(name)
                 cmd.deselect()
             else:
-                pglob.GUI['motif_maker']['file'].writelines(pglob.GUI['motif_maker']['motif'])
-                pglob.GUI['motif_maker']['file'].close()
+                glb.GUI.motif_maker['file'].writelines(glb.GUI.motif_maker['motif'])
+                glb.GUI.motif_maker['file'].close()
                 if mode == 1:
-                    pglob.motifstore(pglob.USRMOTIFSFOLDER)
+                    glb.motifstore(glb.USRMOTIFSFOLDER)
         return True
 
     def addresn(x,y,z):
-        if z not in pglob.GUI['motif_maker']['resnstr']:
-            pglob.GUI['motif_maker']['resnstr'][z] = {}
-        pglob.GUI['motif_maker']['resnstr'][z][y] = x
+        if z not in glb.GUI.motif_maker['resnstr']:
+            glb.GUI.motif_maker['resnstr'][z] = {}
+        glb.GUI.motif_maker['resnstr'][z][y] = x
         return x
     
     def getresnstr():
         alphanum = lambda k:[(lambda t:(t.isdigit() and [int(t)] or [t])[0])(c) for c in re.split('([0-9]+)',k)]
-        for i in pglob.GUI['motif_maker']['resnstr']:
-            keys = pglob.GUI['motif_maker']['resnstr'][i].keys()
+        for i in glb.GUI.motif_maker['resnstr']:
+            keys = glb.GUI.motif_maker['resnstr'][i].keys()
             keys.sort(lambda x,y:cmp(alphanum(x),alphanum(y)))
             resn = []
             for key in keys:
-                resn.append(pglob.GUI['motif_maker']['resnstr'][i][key])
-            pglob.GUI['motif_maker']['resnstr'][i] = resn
-        keys = pglob.GUI['motif_maker']['resnstr'].keys()
+                resn.append(glb.GUI.motif_maker['resnstr'][i][key])
+            glb.GUI.motif_maker['resnstr'][i] = resn
+        keys = glb.GUI.motif_maker['resnstr'].keys()
         keys.sort()
         resn = []
         for key in keys:
-            for i in pglob.GUI['motif_maker']['resnstr'][key]:
+            for i in glb.GUI.motif_maker['resnstr'][key]:
                 resn.append(i)
         return ','.join(resn)
     
@@ -809,12 +786,12 @@ def makemotif(mode):
             return ''
         try:
             x = x.lower()
-            newresn = pglob.AminoHashTable[x][3]
+            newresn = glb.AminoHashTable[x][3]
         except KeyError:
             return None
         return addresn(newresn,y,z)
     exceptions += '%s%s'%(fetch(pdb,True),'\n')
-    pglob.update()
+    glb.update()
     preecs = ecen.split(',')
     for preec in preecs:
         try:
@@ -835,11 +812,11 @@ def makemotif(mode):
     skip = {}
     skip[0] = 0
     for i in range(1,11):
-        g = pglob.GUI['motif_maker']['curorder'][i]
-        resi[g] = pglob.GUI['motif_maker']['resi'][g].get().strip()
-        backbone[g] = pglob.GUI['motif_maker']['backbone'][g].get()
-        chain[g] = pglob.GUI['motif_maker']['chain'][g].get().strip()
-        resn[g] = acceptresn(pglob.GUI['motif_maker']['resn'][g].get().strip(),resi[g],chain[g])
+        g = glb.GUI.motif_maker['curorder'][i]
+        resi[g] = glb.GUI.motif_maker['resi'][g].get().strip()
+        backbone[g] = glb.GUI.motif_maker['backbone'][g].get()
+        chain[g] = glb.GUI.motif_maker['chain'][g].get().strip()
+        resn[g] = acceptresn(glb.GUI.motif_maker['resn'][g].get().strip(),resi[g],chain[g])
         skip[g] = False
         if resn[g] == '' and resi[g] == '' and chain[g] == '':
             ### this gives us the ability to skip whole blocks
@@ -870,40 +847,40 @@ def makemotif(mode):
         if mode >= 5 and mode < 6:
             if mode == 5:
                 for i in range(1,11):
-                    pglob.GUI['motif_maker']['resn'][i]['state'] = tk.DISABLED
-                    pglob.GUI['motif_maker']['resi'][i]['state'] = tk.DISABLED
-                    pglob.GUI['motif_maker']['chain'][i]['state'] = tk.DISABLED
-                    pglob.GUI['motif_maker']['backbone'][i]['state'] = tk.DISABLED
-                    pglob.GUI['motif_maker']['canvas'].itemconfigure('resn%s' % pglob.GUI['motif_maker']['neworder'][i],
-                        text=pglob.GUI['motif_maker']['resn'][i].get())
-                    pglob.GUI['motif_maker']['canvas'].itemconfigure('chain%s' % pglob.GUI['motif_maker']['neworder'][i],
-                        text=pglob.GUI['motif_maker']['chain'][i].get())
-                    pglob.GUI['motif_maker']['canvas'].itemconfigure('resi%s' % pglob.GUI['motif_maker']['neworder'][i],
-                        text=pglob.GUI['motif_maker']['resi'][i].get())
-                    pglob.GUI['motif_maker']['canvas'].itemconfigure('back%s' % pglob.GUI['motif_maker']['neworder'][i],
-                        text=pglob.GUI['motif_maker']['backbone'][i].get())
-                pglob.GUI['motif_maker']['canvas'].grid()
-                pglob.GUI['motif_maker']['canvas'].tag_bind('up','<Button-1>', pressup)
-                pglob.GUI['motif_maker']['canvas'].tag_bind('down','<Button-1>', pressdown)
-                pglob.GUI['motif_maker']['canvas'].bind('<ButtonRelease-1>', release)
-                pglob.GUI['motif_maker']['test'].grid_remove()
-                pglob.GUI['motif_maker']['save'].grid_remove()
-                pglob.GUI['motif_maker']['export'].grid_remove()
-                pglob.GUI['motif_maker']['clear'].grid_remove()
-                pglob.GUI['motif_maker']['order'].grid_remove()
-                pglob.GUI['motif_maker']['extest'] = tk.DISABLED
-                pglob.GUI['motif_maker']['done'].grid()
-                pglob.GUI['motif_maker']['recommend'].grid()
-                pglob.GUI['motif_maker']['cancel'].grid()
+                    glb.GUI.motif_maker['resn'][i]['state'] = tk.DISABLED
+                    glb.GUI.motif_maker['resi'][i]['state'] = tk.DISABLED
+                    glb.GUI.motif_maker['chain'][i]['state'] = tk.DISABLED
+                    glb.GUI.motif_maker['backbone'][i]['state'] = tk.DISABLED
+                    glb.GUI.motif_maker['canvas'].itemconfigure('resn%s' % glb.GUI.motif_maker['neworder'][i],
+                        text=glb.GUI.motif_maker['resn'][i].get())
+                    glb.GUI.motif_maker['canvas'].itemconfigure('chain%s' % glb.GUI.motif_maker['neworder'][i],
+                        text=glb.GUI.motif_maker['chain'][i].get())
+                    glb.GUI.motif_maker['canvas'].itemconfigure('resi%s' % glb.GUI.motif_maker['neworder'][i],
+                        text=glb.GUI.motif_maker['resi'][i].get())
+                    glb.GUI.motif_maker['canvas'].itemconfigure('back%s' % glb.GUI.motif_maker['neworder'][i],
+                        text=glb.GUI.motif_maker['backbone'][i].get())
+                glb.GUI.motif_maker['canvas'].grid()
+                glb.GUI.motif_maker['canvas'].tag_bind('up','<Button-1>', pressup)
+                glb.GUI.motif_maker['canvas'].tag_bind('down','<Button-1>', pressdown)
+                glb.GUI.motif_maker['canvas'].bind('<ButtonRelease-1>', release)
+                glb.GUI.motif_maker['test'].grid_remove()
+                glb.GUI.motif_maker['save'].grid_remove()
+                glb.GUI.motif_maker['export'].grid_remove()
+                glb.GUI.motif_maker['clear'].grid_remove()
+                glb.GUI.motif_maker['order'].grid_remove()
+                glb.GUI.motif_maker['extest'] = tk.DISABLED
+                glb.GUI.motif_maker['done'].grid()
+                glb.GUI.motif_maker['recommend'].grid()
+                glb.GUI.motif_maker['cancel'].grid()
             if mode > 5:
                 if mode == 5.2:
                     residuecounts = {}
                     for i in range(1,11):
-                        h = pglob.GUI['motif_maker']['resn'][i].get()
+                        h = glb.GUI.motif_maker['resn'][i].get()
                         if h == '':
                             continue
                         cmd.select(h,'resn %s'%h)
-                        residuecounts[cmd.count_atoms(h)/pglob.AminoHashTable[h][0]] = i
+                        residuecounts[cmd.count_atoms(h)/glb.AminoHashTable[h][0]] = i
                         cmd.delete(h)
                     keys = residuecounts.keys()
                     keys.sort()
@@ -917,44 +894,44 @@ def makemotif(mode):
                     g = 0
                     for order in residueorder:
                         g += 1
-                        i = pglob.GUI['motif_maker']['neworder'][order]
-                        h = pglob.GUI['motif_maker']['neworder'][g]
+                        i = glb.GUI.motif_maker['neworder'][order]
+                        h = glb.GUI.motif_maker['neworder'][g]
                         if i == h: 
                             continue
                         event.y = (i)*22
                         y = (g-i)*22
                         press(event,y)
-                    print pglob.GUI['motif_maker']['neworder']
+                    print glb.GUI.motif_maker['neworder']
 
                 for i in range(1,11):
-                    pglob.GUI['motif_maker']['resn'][i]['state'] = tk.NORMAL
-                    pglob.GUI['motif_maker']['resi'][i]['state'] = tk.NORMAL
-                    pglob.GUI['motif_maker']['chain'][i]['state'] = tk.NORMAL
-                    pglob.GUI['motif_maker']['backbone'][i]['state'] = 'readonly'
+                    glb.GUI.motif_maker['resn'][i]['state'] = tk.NORMAL
+                    glb.GUI.motif_maker['resi'][i]['state'] = tk.NORMAL
+                    glb.GUI.motif_maker['chain'][i]['state'] = tk.NORMAL
+                    glb.GUI.motif_maker['backbone'][i]['state'] = 'readonly'
                     if mode != 5.3:
-                        pglob.GUI['motif_maker']['resn'][i].delete(0,tk.END)
-                        pglob.GUI['motif_maker']['resi'][i].delete(0,tk.END)
-                        pglob.GUI['motif_maker']['chain'][i].delete(0,tk.END)
-                        if pglob.GUI['motif_maker']['backbone'][i].get() == 'On':
-                            pglob.GUI['motif_maker']['backbone'][i].invoke('buttonup')
-                        pglob.GUI['motif_maker']['resn'][i].insert(0,pglob.GUI['motif_maker']['canvas'].itemcget('resn%s'%pglob.GUI['motif_maker']['neworder'][i],"text"))
-                        pglob.GUI['motif_maker']['resi'][i].insert(0,pglob.GUI['motif_maker']['canvas'].itemcget('resi%s'%pglob.GUI['motif_maker']['neworder'][i],"text"))
-                        pglob.GUI['motif_maker']['chain'][i].insert(0,pglob.GUI['motif_maker']['canvas'].itemcget('chain%s'%pglob.GUI['motif_maker']['neworder'][i],"text"))
-                        if pglob.GUI['motif_maker']['backbone'][i].get() != pglob.GUI['motif_maker']['canvas'].itemcget('back%s'%pglob.GUI['motif_maker']['neworder'][i],"text"):
-                            pglob.GUI['motif_maker']['backbone'][i].invoke('buttonup')
-                pglob.GUI['motif_maker']['canvas'].grid_remove()
-                pglob.GUI['motif_maker']['canvas'].tag_unbind('up','<Button-1>')
-                pglob.GUI['motif_maker']['canvas'].tag_unbind('down','<Button-1>')
-                pglob.GUI['motif_maker']['canvas'].unbind('<ButtonRelease-1>')
-                pglob.GUI['motif_maker']['test'].grid()
-                pglob.GUI['motif_maker']['save'].grid()
-                pglob.GUI['motif_maker']['export'].grid()
-                pglob.GUI['motif_maker']['clear'].grid()
-                pglob.GUI['motif_maker']['order'].grid()
-                pglob.GUI['motif_maker']['extest'] = tk.NORMAL
-                pglob.GUI['motif_maker']['done'].grid_remove()
-                pglob.GUI['motif_maker']['recommend'].grid_remove()
-                pglob.GUI['motif_maker']['cancel'].grid_remove()
+                        glb.GUI.motif_maker['resn'][i].delete(0,tk.END)
+                        glb.GUI.motif_maker['resi'][i].delete(0,tk.END)
+                        glb.GUI.motif_maker['chain'][i].delete(0,tk.END)
+                        if glb.GUI.motif_maker['backbone'][i].get() == 'On':
+                            glb.GUI.motif_maker['backbone'][i].invoke('buttonup')
+                        glb.GUI.motif_maker['resn'][i].insert(0,glb.GUI.motif_maker['canvas'].itemcget('resn%s'%glb.GUI.motif_maker['neworder'][i],"text"))
+                        glb.GUI.motif_maker['resi'][i].insert(0,glb.GUI.motif_maker['canvas'].itemcget('resi%s'%glb.GUI.motif_maker['neworder'][i],"text"))
+                        glb.GUI.motif_maker['chain'][i].insert(0,glb.GUI.motif_maker['canvas'].itemcget('chain%s'%glb.GUI.motif_maker['neworder'][i],"text"))
+                        if glb.GUI.motif_maker['backbone'][i].get() != glb.GUI.motif_maker['canvas'].itemcget('back%s'%glb.GUI.motif_maker['neworder'][i],"text"):
+                            glb.GUI.motif_maker['backbone'][i].invoke('buttonup')
+                glb.GUI.motif_maker['canvas'].grid_remove()
+                glb.GUI.motif_maker['canvas'].tag_unbind('up','<Button-1>')
+                glb.GUI.motif_maker['canvas'].tag_unbind('down','<Button-1>')
+                glb.GUI.motif_maker['canvas'].unbind('<ButtonRelease-1>')
+                glb.GUI.motif_maker['test'].grid()
+                glb.GUI.motif_maker['save'].grid()
+                glb.GUI.motif_maker['export'].grid()
+                glb.GUI.motif_maker['clear'].grid()
+                glb.GUI.motif_maker['order'].grid()
+                glb.GUI.motif_maker['extest'] = tk.NORMAL
+                glb.GUI.motif_maker['done'].grid_remove()
+                glb.GUI.motif_maker['recommend'].grid_remove()
+                glb.GUI.motif_maker['cancel'].grid_remove()
             return True
         
         name = 'P_%s_%s'%(pdb,ec)
@@ -997,7 +974,7 @@ def makemotif(mode):
         
         numOfi = {}
         for i in range(1,11):
-            g = pglob.GUI['motif_maker']['curorder'][i]
+            g = glb.GUI.motif_maker['curorder'][i]
             if skip[g] == False:
                 if resn[g] not in numOfi:
                     numOfi[resn[g]] = 0

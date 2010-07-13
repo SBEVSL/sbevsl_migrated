@@ -1,14 +1,14 @@
 from pymol import cmd
 import Tkinter as tk
 import Pmw
-from pmg_tk.startup.ProMol import promolglobals as pglob
+from pmg_tk.startup.ProMol import promolglobals as glb
 from pmg_tk.startup.ProMol.Methods.motif import *
 from pmg_tk.startup.ProMol.Methods.utility import *
 Pmw.initialise()
 
 def initialise():
     #custom group
-    group = tk.LabelFrame(pglob.GUI['custom_motifs']['tab'], text = 'Custom Motifs')
+    group = tk.LabelFrame(glb.GUI.custom_motifs['tab'], text = 'Custom Motifs')
     group.grid(row=0, column=0,columnspan =4, padx=0, pady=0)
     #menu bars
     selectionAA = Pmw.OptionMenu(group,label_text = 'Selection A:',labelpos = 'n',
@@ -83,7 +83,7 @@ def initialise():
     #--------------------------------------#
 
     #custom group
-    group = tk.LabelFrame(pglob.GUI['custom_motifs']['tab'], text = 'Advanced Custom Motifs')
+    group = tk.LabelFrame(glb.GUI.custom_motifs['tab'], text = 'Advanced Custom Motifs')
     group.grid(row=1, column=0,columnspan =4, padx=0, pady=0)
     #menu bars
     selectionA = Pmw.OptionMenu(group,label_text = 'Selection A:',labelpos = 'n',

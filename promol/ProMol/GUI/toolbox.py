@@ -1,7 +1,7 @@
 from pymol import cmd
 import Tkinter as tk
 import Pmw
-from pmg_tk.startup.ProMol import promolglobals as pglob
+from pmg_tk.startup.ProMol import promolglobals as glb
 from pmg_tk.startup.ProMol.Methods.motif import *
 from pmg_tk.startup.ProMol.Methods.setting import *
 from pmg_tk.startup.ProMol.Methods.utility import *
@@ -9,7 +9,7 @@ Pmw.initialise()
 
 def initialise():
     #------------------External Resources------------------#
-    group = tk.LabelFrame(pglob.GUI['toolbox']['tab'], text='Resources')
+    group = tk.LabelFrame(glb.GUI.toolbox['tab'], text='Resources')
     group.grid(row=2, column=1, columnspan=2, padx=2, pady=2, sticky=NE)
     pdber = Entry(group, width = 4)
     pdber.grid(row=1, column=0, padx=1, pady=1, sticky=NW)
@@ -31,7 +31,7 @@ def initialise():
 
     #--------------Electrostatics-------------#
 
-    group = tk.LabelFrame(pglob.GUI['toolbox']['tab'], text='Electrostatics')
+    group = tk.LabelFrame(glb.GUI.toolbox['tab'], text='Electrostatics')
     group.grid(row=2, column=0, columnspan=3, padx=2, pady=2, sticky=NW)
     labelaa = Label(group, text = 'Code:')
     frameelec = Frame(group, width=16)
@@ -55,7 +55,7 @@ def initialise():
 
 
     #---------Orthoscopic view and View distance-----#
-    group = tk.LabelFrame(pglob.GUI['toolbox']['tab'], text='Perspective')
+    group = tk.LabelFrame(glb.GUI.toolbox['tab'], text='Perspective')
     group.grid(row=1, column=1, padx=0, pady=0, sticky=NW)
     frameorthoon = Frame(group, width = 16)
     frameorthoon.grid(row=0, column=0, padx=2, pady=2, sticky=NW)
@@ -110,7 +110,7 @@ def initialise():
 
 
     #-------------------Alternate Ray Tracing----------------------
-    group = tk.LabelFrame(pglob.GUI['toolbox']['tab'], text='Ray Trace Options')
+    group = tk.LabelFrame(glb.GUI.toolbox['tab'], text='Ray Trace Options')
     group.grid(row=0, column=0,columnspan=2, padx=0, pady=5, sticky=NW)
     rayzero = Button(group, text = 'Default Ray')
     rayzero.grid(row=0, column=0, padx=2, pady=2, sticky=E)
@@ -126,7 +126,7 @@ def initialise():
     raythree.bind('<Button-1>', setray3)
 
     #------------------Amino Acid Reference Group-----------------
-    group = tk.LabelFrame(pglob.GUI['toolbox']['tab'], text='Amino Acid Reference:')
+    group = tk.LabelFrame(glb.GUI.toolbox['tab'], text='Amino Acid Reference:')
     group.grid(row=1, column=0,  padx=0, pady=0, sticky=NW)
     canvas79=Canvas(group, width=200, height=150)
     canvas79.grid(row=2, column=0,columnspan = 2, padx=0, pady=0, sticky=NE)

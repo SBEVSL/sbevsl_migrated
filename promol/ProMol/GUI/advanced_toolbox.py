@@ -1,14 +1,14 @@
 from pymol import cmd
 import Tkinter as tk
 import Pmw
-from pmg_tk.startup.ProMol import promolglobals as pglob
+from pmg_tk.startup.ProMol import promolglobals as glb
 from pmg_tk.startup.ProMol.Methods.setting import *
 from pmg_tk.startup.ProMol.Methods.utility import *
 Pmw.initialise()
 
 def initialise():
     #--------------Mode---------------------
-    group = tk.LabelFrame(pglob.GUI['advanced_toolbox']['tab'], text='Mode:')
+    group = tk.LabelFrame(glb.GUI.advanced_toolbox['tab'], text='Mode:')
     group.grid(row=0, column=1, padx=2, pady=2, sticky = tk.NW)
     framesculbtn = tk.Frame(group, width=16)
     framesculbtn.grid(row=0, column=0, padx=1, pady=1, sticky = tk.NW)
@@ -49,7 +49,7 @@ def initialise():
               ' ', labels, 4, 0, 1, 1, 'NW')
 
     #------------Amino Acid Select------------------------------
-    group = tk.LabelFrame(pglob.GUI['advanced_toolbox']['tab'], text='Amino Acid Selector:')
+    group = tk.LabelFrame(glb.GUI.advanced_toolbox['tab'], text='Amino Acid Selector:')
     group.grid(row=1, column=0, padx=2, pady=2, sticky = tk.SW)
     labelaa = tk.Label(group, text = 'Code:')
     labelaa.grid(row=1, column=0, padx=2, pady=2)
@@ -76,7 +76,7 @@ def initialise():
     #----------Set up scales for controlling how much of protein is roved----------
 
 
-    group = tk.LabelFrame(pglob.GUI['advanced_toolbox']['tab'], text='Electron Density Mapping')#And a new group
+    group = tk.LabelFrame(glb.GUI.advanced_toolbox['tab'], text='Electron Density Mapping')#And a new group
     group.grid(row=0, column=0, padx=2, pady=2, sticky = tk.NW)
     framemesh = tk.Frame(group)
     framemesh.grid(row=0, column=0, padx=0, pady=2, sticky = tk.W)
@@ -216,7 +216,7 @@ def initialise():
     loadmapbtn.bind('<Button-1>', loadmapps)
 
     #------------Fetch Ramachandran Plot --------------------
-    group = tk.LabelFrame(pglob.GUI['advanced_toolbox']['tab'], text='Ramachandran Plot:')
+    group = tk.LabelFrame(glb.GUI.advanced_toolbox['tab'], text='Ramachandran Plot:')
     group.grid(row=1, column=1, padx=2, pady=2, sticky = tk.SW)
     framebtn1 = tk.Frame(group)
     framebtn1.grid(row=1, column=0, padx=2, pady=2, sticky = tk.NE)

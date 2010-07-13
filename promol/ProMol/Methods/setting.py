@@ -1,7 +1,7 @@
 from pymol import cmd
 from Tkinter import *
 import Pmw
-from pmg_tk.startup.ProMol import promolglobals as pglob
+from pmg_tk.startup.ProMol import promolglobals as glb
 Pmw.initialise()
 
 def stereo_switch(tag):
@@ -38,56 +38,56 @@ def hide_interface(tag):
         cmd.set('internal_gui', '0')
 
 def ambient_update():
-    cmd.set("ambient", pglob.GUI['view']['asca'].get())
+    cmd.set("ambient", glb.GUI.view['asca'].get())
 
 # Set Cartoon Thickness
 def cartoon_thickness():
-    pglob.populate()
-    value = pglob.GUI['view']['toonThickness'].get()
-    cmd.set('cartoon_rect_width', value, pglob.SELE) # strands
-    cmd.set('cartoon_oval_width', value, pglob.SELE) # helices
+    glb.populate()
+    value = glb.GUI.view['toonThickness'].get()
+    cmd.set('cartoon_rect_width', value, glb.SELE) # strands
+    cmd.set('cartoon_oval_width', value, glb.SELE) # helices
 
 # Set Cartoon Width
 def cartoon_width():
-    pglob.populate()
-    value = pglob.GUI['view']['toonWidth'].get()
-    cmd.set('cartoon_rect_length', value, pglob.SELE) # strands
-    cmd.set('cartoon_oval_length', value, pglob.SELE) # helices
+    glb.populate()
+    value = glb.GUI.view['toonWidth'].get()
+    cmd.set('cartoon_rect_length', value, glb.SELE) # strands
+    cmd.set('cartoon_oval_length', value, glb.SELE) # helices
 
 # Set Cartoon Transparency
 def cartoon_transparency():
-    pglob.populate()
-    amount = pglob.GUI['view']['cartoonTransparency'].get()
-    cmd.set('cartoon_transparency', amount, pglob.SELE)
+    glb.populate()
+    amount = glb.GUI.view['cartoonTransparency'].get()
+    cmd.set('cartoon_transparency', amount, glb.SELE)
 
 # Set Cartoon Tube Radius
 def cartoon_tube_radius():
-    pglob.populate()
-    value = pglob.GUI['view']['toonTubeRadius'].get()
-    cmd.set('cartoon_tube_radius', value, pglob.SELE) # strands
+    glb.populate()
+    value = glb.GUI.view['toonTubeRadius'].get()
+    cmd.set('cartoon_tube_radius', value, glb.SELE) # strands
 
 #Set Ribbon Type
 def ribType(tag):
     try:
-        pglob.populate()
+        glb.populate()
         if tag == 'Skip':
-            cmd.cartoon('skip', pglob.SELE)
+            cmd.cartoon('skip', glb.SELE)
         elif tag == 'Automatic':
-            cmd.cartoon('automatic', pglob.SELE)
+            cmd.cartoon('automatic', glb.SELE)
         elif tag == 'Oval':
-            cmd.cartoon('oval', pglob.SELE)
+            cmd.cartoon('oval', glb.SELE)
         elif tag == 'Tube':
-            cmd.cartoon('tube', pglob.SELE)
+            cmd.cartoon('tube', glb.SELE)
         elif tag == 'Rectangle':
-            cmd.cartoon('rectangle', pglob.SELE)
+            cmd.cartoon('rectangle', glb.SELE)
         elif tag == 'Loop':
-            cmd.cartoon('loop', pglob.SELE)
+            cmd.cartoon('loop', glb.SELE)
         elif tag == 'Arrow':
-            cmd.cartoon('arrow', pglob.SELE)
+            cmd.cartoon('arrow', glb.SELE)
         elif tag == 'Dumbbell':
-            cmd.cartoon('dumbbell', pglob.SELE)
+            cmd.cartoon('dumbbell', glb.SELE)
         elif tag == 'Putty':
-            cmd.cartoon('putty', pglob.SELE)
+            cmd.cartoon('putty', glb.SELE)
     except:
         showinfo('Error', 'Drop down menu is set to an invalid selection\n'+
             'You may need to update selections')
@@ -97,39 +97,39 @@ def ribType(tag):
 #------------------------------------------#
 # Set Sphere Transparency
 def sphere_transparency():
-    pglob.populate()
-    amount = pglob.GUI['view']['sphereTransparency'].get()
-    cmd.set('sphere_transparency', amount, pglob.SELE)
+    glb.populate()
+    amount = glb.GUI.view['sphereTransparency'].get()
+    cmd.set('sphere_transparency', amount, glb.SELE)
 
 # Set Sphere Size
 def sphereSize():
-    pglob.populate()
-    size = pglob.GUI['view']['sphereScale'].get()
-    cmd.set('sphere_scale', size, pglob.SELE)
+    glb.populate()
+    size = glb.GUI.view['sphereScale'].get()
+    cmd.set('sphere_scale', size, glb.SELE)
 
 #------------------------------------------#
 #                Surface    Functions            #
 #------------------------------------------#
 # Set Surface Transparency
 def surface_transparency():
-    pglob.populate()
-    amount = pglob.GUI['view']['surfaceTransparency'].get()
-    cmd.set('transparency', amount, pglob.SELE)
+    glb.populate()
+    amount = glb.GUI.view['surfaceTransparency'].get()
+    cmd.set('transparency', amount, glb.SELE)
 
 #------------------------------------------#
 #                Stick    Functions            #
 #------------------------------------------#
 # Set Stick Transparency
 def stick_transparency():
-    pglob.populate()
-    amount = pglob.GUI['view']['stickTransparency'].get()
-    cmd.set('stick_transparency', amount, pglob.SELE)
+    glb.populate()
+    amount = glb.GUI.view['stickTransparency'].get()
+    cmd.set('stick_transparency', amount, glb.SELE)
  
  # Set Stick Radius
 def stickRad():
-    pglob.populate()
-    size = pglob.GUI['view']['stickRadius'].get()
-    cmd.set('stick_radius', size, pglob.SELE)
+    glb.populate()
+    size = glb.GUI.view['stickRadius'].get()
+    cmd.set('stick_radius', size, glb.SELE)
     
 def setray0(event):
     cmd.set("ray_trace_mode", "0")
