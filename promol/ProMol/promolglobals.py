@@ -156,7 +156,7 @@ class PERSISTENT:
         self.writeback = writeback
         self.dictlen = 'len'.encode("hex")
         self.dictkey = 'key'.encode("hex")
-        self.filename = os.path.join(OFFSITE, filename)
+        self.filename = os.path.join(OFFSITE, '%s.db' % filename)
         try:
             self.dict = shelve.open(self.filename)
         except:
