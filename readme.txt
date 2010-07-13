@@ -6,9 +6,9 @@ ConSCRIPT (C) Copyright 2007-2010
 S. Mottarella, P. Craig, H. Bernstein
 GPL, No Warranty
 
-2.0 Release Candidate 3
+2.0 Release Candidate 4.1
 by Mario Rosa
-12 July 2010
+13 July 2010
 
 /*************************** GPL NOTICES ******************************
  *                                                                    *
