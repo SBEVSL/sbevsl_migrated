@@ -116,19 +116,19 @@ def molSave():
       enti.delete(0,100000)
       enti.insert(0,a)
 
-      file = asksaveasfilename(defaultextension=entfilex.get(), initialdir=pglob.HOME, initialfile= "frame" + enti.get())
+      file = asksaveasfilename(defaultextension=entfilex.get(), initialdir=glb.HOME, initialfile= "frame" + enti.get())
       if len(file)>0:
           cmd.save(file)
-      pglob.GUI['movie_maker']['tab'].mainloop()
+      glb.GUI.movie_maker['tab'].mainloop()
     except:
       a = int(enti.get()) + 1
       enti.delete(0,100000)
       enti.insert(0,a)
 
-      file = asksaveasfilename(defaultextension=entfilex.get(), initialdir=pglob.HOME, initialfile= "frame" + enti.get())
+      file = asksaveasfilename(defaultextension=entfilex.get(), initialdir=glb.HOME, initialfile= "frame" + enti.get())
       if len(file)>0:
           cmd.save(file)
-    pglob.GUI['movie_maker']['tab'].mainloop()
+    glb.GUI.movie_maker['tab'].mainloop()
   except:
 
 

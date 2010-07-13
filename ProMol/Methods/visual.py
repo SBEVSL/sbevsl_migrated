@@ -1,5 +1,5 @@
-from pymol import cmd, util
-from pmg_tk.startup.ProMol import promolglobals as pglob
+from pymol import cmd, util, preset
+from pmg_tk.startup.ProMol import promolglobals as glb
 from tkColorChooser import askcolor
 from tkMessageBox import showinfo,showerror
 
@@ -61,7 +61,7 @@ def premisc(tag):
     elif tag == 'DNA & RNA':
         show_dna_rna()
     elif tag == 'CPK':
-        pglob.procolor()
+        glb.procolor()
     elif tag == 'Ball & Stick':
         ball_and_stick()
 
@@ -77,23 +77,20 @@ def show_hide_water(tag):
 def color_sel(tag):
     try:
         if tag == 'Red':
-            cmd.color('red', pglob.SELE)
+            cmd.color('red', glb.SELE)
         elif tag == 'Green':
-            cmd.color('green', pglob.SELE)
+            cmd.color('green', glb.SELE)
         elif tag == 'Orange':
-            cmd.color('orange', pglob.SELE)
+            cmd.color('orange', glb.SELE)
         elif tag == 'Yellow':
-            cmd.color('yellow', pglob.SELE)
+            cmd.color('yellow', glb.SELE)
         elif tag == 'Blue':
-            cmd.color('blue', pglob.SELE)
+            cmd.color('blue', glb.SELE)
         elif tag == 'Violet':
-            cmd.color('violet', pglob.SELE)
+            cmd.color('violet', glb.SELE)
         elif tag == 'CPK':
-            cmd.color("oxygen", "(elem O and %s)"%pglob.SELE)
-            cmd.color("nitrogen", "(elem N and %s)"%pglob.SELE)
-            cmd.color("sulfur", "(elem S and %s)"%pglob.SELE)
-            cmd.color("hydrogen", "(elem H and %s)"%pglob.SELE)
-            cmd.color("gray", "(elem C and %s)"%pglob.SELE)
+            glb.procolor(selection=glb.SELE, show_selection='sticks',
+                color_selection='cpk', show_all=None)
         elif tag == 'Other':
             color = askcolor(title = "Selection Color Chooser")
             colorArray = []
@@ -104,7 +101,7 @@ def color_sel(tag):
                     val = repr(z)
                     colorArray.append(val)
                 cmd.set_color('newcolor', colorArray)
-                cmd.color('newcolor', pglob.SELE)
+                cmd.color('newcolor', glb.SELE)
     except:
         showerror('Error', 'Update Selection!')
 
@@ -129,7 +126,7 @@ def bgcolor_switch(tag):
             cmd.bg_color('newcolor')
 
 def show_dna_rna():
-    pglob.update()
+    glb.update()
     objects = cmd.get_names('all')
     cmd.set('cartoon_ring_mode' , '1')
     if 'dna' in objects or 'rna' in objects:
@@ -161,7 +158,7 @@ cmd.extend('show_dna_rna', show_dna_rna)
 
 # default view
 def cartoon_view(cartoon=None):
-    pglob.update()
+    glb.update()
     cmd.hide('all')
     objects = cmd.get_names('all')
     if 'protein' in objects:
@@ -170,11 +167,11 @@ def cartoon_view(cartoon=None):
     cmd.color("yellow", "ss s")
     cmd.color("cyan", "ss l+\'\'")
     if 'ligands' in objects:
-        pglob.procolor('ligands','spheres','orange',None)
+        glb.procolor('ligands','spheres','orange',None)
     if 'dna' in objects:
-        pglob.procolor('dna','sticks','cpk',None)
+        glb.procolor('dna','sticks','cpk',None)
     if 'rna' in objects:
-        pglob.procolor('rna','sticks','cpk',None)
+        glb.procolor('rna','sticks','cpk',None)
     if cartoon == 'putty':
         try:
             cmd.cartoon('putty', 'protein')
@@ -185,18 +182,18 @@ def cartoon_view(cartoon=None):
 
 # show hetero atoms
 def show_hetero():
-    pglob.update()
+    glb.update()
     objects = cmd.get_names('all')
     if 'ligands' in objects:
         if 'protein' in objects:
             cmd.show('cartoon', 'protein')
             cmd.set('cartoon_transparency', '0.7', 'protein')
         if 'dna' in objects:
-            pglob.procolor('dna','sticks','cpk',None)
+            glb.procolor('dna','sticks','cpk',None)
         if 'rna' in objects:
-            pglob.procolor('rna','sticks','cpk',None)
-        pglob.procolor('ligands around 6','sticks','cpk','cartoon')
-        pglob.procolor('ligands','spheres','orange',None)
+            glb.procolor('rna','sticks','cpk',None)
+        glb.procolor('ligands around 6','sticks','cpk','cartoon')
+        glb.procolor('ligands','spheres','orange',None)
         cmd.set('sphere_transparency', '0.1', 'ligands')
         cmd.set('stick_radius', '0.3', 'ligands around 6')
         cmd.set('stick_transparency', '0.1', 'ligands around 6')
@@ -206,29 +203,19 @@ cmd.extend('show_hetero', show_hetero)
 
 # ball and stick view
 def ball_and_stick():
-    pglob.update()
-    objects = cmd.get_names('all')
-    cmd.set("stick_radius", "0.1", "all")
-    cmd.set("sphere_scale", "0.3", "all")
-    if 'protein' in objects:
-        pglob.procolor('protein',('spheres','sticks'),'cpk',None)
-    if 'dna' in objects:
-        pglob.procolor('dna',('sticks','cartoon','spheres'),'cpk',None)
-    if 'rna' in objects:
-        pglob.procolor('rna',('sticks','cartoon','spheres'),None)
-    if 'ligands' in objects:
-        pglob.procolor('ligands','spheres','orange',None)
+    glb.update()
+    preset.ball_and_stick('all')
 cmd.extend('ball_and_stick', ball_and_stick)
 
 def surface_view(surface = None):
     '''
     Show the surface of the molecule in different representations
     '''
-    pglob.update()
+    glb.update()
     util.cbc()
     cmd.hide('all')
     if surface == 'dot':
-        cmd.set('dot_density',3)
+        cmd.set('dot_density',1)
         cmd.show('lines','all')
         cmd.show('dots','all')
     elif surface == 'mesh':
@@ -255,7 +242,7 @@ cmd.extend('surface_view', surface_view)
 
 # show the polarities of the molecule
 def view_polarity():
-    pglob.update()
+    glb.update()
     objects = cmd.get_names('all')
     if 'protein' in objects:
         cmd.show('surface', 'protein')
@@ -264,14 +251,15 @@ def view_polarity():
     cmd.show('spheres', 'het')
     cmd.color('green', 'het')
     cmd.set('cartoon_ring_mode' , '1')
-    cmd.show('cartoon', 'resn %s'%(pglob.DNASTR))
-    pglob.procolor(pglob.DNASTR,'cartoon','cpk',None)
+    if 'dna' in objects:
+        cmd.show('cartoon', 'resn %s'%(glb.DNASTR))
+        glb.procolor(glb.DNASTR,'cartoon','cpk',None)
     showinfo('Info', 'Red = Hydrophobic\nBlue = Hydrophilic')
 cmd.extend('solubility', view_polarity)
 
 # aromatics view
 def color_aromatics():
-    pglob.update()
+    glb.update()
     cmd.hide('all')
     cmd.show('cartoon', 'resn GLY+PRO+ALA+VAL+LEU+ILE+MET+CYS+PHE+TYR+TRP+'+
         'HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
@@ -279,9 +267,9 @@ def color_aromatics():
         'TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
     cmd.set('cartoon_transparency', '0.6', 'resn GLY+PRO+ALA+VAL+LEU+ILE+'+
         'MET+CYS+PHE+TYR+TRP+HIS+LYS+ARG+GLN+ASN+GLU+ASP+SER+THR')
-    cmd.show('cartoon', 'resn %s'%(pglob.DNASTR))
-    cmd.color('aquamarine', 'resn %s'%(pglob.DNASTR))
-    cmd.set('cartoon_transparency', '0.6', 'resn %s'%(pglob.DNASTR))
+    cmd.show('cartoon', 'resn %s'%(glb.DNASTR))
+    cmd.color('aquamarine', 'resn %s'%(glb.DNASTR))
+    cmd.set('cartoon_transparency', '0.6', 'resn %s'%(glb.DNASTR))
     cmd.select('aromatics', 'resn phe+tyr+trp+his')
     cmd.color('red', 'aromatics')
     cmd.show('sticks', 'aromatics and (!name c+n+o)')
@@ -290,7 +278,7 @@ def color_aromatics():
 cmd.extend('color_aromatics', color_aromatics)
 
 def show_charged():
-    pglob.update()
+    glb.update()
     objects = cmd.get_names('all')
     cmd.hide('all')
     cmd.show('cartoon', 'all')
@@ -310,7 +298,7 @@ def show_charged():
 cmd.extend('show_charged', show_charged)
 
 def stick_toon():
-    pglob.update()
+    glb.update()
     cmd.hide('all')
     cmd.show('lines')
     cmd.create('cartoon', 'all')
@@ -320,48 +308,48 @@ def stick_toon():
 cmd.extend('stick_and_cartoon', stick_toon)
 
 def rovingstickers():
-    pglob.update()
+    glb.update()
     cmd.hide('everything')
     cmd.set("roving_detail", 1)
     cmd.set("roving_origin", 1)
     cmd.set("stick_radius", 0.3)
     cmd.set("roving_polar_contacts", 8)
-    cmd.set("roving_sticks", pglob.GUI['ez_viz']['roving'].get())
+    cmd.set("roving_sticks", glb.GUI.ez_viz['roving'].get())
 cmd.extend('roving_stick', rovingstickers)
 
 def rovinglines():
-    pglob.update()
+    glb.update()
     cmd.hide('everything')
     cmd.set("roving_detail", 1)
     cmd.set("roving_origin", 1)
     cmd.set("roving_sticks", 0)
     cmd.set("roving_polar_contacts", 8)
-    cmd.set('roving_lines', pglob.GUI['ez_viz']['roving'].get())
+    cmd.set('roving_lines', glb.GUI.ez_viz['roving'].get())
 cmd.extend('roving_line', rovinglines)
 
 def rovingspheres(): 
-    pglob.update()
+    glb.update()
     cmd.hide('everything')
     cmd.set("roving_detail", 1)
     cmd.set("roving_origin", 1)
     cmd.set("roving_polar_contacts", 8)
     cmd.set('sphere_transparency', '0.2')
     cmd.set('sphere_scale', '0.8', 'all')
-    cmd.set('roving_spheres', pglob.GUI['ez_viz']['roving'].get())
+    cmd.set('roving_spheres', glb.GUI.ez_viz['roving'].get())
 cmd.extend('roving_sphere', rovingspheres)
 
 def rovingballstick():
-    pglob.update()
+    glb.update()
     cmd.hide('everything')
     cmd.set("roving_detail", 1)
     cmd.set("roving_origin", 1)
     cmd.set("roving_polar_contacts", 8)
     cmd.set('sphere_transparency', '0.2')
     cmd.set("sphere_scale", "0.3", "all")
-    cmd.set('roving_spheres', pglob.GUI['ez_viz']['roving'].get())
+    cmd.set('roving_spheres', glb.GUI.ez_viz['roving'].get())
     cmd.set("stick_radius", 0.3)
     cmd.set("roving_polar_contacts", 8)
-    cmd.set("roving_sticks", pglob.GUI['ez_viz']['roving'].get())
+    cmd.set("roving_sticks", glb.GUI.ez_viz['roving'].get())
 cmd.extend('roving_ballstick', rovingballstick)
 
 def chain_contact():
@@ -375,7 +363,7 @@ def chain_contact():
             l += 1
             while d == (c+1) or d in skip:
                 d += 1
-    pglob.update()
+    glb.update()
     cmd.hide('everything')
     cmd.show('mesh', 'all')
     cmd.color('gray40', 'all')
@@ -392,7 +380,7 @@ def chain_contact():
         skip.append(c+1)
         chain_contact_loop(c,skip,chainPullList)
         c += 1
-    pglob.procolor('chain_contact','mesh','cpk',None)
+    glb.procolor('chain_contact','mesh','cpk',None)
     cmd.delete('chain_contact')
     return chainPullList
 cmd.extend('chain_contact',chain_contact)
@@ -400,28 +388,25 @@ cmd.extend('chain_contact',chain_contact)
 
 def mesh_ribbon():
     cmd.hide('everything')
-    pglob.update()
+    glb.update()
     cmd.map_new('map', "gaussian", "0.75", 'all')
-    cmd.enable('map')
-    pglob.procolor(None,show_all=('lines','ribbon'),color_all='red')
+    glb.procolor(None,show_all=('lines','ribbon'),color_all='red')
     cmd.isomesh('map1', 'map', '1')
     cmd.color('purple','map1')
 cmd.extend('mesh_ribbon', mesh_ribbon)
 
 def dot_sticks():
     cmd.hide('everything')
-    pglob.update()
+    glb.update()
     cmd.map_new('map', "gaussian", "0.75", 'all')
-    cmd.enable('map')
     cmd.isodot("map1", "map", 9999.0, 'all')
     cmd.isodot('map1', 'map', '1')
 
 def surfinglines():
     cmd.hide('everything')
-    pglob.update()
+    glb.update()
     cmd.map_new('map', "gaussian", "0.75", 'all')
-    cmd.enable('map')
-    pglob.procolor(None,show_all='lines')
+    glb.procolor(None,show_all='lines')
     cmd.isosurface('map1', 'map', '1')
     cmd.color('orange', "map1")
     cmd.set('transparency', '0.4')
@@ -469,9 +454,8 @@ def show_all(tag):
 
 # Show individual representations
 def show_rep(tag):
-    print pglob.SELE
     try:
-        sel = pglob.SELE
+        sel = glb.SELE
         if tag == 'Lines':
             cmd.show('lines', sel)
         elif tag == 'Sticks':
@@ -489,12 +473,9 @@ def show_rep(tag):
         elif tag == 'Surface':
             cmd.show('surface', sel)
         elif tag == 'Water':
-            cmd.show('(resn HOH)')
             cmd.show('spheres', '(resn HOH)')
         elif tag == 'Ball and Stick':
-            cmd.set('sphere_scale', '0.35', sel)
-            cmd.show('spheres', sel)
-            cmd.show('sticks', sel)
+            preset.ball_and_stick(sel)
         elif tag == 'Polar Contacts':
             cmd.dist(sel+"_polar_conts", sel, sel, quiet = 1, mode = 2, label = 0,
                 reset = 1)
@@ -506,7 +487,7 @@ def show_rep(tag):
 # Hide individual representations
 def hide_rep(tag):
     try:
-        sel = pglob.SELE
+        sel = glb.SELE
         if tag == 'Lines':
             cmd.hide('lines', sel)
         elif tag == 'Sticks':

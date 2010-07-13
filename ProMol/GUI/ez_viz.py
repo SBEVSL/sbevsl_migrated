@@ -1,7 +1,7 @@
 from pymol import cmd
 import Tkinter as tk
 import Pmw
-from pmg_tk.startup.ProMol import promolglobals as pglob
+from pmg_tk.startup.ProMol import promolglobals as glb
 from pmg_tk.startup.ProMol.Methods.visual import *
 from pmg_tk.startup.ProMol.Methods.movie import *
 from pmg_tk.startup.ProMol.Methods.setting import *
@@ -11,7 +11,7 @@ Pmw.initialise()
 def initialise():
     
     #------------ Presets Group  ---------------
-    group = tk.LabelFrame(pglob.GUI['ez_viz']['tab'], text='Preset Views')
+    group = tk.LabelFrame(glb.GUI.ez_viz['tab'], text='Preset Views')
     group.grid(row=0, column=0, padx=0, pady=0)
 
     #menus for presets
@@ -49,22 +49,24 @@ def initialise():
 
     #roving slider
 
-    pglob.GUI['ez_viz']['roving'] = tk.Scale(group, width =8,showvalue="0",
+    glb.GUI.ez_viz['roving'] = tk.Scale(group, width =8,showvalue="0",
         troughcolor="#ffffff",length="90",orient="horizontal",resolution="0.1",
         to="15.0")
-    pglob.GUI['ez_viz']['roving'].grid(row=1, column=3, padx=0, pady=0, sticky=tk.S)
-    pglob.GUI['ez_viz']['roving'].set(8.0)
+    glb.GUI.ez_viz['roving'].grid(row=1, column=3, padx=0, pady=0, sticky=tk.S)
+    glb.GUI.ez_viz['roving'].set(8.0)
     labelradius = tk.Label(group, text = 'Roving Detail')
     labelradius.grid(row=1, column=3, padx=0, pady=0, sticky=tk.N)
 
     #preset movies dropdown
 
     movies = Pmw.OptionMenu(group, label_text = 'Preset Movies:', labelpos=tk.N,
-                items = ('', 'Build Protein', 'Highlight Chains', 'Rotate', 'Chain Pull', 'Ligand Pull', 'Surface to Stick', 'Surface to Cartoon', 'Play', 'Stop', 'Rewind'),
+                items = ('', 'Build Protein', 'Highlight Chains', 'Rotate',
+                    'Chain Pull', 'Ligand Pull', 'Surface to Stick',
+                    'Surface to Cartoon', 'Play', 'Stop', 'Rewind'),
                 menubutton_width = 10, command=premovie)
     movies.grid(row=0, column=3, sticky=tk.NW)
 
-    group = tk.LabelFrame(pglob.GUI['ez_viz']['tab'], text='Display Options')
+    group = tk.LabelFrame(glb.GUI.ez_viz['tab'], text='Display Options')
     group.grid(row=4, column=0, columnspan=2, padx=0, pady=0)
 
     # menu for stereo options
@@ -92,21 +94,21 @@ def initialise():
                 menubutton_width = 11, command=hide_interface)
     stereo.grid(row=0, column=3, sticky=tk.NW)
 
-    group = tk.LabelFrame(pglob.GUI['ez_viz']['tab'], text = 'Automated Commands')
+    group = tk.LabelFrame(glb.GUI.ez_viz['tab'], text = 'Automated Commands')
     group.grid(row=2, column=0, padx=0, pady=0)
 
-    popbtn = tk.Button(group, text='Update Selection', width=15,command = pglob.populate)
+    popbtn = tk.Button(group, text='Update Selection', width=15,command = glb.populate)
     popbtn.grid(row=1,column=0, columnspan=2)
     
     tk.Label(group,text='Select').grid(row=0,column=0)
-    pglob.GUI['ez_viz']['selection'] = tk.StringVar()
-    pglob.GUI['ez_viz']['selection_menu'] = tk.OptionMenu(group, pglob.GUI['ez_viz']['selection'], 'All', 'Selected', 'Not Selected',command=pglob.set_selection)
-    pglob.GUI['ez_viz']['selection'].set('All')
-    pglob.GUI['ez_viz']['selection_menu'].grid(row=0,column=1,sticky=tk.NW)
+    glb.GUI.ez_viz['selection'] = tk.StringVar()
+    glb.GUI.ez_viz['selection_menu'] = tk.OptionMenu(group, glb.GUI.ez_viz['selection'], 'All', 'Selected', 'Not Selected',command=glb.set_selection)
+    glb.GUI.ez_viz['selection'].set('All')
+    glb.GUI.ez_viz['selection_menu'].grid(row=0,column=1,sticky=tk.NW)
 
     viewOptions = Pmw.OptionMenu(group, labelpos='w',
     	label_text = 'Show:',
-    	items = ('Lines', 'Sticks', 'Ribbons', 'Cartoon', 'Dots', 'Spheres', 'Mesh', 'Surface', 'Ball and Stick', 'Water', 'Everything', 'Polar Contacts'),
+    	items = ('Lines', 'Sticks', 'Ribbons', 'Cartoon', 'Dots', 'Spheres', 'Mesh', 'Surface', 'Ball and Stick', 'Water', 'Polar Contacts'),
     	menubutton_width=10, command=show_rep)
 
     viewOptions.grid(row=0, column=2, padx=0, pady=0, sticky=tk.N)

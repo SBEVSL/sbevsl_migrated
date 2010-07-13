@@ -1,5 +1,5 @@
 from pymol import cmd
-from pmg_tk.startup.ProMol import promolglobals as pglob
+from pmg_tk.startup.ProMol import promolglobals as glb
 from pmg_tk.startup.ProMol.Methods.visual import *
 from tkMessageBox import showinfo
 import Pmw
@@ -41,7 +41,7 @@ def highlight_chains():
     cmd.mstop()
     cmd.mclear()
     cmd.mset()
-    pglob.update()
+    glb.update()
 
     colors = ['blue', 'orange', 'silver', 'green', 'yellow',
                      'purple', 'brightorange', 'lightblue', 'lightorange',
@@ -103,7 +103,7 @@ def growProtein():
     cmd.mclear()
     cmd.mset()
     
-    pglob.update()
+    glb.update()
     
     objects = cmd.get_names('all')
     
@@ -121,10 +121,10 @@ def growProtein():
         # dna and rna will be represented as sticks
         # to make them stand out from the protein
         if 'dna' in objects:
-            pglob.procolor('dna','sticks','cpk',None)
+            glb.procolor('dna','sticks','cpk',None)
         
         if 'rna' in objects:
-            pglob.procolor('rna','sticks','cpk',None)
+            glb.procolor('rna','sticks','cpk',None)
         
         # coloring the protein and secondary structures
         cmd.color('white', 'protein')
@@ -177,13 +177,13 @@ def growProtein():
 cmd.extend('build_protein', growProtein)
 
 def surface_cartoon():
-    pglob.update()
+    glb.update()
     cmd.mstop()
     cmd.mclear()
     cmd.mset('1', '60')
     cmd.hide('everything')
     objects = cmd.get_names('all')
-    pglob.procolor(None,show_all=('cartoon','surface'))
+    glb.procolor(None,show_all=('cartoon','surface'))
     cmd.set("cartoon_fancy_helices", "1")
     cmd.set("cartoon_fancy_sheets", "1")
     cmd.mdo(1,'set transparency = 0.75, all;')
@@ -249,12 +249,12 @@ cmd.extend('surface_cartoon', surface_cartoon)
     
 def surface_stick():
     '''surface over stick movie'''
-    pglob.update()
+    glb.update()
     cmd.mstop()
     cmd.mclear()
     cmd.mset()
     cmd.mset('1', '60')
-    pglob.procolor(None,show_all=('sticks','surface'))
+    glb.procolor(None,show_all=('sticks','surface'))
     cmd.mdo(1,'set transparency = 0.75, all;')
     cmd.mdo(2,'set transparency = 0.7, all;')
     cmd.mdo(3,'set transparency = 0.65, all;')
@@ -319,7 +319,7 @@ cmd.extend('surface_stick', surface_stick)
     
     #movie that pulls ligands out of    and puts them back in
 def Ligand_Pull():
-    pglob.update()
+    glb.update()
     cmd.mstop()
     cmd.mclear()
     cmd.mset('1', '442')
@@ -329,8 +329,8 @@ def Ligand_Pull():
     objects = cmd.get_names('all')
     if 'ligands' in objects:
         cmd.set('stick_radius', '0.3')
-        pglob.procolor('ligands around 6','sticks','cpk','cartoon')
-        pglob.procolor('ligands','spheres','orange',None)
+        glb.procolor('ligands around 6','sticks','cpk','cartoon')
+        glb.procolor('ligands','spheres','orange',None)
         cmd.set("cartoon_fancy_helices", "1")
         cmd.set("cartoon_fancy_sheets", "1")
         cmd.set('cartoon_transparency', '0.5')
@@ -494,10 +494,10 @@ def cacheframe( r, state):
         cmd.set('cache_frames', '1')
 
 def loadframe(event):
-    file = askopenfilename(defaultextension=entfilex.get(), initialdir=pglob.HOME)
+    file = askopenfilename(defaultextension=entfilex.get(), initialdir=glb.HOME)
     if len(file)>0:
         cmd.load(file, "mov", entl.get())
-    pglob.GUI['movie_maker']['tab'].mainloop()
+    glb.GUI.movie_maker['tab'].mainloop()
     
 def gotoframe(event):
     try:

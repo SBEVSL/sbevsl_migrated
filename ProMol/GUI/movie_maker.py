@@ -1,7 +1,7 @@
 from pymol import cmd
 import Tkinter as tk
 import Pmw
-from pmg_tk.startup.ProMol import promolglobals as pglob
+from pmg_tk.startup.ProMol import promolglobals as glb
 from pmg_tk.startup.ProMol.Methods.movie import *
 from pmg_tk.startup.ProMol.Methods.save import *
 from pmg_tk.startup.ProMol.Methods.setting import *
@@ -9,7 +9,7 @@ Pmw.initialise()
 
 def initialise():
     #-----------Mouse Mode--------------
-    group = tk.LabelFrame(pglob.GUI['movie_maker']['tab'], text='Mouse Mode:')
+    group = tk.LabelFrame(glb.GUI.movie_maker['tab'], text='Mouse Mode:')
     group.grid(row=1, column=0, padx=0, pady=0, sticky = tk.NW)
     ddddd = tk.Button(group, width = 15, text = '3 Button Viewing')
     ddddd.grid(row=0, column=0, padx=2, pady=2, sticky = tk.NW)
@@ -36,7 +36,7 @@ def initialise():
     #----------Load and Save Frame Group------------------#
 
 
-    group = tk.LabelFrame(pglob.GUI['movie_maker']['tab'], text='Load and Save:')
+    group = tk.LabelFrame(glb.GUI.movie_maker['tab'], text='Load and Save:')
     group.grid(row=0, column=0, padx=0, pady=0, sticky = tk.NE)
     #------------File extension Selector---------------#
 
@@ -119,7 +119,7 @@ def initialise():
     #Used for easier creation of movies, utilizing buttons
     #instead of the necessity to input Pymol commands constantly
 
-    group = tk.LabelFrame(pglob.GUI['movie_maker']['tab'], text='Scripted Animation:')
+    group = tk.LabelFrame(glb.GUI.movie_maker['tab'], text='Scripted Animation:')
     group.grid(row=0, column=1, padx=0, pady=0, sticky = tk.NW)
     labscrp = tk.Label(group, text = "Frames in Movie:")
     labscrp.grid(row = 0, column=0, padx=5, pady=5, sticky = NE)
@@ -186,7 +186,7 @@ def initialise():
     #--------------Selection Controls--------------------
     #---This creates frames, and thusly the ability to add
     #---Balloon pop up help for mask/protect buttons-----
-    group = tk.LabelFrame(pglob.GUI['movie_maker']['tab'], text='Selection Controls')
+    group = tk.LabelFrame(glb.GUI.movie_maker['tab'], text='Selection Controls')
     group.grid(row=1, column=1, padx=0, pady=0, sticky = tk.SW)
     framemaskbtn = tk.Frame(group)
     framemaskbtn.grid(row=1, column=0, padx=2, pady=1, sticky = tk.NW)
