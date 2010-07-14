@@ -1,6 +1,8 @@
 '''Starts the ProMol Plugin for Pymol.
-   ProMOL Copyright 2004-2010 Multiple Authors
+   ProMOL Copyright 2004-2010 Charlie Westin, Brett Hanson & Paul Craig
    GPL, No Warranty
+
+   This release 4.0rc4.0 by Mario Rosa, 13 July 2010
    
 /*************************** GPL NOTICES ******************************
  *                                                                    *
@@ -26,7 +28,7 @@ def __init__(self):
     import os
     print '\n'
     print ('''ERROR: The folder `ProMol` that was distributed alongside
-`ProMol.py` must be install in order for the ProMol plugin to work. Please close
- PyMol and install the `ProMol` folder in "%s/" by copy and
+`ProMol.py` must be installed in order for the ProMol plugin to work. 
+ Please close PyMol and install the `ProMol` folder in "%s/" by copy and
  pasting.''' % os.path.dirname(__file__)).replace('\n','')
  
