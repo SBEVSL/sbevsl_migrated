@@ -53,6 +53,12 @@ def fetch(pdbCode,passerrors=False):
         cmd.read_pdbstr(zlib.decompress(pdbFile[cutsite:], -zlib.MAX_WBITS),
             pdbCode)
         return ''
+    except zlib.error:
+        url = pdbCode.join(('http://www.rcsb.org/pdb/cgi/export.cgi/',
+            '.pdb?format=PDB&pdbId=',''))
+        pdbUrl = urllib2.urlopen(url)
+        cmd.read_pdbstr(pdbUrl.read(), pdbCode)
+        pdbUrl.close()
     except (urllib2.HTTPError,SyntaxError):
         if passerrors == False:
             tkMessageBox.showerror('Invalid Code',

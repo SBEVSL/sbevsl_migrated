@@ -10,7 +10,7 @@ import linecache
 import random
 import platform
 from pmg_tk.startup.ProMol.remote_pdb_load import fetch
-VERSION = '4.0rc4'
+VERSION = '4.0rc4.1'
 PLATFORM = platform.system()
 PROMOL_DIR_PATH = os.path.dirname(__file__)
 try:
