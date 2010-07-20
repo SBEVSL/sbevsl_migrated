@@ -33,16 +33,13 @@ def __init__(pymol):
             glb.update()
         elif result == 'Clear':
             cmd.reinitialize()
-        elif result == 'Thanks':
-            import webbrowser
-            webbrowser.open(glb.pathmaker('Thanks.html'))
         else:
             ProMol.withdraw()
     
     ProMol = tk.Toplevel()
     ProMol.title('ProMol Version %s'%(glb.VERSION))
     
-    buttons = ('Open PDB', 'Fetch PDB', 'Random PDB', 'Clear', 'Help', 'Thanks')
+    buttons = ('Open PDB', 'Fetch PDB', 'Random PDB', 'Clear', 'Help')
     buttonsl = len(buttons)
 
     notebook = Pmw.NoteBook(ProMol)
