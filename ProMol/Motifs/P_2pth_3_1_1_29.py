@@ -3,6 +3,7 @@ FUNC:P_2pth_3_1_1_29
 PDB:2pth
 EC:3.1.1.29
 RESI:asn,his,asp
+LOCI:a-10,20,93;
 '''
 cmd.select('asn1', 'n. CB&r. asn w. %s of n. CB&r. his'%(d*8.20))
 cmd.select('asn2', 'n. CB&r. asn w. %s of n. CG&r. his'%(d*8.73))

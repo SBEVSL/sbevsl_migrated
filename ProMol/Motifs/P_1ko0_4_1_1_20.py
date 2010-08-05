@@ -3,6 +3,7 @@ FUNC:P_1ko0_4_1_1_20
 PDB:1ko0
 EC:4.1.1.20
 RESI:lys,his,glu
+LOCI:a-54,191,268;
 '''
 cmd.select('lys1', 'n. CB&r. lys w. %s of n. CB&r. his'%(d*13.65))
 cmd.select('lys2', 'n. CB&r. lys w. %s of n. CG&r. his'%(d*12.73))

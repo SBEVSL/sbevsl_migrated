@@ -3,6 +3,7 @@ FUNC:Jfa_1pzp_3_5_2_6
 PDB:1pzp
 EC:3.5.2.6
 RESI:ser,lys,ser,glu
+LOCI:a-70,73,130,166;
 '''
 cmd.select('temp0', 'n. ca')
 cmd.select('temp1', 'r. ser')

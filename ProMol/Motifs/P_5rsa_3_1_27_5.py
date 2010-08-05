@@ -3,6 +3,7 @@ FUNC:P_5rsa_3_1_27_5
 PDB:5rsa
 EC:3.1.27.5
 RESI:his,lys,his
+LOCI:a-12,41,119;
 '''
 cmd.select('his1', 'n. CB&r. his w. %s of n. CB&r. lys'%(d*13.70))
 cmd.select('his2', 'n. CB&r. his w. %s of n. CG&r. lys'%(d*12.83))

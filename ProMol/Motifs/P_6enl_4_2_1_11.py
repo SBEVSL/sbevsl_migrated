@@ -3,6 +3,7 @@ FUNC:P_6enl_4_2_1_11
 PDB:6enl
 EC:4.2.1.11
 RESI:glu,glu,his,lys
+LOCI:a-168,211,373,396;
 '''
 cmd.select('glu1', 'n. CB&r. glu w. %s of n. CB&r. glu'%(d*9.83))
 cmd.select('glu2', 'n. CB&r. glu w. %s of n. CG&r. glu'%(d*9.88))

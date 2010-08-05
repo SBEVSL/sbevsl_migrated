@@ -3,6 +3,7 @@ FUNC:P_1f6d_5_1_3_14
 PDB:1f6d
 EC:5.1.3.14
 RESI:asp,glu,glu,his
+LOCI:a-95,117,131,213;
 '''
 cmd.select('asp1', 'n. CB&r. asp w. %s of n. CB&r. glu'%(d*9.37))
 cmd.select('asp2', 'n. CB&r. asp w. %s of n. CG&r. glu'%(d*9.68))

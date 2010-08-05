@@ -3,6 +3,7 @@ FUNC:P_3fit_3_6_1_29
 PDB:3fit
 EC:3.6.1.29
 RESI:gln,his,his
+LOCI:a-83,94,96;
 '''
 cmd.select('gln1', 'n. CB&r. gln w. %s of n. CB&r. his'%(d*12.98))
 cmd.select('gln2', 'n. CB&r. gln w. %s of n. CG&r. his'%(d*14.02))

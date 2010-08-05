@@ -3,6 +3,7 @@ FUNC:P_1ahy_2_6_1_1
 PDB:1ahy
 EC:2.6.1.1
 RESI:trp,asp
+LOCI:a-140,222;
 '''
 cmd.select('trp1', 'n. CB&r. trp w. %s of n. CB&r. asp'%(d*9.22))
 cmd.select('trp2', 'n. CB&r. trp w. %s of n. CG&r. asp'%(d*8.61))

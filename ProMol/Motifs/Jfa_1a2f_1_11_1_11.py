@@ -3,6 +3,7 @@ FUNC:Jfa_1a2f_1_11_1_11
 PDB:1a2f
 EC:1.11.1.11
 RESI:arg,his,asn
+LOCI:a-48,52,82;
 '''
 cmd.select('temp0', 'n. ne')
 cmd.select('temp1', 'r. arg')

@@ -3,6 +3,7 @@ FUNC:Jab_1csc_4_1_3_7
 PDB:1csc
 EC:4.1.3.7
 RESI:his,his,asp
+LOCI:a-274,320,375;
 '''
 cmd.select('temp0', 'n. ca')
 cmd.select('temp1', 'r. his')

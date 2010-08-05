@@ -3,6 +3,7 @@ FUNC:P_1gpk_3_1_1_7
 PDB:1gpk
 EC:3.1.1.7
 RESI:ser,glu,his
+LOCI:a-200,327,440;
 '''
 cmd.select('ser1', 'n. CB&r. ser w. %s of n. CB&r. glu'%(d*11.16))
 cmd.select('ser2', 'n. CB&r. ser w. %s of n. CG&r. glu'%(d*11.13))

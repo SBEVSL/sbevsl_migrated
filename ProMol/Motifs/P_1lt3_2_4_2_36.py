@@ -3,6 +3,7 @@ FUNC:P_1lt3_2_4_2_36
 PDB:1lt3
 EC:2.4.2.36
 RESI:arg,ser,glu,glu
+LOCI:a-7,61,110,112;
 '''
 cmd.select('arg1', 'n. CB&r. arg w. %s of n. CB&r. ser'%(d*8.96))
 cmd.select('arg2', 'n. CB&r. arg w. %s of n. OG&r. ser'%(d*9.43))

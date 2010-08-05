@@ -3,6 +3,7 @@ FUNC:P_1h2x_3_4_21_26
 PDB:1h2x
 EC:3.4.21.26
 RESI:ser,asp,his
+LOCI:a-554,641,680;
 '''
 cmd.select('ser1', 'n. CB&r. ser w. %s of n. CB&r. asp'%(d*10.84))
 cmd.select('ser2', 'n. CB&r. ser w. %s of n. CG&r. asp'%(d*9.40))

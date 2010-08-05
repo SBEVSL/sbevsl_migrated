@@ -3,6 +3,7 @@ FUNC:Jfa_1pfk_2_7_1_11
 PDB:1pfk
 EC:2.7.1.11
 RESI:gly,arg,thr,asp,arg
+LOCI:a-11,72,125,127,171;
 '''
 cmd.select('temp0', 'n. n')
 cmd.select('jessatom0', 'temp0')

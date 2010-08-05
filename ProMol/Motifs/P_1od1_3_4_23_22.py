@@ -3,6 +3,7 @@ FUNC:P_1od1_3_4_23_22
 PDB:1od1
 EC:3.4.23.22
 RESI:asp,ser,asp,thr
+LOCI:a-35,38,219,222;
 '''
 cmd.select('thr1', 'n. CB&r. thr w. %s of n. CB&r. asp'%(d*5.89))
 cmd.select('thr2', 'n. CB&r. thr w. %s of n. CG&r. asp'%(d*5.54))

@@ -10,7 +10,7 @@ import linecache
 import random
 import platform
 from pmg_tk.startup.ProMol.remote_pdb_load import fetch
-VERSION = '4.0rc4.1'
+VERSION = '4.1rc1'
 PLATFORM = platform.system()
 PROMOL_DIR_PATH = os.path.dirname(__file__)
 try:
@@ -35,6 +35,11 @@ for DIR in DIRS:
 class PROMOLGUI:pass
 GUI = PROMOLGUI()
 SELE = 'All'
+NEWCOLOR = 0
+def incnewcolor():
+    tmp = NEWCOLOR
+    NEWCOLOR += 1
+    return tmp
 
 AminoMenuList = ('', 'ala', 'arg', 'asn', 'asp', 'cys', 'gln', 'glu', 'gly',
     'his', 'ile', 'leu', 'lys', 'met', 'phe', 'pro', 'ser', 'thr', 'trp', 'tyr',
@@ -353,7 +358,7 @@ def motifstore(*args):
             if not os.path.isfile(MOTIFS[filecheck]['path']):
                 del MOTIFS[filecheck]
 
-    find = ('FUNC', 'PDB', 'EC', 'RESI')
+    find = ('FUNC', 'PDB', 'EC', 'RESI', 'LOCI')
     MOTIFS['errors'] = []
     for motdir in args:
         motfiles = os.listdir(motdir)
@@ -432,6 +437,30 @@ def motifstore(*args):
                             break
                         MOTIFS[func]['resi'] = resi.split(',')
                         continue
+                    if line[0:4] == 'LOCI':
+                        if 'LOCI' in found:
+                            MOTIFS['errors'].append('Warning: Motif `%s` included an extra `LOCI` attribute, which was ignored.'%(MOTIFS[func]['path']))
+                            MOTIFS[func]['mtime'] = 0
+                            continue
+                        found.append('LOCI')
+                        loci = line.split(':')[1][0:-1].split(';')
+                        if len(loci) == 1:
+                            MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to an incorrect `LOCI` attribute.'%(MOTIFS[func]['path']))
+                            del MOTIFS[func]
+                            tmpf.close()
+                            break
+                        selection = ''
+                        for loc in loci:
+                            if loc == '':
+                                continue
+                            chain, numbers = loc.split('-')
+                            nums = 'resi %s' % ' or resi '.join(numbers.split(','))
+                            if selection == '':
+                                selection = '(chain %s and (%s))' % (chain, nums)
+                            else:
+                                selection = '%s or (chain %s and (%s))' % (selection, chain, nums)
+                        MOTIFS[func]['loci'] = selection
+                        continue
                 if line[0:3] != 'cmd' and line != '':
                     MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to potential mallicious code.'%(MOTIFS[func]['path']))
                     del MOTIFS[func]
@@ -446,7 +475,7 @@ motifstore(MOTIFSFOLDER, USRMOTIFSFOLDER)
 
 def reset_motif_database():
     global MOTIFS
-    MOTIFS.delete_database()
+    MOTIFS.clear()
     del MOTIFS
     MOTIFS = PERSISTENT('motifs')
     motifstore(MOTIFSFOLDER, USRMOTIFSFOLDER)
@@ -525,6 +554,12 @@ def deletemotif():
         cmd.delete('%s'%(motif))
 cmd.extend('deletemotif', deletemotif)
 
+def show_as(show, selection):
+    try:
+        cmd.show_as(show, selection)
+    except AttributeError:
+        cmd.as(show, selection)
+
 def procolor(selection=None, show_selection='sticks', color_selection='cpk',
         show_all=('sticks', 'spheres'), color_all='cpk', cpknew=False):
     '''Color in CPK or CPKnew
@@ -587,15 +622,10 @@ def populate():
     cmd.disable('dna')
     cmd.disable('rna')
     cmd.disable('protein')
-    for letter in AlphaSequence:
+    for letter in cmd.get_chains():
         chain = 'Chain-%s'%(letter)
         cmd.select(chain, "chain %s"%(letter))
-        if(len(cmd.index(chain)) < 1):
-            cmd.delete(chain)
-    #cmd.select("Chain-' '", "chain ' '")
-    # if 'Chain-' '' in objects:
-    #         if(len(cmd.index('Chain-' '')) < 1):
-    #             cmd.delete('Chain-' '')
+        cmd.disable(chain)
     objects = cmd.get_names('all')
     for obj in objects:
         try:

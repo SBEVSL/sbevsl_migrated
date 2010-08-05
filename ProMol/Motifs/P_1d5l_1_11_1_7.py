@@ -3,6 +3,7 @@ FUNC:P_1d5l_1_11_1_7
 PDB:1d5l
 EC:1.11.1.7
 RESI:gln,his,arg
+LOCI:a-91,95;c-239;
 '''
 cmd.select('gln1', 'n. CB&r. gln w. %s of n. CB&r. his'%(d*7.51))
 cmd.select('gln2', 'n. CB&r. gln w. %s of n. CG&r. his'%(d*6.65))

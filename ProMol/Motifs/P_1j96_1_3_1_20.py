@@ -3,6 +3,7 @@ FUNC:P_1j96_1_3_1_20
 PDB:1j96
 EC:1.3.1.20
 RESI:asp,tyr,lys,his
+LOCI:a-50,55,84,117;
 '''
 cmd.select('asp1', 'n. CB&r. asp w. %s of n. CB&r. tyr'%(d*11.16))
 cmd.select('asp2', 'n. CB&r. asp w. %s of n. CG&r. tyr'%(d*10.17))

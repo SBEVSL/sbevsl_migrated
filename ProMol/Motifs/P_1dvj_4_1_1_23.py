@@ -3,6 +3,7 @@ FUNC:P_1dvj_4_1_1_23
 PDB:1dvj
 EC:4.1.1.23
 RESI:asp,lys
+LOCI:a-70,72;
 '''
 cmd.select('asp1', 'n. CB&r. asp w. %s of n. CB&r. lys'%(d*7.60))
 cmd.select('asp2', 'n. CB&r. asp w. %s of n. CG&r. lys'%(d*6.66))

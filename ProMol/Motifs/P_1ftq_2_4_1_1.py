@@ -3,6 +3,7 @@ FUNC:P_1ftq_2_4_1_1
 PDB:1ftq
 EC:2.4.1.1
 RESI:lys,arg,lys,thr
+LOCI:a-568,569,574,676;
 '''
 cmd.select('lys1', 'n. CB&r. lys w. %s of n. CB&r. arg'%(d*7.27))
 cmd.select('lys2', 'n. CB&r. lys w. %s of n. CG&r. arg'%(d*7.92))

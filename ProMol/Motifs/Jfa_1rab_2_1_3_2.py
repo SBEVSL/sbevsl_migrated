@@ -3,6 +3,7 @@ FUNC:Jfa_1rab_2_1_3_2
 PDB:1rab
 EC:2.1.3.2
 RESI:arg,thr,arg,his
+LOCI:a-54,55,105,134;
 '''
 cmd.select('temp0', 'n. ne')
 cmd.select('temp1', 'r. arg')

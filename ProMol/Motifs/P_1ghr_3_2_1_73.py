@@ -3,6 +3,7 @@ FUNC:P_1ghr_3_2_1_73
 PDB:1ghr
 EC:3.2.1.73
 RESI:glu,glu,lys,glu
+LOCI:a-232,280,283,288;
 '''
 cmd.select('glu1', 'n. CB&r. glu w. %s of n. CB&r. glu'%(d*15.41))
 cmd.select('glu2', 'n. CB&r. glu w. %s of n. CG&r. glu'%(d*14.78))

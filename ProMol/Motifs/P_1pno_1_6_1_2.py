@@ -3,6 +3,7 @@ FUNC:P_1pno_1_6_1_2
 PDB:1pno
 EC:1.6.1.2
 RESI:tyr,arg,tyr
+LOCI:a-316,351,432;
 '''
 cmd.select('tyr1', 'n. CB&r. tyr w. %s of n. CB&r. arg'%(d*8.23))
 cmd.select('tyr2', 'n. CB&r. tyr w. %s of n. CG&r. arg'%(d*7.16))

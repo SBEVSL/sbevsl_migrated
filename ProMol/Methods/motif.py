@@ -6,6 +6,7 @@ import os
 import re
 from tkFileDialog import asksaveasfile, askdirectory
 from tkSimpleDialog import askstring
+from tkColorChooser import askcolor
 from tkMessageBox import showinfo, showerror, askyesno
 from pmg_tk.startup.ProMol import promolglobals as glb
 from pmg_tk.startup.ProMol.remote_pdb_load import fetch
@@ -396,17 +397,57 @@ def MotifCaller(motif, camera=True):
     else:
         return True
 
+def changecolor(event):
+    color = askcolor(title='Select a Color', color=event.widget['bg'])
+    if color[1] != None:
+        event.widget['bg'] = color[1]
+
+def togglealign(event):
+    if glb.GUI.motifs['align'].get() == 0:
+        glb.GUI.motifs['templatecolor']['relief'] = tk.SUNKEN
+        glb.GUI.motifs['motifcolor']['relief'] = tk.SUNKEN
+        glb.GUI.motifs['templatecolor'].unbind("<ButtonRelease-1>")
+        glb.GUI.motifs['motifcolor'].unbind("<ButtonRelease-1>")
+    else:
+        glb.GUI.motifs['templatecolor']['relief'] = tk.RAISED
+        glb.GUI.motifs['motifcolor']['relief'] = tk.RAISED
+        glb.GUI.motifs['templatecolor'].bind("<ButtonRelease-1>", changecolor)
+        glb.GUI.motifs['motifcolor'].bind("<ButtonRelease-1>", changecolor)
+
 def dbckmotif(event):
-    '''allows user to click on motif search field items and run the motif function'''
+    '''allows user to click on motif search field items
+    and run the motif function'''
     motif = glb.GUI.motifs['motifbox'].curselection()[0]
     tag = glb.GUI.motifs['motifbox'].get(motif).split('-')
+    tpdb = tag[1].split('_')[1]
     pdb = glb.GUI.motifs['hidmotif'].get(motif)
     cmd.reinitialize()
-    fetch(pdb)
-    if len(tag) == 2 and tag[1] in glb.MOTIFS:
-        MotifCaller(tag[1])
-    else:
-        glb.update()
+    if glb.GUI.motifs['align'].get() == 0 or tpdb == pdb:
+        fetch(pdb)
+        if len(tag) == 2 and tag[1] in glb.MOTIFS:
+            MotifCaller(tag[1])
+        else:
+            glb.update()
+    else:      
+        if len(tag) == 2 and tag[1] in glb.MOTIFS:
+            tcl = glb.GUI.motifs['templatecolor']['bg']
+            mcl = glb.GUI.motifs['motifcolor']['bg']
+            fetch(pdb)
+            MotifCaller(tag[1])
+            fetch(tpdb)
+            glb.show_as('cartoon', tpdb)
+            cmd.select('Template', '%s and (%s)' % (tpdb,
+                glb.MOTIFS[tag[1]]['loci']))
+            cmd.show('sticks', 'Template')
+            cmd.color('white', 'Template')
+            cmd.align('Template', tag[1])
+            cmd.set_color('Template',
+                ([int(n, 16) for n in (tcl[1:3], tcl[3:5], tcl[5:7])]))
+            cmd.set_color('Motif',
+                ([int(n, 16) for n in (mcl[1:3], mcl[3:5], mcl[5:7])]))
+            cmd.color('Template', tpdb)
+            cmd.color('Motif', pdb)
+            cmd.orient('Template')
 
 def export2ods():
     pass
@@ -659,7 +700,7 @@ def makemotif(mode):
     glb.GUI.motif_maker['file'] = None
     glb.GUI.motif_maker['wait'] = []
     glb.GUI.motif_maker['motif'] = []
-    glb.GUI.motif_maker['resnstr'] = {}
+    glb.GUI.motif_maker['order'] = []
     pf = glb.GUI.motif_maker['pf'].get()
     pdb = glb.GUI.motif_maker['pdb'].get().lower()
     ecen = glb.GUI.motif_maker['ec'].get()
@@ -757,29 +798,32 @@ def makemotif(mode):
                 if mode == 1:
                     glb.motifstore(glb.USRMOTIFSFOLDER)
         return True
-
-    def addresn(x,y,z):
-        if z not in glb.GUI.motif_maker['resnstr']:
-            glb.GUI.motif_maker['resnstr'][z] = {}
-        glb.GUI.motif_maker['resnstr'][z][y] = x
-        return x
+    
+    def getlocistr():
+        locistr = ''
+        tmpdict = {}
+        for item in glb.GUI.motif_maker['order']:
+            if item[1] not in tmpdict:
+                tmpdict[item[1]] = []
+            tmpdict[item[1]].append(item[2])
+        for chain in tmpdict:
+            locistr = '%s%s-%s;' % (locistr, chain.lower(), ','.join(tmpdict[chain]))
+        return locistr
     
     def getresnstr():
-        alphanum = lambda k:[(lambda t:(t.isdigit() and [int(t)] or [t])[0])(c) for c in re.split('([0-9]+)',k)]
-        for i in glb.GUI.motif_maker['resnstr']:
-            keys = glb.GUI.motif_maker['resnstr'][i].keys()
-            keys.sort(lambda x,y:cmp(alphanum(x),alphanum(y)))
-            resn = []
-            for key in keys:
-                resn.append(glb.GUI.motif_maker['resnstr'][i][key])
-            glb.GUI.motif_maker['resnstr'][i] = resn
-        keys = glb.GUI.motif_maker['resnstr'].keys()
-        keys.sort()
-        resn = []
-        for key in keys:
-            for i in glb.GUI.motif_maker['resnstr'][key]:
-                resn.append(i)
-        return ','.join(resn)
+        tmplist = []
+        for item in glb.GUI.motif_maker['order']:
+            tmplist.append(item[0])
+        return ','.join(tmplist)
+    
+    def addresn(x,y,z):
+        glb.GUI.motif_maker['order'].append((x, y, z))
+        try:
+            glb.GUI.motif_maker['order'].sort(key=lambda item: (item[1],int(item[2])))
+        except TypeError:
+            glb.GUI.motif_maker['order'].sort(lambda x,y: cmp(int(x[2]), int(y[2])))
+            glb.GUI.motif_maker['order'].sort(lambda x,y: cmp(x[1], y[1]))
+        return x
     
     def acceptresn(x,y,z):
         if len(x) == 0:
@@ -790,6 +834,7 @@ def makemotif(mode):
         except KeyError:
             return None
         return addresn(newresn,y,z)
+    
     exceptions += '%s%s'%(fetch(pdb,True),'\n')
     glb.update()
     preecs = ecen.split(',')
@@ -816,7 +861,7 @@ def makemotif(mode):
         resi[g] = glb.GUI.motif_maker['resi'][g].get().strip()
         backbone[g] = glb.GUI.motif_maker['backbone'][g].get()
         chain[g] = glb.GUI.motif_maker['chain'][g].get().strip()
-        resn[g] = acceptresn(glb.GUI.motif_maker['resn'][g].get().strip(),resi[g],chain[g])
+        resn[g] = acceptresn(glb.GUI.motif_maker['resn'][g].get().strip(),chain[g],resi[g])
         skip[g] = False
         if resn[g] == '' and resi[g] == '' and chain[g] == '':
             ### this gives us the ability to skip whole blocks
@@ -940,6 +985,7 @@ def makemotif(mode):
         write("PDB:%s\n"%(pdb))
         write("EC:%s\n"%(ec.replace('_','.')))
         write("RESI:%s\n"%(getresnstr()))
+        write("LOCI:%s\n"%(getlocistr()))
         write("'''\n")
         if write(open=True) == False:
             return False

@@ -3,6 +3,7 @@ FUNC:P_1orv_3_4_14_5
 PDB:1orv
 EC:3.4.14.5
 RESI:ser,asp,his
+LOCI:a-630,708,740;
 '''
 cmd.select('ser1', 'n. CB&r. ser w. %s of n. CB&r. asp'%(d*11.58))
 cmd.select('ser2', 'n. CB&r. ser w. %s of n. CG&r. asp'%(d*10.17))

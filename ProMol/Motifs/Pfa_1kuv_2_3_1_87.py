@@ -3,6 +3,7 @@ FUNC:Pfa_1kuv_2_3_1_87
 PDB:1kuv
 EC:2.3.1.87
 RESI:ser,leu,his,leu,tyr
+LOCI:a-97,111,122,124,168;
 '''
 cmd.select('ser1', 'n. CB&r. ser w. %s of n. CB&r. leu'%(d*8.54))
 cmd.select('ser2', 'n. CB&r. ser w. %s of n. CG&r. leu'%(d*10.04))
