@@ -4,7 +4,6 @@ import Tkinter as tk
 from tkFileDialog import askopenfilename
 import Pmw
 from pmg_tk.startup.ProMol import promolglobals as glb
-from pmg_tk.startup.ProMol.remote_pdb_load import PDBDialog
 Pmw.initialise()
 
 def __init__(pymol):
@@ -29,7 +28,7 @@ def __init__(pymol):
             except:
                 webbrowser.open(glb.pathmaker('Help','EZ-VizWebMain.html'))
         elif result == 'Fetch PDB':
-            PDBDialog(pymol)
+            glb.PDBDialog(pymol)
             glb.update()
         elif result == 'Clear':
             cmd.reinitialize()
@@ -45,7 +44,7 @@ def __init__(pymol):
     notebook = Pmw.NoteBook(ProMol)
     notebook.grid(row=0,column=0, columnspan=buttonsl, padx=10, pady=10)
     from pmg_tk.startup.ProMol.GUI import welcome, ez_viz, motifs, \
-        custom_motifs, motif_maker, view, toolbox, advanced_toolbox, movie_maker
+        motif_maker, view, toolbox, advanced_toolbox, movie_maker
 
     glb.GUI.welcome = {'tab':notebook.add('Welcome')}
     welcome.initialise()
@@ -55,9 +54,6 @@ def __init__(pymol):
     
     glb.GUI.motifs = {'tab':notebook.add('Motif Finder')}
     motifs.initialise()
-    
-    #glb.GUI.custom_motifs = {'tab':notebook.add('Custom\nMotifs')}
-    #custom_motifs.initialise()
     
     glb.GUI.motif_maker = {'tab':notebook.add('Motif Maker')}
     motif_maker.initialise()

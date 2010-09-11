@@ -9,7 +9,6 @@ from tkSimpleDialog import askstring
 from tkColorChooser import askcolor
 from tkMessageBox import showinfo, showerror, askyesno
 from pmg_tk.startup.ProMol import promolglobals as glb
-from pmg_tk.startup.ProMol.remote_pdb_load import fetch
 
 #print dir(motcod)
 Pmw.initialise()
@@ -147,232 +146,6 @@ def labelmotif():
     except:
         showinfo('Alert', "Select a motif first")
 
-#def custom motif dropdown selection
-
-def set_motifA(tag):
-    cmd.deselect()
-    mA = tag
-
-def set_motifB(tag):
-    cmd.deselect()
-    mB = tag
-
-def set_motifC(tag):
-    cmd.deselect()
-    mC = tag
-
-def set_motifD(tag):
-    cmd.deselect()
-    mD = tag
- 
- #def custom motif dropdown selection
-def set_motifAA(tag):
-    cmd.deselect()
-    mAA = tag
-
-def set_motifAB(tag):
-    cmd.deselect()
-    mAB = tag
-
-def set_motifAC(tag):
-    cmd.deselect()
-    mAC = tag
-
-def set_motifAD(tag):
-    cmd.deselect()
-    mAD = tag
-
-#Custom motif functions
-
-def bimotif():
-    try:
-        update()
-        objects = cmd.get_names('all')
-        cmd.delete('motif')
-        cmd.hide('everything')
-        mA = mA
-        mB = mB
-        cmd.select('AA', 'resn %s within %s of resn %s'%(mA, selA.get(), mB))
-        cmd.select('BB', 'resn %s within %s of resn %s'%(mB, selA.get(), mA))
-        cmd.select('motif', 'byres AA | byres BB')
-        cmd.show('cartoon', 'all')
-        cmd.set('cartoon_transparency', '0.5', 'all')
-        cmd.show('sticks', 'motif')
-        cmd.set('stick_radius', '0.5')
-        cpkmotif()
-        cmd.orient('motif')
-        cmd.deselect()
-        cmd.delete('AA')
-        cmd.delete('BB')
-    except:
-        showinfo('Alert', 'You must select an amino acid for menus A and B')
-
-def trimotif():
-    try:
-        update()
-        objects = cmd.get_names('all')
-        cmd.delete('motif')
-        cmd.hide('everything')
-        mA = mA
-        mB = mB
-        mC = mC
-        cmd.select('AA', 'resn %s within %s of resn %s'%(mA, selA.get(), mB))
-        cmd.select('BB', 'resn %s within %s of resn %s'%(mB, selA.get(), mA))
-        cmd.select('CC', 'resn %s within %s of resn %s'%(mC, selB.get(), mB))
-        cmd.select('motif', 'byres AA | byres BB | byres CC')
-        cmd.show('cartoon', 'all')
-        cmd.set('cartoon_transparency', '0.5', 'all')
-        cmd.show('sticks', 'motif')
-        cmd.set('stick_radius', '0.5')
-        cpkmotif()
-        cmd.orient('motif')
-        cmd.deselect()
-        cmd.delete('AA')
-        cmd.delete('BB')
-        cmd.delete('CC')
-    except:
-        showinfo('Alert',
-            'You must select an amino acid for menus A, B, and C')
-
-def quadmotif():
-    try:
-        update()
-        objects = cmd.get_names('all')
-        cmd.delete('motif')
-        cmd.hide('everything')
-        mA = mA
-        mB = mB
-        mC = mC
-        mD = mD
-        cmd.select('AA', 'resn %s within %s of resn %s'%(mA, selA.get(), mB))
-        cmd.select('BB', 'resn %s within %s of resn %s'%(mB, selA.get(), mA))
-        cmd.select('CC', 'resn %s within %s of resn %s'%(mC, selB.get(), mB))
-        cmd.select('DD', 'resn %s within %s of resn %s'%(mD, selC.get(), mC))
-        cmd.select('motif', 'byres AA | byres BB | byres CC')
-        cmd.show('cartoon', 'all')
-        cmd.set('cartoon_transparency', '0.5', 'all')
-        cmd.show('sticks', 'motif')
-        cmd.set('stick_radius', '0.5')
-        cpkmotif()
-        cmd.orient('motif')
-        cmd.deselect()
-        cmd.delete('AA')
-        cmd.delete('BB')
-        cmd.delete('CC')
-        cmd.delete('DD')
-    except:
-        showinfo('Alert',
-            'You must select an amino acid for menus A, B, C, and D')
-
-def Abimotif():
-    try:
-        update()
-        objects = cmd.get_names('all')
-        cmd.delete('motif')
-        cmd.hide('everything')
-        mAA = mAA
-        mAB = mAB
-        cmd.select('AA', 'resn %s within %s of resn %s'%(mAA, selAB.get(), mAB))
-        cmd.select('BB', 'resn %s within %s of resn %s'%(mAB, selAB.get(), mAA))
-        cmd.select('motif', 'byres AA | byres BB')
-        cmd.show('cartoon', 'all')
-        cmd.set('cartoon_transparency', '0.5', 'all')
-        cmd.show('sticks', 'motif')
-        cmd.set('stick_radius', '0.5')
-        cpkmotif()
-        cmd.orient('motif')
-        cmd.deselect()
-        cmd.delete('AA')
-        cmd.delete('BB')
-    except:
-        showinfo('Alert', 'You must select an amino acid for menus A and B')
-
-def Atrimotif():
-    try:
-        update()
-        objects = cmd.get_names('all')
-        cmd.delete('motif')
-        cmd.hide('everything')
-        mAA = mAA
-        mAB = mAB
-        mAC = mAC
-        cmd.select('AA1', 'resn %s within %s of resn %s'%(mAA, selAB.get(), mAB))
-        cmd.select('AA2', 'resn %s within %s of resn %s'%(mAA, selAC.get(), mAC))
-        cmd.select('AA', 'byres AA1 and byres AA2')
-        cmd.select('BB1', 'resn %s within %s of resn %s'%(mAB, selAB.get(), mAA))
-        cmd.select('BB2', 'resn %s within %s of resn %s'%(mAB, selBC.get(), mAC))
-        cmd.select('BB', 'byres BB1 and byres BB2')
-        cmd.select('CC1', 'resn %s within %s of resn %s'%(mAC, selBC.get(), mAB))
-        cmd.select('CC2', 'resn %s within %s of resn %s'%(mAC, selAC.get(), mAA))
-        cmd.select('CC', 'byres CC1 and byres CC2')
-        cmd.select('motif', 'byres AA | byres BB | byres CC')
-        cmd.show('cartoon', 'all')
-        cmd.set('cartoon_transparency', '0.5', 'all')
-        cmd.show('sticks', 'motif')
-        cmd.set('stick_radius', '0.5')
-        cpkmotif()
-        cmd.orient('motif')
-        cmd.deselect()
-        cmd.delete('AA')
-        cmd.delete('BB')
-        cmd.delete('CC')
-    except:
-        showinfo('Alert',
-            'You must select an amino acid for menus A, B, and C')
-
-def Aquadmotif():
-    try:
-        update()
-        objects = cmd.get_names('all')
-        cmd.delete('motif')
-        cmd.hide('everything')
-        mAA = mAA
-        mAB = mAB
-        mAC = mAC
-        mAD = mAD
-        cmd.select('AA1', 'resn %s within %s of resn %s'%(mAA, selAB.get(), mAB))
-        cmd.select('AA2', 'resn %s within %s of resn %s'%(mAA, selAC.get(), mAC))
-        cmd.select('AA3', 'resn %s within %s of resn %s'%(mAA, selAD.get(), mAD))
-        cmd.select('AA', 'byres AA1 and byres AA2 and byres AA3')
-        cmd.select('BB1', 'resn %s within %s of resn %s'%(mAB, selAB.get(), mAA))
-        cmd.select('BB2', 'resn %s within %s of resn %s'%(mAB, selBC.get(), mAC))
-        cmd.select('BB3', 'resn %s within %s of resn %s'%(mAB, selBD.get(), mAD))
-        cmd.select('BB', 'byres BB1 and byres BB2 and byres BB3')
-        cmd.select('CC1', 'resn %s within %s of resn %s'%(mAC, selBC.get(), mAB))
-        cmd.select('CC2', 'resn %s within %s of resn %s'%(mAC, selAC.get(), mAA))
-        cmd.select('CC3', 'resn %s within %s of resn %s'%(mAC, selCD.get(), mAD))
-        cmd.select('CC', 'byres CC1 and byres CC2 and byres CC3')
-        cmd.select('DD1', 'resn %s within %s of resn %s'%(mAD, selAD.get(), mAA))
-        cmd.select('DD2', 'resn %s within %s of resn %s'%(mAD, selBD.get(), mAB))
-        cmd.select('DD3', 'resn %s within %s of resn %s'%(mAD, selCD.get(), mAC))
-        cmd.select('DD', 'byres DD1 and byres DD2 and byres DD3')
-        cmd.select('motif', 'byres AA | byres BB | byres CC | byres DD')
-        cmd.show('cartoon', 'all')
-        cmd.set('cartoon_transparency', '0.5', 'all')
-        cmd.show('sticks', 'motif')
-        cmd.set('stick_radius', '0.5')
-        cpkmotif()
-        cmd.orient('motif')
-        cmd.deselect()
-        cmd.delete('AA')
-        cmd.delete('BB')
-        cmd.delete('CC')
-        cmd.delete('DD')
-    except:
-        showinfo('Alert', 'You must select an amino acid for menus A, B, C, and D')
-
-#reset the range sliders
-def resetmotif():
-    selA.set(4.0)
-    selB.set(4.0)
-    selC.set(4.0)
-    selAB.set(4.0)
-    selAC.set(4.0)
-    selAD.set(4.0)
-    selBC.set(4.0)
-    selBD.set(4.0)
-    selCD.set(4.0)
-
 def MotifCaller(motif, camera=True):
     d = float(glb.GUI.motifs['delta'].get())
     if camera:
@@ -423,7 +196,7 @@ def dbckmotif(event):
     pdb = glb.GUI.motifs['hidmotif'].get(motif)
     cmd.reinitialize()
     if glb.GUI.motifs['align'].get() == 0 or tpdb == pdb:
-        fetch(pdb)
+        glb.fetch(pdb)
         if len(tag) == 2 and tag[1] in glb.MOTIFS:
             MotifCaller(tag[1])
         else:
@@ -432,9 +205,9 @@ def dbckmotif(event):
         if len(tag) == 2 and tag[1] in glb.MOTIFS:
             tcl = glb.GUI.motifs['templatecolor']['bg']
             mcl = glb.GUI.motifs['motifcolor']['bg']
-            fetch(pdb)
+            glb.fetch(pdb)
             MotifCaller(tag[1])
-            fetch(tpdb)
+            glb.fetch(tpdb)
             glb.show_as('cartoon', tpdb)
             cmd.select('Template', '%s and (%s)' % (tpdb,
                 glb.MOTIFS[tag[1]]['loci']))
@@ -638,7 +411,7 @@ def motifchecker():
         keysLo = keysL*len(pdbs)
         glb.GUI.motifs['csvprep'][pdb] = {}
         cmd.reinitialize()
-        fetchresult = fetch(pdb,True)
+        fetchresult = glb.fetch(pdb,True)
         if fetchresult != '':
             founds[pdb] = ['    %s'%fetchresult]
             lasto += keysL
@@ -779,7 +552,7 @@ def makemotif(mode):
             if mode == 4:
                 if glb.GUI.motif_maker['radio'].get() == 1:
                     cmd.reinitialize()
-                    fetch(glb.GUI.motif_maker['testpdb'].get())
+                    glb.fetch(glb.GUI.motif_maker['testpdb'].get())
                     glb.update()
                 elif glb.GUI.motif_maker['radio'].get() == 2:
                     glb.randompdb()
@@ -835,7 +608,7 @@ def makemotif(mode):
             return None
         return addresn(newresn,y,z)
     
-    exceptions += '%s%s'%(fetch(pdb,True),'\n')
+    exceptions += '%s%s'%(glb.fetch(pdb,True),'\n')
     glb.update()
     preecs = ecen.split(',')
     for preec in preecs:

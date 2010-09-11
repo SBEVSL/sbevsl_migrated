@@ -2,7 +2,6 @@ import Tkinter as tk
 import Pmw
 from pmg_tk.startup.ProMol import promolglobals as glb
 from pmg_tk.startup.ProMol.Methods.motif import *
-from pmg_tk.startup.ProMol.Methods.utility import *
 Pmw.initialise()
 
 def initialise():

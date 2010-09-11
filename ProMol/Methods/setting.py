@@ -131,70 +131,41 @@ def stickRad():
     size = glb.GUI.view['stickRadius'].get()
     cmd.set('stick_radius', size, glb.SELE)
     
-def setray0(event):
+def setray0():
     cmd.set("ray_trace_mode", "0")
-    imgraysave()
-def setray1(event):
+    cmd.ray()
+
+def setray1():
     cmd.set("ray_trace_mode", "1")
     cmd.bg_color('white')
-    imgraysave()
-def setray2(event):
+    cmd.ray()
+
+def setray2():
     cmd.set("ray_trace_mode", "2")
     cmd.bg_color('white')
-    imgraysave()
-def setray3(event):
+    cmd.ray()
+
+def setray3():
     cmd.set("ray_trace_mode", "3")
-    imgraysave()
-def orient(event):
+    cmd.ray()
+
+def orient():
     cmd.orient('all')
-def fullon(event):
-    cmd.set("full_screen", '1')
-    cmd.set('internal_gui','0')
-def setfield(event):
-    cmd.set("field_of_view", setfieldofview.get())
+
+def setfield(var):
+    cmd.set("field_of_view", var)
     
-def turnorthon(event):
+def turnorthon():
     cmd.set("orthoscopic", "on")
-def turnorthoff(event):
+
+def turnorthoff():
     cmd.set("orthoscopic", "off")
-    
-def delelectro(event):
-    try:
-        cmd.select('goodbye',entelc.get()+'_e_chg')
-        cmd.delete(entelc.get()+'_e_pot')
-        cmd.delete(entelc.get()+'_e_chg')
-        cmd.delete(entelc.get()+'_e_map')
-        cmd.delete('goodbye')
-        cmd.enable('all')
-    except:
-        cmd.delete('goodbye')
-        cmd.delete(entelc.get()+'_e_pot')
-        cmd.delete(entelc.get()+'_e_map')
-        showinfo("Error", 'That PDB is not loaded or entry is not capitalized')
-        interior.mainloop()
-def seq(event):
-    try:
-        util.protein_vacuum_esp(entelc.get(),mode=2,quiet=0)
-    except:
-        showinfo("Error", 'That PDB is not loaded or entry is not capitalized')
-        interior.mainloop()
-        
-#Defines Sculpting mode
-def sculpt(*args):
-    cmd.hide('everything')
-    cmd.set('sphere_transparency',0.60)
-    cmd.set('sphere_color','white')
-    cmd.set('auto_sculpt',1)
-    cmd.mouse('three_button_editing')
-    cmd.show('sticks')
-    cmd.show('spheres')
-    cmd.zoom('all',4)
-cmd.extend('sculpt',sculpt)
 
 def seqviewon(event):
     cmd.set('seq_view', 1)
 def seqviewoff(event):
     cmd.set('seq_view', 0)
+
 def seqviewformat(tag):
     if tag == 'One letter':
         cmd.set('seq_view_format', '0')
