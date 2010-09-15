@@ -72,14 +72,14 @@ ProMOL can be downloaded in a compressed file format from
 http://sourceforge.net/projects/sbevsl/files
 
 You can choose to download either a .tar.gz compressed file
-(ProMOL-4.0rc4.tar.gz as of July 13, 2010) or a zip compressed file
-(ProMOL-4.0rc4.zip as of July 13, 2010). The way you expand the 
+(ProMOL-4.0rc5.tar.gz as of September 15, 2010) or a zip compressed file
+(ProMOL-4.0rc5.zip as of September 15, 2010.). The way you expand the 
 file depends on your operating system.
 
 In unix or linux systems, or using MINGW under windows you may unpack the
 tarball with
 
-gunzip < ProMOL-4.0rc4.tar.gz | tar xvf -
+gunzip < ProMOL-4.0rc5.tar.gz | tar xvf -
 
 Windows and Macintosh systems may have a native application that will expand
 your .tar.gz or .zip files; if not you may wish to consider using Stuffit
@@ -156,6 +156,15 @@ implementing more effective alignment strategies with the motif tool in ProMOL.
 =========================================================================
 
 ChangeLog:
+
+Revision 116
+Modified Sat Sep 11 03:50:24 2010 UTC (4 days, 15 hours ago) by vinnyrose
+File length: 3070 byte(s)
+
+Most changes are in the hidden tabs. The PDB entries for the random pdb are 
+now in a database instead of a txt file. Got rid of remote_pdb_load file and 
+incorporated it into globals.  In general trying to get rid of PMW where 
+possible.
 
 Revision 109 
 Modified Wed Jul 14 02:15:09 2010 UTC (15 hours, 24 minutes ago) by yaya-hjb 
