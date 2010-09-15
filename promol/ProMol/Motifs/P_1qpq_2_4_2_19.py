@@ -3,6 +3,7 @@ FUNC:P_1qpq_2_4_2_19
 PDB:1qpq
 EC:2.4.2.19
 RESI:arg,lys,glu,asp
+LOCI:a-105;b-640,701,722;
 '''
 cmd.select('arg1', 'n. CB&r. arg w. %s of n. CB&r. lys'%(d*9.33))
 cmd.select('arg2', 'n. CB&r. arg w. %s of n. CG&r. lys'%(d*8.78))

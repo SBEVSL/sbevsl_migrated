@@ -2,7 +2,6 @@ import Tkinter as tk
 import Pmw
 from pmg_tk.startup.ProMol import promolglobals as glb
 from pmg_tk.startup.ProMol.Methods.motif import *
-from pmg_tk.startup.ProMol.Methods.utility import *
 Pmw.initialise()
 
 def initialise():
@@ -67,3 +66,22 @@ def initialise():
     glb.GUI.motifs['delta'].grid(row=1, column=1, sticky=tk.N)
     glb.GUI.motifs['delta'].delete(0,4)
     glb.GUI.motifs['delta'].insert(0,'1.00')
+    
+    glb.GUI.motifs['align'] = tk.IntVar()
+    alignbox = tk.Checkbutton(group, text="Show alignment?",
+        variable=glb.GUI.motifs['align'])
+    alignbox.grid(row=2, column=0)
+    alignbox.bind("<ButtonRelease-1>", togglealign)
+    
+    tempcollab = tk.Label(group, text="Template Color")
+    tempcollab.grid(row=3, column=0, sticky=tk.E)
+    glb.GUI.motifs['templatecolor'] = tk.Canvas(group, bg='#ffffff', width=50,
+        height=25, bd=3, relief=tk.SUNKEN)
+    glb.GUI.motifs['templatecolor'].grid(row=3,column=1)
+    
+    motcollab = tk.Label(group, text="Motif Color")
+    motcollab.grid(row=4, column=0, sticky=tk.E)
+    glb.GUI.motifs['motifcolor'] = tk.Canvas(group, bg='#ff0000', width=50,
+        height=25, bd=3, relief=tk.SUNKEN)
+    glb.GUI.motifs['motifcolor'].grid(row=4,column=1)    
+    

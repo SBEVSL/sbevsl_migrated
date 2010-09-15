@@ -3,6 +3,7 @@ FUNC:P_1kkt_3_2_1_113
 PDB:1kkt
 EC:3.2.1.113
 RESI:glu,arg,asp,glu
+LOCI:a-122,126,267,409;
 '''
 cmd.select('glu1', 'n. CB&r. glu w. %s of n. CB&r. arg'%(d*7.00))
 cmd.select('glu2', 'n. CB&r. glu w. %s of n. CG&r. arg'%(d*6.16))

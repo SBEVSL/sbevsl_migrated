@@ -3,6 +3,7 @@ FUNC:Jab_1hdq_3_4_17_1
 PDB:1hdq
 EC:3.4.17.1
 RESI:arg,arg,glu
+LOCI:a-71,127,270;
 '''
 cmd.select('temp0', 'n. ca')
 cmd.select('temp1', 'r. arg')

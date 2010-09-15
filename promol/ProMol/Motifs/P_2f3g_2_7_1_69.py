@@ -3,6 +3,7 @@ FUNC:P_2f3g_2_7_1_69
 PDB:2f3g
 EC:2.7.1.69
 RESI:thr,his,his,gly
+LOCI:a-73,75,90,92;
 '''
 cmd.select('thr1', 'n. CB&r. thr w. %s of n. CB&r. his'%(d*7.07))
 cmd.select('thr2', 'n. CB&r. thr w. %s of n. CG&r. his'%(d*6.73))

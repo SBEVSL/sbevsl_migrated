@@ -3,6 +3,7 @@ FUNC:P_1h16_2_3_1_54
 PDB:1h16
 EC:2.3.1.54
 RESI:trp,cys,cys,gly
+LOCI:a-333,418,419,734;
 '''
 cmd.select('trp1', 'n. CB&r. trp w. %s of n. CB&r. cys'%(d*7.15))
 cmd.select('trp2', 'n. CB&r. trp w. %s of n. SG&r. cys'%(d*6.86))

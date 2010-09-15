@@ -3,6 +3,7 @@ FUNC:P_1d8h_3_1_3_33
 PDB:1d8h
 EC:3.1.3.33
 RESI:arg,glu,lys,arg
+LOCI:a-393,433,456,458;
 '''
 cmd.select('arg1', 'n. CB&r. arg w. %s of n. CB&r. glu'%(d*9.99))
 cmd.select('arg2', 'n. CB&r. arg w. %s of n. CG&r. glu'%(d*10.31))

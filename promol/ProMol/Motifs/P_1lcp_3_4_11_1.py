@@ -3,6 +3,7 @@ FUNC:P_1lcp_3_4_11_1
 PDB:1lcp
 EC:3.4.11.1
 RESI:asp,lys,arg
+LOCI:a-255,262,336;
 '''
 cmd.select('asp1', 'n. CB&r. asp w. %s of n. CB&r. lys'%(d*8.08))
 cmd.select('asp2', 'n. CB&r. asp w. %s of n. CG&r. lys'%(d*6.95))

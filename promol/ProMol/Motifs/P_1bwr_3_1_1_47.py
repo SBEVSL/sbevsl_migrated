@@ -3,6 +3,7 @@ FUNC:P_1bwr_3_1_1_47
 PDB:1bwr
 EC:3.1.1.47
 RESI:ser,gly,asn,asp,his
+LOCI:a-47,74,104,192,195;
 '''
 cmd.select('ser1', 'n. CB&r. ser w. %s of n. O&r. gly'%(d*10.09))
 cmd.select('ser2', 'n. CB&r. ser w. %s of n. C&r. gly'%(d*8.96))

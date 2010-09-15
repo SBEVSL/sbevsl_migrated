@@ -3,6 +3,7 @@ FUNC:P_1kwb_1_13_11_39
 PDB:1kwb
 EC:1.13.11.39
 RESI:his,his,tyr
+LOCI:b-194,240,249;
 '''
 cmd.select('tyr1', 'n. CB&r. tyr w. %s of n. CB&r. his'%(d*12.05))
 cmd.select('tyr2', 'n. CB&r. tyr w. %s of n. CG&r. his'%(d*10.63))

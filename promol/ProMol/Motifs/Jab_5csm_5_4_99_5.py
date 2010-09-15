@@ -3,6 +3,7 @@ FUNC:Jab_5csm_5_4_99_5
 PDB:5csm
 EC:5.4.99.5
 RESI:arg,arg,lys,glu
+LOCI:a-16,157,168,246;
 '''
 cmd.select('temp0', 'n. ca')
 cmd.select('temp1', 'r. arg')

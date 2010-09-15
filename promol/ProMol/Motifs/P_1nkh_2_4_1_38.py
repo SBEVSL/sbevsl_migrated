@@ -3,6 +3,7 @@ FUNC:P_1nkh_2_4_1_38
 PDB:1nkh
 EC:2.4.1.38
 RESI:glu,asp,arg
+LOCI:b-317,319,359;
 '''
 cmd.select('glu1', 'n. CB&r. glu w. %s of n. CB&r. asp'%(d*9.52))
 cmd.select('glu2', 'n. CB&r. glu w. %s of n. CG&r. asp'%(d*9.81))

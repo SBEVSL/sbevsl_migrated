@@ -3,6 +3,7 @@ FUNC:Jfa_1djq_1_5_99_7
 PDB:1djq
 EC:1.5.99.7
 RESI:tyr,his,asp
+LOCI:a-169,172,267;
 '''
 cmd.select('temp0', 'n. ce1')
 cmd.select('temp1', 'r. tyr')

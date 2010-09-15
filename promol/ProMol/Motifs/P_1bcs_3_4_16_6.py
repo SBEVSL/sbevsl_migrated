@@ -3,6 +3,7 @@ FUNC:P_1bcs_3_4_16_6
 PDB:1bcs
 EC:3.4.16.6
 RESI:gly,ser,tyr,asp,his
+LOCI:a-53,146,147;b-338,397;
 '''
 cmd.select('gly1', 'n. O&r. gly w. %s of n. CB&r. ser'%(d*8.20))
 cmd.select('gly2', 'n. O&r. gly w. %s of n. OG&r. ser'%(d*7.42))

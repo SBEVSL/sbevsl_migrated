@@ -3,6 +3,7 @@ FUNC:P_2uag_6_3_2_9
 PDB:2uag
 EC:6.3.2.9
 RESI:lys,asn,his
+LOCI:a-115,138,183;
 '''
 cmd.select('lys1', 'n. CB&r. lys w. %s of n. CB&r. asn'%(d*8.56))
 cmd.select('lys2', 'n. CB&r. lys w. %s of n. CG&r. asn'%(d*8.81))

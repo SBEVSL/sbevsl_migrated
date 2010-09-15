@@ -3,6 +3,7 @@ FUNC:Jfa_1que_1_18_1_2
 PDB:1que
 EC:1.18.1.2
 RESI:ser,cys,glu
+LOCI:a-80,261,301;
 '''
 cmd.select('temp0', 'n. ca')
 cmd.select('temp1', 'r. ser')

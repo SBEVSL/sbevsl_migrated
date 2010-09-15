@@ -3,6 +3,7 @@ FUNC:P_1fm7_5_5_1_6
 PDB:1fm7
 EC:5.5.1.6
 RESI:thr,tyr,asn,thr
+LOCI:a-48,106,113,190;
 '''
 cmd.select('thr1', 'n. CB&r. thr w. %s of n. CB&r. tyr'%(d*9.53))
 cmd.select('thr2', 'n. CB&r. thr w. %s of n. CG&r. tyr'%(d*8.74))

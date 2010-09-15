@@ -1,7 +1,7 @@
 '''Sets up global variables and functions'''
 from pymol import cmd
-from urllib import urlretrieve
 import Tkinter as tk
+import urllib2
 import shelve
 import os
 import math
@@ -9,8 +9,7 @@ import time
 import linecache
 import random
 import platform
-from pmg_tk.startup.ProMol.remote_pdb_load import fetch
-VERSION = '4.0rc5'
+VERSION = '4.1rc2'
 PLATFORM = platform.system()
 PROMOL_DIR_PATH = os.path.dirname(__file__)
 try:
@@ -35,6 +34,11 @@ for DIR in DIRS:
 class PROMOLGUI:pass
 GUI = PROMOLGUI()
 SELE = 'All'
+NEWCOLOR = 0
+def incnewcolor():
+    tmp = NEWCOLOR
+    NEWCOLOR += 1
+    return tmp
 
 AminoMenuList = ('', 'ala', 'arg', 'asn', 'asp', 'cys', 'gln', 'glu', 'gly',
     'his', 'ile', 'leu', 'lys', 'met', 'phe', 'pro', 'ser', 'thr', 'trp', 'tyr',
@@ -353,7 +357,7 @@ def motifstore(*args):
             if not os.path.isfile(MOTIFS[filecheck]['path']):
                 del MOTIFS[filecheck]
 
-    find = ('FUNC', 'PDB', 'EC', 'RESI')
+    find = ('FUNC', 'PDB', 'EC', 'RESI', 'LOCI')
     MOTIFS['errors'] = []
     for motdir in args:
         motfiles = os.listdir(motdir)
@@ -366,7 +370,6 @@ def motifstore(*args):
             MOTIFS[func]['path'] = os.path.join(motdir, motfile)
             if MOTIFS[func]['mtime'] == os.path.getmtime(MOTIFS[func]['path']):
                 continue
-            repickle = True
             MOTIFS[func]['mtime'] = os.path.getmtime(MOTIFS[func]['path'])
             tmpf = open(MOTIFS[func]['path'], 'rbU')
             i = 0
@@ -432,6 +435,30 @@ def motifstore(*args):
                             break
                         MOTIFS[func]['resi'] = resi.split(',')
                         continue
+                    if line[0:4] == 'LOCI':
+                        if 'LOCI' in found:
+                            MOTIFS['errors'].append('Warning: Motif `%s` included an extra `LOCI` attribute, which was ignored.'%(MOTIFS[func]['path']))
+                            MOTIFS[func]['mtime'] = 0
+                            continue
+                        found.append('LOCI')
+                        loci = line.split(':')[1][0:-1].split(';')
+                        if len(loci) == 1:
+                            MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to an incorrect `LOCI` attribute.'%(MOTIFS[func]['path']))
+                            del MOTIFS[func]
+                            tmpf.close()
+                            break
+                        selection = ''
+                        for loc in loci:
+                            if loc == '':
+                                continue
+                            chain, numbers = loc.split('-')
+                            nums = 'resi %s' % ' or resi '.join(numbers.split(','))
+                            if selection == '':
+                                selection = '(chain %s and (%s))' % (chain, nums)
+                            else:
+                                selection = '%s or (chain %s and (%s))' % (selection, chain, nums)
+                        MOTIFS[func]['loci'] = selection
+                        continue
                 if line[0:3] != 'cmd' and line != '':
                     MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to potential mallicious code.'%(MOTIFS[func]['path']))
                     del MOTIFS[func]
@@ -446,11 +473,32 @@ motifstore(MOTIFSFOLDER, USRMOTIFSFOLDER)
 
 def reset_motif_database():
     global MOTIFS
-    MOTIFS.delete_database()
+    MOTIFS.clear()
     del MOTIFS
     MOTIFS = PERSISTENT('motifs')
     motifstore(MOTIFSFOLDER, USRMOTIFSFOLDER)
 cmd.extend('reset_motif_database', reset_motif_database)
+
+PDBENTRIES = PERSISTENT('pdbentries')
+def pdbstore():
+    if 'pdbentries' not in PDBENTRIES or 'expire' not in PDBENTRIES:
+        PDBENTRIES['pdbentries'] = {}
+        PDBENTRIES['expire'] = time.time()-864001
+        oldfile = os.path.join(OFFSITE, 'pdb_entry_type.txt')
+        if os.path.exists(oldfile):
+            os.remove(oldfile)
+    if (PDBENTRIES['expire']+864000) <= time.time():
+        PDBENTRIES['expire'] = time.time()
+        PDBENTRIES.switchwriteback()
+        pdbliness = urllib2.urlopen('ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_entry_type.txt')
+        for pdbline in pdbliness:
+            pdb = pdbline.split('	')[0]
+            if pdb in PDBENTRIES['pdbentries']:
+                continue
+            PDBENTRIES['pdbentries'][pdb] = None
+        pdbliness.close()
+        PDBENTRIES.switchwriteback()
+pdbstore()
 
 def pathmaker(*args, **options):
     newargs = [PROMOL_DIR_PATH]
@@ -525,6 +573,12 @@ def deletemotif():
         cmd.delete('%s'%(motif))
 cmd.extend('deletemotif', deletemotif)
 
+def show_as(show, selection):
+    try:
+        cmd.show_as(show, selection)
+    except AttributeError:
+        cmd.as(show, selection)
+
 def procolor(selection=None, show_selection='sticks', color_selection='cpk',
         show_all=('sticks', 'spheres'), color_all='cpk', cpknew=False):
     '''Color in CPK or CPKnew
@@ -587,15 +641,10 @@ def populate():
     cmd.disable('dna')
     cmd.disable('rna')
     cmd.disable('protein')
-    for letter in AlphaSequence:
+    for letter in cmd.get_chains():
         chain = 'Chain-%s'%(letter)
         cmd.select(chain, "chain %s"%(letter))
-        if(len(cmd.index(chain)) < 1):
-            cmd.delete(chain)
-    #cmd.select("Chain-' '", "chain ' '")
-    # if 'Chain-' '' in objects:
-    #         if(len(cmd.index('Chain-' '')) < 1):
-    #             cmd.delete('Chain-' '')
+        cmd.disable(chain)
     objects = cmd.get_names('all')
     for obj in objects:
         try:
@@ -630,23 +679,8 @@ cmd.extend('update', update)
 
 def randompdb():
     cmd.reinitialize()
-    lineFile = pathmaker('pdb_entry_type.txt',root=OFFSITE)
-    while os.path.exists(lineFile):
-        expiration = (os.path.getmtime(lineFile)+864000)
-        if expiration <= time.time():
-            os.remove(lineFile)
-        else:
-            linecount = open(lineFile, 'rbU')
-            lines = sum([1 for line in linecount])
-            linecount.close()
-            pdbCode = linecache.getline(lineFile,random.randint(1, lines))[0:4]
-            fetch(pdbCode)
-            break
-    else:
-        urlretrieve('ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_entry_type.txt',
-            lineFile)
-        linecache.checkcache(lineFile)
-        randompdb()
+    pdbCode = random.choice(PDBENTRIES['pdbentries'].keys())
+    fetch(pdbCode)
     update()
 cmd.extend('randompdb',randompdb)
 
@@ -673,4 +707,82 @@ class ProgressBar:
         self.BarCanvas.coords(self.RectangleID, 0, 0,
             (max(0, min(100, math.floor(NewLevel)))/100.0)*self.Width,
             self.Height)
+
+# Copyright Notice
+# ================
+# 
+# The PyMOL Plugin source code [below this point] is copyrighted, but you can
+# freely use and copy it as long as you don't change or remove any of
+# the copyright notices.
+# 
+# ----------------------------------------------------------------------
+# This PyMOL Plugin is Copyright (C) 2004 by Charles Moad <cmoad@indiana.edu>
+# 
+#                        All Rights Reserved
+# 
+# Permission to use, copy, modify, distribute, and distribute modified
+# versions of this software and its documentation for any purpose and
+# without fee is hereby granted, provided that the above copyright
+# notice appear in all copies and that both the copyright notice and
+# this permission notice appear in supporting documentation, and that
+# the name(s) of the author(s) not be used in advertising or publicity
+# pertaining to distribution of the software without specific, written
+# prior permission.
+# 
+# THE AUTHOR(S) DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+# INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.  IN
+# NO EVENT SHALL THE AUTHOR(S) BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+# CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+# USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+# OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+# PERFORMANCE OF THIS SOFTWARE.
+# ----------------------------------------------------------------------
+
+import tkSimpleDialog
+import tkMessageBox
+import sys, zlib
+
+def fetch(pdbCode,passerrors=False):
+    try:
+        if len(pdbCode) > 4:
+            raise SyntaxError
+        url = pdbCode.join(('http://www.rcsb.org/pdb/cgi/export.cgi/',
+            '.pdb.gz?format=PDB&pdbId=','&compression=gz'))
+        pdbUrl = urllib2.urlopen(url)
+        pdbFile = pdbUrl.read()
+        pdbUrl.close()
+        if pdbFile.find('.ent',0,30) == 17:
+            cutsite = 22
+        else:
+            cutsite = 10
+        cmd.read_pdbstr(zlib.decompress(pdbFile[cutsite:], -zlib.MAX_WBITS),
+            pdbCode)
+        return ''
+    except zlib.error:
+        url = pdbCode.join(('http://www.rcsb.org/pdb/cgi/export.cgi/',
+            '.pdb?format=PDB&pdbId=',''))
+        pdbUrl = urllib2.urlopen(url)
+        cmd.read_pdbstr(pdbUrl.read(), pdbCode)
+        pdbUrl.close()
+    except (urllib2.HTTPError,SyntaxError):
+        if passerrors == False:
+            tkMessageBox.showerror('Invalid Code',
+                'You entered an invalid pdb code: %s'%(pdbCode))
+        else:
+            return 'You entered an invalid pdb code: %s'%(pdbCode)
+    except urllib2.URLError:
+        if passerrors == False:
+            tkMessageBox.showerror('Connection Error',
+                'Please check your internet connection.\n')
+        else:
+            return 'Please check your internet connection.'
+    #except:
+        #print "Unexpected error:", sys.exc_info()[0]
+
+def PDBDialog(app):
+    pdbCode = tkSimpleDialog.askstring('PDB Loader Service',
+        'Please enter a 4-digit pdb code:',parent=app.root)
+    if pdbCode:
+        fetch(pdbCode)
+#cmd.extend('fetch', fetch)
 

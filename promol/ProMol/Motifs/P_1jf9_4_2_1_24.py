@@ -3,6 +3,7 @@ FUNC:P_1jf9_4_2_1_24
 PDB:1jf9
 EC:4.2.1.24
 RESI:his,asp,lys
+LOCI:a-124,200,226;
 '''
 cmd.select('his1', 'n. CB&r. his w. %s of n. CB&r. asp'%(d*8.60))
 cmd.select('his2', 'n. CB&r. his w. %s of n. CG&r. asp'%(d*7.56))

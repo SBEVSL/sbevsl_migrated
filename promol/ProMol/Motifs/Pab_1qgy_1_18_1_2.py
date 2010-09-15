@@ -3,6 +3,7 @@ FUNC:Pab_1qgy_1_18_1_2
 PDB:1qgy
 EC:1.18.1.2
 RESI:ser,cys,glu
+LOCI:a-80,261,301;
 '''
 cmd.select('ser1', 'n. CB&r. ser w. %s of n. CB&r. cys'%(d*8.81))
 cmd.select('ser2', 'n. CB&r. ser w. %s of n. SG&r. cys'%(d*7.24))

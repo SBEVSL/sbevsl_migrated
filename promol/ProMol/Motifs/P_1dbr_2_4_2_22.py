@@ -3,6 +3,7 @@ FUNC:P_1dbr_2_4_2_22
 PDB:1dbr
 EC:2.4.2.22
 RESI:glu,asp,asp,lys
+LOCI:a-146,147,150,178;
 '''
 cmd.select('glu1', 'n. CB&r. glu w. %s of n. CB&r. lys'%(d*13.92))
 cmd.select('glu2', 'n. CB&r. glu w. %s of n. CG&r. lys'%(d*13.54))

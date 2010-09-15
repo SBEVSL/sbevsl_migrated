@@ -3,6 +3,7 @@ FUNC:P_3cox_1_1_3_6
 PDB:3cox
 EC:1.1.3.6
 RESI:glu,his,asn
+LOCI:a-361,447,485;
 '''
 cmd.select('glu1', 'n. CB&r. glu w. %s of n. CB&r. his'%(d*13.30))
 cmd.select('glu2', 'n. CB&r. glu w. %s of n. CG&r. his'%(d*11.90))

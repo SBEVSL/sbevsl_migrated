@@ -3,6 +3,7 @@ FUNC:Jfa_1gk2_4_3_1_3
 PDB:1gk2
 EC:4.3.1.3
 RESI:ala,ser,gly,tyr,glu
+LOCI:a-142,143,144,280,414;
 '''
 cmd.select('temp0', 'n. ca')
 cmd.select('temp1', 'r. ala')

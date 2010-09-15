@@ -3,6 +3,7 @@ FUNC:P_1cnz_1_1_1_85
 PDB:1cnz
 EC:1.1.1.85
 RESI:lys,asp,tyr
+LOCI:a-195,227;b-145;
 '''
 cmd.select('lys1', 'n. CB&r. lys w. %s of n. CB&r. asp'%(d*9.74))
 cmd.select('lys2', 'n. CB&r. lys w. %s of n. CG&r. asp'%(d*9.05))

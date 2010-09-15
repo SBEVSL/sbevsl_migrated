@@ -3,6 +3,7 @@ FUNC:P_5yas_4_1_2_39
 PDB:5yas
 EC:4.1.2.39
 RESI:thr,ser,asp,his
+LOCI:a-11,80,207,235;
 '''
 cmd.select('thr1', 'n. CB&r. thr w. %s of n. CB&r. ser'%(d*5.62))
 cmd.select('thr2', 'n. CB&r. thr w. %s of n. OG&r. ser'%(d*6.19))

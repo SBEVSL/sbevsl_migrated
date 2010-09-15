@@ -3,6 +3,7 @@ FUNC:P_2nac_1_2_1_2
 PDB:2nac
 EC:1.2.1.2
 RESI:asn,arg,gln,his
+LOCI:a-146,284,313,332;
 '''
 cmd.select('asn1', 'n. CB&r. asn w. %s of n. CB&r. arg'%(d*16.82))
 cmd.select('asn2', 'n. CB&r. asn w. %s of n. CG&r. arg'%(d*15.98))

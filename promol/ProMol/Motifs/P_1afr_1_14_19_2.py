@@ -3,6 +3,7 @@ FUNC:P_1afr_1_14_19_2
 PDB:1afr
 EC:1.14.19.2
 RESI:trp,his,thr,asp
+LOCI:a-62,146,199,228;
 '''
 cmd.select('trp1', 'n. CB&r. trp w. %s of n. CB&r. his'%(d*12.67))
 cmd.select('trp2', 'n. CB&r. trp w. %s of n. CG&r. his'%(d*11.91))

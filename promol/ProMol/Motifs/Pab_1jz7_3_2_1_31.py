@@ -3,6 +3,7 @@ FUNC:Pab_1jz7_3_2_1_31
 PDB:1jz7
 EC:3.2.1.31
 RESI:glu,tyr,glu
+LOCI:a-461,503,537;
 '''
 cmd.select('tyr1', 'n. CB&r. tyr w. %s of n. CB&r. glu'%(d*8.09))
 cmd.select('tyr2', 'n. CB&r. tyr w. %s of n. CG&r. glu'%(d*9.44))

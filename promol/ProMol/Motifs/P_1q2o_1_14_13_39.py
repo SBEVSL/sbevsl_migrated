@@ -3,6 +3,7 @@ FUNC:P_1q2o_1_14_13_39
 PDB:1q2o
 EC:1.14.13.39
 RESI:cys,arg,trp,glu
+LOCI:a-186,189,358,363;
 '''
 cmd.select('cys1', 'n. CB&r. cys w. %s of n. CB&r. arg'%(d*7.11))
 cmd.select('cys2', 'n. CB&r. cys w. %s of n. CG&r. arg'%(d*5.89))

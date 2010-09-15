@@ -3,6 +3,7 @@ FUNC:P_1naw_2_5_1_7
 PDB:1naw
 EC:2.5.1.7
 RESI:asn,cys,asp,arg
+LOCI:a-23,115,305,397;
 '''
 cmd.select('asn1', 'n. CB&r. asn w. %s of n. CB&r. asp'%(d*10.17))
 cmd.select('asn2', 'n. CB&r. asn w. %s of n. CG&r. asp'%(d*9.44))

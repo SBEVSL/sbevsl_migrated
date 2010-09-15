@@ -3,6 +3,7 @@ FUNC:P_5mdh_1_1_1_37
 PDB:5mdh
 EC:1.1.1.37
 RESI:asp,arg,his
+LOCI:a-158,161,186;
 '''
 cmd.select('asp1', 'n. CB&r. asp w. %s of n. CB&r. arg'%(d*7.37))
 cmd.select('asp2', 'n. CB&r. asp w. %s of n. CG&r. arg'%(d*7.75))

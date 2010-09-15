@@ -3,6 +3,7 @@ FUNC:P_1pgp_1_1_1_44
 PDB:1pgp
 EC:1.1.1.44
 RESI:gly,lys,asn,glu
+LOCI:a-130,183,187,190;
 '''
 cmd.select('glu1', 'n. CB&r. glu w. %s of n. CB&r. asn'%(d*6.54))
 cmd.select('glu2', 'n. CB&r. glu w. %s of n. CG&r. asn'%(d*6.85))

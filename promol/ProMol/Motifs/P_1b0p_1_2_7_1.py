@@ -3,6 +3,7 @@ FUNC:P_1b0p_1_2_7_1
 PDB:1b0p
 EC:1.2.7.1
 RESI:thr,glu,arg,asn
+LOCI:a-31,64,114,996;
 '''
 cmd.select('thr1', 'n. CB&r. thr w. %s of n. CB&r. glu'%(d*13.13))
 cmd.select('thr2', 'n. CB&r. thr w. %s of n. CG&r. glu'%(d*12.37))
