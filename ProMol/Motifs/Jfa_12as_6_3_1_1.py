@@ -3,6 +3,7 @@ FUNC:Jfa_12as_6_3_1_1
 PDB:12as
 EC:6.3.1.1
 RESI:asp,arg,gln
+LOCI:a-46,100,116;
 '''
 cmd.select('temp0', 'n. cg')
 cmd.select('temp1', 'r. asp')

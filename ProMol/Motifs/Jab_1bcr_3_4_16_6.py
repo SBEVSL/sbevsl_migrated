@@ -3,6 +3,7 @@ FUNC:Jab_1bcr_3_4_16_6
 PDB:1bcr
 EC:3.4.16.6
 RESI:gly,ser,tyr,asp,his
+LOCI:a-53,146,147;b-338,397;
 '''
 cmd.select('temp0', 'n. n')
 cmd.select('jessatom0', 'temp0')

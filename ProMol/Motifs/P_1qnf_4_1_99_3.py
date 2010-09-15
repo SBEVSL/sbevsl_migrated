@@ -3,6 +3,7 @@ FUNC:P_1qnf_4_1_99_3
 PDB:1qnf
 EC:4.1.99.3
 RESI:trp,trp,trp
+LOCI:a-314,367,390;
 '''
 cmd.select('trp1', 'n. CB&r. trp w. %s of n. CB&r. trp'%(d*10.12))
 cmd.select('trp2', 'n. CB&r. trp w. %s of n. CG&r. trp'%(d*9.03))

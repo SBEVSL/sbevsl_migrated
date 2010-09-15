@@ -3,6 +3,7 @@ FUNC:P_1f17_1_1_1_35
 PDB:1f17
 EC:1.1.1.35
 RESI:ser,his,asn
+LOCI:a-137,158,208;
 '''
 cmd.select('ser1', 'n. CB&r. ser w. %s of n. CB&r. his'%(d*8.93))
 cmd.select('ser2', 'n. CB&r. ser w. %s of n. CG&r. his'%(d*7.61))

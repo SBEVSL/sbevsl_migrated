@@ -3,6 +3,7 @@ FUNC:P_1aur_3_1_1_1
 PDB:1aur
 EC:3.1.1.1
 RESI:leu,ser,gln,asp,his
+LOCI:a-23,114,115,168,199;
 '''
 cmd.select('leu1', 'n. CB&r. leu w. %s of n. CB&r. ser'%(d*8.39))
 cmd.select('leu2', 'n. CB&r. leu w. %s of n. OG&r. ser'%(d*7.81))

@@ -3,6 +3,7 @@ FUNC:P_1fwa_3_5_1_5
 PDB:1fwa
 EC:3.5.1.5
 RESI:his,asp,his,arg
+LOCI:c-219,221,320,336;
 '''
 cmd.select('his1', 'n. CB&r. his w. %s of n. CB&r. asp'%(d*7.07))
 cmd.select('his2', 'n. CB&r. his w. %s of n. CG&r. asp'%(d*7.67))

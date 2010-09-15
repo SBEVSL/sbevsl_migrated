@@ -3,6 +3,7 @@ FUNC:P_12as_6_3_1_1
 PDB:12as
 EC:6.3.1.1
 RESI:asp,arg,gln
+LOCI:a-46,100,116;
 '''
 cmd.select('asp1', 'n. CB&r. asp w. %s of n. CB&r. arg'%(d*11.20))
 cmd.select('asp2', 'n. CB&r. asp w. %s of n. CG&r. arg'%(d*9.74))

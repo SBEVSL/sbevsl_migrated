@@ -3,6 +3,7 @@ FUNC:P_3csm_5_4_99_5
 PDB:3csm
 EC:5.4.99.5
 RESI:arg,arg,lys,glu
+LOCI:a-16,157,168,246;
 '''
 cmd.select('arg1', 'n. CB&r. arg w. %s of n. CB&r. arg'%(d*12.66))
 cmd.select('arg2', 'n. CB&r. arg w. %s of n. CG&r. arg'%(d*12.17))

@@ -3,6 +3,7 @@ FUNC:P_1dah_6_3_3_3
 PDB:1dah
 EC:6.3.3.3
 RESI:thr,lys,lys,ser
+LOCI:a-11,15,37,41;
 '''
 cmd.select('lys1', 'n. CB&r. lys w. %s of n. CB&r. ser'%(d*15.78))
 cmd.select('lys2', 'n. CB&r. lys w. %s of n. OG&r. ser'%(d*14.67))

@@ -3,6 +3,7 @@ FUNC:P_1dlu_2_3_1_9
 PDB:1dlu
 EC:2.3.1.9
 RESI:cys,his,cys,gly
+LOCI:a-89,348,378,380;
 '''
 cmd.select('cys1', 'n. CB&r. cys w. %s of n. CB&r. his'%(d*9.78))
 cmd.select('cys2', 'n. CB&r. cys w. %s of n. CG&r. his'%(d*8.29))

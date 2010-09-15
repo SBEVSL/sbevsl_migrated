@@ -3,6 +3,7 @@ FUNC:Pab_1hdq_3_4_17_1
 PDB:1hdq
 EC:3.4.17.1
 RESI:arg,arg,glu
+LOCI:a-71,127,270;
 '''
 cmd.select('arg1', 'n. CB&r. arg w. %s of n. CB&r. arg'%(d*5.51))
 cmd.select('arg2', 'n. CB&r. arg w. %s of n. CG&r. arg'%(d*6.91))

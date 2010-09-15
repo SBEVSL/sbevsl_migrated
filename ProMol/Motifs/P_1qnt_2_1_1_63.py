@@ -3,6 +3,7 @@ FUNC:P_1qnt_2_1_1_63
 PDB:1qnt
 EC:2.1.1.63
 RESI:asn,cys,his,glu
+LOCI:a-137,145,146,172;
 '''
 cmd.select('asn1', 'n. CB&r. asn w. %s of n. CB&r. cys'%(d*6.76))
 cmd.select('asn2', 'n. CB&r. asn w. %s of n. SG&r. cys'%(d*6.43))

@@ -3,6 +3,7 @@ FUNC:P_1n7n_4_2_2_5
 PDB:1n7n
 EC:4.2.2.5
 RESI:his,tyr,arg
+LOCI:a-399,408,462;
 '''
 cmd.select('his1', 'n. CB&r. his w. %s of n. CB&r. tyr'%(d*9.10))
 cmd.select('his2', 'n. CB&r. his w. %s of n. CG&r. tyr'%(d*8.32))

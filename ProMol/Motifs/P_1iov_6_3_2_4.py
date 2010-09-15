@@ -3,6 +3,7 @@ FUNC:P_1iov_6_3_2_4
 PDB:1iov
 EC:6.3.2.4
 RESI:glu,ser,tyr,arg,gly
+LOCI:a-15,150,216,255,276;
 '''
 cmd.select('glu1', 'n. CB&r. glu w. %s of n. CB&r. ser'%(d*5.63))
 cmd.select('glu2', 'n. CB&r. glu w. %s of n. OG&r. ser'%(d*4.63))

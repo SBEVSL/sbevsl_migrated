@@ -3,6 +3,7 @@ FUNC:Jab_1ah3_1_1_1_21
 PDB:1ah3
 EC:1.1.1.21
 RESI:asp,tyr,lys,his
+LOCI:a-43,48,77,110;
 '''
 cmd.select('temp0', 'n. ca')
 cmd.select('temp1', 'r. asp')

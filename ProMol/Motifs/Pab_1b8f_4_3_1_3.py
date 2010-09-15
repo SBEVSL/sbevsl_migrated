@@ -3,6 +3,7 @@ FUNC:Pab_1b8f_4_3_1_3
 PDB:1b8f
 EC:4.3.1.3
 RESI:ala,ser,gly,tyr,glu
+LOCI:a-142,143,144,280,414;
 '''
 cmd.select('ala1', 'n. C&r. ala w. %s of n. CB&r. ser'%(d*5.51))
 cmd.select('ala2', 'n. C&r. ala w. %s of n. O&r. gly'%(d*5.63))

@@ -3,6 +3,7 @@ FUNC:P_1ei9_3_1_2_22
 PDB:1ei9
 EC:3.1.2.22
 RESI:met,ser,gln,asp,his
+LOCI:a-41,115,116,233,289;
 '''
 cmd.select('met1', 'n. CB&r. met w. %s of n. CB&r. ser'%(d*8.10))
 cmd.select('met2', 'n. CB&r. met w. %s of n. OG&r. ser'%(d*7.89))

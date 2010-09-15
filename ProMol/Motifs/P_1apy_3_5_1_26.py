@@ -3,6 +3,7 @@ FUNC:P_1apy_3_5_1_26
 PDB:1apy
 EC:3.5.1.26
 RESI:ser,thr,thr,thr,gly
+LOCI:a-49;b-183,201,234,235;
 '''
 cmd.select('ser1', 'n. CB&r. ser w. %s of n. O&r. gly'%(d*9.60))
 cmd.select('ser2', 'n. CB&r. ser w. %s of n. C&r. gly'%(d*10.36))

@@ -10,13 +10,6 @@ def initialise():
     #--------------Mode---------------------
     group = tk.LabelFrame(glb.GUI.advanced_toolbox['tab'], text='Mode:')
     group.grid(row=0, column=1, padx=2, pady=2, sticky = tk.NW)
-    framesculbtn = tk.Frame(group, width=16)
-    framesculbtn.grid(row=0, column=0, padx=1, pady=1, sticky = tk.NW)
-    balloonsculpt = Pmw.Balloon(group)
-    balloonsculpt.bind(framesculbtn, "Ctrl + Right Click to drag an atom.\nCtrl + Left Click to rotate bonds.")
-    sculbtn = tk.Button(framesculbtn, text = 'Sculpting', width=16)
-    sculbtn.grid(row=0, column=0, padx=1, pady=1, sticky = tk.NW)
-    sculbtn.bind('<Button-1>',sculpt)
 
     #-------------Measurment-------------------#
 
@@ -47,31 +40,6 @@ def initialise():
     labels = ("One letter", "Three letter", "AA atoms", "Chains")
     radioAdd(group, 'w', 'vertical', seqviewformat,
               ' ', labels, 4, 0, 1, 1, 'NW')
-
-    #------------Amino Acid Select------------------------------
-    group = tk.LabelFrame(glb.GUI.advanced_toolbox['tab'], text='Amino Acid Selector:')
-    group.grid(row=1, column=0, padx=2, pady=2, sticky = tk.SW)
-    labelaa = tk.Label(group, text = 'Code:')
-    labelaa.grid(row=1, column=0, padx=2, pady=2)
-    x = tk.Entry(group, width =5)
-    x.grid(row=1, column=1, padx=2, pady=2)
-    selecta = tk.Button(group, width = 15,text = 'Select Residues')
-    selecta.grid(row=1, column=2, padx=2, pady=2)
-
-    #-------------Residue Select------------------------
-    labelr = tk.Label(group, text = ' Number:')
-    labelr.grid(row=0, column=0, padx=2, pady=2)
-    xr = tk.Entry(group, width =5)
-    xr.grid(row=0, column=1, padx=2, pady=2)
-    selectr = tk.Button(group, width = 15,text = 'Select Residues')
-    selectr.grid(row=0, column=2, padx=2, pady=2)
-
-    selectr.bind('<Button-1>', selectresi)
-
-
-    x.bind('<Return>', selres)
-    selecta.bind('<Button-1>', selres)
-
 
     #----------Set up scales for controlling how much of protein is roved----------
 
@@ -215,17 +183,3 @@ def initialise():
     loadmapbtn.grid(row=4, column=1, padx=0, pady=5, sticky = tk.NW)
     loadmapbtn.bind('<Button-1>', loadmapps)
 
-    #------------Fetch Ramachandran Plot --------------------
-    group = tk.LabelFrame(glb.GUI.advanced_toolbox['tab'], text='Ramachandran Plot:')
-    group.grid(row=1, column=1, padx=2, pady=2, sticky = tk.SW)
-    framebtn1 = tk.Frame(group)
-    framebtn1.grid(row=1, column=0, padx=2, pady=2, sticky = tk.NE)
-    balloon12 = Pmw.Balloon(group)
-    balloon12.bind(framebtn1, "Must have internet connection, goes to external website.")
-    Labelpdb = tk.Label(group, text = 'Enter PDB code:')
-    Labelpdb.grid(row=0, column=0, columnspan = 2, padx=2, pady=2, sticky = tk.NW)
-    enterpdb = tk.Entry(group, width=6)
-    enterpdb.grid(row=1, column=1, padx=2, pady=4, sticky = tk.NW)
-    btn1 = tk.Button(framebtn1, text = 'Fetch Plot', width = 10)
-    btn1.grid(row=1, column=0, padx=2, pady=2, sticky = tk.NW)
-    btn1.bind('<Button-1>', fetchurl)

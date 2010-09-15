@@ -3,6 +3,7 @@ FUNC:P_1chd_3_1_1_61
 PDB:1chd
 EC:3.1.1.61
 RESI:ser,thr,his,met,asp
+LOCI:a-164,165,190,283,286;
 '''
 cmd.select('ser1', 'n. CB&r. ser w. %s of n. CB&r. thr'%(d*6.87))
 cmd.select('ser2', 'n. CB&r. ser w. %s of n. OG1&r. thr'%(d*6.49))

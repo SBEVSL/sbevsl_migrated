@@ -3,6 +3,7 @@ FUNC:P_1b31_3_2_1_8
 PDB:1b31
 EC:3.2.1.8
 RESI:glu,his,glu,asp
+LOCI:a-132,210,238,240;
 '''
 cmd.select('his1', 'n. CB&r. his w. %s of n. CB&r. glu'%(d*13.39))
 cmd.select('his2', 'n. CB&r. his w. %s of n. CG&r. glu'%(d*12.08))

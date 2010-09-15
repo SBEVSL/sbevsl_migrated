@@ -3,6 +3,7 @@ FUNC:P_1ajz_2_5_1_15
 PDB:1ajz
 EC:2.5.1.15
 RESI:asn,arg,arg
+LOCI:a-22,63,255;
 '''
 cmd.select('asn1', 'n. CB&r. asn w. %s of n. CB&r. arg'%(d*10.99))
 cmd.select('asn2', 'n. CB&r. asn w. %s of n. CG&r. arg'%(d*10.00))

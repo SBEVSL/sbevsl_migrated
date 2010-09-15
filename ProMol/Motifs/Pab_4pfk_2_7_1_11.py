@@ -3,6 +3,7 @@ FUNC:Pab_4pfk_2_7_1_11
 PDB:4pfk
 EC:2.7.1.11
 RESI:gly,arg,thr,asp,arg
+LOCI:a-11,72,125,127,171;
 '''
 cmd.select('gly1', 'n. O&r. gly w. %s of n. CB&r. arg'%(d*12.74))
 cmd.select('gly2', 'n. O&r. gly w. %s of n. CG&r. arg'%(d*11.80))

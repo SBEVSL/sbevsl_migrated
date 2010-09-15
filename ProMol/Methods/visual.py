@@ -75,35 +75,29 @@ def show_hide_water(tag):
 
 # Coloring on Selection
 def color_sel(tag):
-    try:
-        if tag == 'Red':
-            cmd.color('red', glb.SELE)
-        elif tag == 'Green':
-            cmd.color('green', glb.SELE)
-        elif tag == 'Orange':
-            cmd.color('orange', glb.SELE)
-        elif tag == 'Yellow':
-            cmd.color('yellow', glb.SELE)
-        elif tag == 'Blue':
-            cmd.color('blue', glb.SELE)
-        elif tag == 'Violet':
-            cmd.color('violet', glb.SELE)
-        elif tag == 'CPK':
-            glb.procolor(selection=glb.SELE, show_selection='sticks',
-                color_selection='cpk', show_all=None)
-        elif tag == 'Other':
-            color = askcolor(title = "Selection Color Chooser")
-            colorArray = []
-            if color[0] != None:
-                list = color[0]
-                for each in list:
-                    z = (each/255.0)
-                    val = repr(z)
-                    colorArray.append(val)
-                cmd.set_color('newcolor', colorArray)
-                cmd.color('newcolor', glb.SELE)
-    except:
-        showerror('Error', 'Update Selection!')
+    if tag == 'Red':
+        cmd.color('red', glb.SELE)
+    elif tag == 'Green':
+        cmd.color('green', glb.SELE)
+    elif tag == 'Orange':
+        cmd.color('orange', glb.SELE)
+    elif tag == 'Yellow':
+        cmd.color('yellow', glb.SELE)
+    elif tag == 'Blue':
+        cmd.color('blue', glb.SELE)
+    elif tag == 'Violet':
+        cmd.color('violet', glb.SELE)
+    elif tag == 'CPK':
+        glb.procolor(selection=glb.SELE, show_selection='sticks',
+            color_selection='cpk', show_all=None)
+    elif tag == 'Other':
+        color = askcolor(title = "Selection Color Chooser")
+        clr = str(color[1])
+        newcolor = 'newcolor%s' % glb.incnewcolor()
+        if clr != None:
+            cmd.set_color(newcolor,
+                ([int(n, 16) for n in (clr[1:3], clr[3:5], clr[5:7])]))
+            cmd.color(newcolor, glb.SELE)
 
 # change background colors
 def bgcolor_switch(tag):
@@ -115,15 +109,12 @@ def bgcolor_switch(tag):
         cmd.bg_color('grey')
     elif tag == 'Other':
         color = askcolor(title = "Background Color Chooser")
-        colorArray = []
-        if color[0] != None:
-            list = color[0]
-            for each in list:
-                z = (each/255.0)
-                val = repr(z)
-                colorArray.append(val)
-            cmd.set_color('newcolor', colorArray)
-            cmd.bg_color('newcolor')
+        clr = str(color[1])
+        newcolor = 'newcolor%s' % glb.incnewcolor()
+        if clr != None:
+            cmd.set_color(newcolor,
+                ([int(n, 16) for n in (clr[1:3], clr[3:5], clr[5:7])]))
+            cmd.bg_color(newcolor)
 
 def show_dna_rna():
     glb.update()

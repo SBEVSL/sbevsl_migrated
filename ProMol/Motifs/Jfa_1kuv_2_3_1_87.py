@@ -3,6 +3,7 @@ FUNC:Jfa_1kuv_2_3_1_87
 PDB:1kuv
 EC:2.3.1.87
 RESI:ser,leu,his,leu,tyr
+LOCI:a-97,111,122,124,168;
 '''
 cmd.select('temp0', 'n. ca')
 cmd.select('temp1', 'r. ser')

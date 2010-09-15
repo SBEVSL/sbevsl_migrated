@@ -3,6 +3,7 @@ FUNC:Jfa_1jz6_3_2_1_23
 PDB:1jz6
 EC:3.2.1.23
 RESI:glu,tyr,glu
+LOCI:a-461,503,537;
 '''
 cmd.select('temp0', 'n. cd')
 cmd.select('temp1', 'r. glu')

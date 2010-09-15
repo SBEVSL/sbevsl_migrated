@@ -2,7 +2,8 @@
 FUNC:P_1gk2_4_3_1_3
 PDB:1gk2
 EC:4.3.1.3
-RESI:gly,ser,tyr,glu
+RESI:ser,gly,tyr,glu
+LOCI:a-143,144,280,414;
 '''
 cmd.select('ser1', 'n. CB&r. ser w. %s of n. O&r. gly'%(d*6.95))
 cmd.select('ser2', 'n. CB&r. ser w. %s of n. C&r. gly'%(d*7.23))

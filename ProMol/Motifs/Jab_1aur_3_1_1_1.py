@@ -3,6 +3,7 @@ FUNC:Jab_1aur_3_1_1_1
 PDB:1aur
 EC:3.1.1.1
 RESI:leu,ser,gln,asp,his
+LOCI:a-23,114,115,168,199;
 '''
 cmd.select('temp0', 'n. n')
 cmd.select('jessatom0', 'temp0')

@@ -3,6 +3,7 @@ FUNC:P_1daa_2_6_1_21
 PDB:1daa
 EC:2.6.1.21
 RESI:lys,glu,leu
+LOCI:a-145,177,201;
 '''
 cmd.select('lys1', 'n. CB&r. lys w. %s of n. CB&r. glu'%(d*13.76))
 cmd.select('lys2', 'n. CB&r. lys w. %s of n. CG&r. glu'%(d*12.92))

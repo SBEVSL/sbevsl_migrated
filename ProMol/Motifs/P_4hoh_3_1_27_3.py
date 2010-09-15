@@ -3,6 +3,7 @@ FUNC:P_4hoh_3_1_27_3
 PDB:4hoh
 EC:3.1.27.3
 RESI:his,glu,his
+LOCI:a-40,58,92;
 '''
 cmd.select('his1', 'n. CB&r. his w. %s of n. CB&r. glu'%(d*8.73))
 cmd.select('his2', 'n. CB&r. his w. %s of n. CG&r. glu'%(d*7.55))
