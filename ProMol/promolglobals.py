@@ -574,10 +574,14 @@ def deletemotif():
 cmd.extend('deletemotif', deletemotif)
 
 def show_as(show, selection):
+    '''`as` is a reserved word as of python 2.6
+    pymol used cmd.as before this and
+    had to change to cmd.show_as'''
     try:
         cmd.show_as(show, selection)
     except AttributeError:
-        cmd.as(show, selection)
+        #this avoids the syntax error in 2.6 and above
+        getattr(cmd, 'as')(show, selection)
 
 def procolor(selection=None, show_selection='sticks', color_selection='cpk',
         show_all=('sticks', 'spheres'), color_all='cpk', cpknew=False):
