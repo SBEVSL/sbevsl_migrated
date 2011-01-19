@@ -40,6 +40,8 @@ def initialise():
     glb.GUI.motifs['multipdb'] = tk.Text(group, state=tk.NORMAL, 
         width=28, height=4)
     glb.GUI.motifs['multipdb'].grid(row=1, column=0)
+    glb.GUI.motifs['openfile'] = tk.Button(group, text ='Open File', command=openfile)
+    glb.GUI.motifs['openfile'].grid(row=1, column=1)    
     
     group = tk.LabelFrame(glb.GUI.motifs['tab'], text='Export')
     group.grid(row=2, column=0)

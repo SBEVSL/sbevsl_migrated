@@ -4,10 +4,11 @@ import Tkinter as tk
 import Pmw
 import os
 import re
-from tkFileDialog import asksaveasfile, askdirectory
+from tkFileDialog import asksaveasfile, askdirectory, askopenfilename
 from tkSimpleDialog import askstring
 from tkColorChooser import askcolor
 from tkMessageBox import showinfo, showerror, askyesno
+from ftplib import FTP
 from pmg_tk.startup.ProMol import promolglobals as glb
 
 #print dir(motcod)
@@ -469,6 +470,14 @@ def motifchecker():
     glb.GUI.motifs['multipdb']['state'] = tk.NORMAL
     glb.GUI.motifs['cancelbutton']['state'] = tk.DISABLED
         
+def openfile():
+    pdbs_filename = askopenfilename()
+    if pdbs_filename:
+    	pdbs_file = open(pdbs_filename, "r")
+    	glb.GUI.motifs['multipdb'].delete(0.0, tk.END)
+    	glb.GUI.motifs['multipdb'].insert(0.0, pdbs_file.read())
+    	pdbs_file.close() 
+
 def makemotif(mode):
     glb.GUI.motif_maker['file'] = None
     glb.GUI.motif_maker['wait'] = []
@@ -927,3 +936,4 @@ def makemotif(mode):
             print '%s Amino Acid Motif `%s` Saved To Motifs Folder\n'%(len(resnlist)-1,name)
         if mode == 2:
             print '%s Amino Acid Motif `%s` Exported\n'%(len(resnlist)-1,name)
+            

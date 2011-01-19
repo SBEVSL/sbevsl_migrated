@@ -580,7 +580,6 @@ def show_as(show, selection):
     try:
         cmd.show_as(show, selection)
     except AttributeError:
-        #this avoids the syntax error in 2.6 and above
         getattr(cmd, 'as')(show, selection)
 
 def procolor(selection=None, show_selection='sticks', color_selection='cpk',
