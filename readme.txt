@@ -5,8 +5,6 @@ ProMOL (C) Copyright 2004-2010
 Charlie Westin, Brett Hanson & Paul Craig
 GPL, No Warranty
 
-Changes on 22Feb2011
-
 4.1 Release Candidate 2 by 
 Mario Rosa
 7 December 2010
