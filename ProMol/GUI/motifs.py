@@ -2,6 +2,7 @@ import Tkinter as tk
 import Pmw
 from pmg_tk.startup.ProMol import promolglobals as glb
 from pmg_tk.startup.ProMol.Methods.motif import *
+from pmg_tk.startup.ProMol.Methods.ftp import *
 Pmw.initialise()
 
 def initialise():
@@ -41,7 +42,27 @@ def initialise():
         width=28, height=4)
     glb.GUI.motifs['multipdb'].grid(row=1, column=0)
     glb.GUI.motifs['openfile'] = tk.Button(group, text ='Open File', command=openfile)
-    glb.GUI.motifs['openfile'].grid(row=1, column=1)    
+    glb.GUI.motifs['openfile'].grid(row=1, column=1)   
+    
+    #FTP GUI Code
+    glb.GUI.motifs['ftptxt'] = tk.Entry(group, state=tk.NORMAL, width=28)
+    glb.GUI.motifs['ftptxt'].bind('<Return>', openftp)
+    glb.GUI.motifs['ftptxt'].grid(row=2, column=0)
+    glb.GUI.motifs['openftp'] = tk.Button(group, text ='Open FTP', command=openftp)
+    glb.GUI.motifs['openftp'].grid(row=2, column=1)
+    glb.GUI.motifs['ftppath'] = tk.Entry(group, state=tk.NORMAL, width=25)
+    glb.GUI.motifs['ftppath'].grid(row=3, column=0)
+    glb.GUI.motifs['up'] = tk.Button(group, text ='<--', command=ftpup)
+    glb.GUI.motifs['up'].grid(row=3, column=1)
+    fscroll = tk.Scrollbar(group, orient=tk.VERTICAL)
+    fscroll.grid(row=4, column=1, sticky=tk.N+tk.S)
+    glb.GUI.motifs['ftplist'] = tk.Listbox(group, width=25, height=8, yscrollcommand=fscroll.set)
+    glb.GUI.motifs['ftplist'].grid(row=4, column=0, sticky=tk.E)
+    glb.GUI.motifs['ftplist'].bind('<Double-Button-1>',ftpcd)
+    fscroll["command"] = glb.GUI.motifs['ftplist'].yview
+    glb.GUI.motifs['opendir'] = tk.Button(group, text ='Open', command=openftpdir)
+    glb.GUI.motifs['opendir'].grid(row=4, column=2)
+    #End FTP Code
     
     group = tk.LabelFrame(glb.GUI.motifs['tab'], text='Export')
     group.grid(row=2, column=0)

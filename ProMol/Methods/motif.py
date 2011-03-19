@@ -8,8 +8,9 @@ from tkFileDialog import asksaveasfile, askdirectory, askopenfilename
 from tkSimpleDialog import askstring
 from tkColorChooser import askcolor
 from tkMessageBox import showinfo, showerror, askyesno
-from ftplib import FTP
+from Tkinter import *
 from pmg_tk.startup.ProMol import promolglobals as glb
+
 
 #print dir(motcod)
 Pmw.initialise()
@@ -282,7 +283,7 @@ def export2csv():
 
 def motifcancel():
     glb.GUI.motifs['cancel'] = True
-
+        
 def motifchecker():
     glb.GUI.motifs['cancel'] = False
     glb.GUI.motifs['motifbox'].delete(0,tk.END)
@@ -396,9 +397,11 @@ def motifchecker():
         return glb.GUI.motifs['csvprep'][pdb][motif]['x']
 
     lasto = 0.0
-    founds = {}
-    foundso = []
+    lengtho = 0
     for pdb in pdbs:
+        founds = {}
+        foundso = []
+        
         pdb = pdb.strip()
         if glb.GUI.motifs['cancel'] == True:
             glb.GUI.motifs['single']['text'] = 'Click Start to begin'
@@ -421,7 +424,8 @@ def motifchecker():
             continue
         cmd.hide('everything', 'all')
         cmd.remove("all and hydro")
-        
+
+       
         for motif in keys:
             if motif == 'errors':
                 continue
@@ -450,18 +454,75 @@ def motifchecker():
             cmd.delete(motif)
         found.sort()
         founds[pdb] = found
-    
-    for f in founds:
-        foundso.extend([f])
-        foundso.extend(founds[f])
+
+        for f in founds:
+            foundso.extend([f])
+            foundso.extend(founds[f])
+
+        for foundo in foundso: 
+            if len(foundo) == 4:
+                pdb = foundo
+            glb.GUI.motifs['motifbox'].insert(tk.END,foundo)
+            glb.GUI.motifs['hidmotif'].insert(tk.END,pdb)
+
+        #Automatically creates a file to store each pdb result
+        #in the same format as the csv files. 
+        lengtho = lengtho + len(foundso)
+        csv = ['PDB Entry,PDB Homologue,Motifs,Rank,Residues',
+        ',,,,Chain,Name,Number']
+        motifs = foundso
+        lastpdb = None
+        motifl = 0
+        motifsl = len(motifs)
+        while motifl < motifsl:
+            try:
+                motif = motifs[motifl].split('-')[1]
+            except IndexError:
+                motifl += 1
+                continue
+            
+            x = glb.GUI.motifs['csvprep'][pdb][motif]['x']
+            pf = glb.GUI.motifs['csvprep'][pdb][motif]['pf']
+            pdbstr = '%s@PF%s'%(pdb,pf)
+            if 'hom' in glb.GUI.motifs['csvprep'][pdb][motif]:
+                hom = '%s@PF%s'%(glb.GUI.motifs['csvprep'][pdb][motif]['hom'],pf)
+            else:
+                hom = ''
+            residues = glb.GUI.motifs['csvprep'][pdb][motif]['res']
+            same = {}
+            motifline = True
+            for residue in residues:
+                chain = residue[0]
+                resn = residue[1]
+                resi = residue[2]
+                key = '%s%s'%(resn,resi)
+                if key in same:
+                    line = same[key]
+                    s = csv[line].split(',')
+                    csv[line] = '%s,%s,%s,%s,%s&%s,%s,%s'%(s[0],s[1],s[2],s[3],s[4],chain,s[5],s[6])
+                    continue
+                same[key] = len(csv)
+                if lastpdb != pdb:
+                    csv.append('%s,%s,%s,[%s],%s,%s,%s'%(pdbstr,hom,motif,x,chain,resn,resi))
+                    lastpdb = pdb
+                    motifline = False
+                    continue
+                if motifline == True:
+                    csv.append(',,%s,[%s],%s,%s,%s'%(motif,x,chain,resn,resi))
+                    motifline = False
+                    continue
+                csv.append(',,,,%s,%s,%s'%(chain,resn,resi))
+            motifl += 1
+            
+        csvfile = "\n".join(csv)
+        csvhandle = open('motiffinder_%s.csv'%pdb, 'w') #opens different file each time through loop
+        csvhandle.write(csvfile) #writes to the open file
+        csvhandle.close()
+
     glb.GUI.motifs['single']['text'] = 'Click Start to begin'
-    glb.GUI.motifs['overall']['text'] = 'Motif Finder finished with %s results.'%(len(foundso)-len(pdbs))
+    glb.GUI.motifs['overall']['text'] = 'Motif Finder finished with %s results.'%(lengtho-len(pdbs))  
     cmd.orient('all')
-    for foundo in foundso:
-        if len(foundo) == 4:
-            pdb = foundo
-        glb.GUI.motifs['motifbox'].insert(tk.END,foundo)
-        glb.GUI.motifs['hidmotif'].insert(tk.END,pdb)
+    
     cmd.show('cartoon', 'all')
     cmd.color('gray', 'all')
     glb.GUI.motifs['csv']['state'] = tk.NORMAL
@@ -469,14 +530,14 @@ def motifchecker():
     glb.GUI.motifs['delta']['state'] = tk.NORMAL
     glb.GUI.motifs['multipdb']['state'] = tk.NORMAL
     glb.GUI.motifs['cancelbutton']['state'] = tk.DISABLED
-        
+
 def openfile():
     pdbs_filename = askopenfilename()
     if pdbs_filename:
-    	pdbs_file = open(pdbs_filename, "r")
-    	glb.GUI.motifs['multipdb'].delete(0.0, tk.END)
-    	glb.GUI.motifs['multipdb'].insert(0.0, pdbs_file.read())
-    	pdbs_file.close() 
+        pdbs_file = open(pdbs_filename, "r")
+        glb.GUI.motifs['multipdb'].delete(0.0, tk.END)
+        glb.GUI.motifs['multipdb'].insert(0.0, pdbs_file.read())
+        pdbs_file.close()
 
 def makemotif(mode):
     glb.GUI.motif_maker['file'] = None
@@ -530,6 +591,7 @@ def makemotif(mode):
     def release(event):
         pass
     
+  
     def write(string=None,**options):
         if string != None:
             glb.GUI.motif_maker['motif'].append(string)
@@ -542,7 +604,7 @@ def makemotif(mode):
                     'A motif has already been made for EC:%s on PDB:%s.\n'%(ec,pdb)+
                     'Are you sure you want to replace it?')
                     if answer == False:
-                        return False
+                         return False
                 glb.GUI.motif_maker['file'] = open(glb.pathmaker((name,'.py'),root=glb.USRMOTIFSFOLDER), 'wb')
             if mode == 2:
                 pref = askdirectory(initialdir=glb.HOME)
@@ -557,6 +619,8 @@ def makemotif(mode):
                 else:
                     showerror('Access Denied','You do not have access to write to this folder.')
                     return False
+        
+                
         if 'close' in options:
             if mode == 4:
                 if glb.GUI.motif_maker['radio'].get() == 1:
@@ -575,12 +639,16 @@ def makemotif(mode):
                 cmd.orient(name)
                 cmd.deselect()
             else:
-                glb.GUI.motif_maker['file'].writelines(glb.GUI.motif_maker['motif'])
-                glb.GUI.motif_maker['file'].close()
-                if mode == 1:
-                    glb.motifstore(glb.USRMOTIFSFOLDER)
+                if glb.GUI.motif_maker['file'] != None:
+                    glb.GUI.motif_maker['file'].writelines(glb.GUI.motif_maker['motif'])
+                    glb.GUI.motif_maker['file'].close()
+                    if mode == 1:
+                        glb.motifstore(glb.USRMOTIFSFOLDER)
+                else:
+                    print 'No file written'
         return True
     
+                    
     def getlocistr():
         locistr = ''
         tmpdict = {}
@@ -936,4 +1004,3 @@ def makemotif(mode):
             print '%s Amino Acid Motif `%s` Saved To Motifs Folder\n'%(len(resnlist)-1,name)
         if mode == 2:
             print '%s Amino Acid Motif `%s` Exported\n'%(len(resnlist)-1,name)
-            
