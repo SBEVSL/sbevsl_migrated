@@ -51,7 +51,7 @@ def ftpup():
     glb.GUI.motifs['ftplist'].delete(0, tk.END)
     ftp.retrlines('NLST', ftplistadd)
 
-def searchdirectory(filetree, timeout = 100):   
+def searchdirectory(filetree, timeout = 200):   
     
     thisdir = ftp.pwd() + '/'	
     timeout = timeout
@@ -60,9 +60,21 @@ def searchdirectory(filetree, timeout = 100):
     	       pdbfile = loc.lstrip("pdb")
     	       pdbfile = pdbfile.rstrip(".pdb")
     	       glb.GUI.motifs['multipdb'].insert(0.0, ", " + pdbfile)
+    	elif loc.endswith(".ent"):
+    	       pdbfile = loc.lstrip("pdb")
+    	       pdbfile = pdbfile.rstrip(".ent")
+    	       glb.GUI.motifs['multipdb'].insert(0.0, ", " + pdbfile)
     	elif loc.endswith(".ent.gz"):
     	       pdbfile = loc.lstrip("pdb")
     	       pdbfile = pdbfile.rstrip(".ent.gz")
+    	       glb.GUI.motifs['multipdb'].insert(0.0, ", " + pdbfile)
+    	elif loc.endswith(".cif"):
+    	       pdbfile = loc.lstrip("pdb")
+    	       pdbfile = pdbfile.rstrip(".cif")
+    	       glb.GUI.motifs['multipdb'].insert(0.0, ", " + pdbfile)
+    	elif loc.endswith(".pdb.gz"):
+    	       pdbfile = loc.lstrip("pdb")
+    	       pdbfile = pdbfile.rstrip(".pdb.gz")
     	       glb.GUI.motifs['multipdb'].insert(0.0, ", " + pdbfile)
     	else:
     	 	    newtree = []
@@ -84,7 +96,7 @@ def openftpdir():
     glb.GUI.motifs['ftppath'].delete(0, tk.END)
     glb.GUI.motifs['ftppath'].insert(tk.END, ftp.pwd() + '/')
     glb.GUI.motifs['multipdb'].delete(0.0, tk.END)
-    searchdirectory(filetree)
+    searchdirectory(filetree,  int(glb.GUI.motifs['toval'].get()) )
     glb.GUI.motifs['multipdb'].delete(0.0, 1.2)
     ftpup()
     
