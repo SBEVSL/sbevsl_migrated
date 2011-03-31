@@ -55,8 +55,9 @@ def initialise():
     glb.GUI.motifs['up'] = tk.Button(group, text ='<--', command=ftpup)
     glb.GUI.motifs['up'].grid(row=3, column=1)
     fscroll = tk.Scrollbar(group, orient=tk.VERTICAL)
-    fscroll.grid(row=4, column=1, sticky=tk.N+tk.S+tk.E)
-    glb.GUI.motifs['ftplist'] = tk.Listbox(group, width=25, height=8, yscrollcommand=fscroll.set)
+    fscroll.grid(row=4, column=0, sticky=tk.N+tk.S+tk.E)
+    glb.GUI.motifs['ftplist'] = tk.Listbox(group, width=25, height=8, yscrollcommand=fscroll.set, 
+    	exportselection=0)
     glb.GUI.motifs['ftplist'].grid(row=4, column=0)
     glb.GUI.motifs['ftplist'].bind('<Double-Button-1>',ftpcd)
     fscroll["command"] = glb.GUI.motifs['ftplist'].yview
@@ -67,7 +68,7 @@ def initialise():
     glb.GUI.motifs['toval'].insert(0, 100)
     glb.GUI.motifs['toval'].grid(row=5, column=0, sticky=tk.E)
     glb.GUI.motifs['opendir'] = tk.Button(group, text ='Open', command=openftpdir)
-    glb.GUI.motifs['opendir'].grid(row=4, column=2)
+    glb.GUI.motifs['opendir'].grid(row=4, column=1)
     #End FTP Code
     
     group = tk.LabelFrame(glb.GUI.motifs['tab'], text='Export')

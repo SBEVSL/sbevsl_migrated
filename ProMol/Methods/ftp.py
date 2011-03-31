@@ -76,6 +76,10 @@ def searchdirectory(filetree, timeout = 200):
     	       pdbfile = loc.lstrip("pdb")
     	       pdbfile = pdbfile.rstrip(".pdb.gz")
     	       glb.GUI.motifs['multipdb'].insert(0.0, ", " + pdbfile)
+    	elif loc.endswith(".cif.gz"):
+    	       pdbfile = loc.lstrip("pdb")
+    	       pdbfile = pdbfile.rstrip(".cif.gz")
+    	       glb.GUI.motifs['multipdb'].insert(0.0, ", " + pdbfile)
     	else:
     	 	    newtree = []
     	 	    thisdir = thisdir + loc
