@@ -9,9 +9,12 @@ import time
 import linecache
 import random
 import platform
+from Tkinter import *
+
 VERSION = '4.1rc2'
 PLATFORM = platform.system()
 PROMOL_DIR_PATH = os.path.dirname(__file__)
+
 try:
     HOME = os.environ['HOME']
 except KeyError:
@@ -23,7 +26,7 @@ elif PLATFORM == 'Darwin':
         'ProMol')
 else:
     OFFSITE = os.path.join(HOME, '.sbevsl', 'ProMol')
-DIRS = ('Motifs', )
+DIRS = ('User Motifs', )#changed folder name to User Motifs for clarity
 if not os.path.isdir(OFFSITE):
     os.makedirs(OFFSITE)
 for DIR in DIRS:
@@ -347,7 +350,8 @@ class PERSISTENT:
 
 MOTIFS = PERSISTENT('motifs')
 MOTIFSFOLDER = os.path.join(PROMOL_DIR_PATH, 'Motifs')
-USRMOTIFSFOLDER = os.path.join(OFFSITE, 'Motifs')
+USRMOTIFSFOLDER = os.path.join(OFFSITE, 'User Motifs')
+
 def motifstore(*args):
     MOTIFS.switchwriteback()#!!DO NOT REMOVE
     if len(MOTIFS) > 0:
@@ -469,7 +473,7 @@ def motifstore(*args):
                 del MOTIFS[func]
             tmpf.close()
     MOTIFS.switchwriteback()#!!DO NOT REMOVE
-motifstore(MOTIFSFOLDER, USRMOTIFSFOLDER)
+motifstore(MOTIFSFOLDER, USRMOTIFSFOLDER)#add all folders here
 
 def reset_motif_database():
     global MOTIFS
@@ -692,7 +696,7 @@ def set_selection(tag='all'):
     GUI.ez_viz['selection'].set(tag)
     GUI.view['advanced_selection'].set(tag)
     SELE = tag
-
+           
 class ProgressBar:
     def __init__(self, Parent, Height=10, Width=100, Row=0, Column=0, Span=1,
                  ForegroundColor="black", BackgroundColor=None):

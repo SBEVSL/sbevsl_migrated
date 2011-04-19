@@ -4,7 +4,7 @@ import Tkinter as tk
 import Pmw
 import os
 import re
-from tkFileDialog import asksaveasfile, askdirectory, askopenfilename
+from tkFileDialog import asksaveasfile, askdirectory, askopenfile
 from tkSimpleDialog import askstring
 from tkColorChooser import askcolor
 from tkMessageBox import showinfo, showerror, askyesno
@@ -283,8 +283,57 @@ def export2csv():
 
 def motifcancel():
     glb.GUI.motifs['cancel'] = True
-        
-def motifchecker():
+
+def storeSetChoice(): #stores button value, action of the select button
+    glb.GUI.motifs['root'].withdraw()
+    selectedSet = glb.GUI.motifs['var'].get()
+    motifchecker(selectedSet)
+
+def cancelSetChoice():#action of the cancel button
+    glb.GUI.motifs['root'].withdraw()
+    glb.GUI.motifs['findmotif']['state'] = tk.NORMAL
+
+def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when the user selects the start button in motif finder
+    pdbs = glb.GUI.motifs['multipdb'].get(1.0,'1.end').split(',')
+    pdbsl = len(pdbs)
+    if pdbsl == 1 and pdbs[0] == '':#moved from motifchecker
+        showerror('No PDB Entered',"Enter a PDB or a comma separated list of PDB's to search")
+        glb.GUI.motifs['delta']['state'] = tk.NORMAL
+        glb.GUI.motifs['findmotif']['state'] = tk.NORMAL
+        glb.GUI.motifs['multipdb']['state'] = tk.NORMAL
+        glb.GUI.motifs['cancelbutton']['state'] = tk.DISABLED
+        return False
+
+    glb.GUI.motifs['findmotif']['state'] = tk.DISABLED
+
+    for w in glb.GUI.motifs['root'].children.values():
+        w.destroy()
+   
+    glb.GUI.motifs['var'] = IntVar()
+    rb1 = Radiobutton(glb.GUI.motifs['root'], text="P set", variable = glb.GUI.motifs['var'], value = 1,  height = 2)
+    rb2 = Radiobutton(glb.GUI.motifs['root'], text="J set", variable = glb.GUI.motifs['var'], value = 2, height = 2)
+    #rb3 = Radiobutton(glb.GUI.motifs['root'], text="N set (NMR)", variable = glb.GUI.motifs['var'], value = 3, height = 2)
+    rb4 = Radiobutton(glb.GUI.motifs['root'], text="All Motifs", variable = glb.GUI.motifs['var'], value = 4, height = 2)
+    rb5 = Radiobutton(glb.GUI.motifs['root'], text="User Motifs", variable = glb.GUI.motifs['var'], value = 5, height = 2)
+
+    rb4.pack(anchor = W)
+    rb5.pack(anchor = W)
+    rb1.pack(anchor = W)
+    rb2.pack(anchor = W)
+    #rb3.pack(anchor = W)
+    
+    frame = Frame(glb.GUI.motifs['root'], width=200, height=250, bd=1)
+    frame.pack()
+    
+    selectButton = Button(frame, text='Select', command = storeSetChoice).pack()
+    cancelButton = Button(frame, text='Cancel', command = cancelSetChoice).pack()
+    glb.GUI.motifs['root'].update()
+    glb.GUI.motifs['root'].deiconify()
+    glb.GUI.motifs['root'].mainloop()
+
+
+          
+def motifchecker(setChoice):
     glb.GUI.motifs['cancel'] = False
     glb.GUI.motifs['motifbox'].delete(0,tk.END)
     glb.GUI.motifs['hidmotif'].delete(0,tk.END)
@@ -292,17 +341,9 @@ def motifchecker():
     glb.GUI.motifs['cancelbutton']['state'] = tk.NORMAL
     glb.GUI.motifs['delta']['state'] = tk.DISABLED
     glb.GUI.motifs['csv']['state'] = tk.DISABLED
-    glb.GUI.motifs['findmotif']['state'] = tk.DISABLED
     glb.GUI.motifs['multipdb']['state'] = tk.DISABLED
     pdbs = glb.GUI.motifs['multipdb'].get(1.0,'1.end').split(',')
     pdbsl = len(pdbs)
-    if pdbsl == 1 and pdbs[0] == '':
-        showerror('No PDB Entered',"Enter a PDB or a comma separated list of PDB's to search")
-        glb.GUI.motifs['delta']['state'] = tk.NORMAL
-        glb.GUI.motifs['findmotif']['state'] = tk.NORMAL
-        glb.GUI.motifs['multipdb']['state'] = tk.NORMAL
-        glb.GUI.motifs['cancelbutton']['state'] = tk.DISABLED
-        return False
     
     def LevenshteinDistance(x,y):
         w,h = len(x)+1,len(y)+1
@@ -398,9 +439,11 @@ def motifchecker():
 
     lasto = 0.0
     lengtho = 0
+    #founds = {}
+    #foundso = []
     for pdb in pdbs:
-        founds = {}
-        foundso = []
+        founds = {} #added
+        foundso = [] #added
         
         pdb = pdb.strip()
         if glb.GUI.motifs['cancel'] == True:
@@ -410,8 +453,32 @@ def motifchecker():
             break
         found = []
         last = 0.0
-        keys = glb.MOTIFS.keys()
-        keysL = len(keys)-1
+        keys =[]#added from here
+        if setChoice == 4:
+            keys = glb.MOTIFS.keys() #gets all motifs that have been loaded in MOTIFS
+        else:
+            allKeys = glb.MOTIFS.keys() #gets all motifs that have been loaded in MOTIFS
+            if setChoice == 1:
+                for key in allKeys:
+                    if key[0] == 'P': #gets the motifs that begin with 'P'
+                        keys.append(key)
+            if setChoice == 2:
+                for key in allKeys:
+                    if key[0] == 'J': #gets the motifs that begin with 'J'
+                        keys.append(key)
+            if setChoice == 3:
+                for key in allKeys:
+                    if key[0] == 'N': #gets the motifs that begin with 'N'
+                        keys.append(key)
+            if setChoice == 5:
+                for key in allKeys:
+                    if key[0] == 'U': #gets the motifs that begin with 'U'
+                        keys.append(key)           
+                        
+        if len(keys) == 1: #there is only one user saved motif
+            keysL=1
+        else: #to here
+            keysL = len(keys)-1
         keysLo = keysL*len(pdbs)
         glb.GUI.motifs['csvprep'][pdb] = {}
         cmd.reinitialize()
@@ -424,7 +491,6 @@ def motifchecker():
             continue
         cmd.hide('everything', 'all')
         cmd.remove("all and hydro")
-
        
         for motif in keys:
             if motif == 'errors':
@@ -465,9 +531,10 @@ def motifchecker():
             glb.GUI.motifs['motifbox'].insert(tk.END,foundo)
             glb.GUI.motifs['hidmotif'].insert(tk.END,pdb)
 
-        #Automatically creates a file to store each pdb result
-        #in the same format as the csv files. 
         lengtho = lengtho + len(foundso)
+
+    #added from here:
+
         csv = ['PDB Entry,PDB Homologue,Motifs,Rank,Residues',
         ',,,,Chain,Name,Number']
         motifs = foundso
@@ -519,6 +586,9 @@ def motifchecker():
         csvhandle.write(csvfile) #writes to the open file
         csvhandle.close()
 
+     #to here. Automatically creates a file to store each pdb result
+     # in the same format as the csv files.
+
     glb.GUI.motifs['single']['text'] = 'Click Start to begin'
     glb.GUI.motifs['overall']['text'] = 'Motif Finder finished with %s results.'%(lengtho-len(pdbs))  
     cmd.orient('all')
@@ -530,15 +600,8 @@ def motifchecker():
     glb.GUI.motifs['delta']['state'] = tk.NORMAL
     glb.GUI.motifs['multipdb']['state'] = tk.NORMAL
     glb.GUI.motifs['cancelbutton']['state'] = tk.DISABLED
-
-def openfile():
-    pdbs_filename = askopenfilename()
-    if pdbs_filename:
-        pdbs_file = open(pdbs_filename, "r")
-        glb.GUI.motifs['multipdb'].delete(0.0, tk.END)
-        glb.GUI.motifs['multipdb'].insert(0.0, pdbs_file.read())
-        pdbs_file.close()
-
+            
+        
 def makemotif(mode):
     glb.GUI.motif_maker['file'] = None
     glb.GUI.motif_maker['wait'] = []
@@ -590,7 +653,7 @@ def makemotif(mode):
     
     def release(event):
         pass
-    
+        
   
     def write(string=None,**options):
         if string != None:
@@ -619,8 +682,6 @@ def makemotif(mode):
                 else:
                     showerror('Access Denied','You do not have access to write to this folder.')
                     return False
-        
-                
         if 'close' in options:
             if mode == 4:
                 if glb.GUI.motif_maker['radio'].get() == 1:
@@ -644,6 +705,7 @@ def makemotif(mode):
                     glb.GUI.motif_maker['file'].close()
                     if mode == 1:
                         glb.motifstore(glb.USRMOTIFSFOLDER)
+                        
                 else:
                     print 'No file written'
         return True
@@ -829,7 +891,7 @@ def makemotif(mode):
                 glb.GUI.motif_maker['cancel'].grid_remove()
             return True
         
-        name = 'P_%s_%s'%(pdb,ec)
+        name = 'U_%s_%s'%(pdb,ec)
         write("'''\n")
         write("FUNC:%s\n"%(name))
         write("PDB:%s\n"%(pdb))
@@ -1000,7 +1062,7 @@ def makemotif(mode):
     
         if mode == 0:
             print '%s Amino Acid Motif `%s` Run\n'%(len(resnlist)-1,name)
-        if mode == 1:
-            print '%s Amino Acid Motif `%s` Saved To Motifs Folder\n'%(len(resnlist)-1,name)
+        if mode == 1:#changed to "Saved to User Motifs Folder"
+            print '%s Amino Acid Motif `%s` Saved To User Motifs Folder\n'%(len(resnlist)-1,name)
         if mode == 2:
             print '%s Amino Acid Motif `%s` Exported\n'%(len(resnlist)-1,name)
