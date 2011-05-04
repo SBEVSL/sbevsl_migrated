@@ -12,6 +12,7 @@ import platform
 from Tkinter import *
 
 VERSION = '4.1rc2'
+ALG_VERSION = '1.0' #added by Alex
 PLATFORM = platform.system()
 PROMOL_DIR_PATH = os.path.dirname(__file__)
 
@@ -170,6 +171,7 @@ class PERSISTENT:
             os.remove(self.filename)
             self.dict = shelve.open(self.filename)
         self.dictkeys = []
+        self.keysUsed = [] #Alex added
         if self.dictkey not in self.dict:
             self.dict[self.dictkey] = []
         else:
@@ -218,6 +220,12 @@ class PERSISTENT:
 
     def keys(self):
         return self.dictkeys
+
+    def setKeysUsed(self, keys):  #Alex added
+        self.keysUsed = keys
+
+    def getKeysUsed(self):        #Alex added
+        return self.keysUsed
 
     def iterkeys(self):
         for key in self.dictkeys:

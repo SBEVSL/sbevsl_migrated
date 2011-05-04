@@ -4,6 +4,7 @@ import Tkinter as tk
 import Pmw
 import os
 import re
+import time
 from tkFileDialog import asksaveasfile, askdirectory, askopenfile
 from tkSimpleDialog import askstring
 from tkColorChooser import askcolor
@@ -227,14 +228,25 @@ def dbckmotif(event):
 def export2ods():
     pass
 
+#Replaced this csv making function with my own
 def export2csv():
-    csv = ['PDB Entry,PDB Homologue,Motifs,Rank,Residues',
+    csv = ['PDB Entry,PDB Homologue,Motifs Found,Rank,Residues,,,, Motifs Not Found', #added Alg version and not found columns
         ',,,,Chain,Name,Number']
     motifs = glb.GUI.motifs['motifbox'].get(0,tk.END)
     pdbs = glb.GUI.motifs['hidmotif'].get(0,tk.END)
     lastpdb = None
-    motifl = 0
-    motifsl = len(motifs)
+    pdbMotifs = [] #motifs found for a given target
+    allMotifs = [] #will contain the names of all motifs being used
+    motifSet = glb.MOTIFS.getKeysUsed() #MODIFIED for subset of motifs
+    for item in motifSet:
+        if item == 'errors':
+            continue
+        allMotifs.append(item)
+    motifl = 0 #length of found motif list entered into csv
+    resl = 0 #non-motif lines
+    motifsl = len(motifs) #length of total found motif list to be entered
+    fillFrom = 2 #line at which motifs not found start to be entered
+    single = True #only one structure t/f
     while motifl < motifsl:
         try:
             motif = motifs[motifl].split('-')[1]
@@ -262,8 +274,22 @@ def export2csv():
                 s = csv[line].split(',')
                 csv[line] = '%s,%s,%s,%s,%s&%s,%s,%s'%(s[0],s[1],s[2],s[3],s[4],chain,s[5],s[6])
                 continue
+            resl += 1
             same[key] = len(csv)
             if lastpdb != pdb:
+                if lastpdb != None:
+                    pdbnfl = 0 #motifs not found entered for this structure
+                    pdbmnf = list(set(allMotifs) - set(pdbMotifs)) # motifs not found for this structure = all motifs - motifs found for this structure
+                    while pdbnfl < len(pdbmnf):  # Add motifs not found for this structure
+                        for line in range(fillFrom, len(csv)):
+                            if pdbnfl >= len(pdbmnf):
+                                break
+                            csv[line] += ',,%s'%(pdbmnf[pdbnfl])
+                            pdbnfl += 1
+                    fillFrom += resl
+                    resl = 0
+                    pdbMotifs = []
+                    single = False
                 csv.append('%s,%s,%s,[%s],%s,%s,%s'%(pdbstr,hom,motif,x,chain,resn,resi))
                 lastpdb = pdb
                 motifline = False
@@ -273,7 +299,19 @@ def export2csv():
                 motifline = False
                 continue
             csv.append(',,,,%s,%s,%s'%(chain,resn,resi))
+        if not motif in pdbMotifs:
+            pdbMotifs.append(motif)
         motifl += 1
+    pdbnfl = 0 #motifs not found entered for this structure
+    pdbmnf = list(set(allMotifs) - set(pdbMotifs)) # motifs not found for this structure = all motifs - motifs found for this structure
+    while pdbnfl < len(pdbmnf):  # Add motifs not found for this structure
+        for line in range(fillFrom, len(csv)):
+            if pdbnfl >= len(pdbmnf):
+                break
+            csv[line] += ',,%s'%(pdbmnf[pdbnfl])
+            pdbnfl += 1
+    csv.append('Precision Factor: %s'%(glb.GUI.motifs['delta'].get()))
+    csv.append('Algorithm Version: %s'%(glb.ALG_VERSION))
     csvfile = "\n".join(csv)
     csvhandle = asksaveasfile(initialfile='motiffinder.csv',defaultextension='.csv',
         filetypes=[('CSV','*.csv')],title='Export Motif Finder Results As...')
@@ -456,25 +494,32 @@ def motifchecker(setChoice):
         keys =[]#added from here
         if setChoice == 4:
             keys = glb.MOTIFS.keys() #gets all motifs that have been loaded in MOTIFS
+            setName = 'All'
         else:
             allKeys = glb.MOTIFS.keys() #gets all motifs that have been loaded in MOTIFS
             if setChoice == 1:
                 for key in allKeys:
                     if key[0] == 'P': #gets the motifs that begin with 'P'
                         keys.append(key)
+                        setName = 'P_Set'
             if setChoice == 2:
                 for key in allKeys:
                     if key[0] == 'J': #gets the motifs that begin with 'J'
                         keys.append(key)
+                        setName = 'J_Set'
             if setChoice == 3:
                 for key in allKeys:
                     if key[0] == 'N': #gets the motifs that begin with 'N'
                         keys.append(key)
+                        setName = 'N_Set'
             if setChoice == 5:
                 for key in allKeys:
                     if key[0] == 'U': #gets the motifs that begin with 'U'
-                        keys.append(key)           
+                        keys.append(key)
+                        setName = 'U_Set'
                         
+        glb.MOTIFS.setKeysUsed(keys) #Alex added
+        
         if len(keys) == 1: #there is only one user saved motif
             keysL=1
         else: #to here
@@ -534,11 +579,21 @@ def motifchecker(setChoice):
         lengtho = lengtho + len(foundso)
 
     #added from here:
-
-        csv = ['PDB Entry,PDB Homologue,Motifs,Rank,Residues',
+    #############
+    ##Fixed, just need to test.
+    #############
+        csv = ['PDB Entry,PDB Homologue,Motifs Found,Rank,Residues,,,, Motifs Not Found', #added Alg version and not found columns
         ',,,,Chain,Name,Number']
         motifs = foundso
+        allMotifs = []
+        pdbMotifs = []
+        motifSet = glb.MOTIFS.getKeysUsed() #MODIFIED for subset of motifs
+        for item in motifSet:
+            if item == 'errors':
+                continue
+            allMotifs.append(item)
         lastpdb = None
+        fillFrom = 2
         motifl = 0
         motifsl = len(motifs)
         while motifl < motifsl:
@@ -579,12 +634,28 @@ def motifchecker(setChoice):
                     motifline = False
                     continue
                 csv.append(',,,,%s,%s,%s'%(chain,resn,resi))
+            if not motif in pdbMotifs:
+                pdbMotifs.append(motif)
             motifl += 1
-            
+        pdbnfl = 0 #motifs not found entered for this structure
+        pdbmnf = list(set(allMotifs) - set(pdbMotifs)) # motifs not found for this structure = all motifs - motifs found for this structure
+        while pdbnfl < len(pdbmnf):  # Add motifs not found for this structure
+            for line in range(fillFrom, len(csv)):
+                if pdbnfl >= len(pdbmnf):
+                    break
+                csv[line] += ',,%s'%(pdbmnf[pdbnfl])
+                pdbnfl += 1
+        csv.append('Precision Factor: %s'%(glb.GUI.motifs['delta'].get()))
+        csv.append('Algorithm Version: %s'%(glb.ALG_VERSION))
+
         csvfile = "\n".join(csv)
-        csvhandle = open('motiffinder_%s.csv'%pdb, 'w') #opens different file each time through loop
-        csvhandle.write(csvfile) #writes to the open file
-        csvhandle.close()
+        stamp = time.ctime()
+        stamp = stamp.split()
+        stamp = stamp[1] + '_' + stamp[2] + '_' + stamp[4]
+        csvhandle = open(str(glb.OFFSITE) + '\\motiffinder_%s_%s_%s.csv'%(pdb, setName, stamp), 'w')
+        if csvhandle != None:
+            csvhandle.write(csvfile)
+            csvhandle.close()
 
      #to here. Automatically creates a file to store each pdb result
      # in the same format as the csv files.
