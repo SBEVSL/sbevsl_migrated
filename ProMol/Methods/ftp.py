@@ -7,7 +7,7 @@
 #
 #  RJ Bacon
 #
-#  February 14th, 2011
+#  May 8th, 2011
 #  
 #  =================
 
@@ -16,7 +16,7 @@ from ftplib import FTP
 from ftplib import all_errors
 import Tkinter as tk
 import tkMessageBox
-import re
+import sys
 
 #Create the ftp instance
 ftp = FTP()
@@ -44,12 +44,16 @@ def openftp(event = None):
 
 def ftpcd(event):
 
-    index = glb.GUI.motifs['ftplist'].curselection()[0]
-    ftp.cwd(glb.GUI.motifs['ftppath'].get() + glb.GUI.motifs['ftplist'].get(index) + '/')
-    glb.GUI.motifs['ftppath'].delete(0, tk.END)
-    glb.GUI.motifs['ftppath'].insert(tk.END, ftp.pwd() + '/')
-    glb.GUI.motifs['ftplist'].delete(0, tk.END)
-    ftp.retrlines('NLST', ftplistadd)
+    try:
+        index = glb.GUI.motifs['ftplist'].curselection()[0]
+    	ftp.cwd(glb.GUI.motifs['ftppath'].get() + glb.GUI.motifs['ftplist'].get(index) + '/')
+    	glb.GUI.motifs['ftppath'].delete(0, tk.END)
+    	glb.GUI.motifs['ftppath'].insert(tk.END, ftp.pwd() + '/')
+    	glb.GUI.motifs['ftplist'].delete(0, tk.END)
+    	ftp.retrlines('NLST', ftplistadd)
+    except IndexError:
+    	sys.exc_clear()
+    	#We just clear the exception and end the method as this is raised on a triple or missed click.
 
 
 def ftpup():
