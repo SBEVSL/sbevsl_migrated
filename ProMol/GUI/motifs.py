@@ -45,7 +45,7 @@ def initialise():
     glb.GUI.motifs['openfile'].grid(row=1, column=1)   
     
     #FTP GUI Code
-    glb.GUI.motifs['ftptxt'] = tk.Entry(group, state=tk.NORMAL, width=28)
+    glb.GUI.motifs['ftptxt'] = tk.Entry(group, state=tk.NORMAL, width=30)
     glb.GUI.motifs['ftptxt'].bind('<Return>', openftp)
     glb.GUI.motifs['ftptxt'].grid(row=2, column=0)
     glb.GUI.motifs['openftp'] = tk.Button(group, text ='Open FTP', command=openftp)
