@@ -25,7 +25,6 @@ ftp = FTP()
 #just add it to this listing
 filetypes = ['pdb', 'ent', 'cif']
 
-
 def ftplistadd(dirline):
     glb.GUI.motifs['ftplist'].insert(tk.END, dirline)
     	
@@ -38,6 +37,7 @@ def openftp(event = None):
     	ftp.login()
     except all_errors: 
     	tkMessageBox.showwarning("Error", "Could not connect to server.")
+    	return
     glb.GUI.motifs['ftppath'].insert(tk.END, ftp.pwd())
     glb.GUI.motifs['ftplist'].delete(0, tk.END)
     ftp.retrlines('NLST', ftplistadd)
@@ -72,7 +72,7 @@ def searchdirectory(directory, timeout = 200):
     	splits = loc.split(".")
     	for split in splits:
     		if split in filetypes:
-    			glb.GUI.motifs['multipdb'].insert(0.0, ", " + loc[3:7])
+    			glb.GUI.motifs['multipdb'].insert(0.0, ", " + splits.pop(0)[-4:])
     			break
     	else:
     		thisdir = directory + '/' + loc
