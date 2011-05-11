@@ -66,7 +66,11 @@ def ftpup():
 
 def searchdirectory(directory, timeout = 200):   
     
-    filetree = ftp.nlst(directory)
+    try:
+    	filetree = ftp.nlst(directory)
+    except ftplib.error_proto:
+    	tkMessageBox.showwarning("Error", "Improper response from server. Please try again.")
+    	return
     timeout = timeout
     for loc in filetree:
     	splits = loc.split(".")
