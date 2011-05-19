@@ -5,10 +5,10 @@ from pmg_tk.startup.ProMol.Methods.motif import *
 from pmg_tk.startup.ProMol.Methods.ftp import *
 Pmw.initialise()
 
+
 def initialise():
     group = tk.LabelFrame(glb.GUI.motifs['tab'], text='Motif Finder')
     group.grid(row=0, column=1, rowspan=4)
-    
     xscroll = tk.Scrollbar(group, orient=tk.HORIZONTAL)
     xscroll.grid(row=1, column=0, sticky=tk.E+tk.W)
     yscroll = tk.Scrollbar(group, orient=tk.VERTICAL)
@@ -20,6 +20,7 @@ def initialise():
     xscroll["command"] = glb.GUI.motifs['motifbox'].xview
     yscroll["command"] = glb.GUI.motifs['motifbox'].yview
     glb.GUI.motifs['motifbox'].bind('<Double-Button-1>',dbckmotif)
+   
     
     group = tk.LabelFrame(glb.GUI.motifs['tab'])
     group.grid(row=0, column=0)
@@ -30,27 +31,33 @@ def initialise():
     glb.GUI.motifs['overall'].grid(row=2,column=0,columnspan=2)
     glb.GUI.motifs['overallstatus'] = glb.ProgressBar(group,10,200,3,0,2)
     glb.GUI.motifs['findmotif'] = tk.Button(group, text ='Start', 
-        command=motifchecker)
+        command=setChoiceDialogBox)#start button now calls setChoiceDialogBox in motif.py
     glb.GUI.motifs['findmotif'].grid(row=4, column=0)
-    glb.GUI.motifs['cancelbutton'] = tk.Button(group, width=12, text='Cancel', command=motifcancel)
+    glb.GUI.motifs['cancelbutton'] = tk.Button(group, text='Cancel', command=motifcancel)
     glb.GUI.motifs['cancelbutton'].grid(row=4, column=1)
     glb.GUI.motifs['cancelbutton']['state'] = tk.DISABLED
+
+    # Creates, then hides, the root for the dialog box that allows user to
+    # choose a set of motifs to compare to  
+    glb.GUI.motifs['root'] = Toplevel(group)
+    glb.GUI.motifs['root'].title("Choose A Set")
+    glb.GUI.motifs['root'].minsize(200, 200)
+    glb.GUI.motifs['root'].withdraw()
+    glb.GUI.motifs['var'] = 0
     
     group = tk.LabelFrame(glb.GUI.motifs['tab'], text='PDB(s) to search\n(comma separated)')
     group.grid(row=1, column=0)
     glb.GUI.motifs['multipdb'] = tk.Text(group, state=tk.NORMAL, 
         width=28, height=4)
     glb.GUI.motifs['multipdb'].grid(row=1, column=0)
-    glb.GUI.motifs['openfile'] = tk.Button(group, text ='Open File', command=openfile)
-    glb.GUI.motifs['openfile'].grid(row=1, column=1)   
-    
+     
     #FTP GUI Code
-    glb.GUI.motifs['ftptxt'] = tk.Entry(group, state=tk.NORMAL, width=30)
+    glb.GUI.motifs['ftptxt'] = tk.Entry(group, state=tk.NORMAL, width=28)
     glb.GUI.motifs['ftptxt'].bind('<Return>', openftp)
     glb.GUI.motifs['ftptxt'].grid(row=2, column=0)
     glb.GUI.motifs['openftp'] = tk.Button(group, text ='Open FTP', command=openftp)
     glb.GUI.motifs['openftp'].grid(row=2, column=1)
-    glb.GUI.motifs['ftppath'] = tk.Entry(group, state=tk.NORMAL, width=25)
+    glb.GUI.motifs['ftppath'] = tk.Entry(group, state=tk.NORMAL, width=30)
     glb.GUI.motifs['ftppath'].grid(row=3, column=0)
     glb.GUI.motifs['up'] = tk.Button(group, text ='<--', command=ftpup)
     glb.GUI.motifs['up'].grid(row=3, column=1)
