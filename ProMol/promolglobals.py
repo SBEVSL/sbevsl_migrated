@@ -27,7 +27,7 @@ elif PLATFORM == 'Darwin':
         'ProMol')
 else:
     OFFSITE = os.path.join(HOME, '.sbevsl', 'ProMol')
-DIRS = ('User Motifs', )#changed folder name to User Motifs for clarity
+DIRS = ('UserMotifs', )#changed folder name to UserMotifs for clarity
 if not os.path.isdir(OFFSITE):
     os.makedirs(OFFSITE)
 for DIR in DIRS:
@@ -358,7 +358,7 @@ class PERSISTENT:
 
 MOTIFS = PERSISTENT('motifs')
 MOTIFSFOLDER = os.path.join(PROMOL_DIR_PATH, 'Motifs')
-USRMOTIFSFOLDER = os.path.join(OFFSITE, 'User Motifs')
+USRMOTIFSFOLDER = os.path.join(OFFSITE, 'UserMotifs')
 
 def motifstore(*args):
     MOTIFS.switchwriteback()#!!DO NOT REMOVE

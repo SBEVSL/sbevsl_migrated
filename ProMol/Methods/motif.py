@@ -519,8 +519,11 @@ def motifchecker(setChoice):
                         setName = 'U_Set'
                         
         glb.MOTIFS.setKeysUsed(keys) #Alex added
-        
-        if len(keys) == 1: #there is only one user saved motif
+        if len(keys) == 0:
+            keysL=0
+            lengtho =1 
+            break
+        elif len(keys) == 1: #there is only one user saved motif
             keysL=1
         else: #to here
             keysL = len(keys)-1
