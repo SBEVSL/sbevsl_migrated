@@ -90,13 +90,13 @@ order to get access to plugins.  You will also need to have the X window
 system installed.  This is included on your Mac OS install disc, but may
 not be installed by default.
 
-To install ProMOL, copy ProMol.py and the folder ProMOL into the correct
+To install ProMOL, copy ProMol.py and the folder ProMol into the correct
 place in the directory tree used by PyMOL for plugins.  For example, for
 PyMOL 1.4.1 under Microsoft Windows:
 
 C:\Program Files\PyMol\modules\pmg_tk\startup\
 
-On other systems you will need to find the portion of the pymol installation
+On other systems you will need to find the portion of the PyMOL installation
 tree that contains
 
 modules/pmg_tk/startup
@@ -113,7 +113,7 @@ However, we believe that this version of ProMOL may use features of the Python
 language that were introduced in 2.6, so it may not run with earlier versions.
 Furthermore, has only been tested on Python 2.7.x, and will not work with Python 3.
 
-For PyMol installed from the Ubuntu Software Center (it may be the same
+For PyMOL installed from the Ubuntu Software Center (it may be the same
 from source), ProMol.py and the ProMol folder can be placed under:
 
 /usr/lib/pymodules/python2.7/pmg_tk/startup
@@ -139,7 +139,7 @@ tab inside either ProMOL's Motifs folder or your UserMotifs folder.  You have be
 warned!
 
 - Motif finder searches tend to run significantly faster if, once the search is
-started, the user selects the PyMol Viewer window and presses Escape to switch
+started, the user selects the PyMOL Viewer window and presses Escape to switch
 into text mode.  To switch back, simply press Escape again.
 
 - Exporting CSV files via the user interface button for a search with no results
@@ -194,7 +194,7 @@ implementing more effective alignment strategies with the motif tool in ProMOL.
 
 The previous developers of ProMOL had incorporated a modified version of the
 PDB Loader Service plugin into promolglobals.py.  We have removed that code
-from ProMol in favor of launching the existing copy on the user's machine
+from ProMOL in favor of launching the existing copy on the user's machine
 that is distributed with PyMol, and using PyMOL's built-in functionality.
 The following notice was included with older versions of ProMOL, and may no
 longer be required, but we have included it for the sake of completeness.
@@ -237,7 +237,7 @@ Revision 144
 Modified Wednesday, July 20, 2011 by Cyprian Corwin and Greg Dodge
 Version 4.2rc1.  Many bug fixes, a few enhancements, and code cleanup
 based on Maddy's Revision 142.  For the full list, please see the file
-promol-changes-144.txt.
+promol-changes.txt.
 
 Revision 119
 Modified Tue Dec 7 by vinnyrose
