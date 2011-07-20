@@ -458,9 +458,7 @@ def chain_pull():
    g = chainPullLen+i
    cmd.mdo(g,'zoom all')
    util.mroll(g+1,g+171,1)
-cmd.extend('chain_pull',chain_pull)
-
-
+   
 cmd.extend('chain_pull', chain_pull)
 
 #movie controls
@@ -493,11 +491,16 @@ def cacheframe( r, state):
     else:
         cmd.set('cache_frames', '1')
 
-def loadframe(event):
-    file = askopenfilename(defaultextension=entfilex.get(), initialdir=glb.HOME)
-    if len(file)>0:
-        cmd.load(file, "mov", entl.get())
-    glb.GUI.movie_maker['tab'].mainloop()
+# loadframe isn't being used by anything except movie_maker which was removed.
+# There is a question as to whether calling askopenfilename without importing it
+# will fail.  Anyway, it references movie_maker, which is gone, so it would have
+# already failed in Maddy's version anyway.
+# Those reasons are why we commented it out.
+#def loadframe(event):
+#    file = askopenfilename(defaultextension=entfilex.get(), initialdir=glb.HOME)
+#    if len(file)>0:
+#        cmd.load(file, "mov", entl.get())
+#    glb.GUI.movie_maker['tab'].mainloop()
     
 def gotoframe(event):
     try:
