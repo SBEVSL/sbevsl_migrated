@@ -10,7 +10,7 @@ import random
 import platform
 from Tkinter import *
 
-VERSION = '4.2 Release Candidate 2'
+VERSION = '4.2'
 ALG_VERSION = '1.0' #added by Alex
 PLATFORM = platform.system()
 PROMOL_DIR_PATH = os.path.dirname(__file__)

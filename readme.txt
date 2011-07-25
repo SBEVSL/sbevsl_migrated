@@ -3,8 +3,8 @@ ProMOL (C) Copyright 2004-2011
 Charlie Westin, Brett Hanson & Paul Craig
 GPL, No Warranty
 
-4.2 Release Candidate 2 by Cyprian Corwin and Greg Dodge
-Wednesday, July 20, 2011
+4.2 by Cyprian Corwin and Greg Dodge
+Monday, July 25, 2011
 
 Based on Maddy's and Mario Rosa's versions
 
@@ -71,14 +71,14 @@ ProMOL can be downloaded in a compressed file format from
 http://sourceforge.net/projects/sbevsl/files
 
 You can choose to download either a .tar.gz compressed file
-(ProMOL-4.2rc2.tar.gz) or a zip compressed file
-(ProMOL-4.2rc2.zip). The way you expand the 
+(ProMOL-4.2.tar.gz) or a zip compressed file
+(ProMOL-4.2.zip). The way you expand the 
 file depends on your operating system.
 
 On Unix or Linux systems, or using MINGW under Windows you may unpack the
 tarball with
 
-gunzip < ProMOL-4.2rc2.tar.gz | tar xvf -
+gunzip < ProMOL-4.2.tar.gz | tar xvf -
 
 Windows and Macintosh systems may have a native application that will expand
 your .tar.gz or .zip files; if not you may wish to consider using Stuffit
@@ -123,7 +123,12 @@ ProMOL from the PyMOL plug-in menu.
 
 =========================================================================
 
-Tips for use:
+WARNING: While running a search with the Motif Finder, PLEASE DO NOT
+double-click in the results list of a previous search, or load, modify,
+manipulate, or clear any structures or named selections present in PyMOL.
+Doing so will likely lead to erroneous results!
+
+Other important notes and tips:
 
 - Motifs generated using the Motif Maker tab are stored the subfolder
 UserMotifs in the ProMOL application data directory.  This folder is usually
@@ -233,11 +238,18 @@ We believe it no longer applies to anything in ProMOL.
 =========================================================================
 
 Change log:
-Revision 144
-Modified Wednesday, July 20, 2011 by Cyprian Corwin and Greg Dodge
-Version 4.2rc1.  Many bug fixes, a few enhancements, and code cleanup
-based on Maddy's Revision 142.  For the full list, please see the file
-promol-changes.txt.
+Revision 149
+Modified Monday, July 25, 2011 by Cyprian Corwin and Greg Dodge
+Version 4.2.  Many bug fixes, a few enhancements, and code cleanup
+based on Maddy's Revision 142.  Major changes from 142 include a new,
+larger set of 440 motifs, removal of PERSISTENT database code,
+changes to the way PDB structures are fetched and the way
+the PDB Loader Service dialog is launched from within ProMOL, simplification of
+the way in which aligned matches are rendered and named (when double-clicking
+a result in Motif Finder), a fix for the issue preventing the creation of
+motifs for active sites containing alanine, and a fix for the hang that
+would formerly happen when a motif search returned zero results, among others.
+For the full list, please see the file promol-changes.txt.
 
 Revision 119
 Modified Tue Dec 7 by vinnyrose
