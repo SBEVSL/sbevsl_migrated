@@ -3,7 +3,7 @@
    Charlie Westin, Brett Hanson & Paul Craig
    GPL, No Warranty
 
-   Release 4.1 RC 1 by Mario Rosa, 13 September 2010
+   Release 4.1 RC 1 by Mario Rosa, 5 August 2010
    
 /*************************** GPL NOTICES ******************************
  *                                                                    *
