@@ -4,11 +4,14 @@ import Tkinter as tk
 import Pmw
 import os
 import re
-from tkFileDialog import asksaveasfile, askdirectory
+import time
+from tkFileDialog import asksaveasfile, askdirectory, askopenfile
 from tkSimpleDialog import askstring
 from tkColorChooser import askcolor
 from tkMessageBox import showinfo, showerror, askyesno
+from Tkinter import *
 from pmg_tk.startup.ProMol import promolglobals as glb
+
 
 #print dir(motcod)
 Pmw.initialise()
@@ -153,9 +156,7 @@ def MotifCaller(motif, camera=True):
         glb.update()
     try:
         if execfile(glb.MOTIFS[motif]['path']) != False:
-            if motif not in cmd.get_names('all'):
-                raise Warning
-            if cmd.count_atoms(motif) == 0:
+            if (motif not in cmd.get_names('all')) or (cmd.count_atoms(motif) == 0):
                 raise Warning
             if camera:
                 glb.procolor(motif, show_all='cartoon',color_all='gray')
@@ -177,62 +178,118 @@ def changecolor(event):
 
 def togglealign(event):
     if glb.GUI.motifs['align'].get() == 0:
-        glb.GUI.motifs['templatecolor']['relief'] = tk.SUNKEN
+        glb.GUI.motifs['querycolor']['relief'] = tk.SUNKEN
         glb.GUI.motifs['motifcolor']['relief'] = tk.SUNKEN
-        glb.GUI.motifs['templatecolor'].unbind("<ButtonRelease-1>")
+        glb.GUI.motifs['querycolor'].unbind("<ButtonRelease-1>")
         glb.GUI.motifs['motifcolor'].unbind("<ButtonRelease-1>")
     else:
-        glb.GUI.motifs['templatecolor']['relief'] = tk.RAISED
+        glb.GUI.motifs['querycolor']['relief'] = tk.RAISED
         glb.GUI.motifs['motifcolor']['relief'] = tk.RAISED
-        glb.GUI.motifs['templatecolor'].bind("<ButtonRelease-1>", changecolor)
+        glb.GUI.motifs['querycolor'].bind("<ButtonRelease-1>", changecolor)
         glb.GUI.motifs['motifcolor'].bind("<ButtonRelease-1>", changecolor)
 
-def dbckmotif(event):
+def doubleClickMotif(event):
     '''allows user to click on motif search field items
     and run the motif function'''
+    # motifString is raw result string listed in results box
+    # motifName is full name of motif found by ProMol
+    # However, the atoms in the selection with that name
+    # are actually on the query protein because that's
+    # what the motifs give us
+    # motifPDBCode is PDB code for motif found by ProMol
+    # The selection with that name is truly the result protein
+    # queryPDBCode is PDB code for query that yielded the result
+    # The selection with that name is truly the query protein
+    # motifSubsetName is the matching subset of the result protein motifPDBCode
+    # motifName is the matching subset of the query protein queryPDBCode
     motif = glb.GUI.motifs['motifbox'].curselection()[0]
-    tag = glb.GUI.motifs['motifbox'].get(motif).split('-')
-    tpdb = tag[1].split('_')[1]
-    pdb = glb.GUI.motifs['hidmotif'].get(motif)
+    motifString = glb.GUI.motifs['motifbox'].get(motif)
+    # The next three ifs added by Kip to prevent crash when double clicking header
+    # One might have sufficed unless something unexpected ends up in motifbox
+    if not motifString.startswith(' '):
+        return
+    tag = motifString.split('-')
+    if len(tag) != 2:
+        return
+    motifName = tag[1]
+    secondsplit = motifName.split('_')
+    if len(secondsplit) < 2:
+        return
+    motifPDBCode = secondsplit[1] # tpdb
+    queryPDBCode = glb.GUI.motifs['hidmotif'].get(motif) # pdb
     cmd.reinitialize()
-    if glb.GUI.motifs['align'].get() == 0 or tpdb == pdb:
-        glb.fetch(pdb)
-        if len(tag) == 2 and tag[1] in glb.MOTIFS:
-            MotifCaller(tag[1])
+    if glb.GUI.motifs['align'].get() == 0 or motifPDBCode == queryPDBCode:
+        cmd.fetch(queryPDBCode, async=0, path=glb.FETCH_PATH)
+        if motifName in glb.MOTIFS:
+            MotifCaller(motifName)
+            
+            querySubsetName = 'match_in_{0}'.format(queryPDBCode)
+            # Actually renames the query protein matching subset
+            # because the selection named after the motif contains the matching subset
+            # of atoms on the query protein given to us by the motif
+            cmd.select(querySubsetName, motifName)
         else:
             glb.update()
     else:      
-        if len(tag) == 2 and tag[1] in glb.MOTIFS:
-            tcl = glb.GUI.motifs['templatecolor']['bg']
-            mcl = glb.GUI.motifs['motifcolor']['bg']
-            glb.fetch(pdb)
-            MotifCaller(tag[1])
-            glb.fetch(tpdb)
-            glb.show_as('cartoon', tpdb)
-            cmd.select('Template', '%s and (%s)' % (tpdb,
-                glb.MOTIFS[tag[1]]['loci']))
-            cmd.show('sticks', 'Template')
-            cmd.color('white', 'Template')
-            cmd.align('Template', tag[1])
-            cmd.set_color('Template',
-                ([int(n, 16) for n in (tcl[1:3], tcl[3:5], tcl[5:7])]))
-            cmd.set_color('Motif',
-                ([int(n, 16) for n in (mcl[1:3], mcl[3:5], mcl[5:7])]))
-            cmd.color('Template', tpdb)
-            cmd.color('Motif', pdb)
-            cmd.orient('Template')
+        if motifName in glb.MOTIFS:
+            motifColor = glb.GUI.motifs['motifcolor']['bg']
+            queryColor = glb.GUI.motifs['querycolor']['bg']
+            cmd.fetch(queryPDBCode, async=0, path=glb.FETCH_PATH)
+            cmd.hide('everything', 'all')
+            
+            # Run the motif
+            MotifCaller(motifName)
+            
+            querySubsetName = 'match_in_{0}'.format(queryPDBCode)
+            # Actually renames the query protein matching subset
+            # because the selection named after the motif contains the matching subset
+            # of atoms on the query protein given to us by the motif
+            cmd.select(querySubsetName, motifName)
+            cmd.hide('everything', 'all')
+            cmd.fetch(motifPDBCode, async=0, path=glb.FETCH_PATH)
+            # Removed cartoon show command
+            # Create named subset of matching result protein atoms
+            motifSubsetName = 'match_in_{0}'.format(motifPDBCode)
+            cmd.select(motifSubsetName, '%s and (%s)' % (motifPDBCode,
+                glb.MOTIFS[motifName]['loci']))
+            # Do final display
+            cmd.hide('everything', 'all')
+            cmd.show('sticks', motifSubsetName)
+            cmd.show('sticks', querySubsetName)
+            # Removed ineffective cmd.color of matching subset
+            cmd.align(motifSubsetName, querySubsetName)
+            cmd.set_color('motifColor',
+                ([int(n, 16) for n in (motifColor[1:3], motifColor[3:5], motifColor[5:7])]))
+            cmd.set_color('queryColor',
+                ([int(n, 16) for n in (queryColor[1:3], queryColor[3:5], queryColor[5:7])]))
+            cmd.color('motifColor', motifPDBCode)
+            cmd.color('queryColor', queryPDBCode)
+            cmd.orient(motifSubsetName)
+            # Added by Kip to show both proteins in subsets
+            glb.populate()
 
 def export2ods():
     pass
 
+#Replaced this csv making function with my own
 def export2csv():
-    csv = ['PDB Entry,PDB Homologue,Motifs,Rank,Residues',
+    csv = ['PDB Entry,PDB Homologue,Motifs Found,Rank,Residues,,,, Motifs Not Found', #added Alg version and not found columns
         ',,,,Chain,Name,Number']
     motifs = glb.GUI.motifs['motifbox'].get(0,tk.END)
     pdbs = glb.GUI.motifs['hidmotif'].get(0,tk.END)
     lastpdb = None
-    motifl = 0
-    motifsl = len(motifs)
+    pdbMotifs = [] #motifs found for a given target
+    allMotifs = [] #will contain the names of all motifs being used
+    motifSet = glb.searchSet #MODIFIED for subset of motifs
+    for item in motifSet:
+        if item == 'errors':
+            continue
+        allMotifs.append(item)
+    motifl = 0 #length of found motif list entered into csv
+    resl = 0 #non-motif lines
+    motifsl = len(motifs) #length of total found motif list to be entered
+    fillFrom = 2 #line at which motifs not found start to be entered
+    single = True #only one structure t/f
     while motifl < motifsl:
         try:
             motif = motifs[motifl].split('-')[1]
@@ -260,8 +317,22 @@ def export2csv():
                 s = csv[line].split(',')
                 csv[line] = '%s,%s,%s,%s,%s&%s,%s,%s'%(s[0],s[1],s[2],s[3],s[4],chain,s[5],s[6])
                 continue
+            resl += 1
             same[key] = len(csv)
             if lastpdb != pdb:
+                if lastpdb != None:
+                    pdbnfl = 0 #motifs not found entered for this structure
+                    pdbmnf = list(set(allMotifs) - set(pdbMotifs)) # motifs not found for this structure = all motifs - motifs found for this structure
+                    while pdbnfl < len(pdbmnf):  # Add motifs not found for this structure
+                        for line in range(fillFrom, len(csv)):
+                            if pdbnfl >= len(pdbmnf):
+                                break
+                            csv[line] += ',,%s'%(pdbmnf[pdbnfl])
+                            pdbnfl += 1
+                    fillFrom += resl
+                    resl = 0
+                    pdbMotifs = []
+                    single = False
                 csv.append('%s,%s,%s,[%s],%s,%s,%s'%(pdbstr,hom,motif,x,chain,resn,resi))
                 lastpdb = pdb
                 motifline = False
@@ -271,18 +342,77 @@ def export2csv():
                 motifline = False
                 continue
             csv.append(',,,,%s,%s,%s'%(chain,resn,resi))
+        if not motif in pdbMotifs:
+            pdbMotifs.append(motif)
         motifl += 1
+    pdbnfl = 0 #motifs not found entered for this structure
+    pdbmnf = list(set(allMotifs) - set(pdbMotifs)) # motifs not found for this structure = all motifs - motifs found for this structure
+    while pdbnfl < len(pdbmnf):  # Add motifs not found for this structure
+        for line in range(fillFrom, len(csv)):
+            if pdbnfl >= len(pdbmnf):
+                break
+            csv[line] += ',,%s'%(pdbmnf[pdbnfl])
+            pdbnfl += 1
+    csv.append('Precision Factor: %s'%(glb.GUI.motifs['delta'].get()))
+    csv.append('Algorithm Version: %s'%(glb.ALG_VERSION))
     csvfile = "\n".join(csv)
-    csvhandle = asksaveasfile(initialfile='motiffinder.csv',defaultextension='.csv',
-        filetypes=[('CSV','*.csv')],title='Export Motif Finder Results As...')
-    if csvhandle != None:
+    with asksaveasfile(initialfile='motiffinder.csv',defaultextension='.csv',
+    filetypes=[('CSV','*.csv')],title='Export Motif Finder Results As...') as csvhandle:
         csvhandle.write(csvfile)
-        csvhandle.close()
 
 def motifcancel():
     glb.GUI.motifs['cancel'] = True
 
-def motifchecker():
+def storeSetChoice(): #stores button value, action of the select button
+    glb.GUI.motifs['root'].withdraw()
+    selectedSet = glb.GUI.motifs['var'].get()
+    motifchecker(selectedSet)
+
+def cancelSetChoice():#action of the cancel button
+    glb.GUI.motifs['root'].withdraw()
+    glb.GUI.motifs['findmotif']['state'] = tk.NORMAL
+
+def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when the user selects the start button in motif finder
+    pdbs = glb.GUI.motifs['multipdb'].get(1.0,'1.end').split(',')
+    pdbsl = len(pdbs)
+    if pdbsl == 1 and pdbs[0] == '':#moved from motifchecker
+        showerror('No PDB Entered',"Enter a PDB or a comma separated list of PDB's to search")
+        glb.GUI.motifs['delta']['state'] = tk.NORMAL
+        glb.GUI.motifs['findmotif']['state'] = tk.NORMAL
+        glb.GUI.motifs['multipdb']['state'] = tk.NORMAL
+        glb.GUI.motifs['cancelbutton']['state'] = tk.DISABLED
+        return False
+
+    glb.GUI.motifs['findmotif']['state'] = tk.DISABLED
+
+    for w in glb.GUI.motifs['root'].children.values():
+        w.destroy()
+   
+    glb.GUI.motifs['var'] = IntVar()
+    rb1 = Radiobutton(glb.GUI.motifs['root'], text="P set", variable = glb.GUI.motifs['var'], value = 1,  height = 2)
+    rb2 = Radiobutton(glb.GUI.motifs['root'], text="J set", variable = glb.GUI.motifs['var'], value = 2, height = 2)
+    #rb3 = Radiobutton(glb.GUI.motifs['root'], text="N set (NMR)", variable = glb.GUI.motifs['var'], value = 3, height = 2)
+    rb4 = Radiobutton(glb.GUI.motifs['root'], text="All Motifs", variable = glb.GUI.motifs['var'], value = 4, height = 2)
+    rb5 = Radiobutton(glb.GUI.motifs['root'], text="User Motifs", variable = glb.GUI.motifs['var'], value = 5, height = 2)
+
+    rb4.pack(anchor = W)
+    rb5.pack(anchor = W)
+    rb1.pack(anchor = W)
+    rb2.pack(anchor = W)
+    #rb3.pack(anchor = W)
+    
+    frame = Frame(glb.GUI.motifs['root'], width=200, height=250, bd=1)
+    frame.pack()
+    
+    selectButton = Button(frame, text='Select', command = storeSetChoice).pack()
+    cancelButton = Button(frame, text='Cancel', command = cancelSetChoice).pack()
+    glb.GUI.motifs['root'].update()
+    glb.GUI.motifs['root'].deiconify()
+    glb.GUI.motifs['root'].mainloop()
+
+
+          
+def motifchecker(setChoice):
     glb.GUI.motifs['cancel'] = False
     glb.GUI.motifs['motifbox'].delete(0,tk.END)
     glb.GUI.motifs['hidmotif'].delete(0,tk.END)
@@ -290,17 +420,9 @@ def motifchecker():
     glb.GUI.motifs['cancelbutton']['state'] = tk.NORMAL
     glb.GUI.motifs['delta']['state'] = tk.DISABLED
     glb.GUI.motifs['csv']['state'] = tk.DISABLED
-    glb.GUI.motifs['findmotif']['state'] = tk.DISABLED
     glb.GUI.motifs['multipdb']['state'] = tk.DISABLED
     pdbs = glb.GUI.motifs['multipdb'].get(1.0,'1.end').split(',')
     pdbsl = len(pdbs)
-    if pdbsl == 1 and pdbs[0] == '':
-        showerror('No PDB Entered',"Enter a PDB or a comma separated list of PDB's to search")
-        glb.GUI.motifs['delta']['state'] = tk.NORMAL
-        glb.GUI.motifs['findmotif']['state'] = tk.NORMAL
-        glb.GUI.motifs['multipdb']['state'] = tk.NORMAL
-        glb.GUI.motifs['cancelbutton']['state'] = tk.DISABLED
-        return False
     
     def LevenshteinDistance(x,y):
         w,h = len(x)+1,len(y)+1
@@ -322,27 +444,20 @@ def motifchecker():
     
     def count(motif,pdb):
         def createsubs(tup):
-            nn = 0
-            for c in tup:
-                if c in ('asp','glu','asn','gln','thr','ser'):
-                    nn += 1
-            if nn == 0:
-                return [None]
-            n = 2**nn
-            r = len(tup)
-            matrix = [[None]*r for i in range(n)]
-            ii = 0
-            for i in tup:
-                h = 2**(ii+1)               
-                if 's' in glb.AminoHashTable[i]:
-                    for g in range(n/h):
-                        for j in range(h):
-                            matrix[g+(j*(n/h))][ii] = j%2 and glb.AminoHashTable[i]['s'] or i
-                else:
-                    for g in range(n):
-                        matrix[g][ii] = i
-                ii += 1
+            matrix = [[]]
+            for acid in tup:
+                newMatrix = []
+                for subList in matrix:
+                    identical = subList[:] # Slice copy as shown on http://docs.python.org/tutorial/controlflow.html section 4.2
+                    identical.append(acid)
+                    newMatrix.append(identical)
+                    if 's' in glb.AminoHashTable[acid]:
+                        substituted = subList[:]
+                        substituted.append(glb.AminoHashTable[acid]['s'])
+                        newMatrix.append(substituted)
+                matrix = newMatrix
             return matrix
+            # End of nested function
 
         last = None
         ordered = []
@@ -395,72 +510,221 @@ def motifchecker():
         return glb.GUI.motifs['csvprep'][pdb][motif]['x']
 
     lasto = 0.0
-    founds = {}
-    foundso = []
+    
+    # Initialize the progress bars
+    # This call to update() may not be thread safe
+    
+    glb.GUI.motifs['single']['text'] = 'Searching... 0% Complete'
+    glb.GUI.motifs['overall']['text'] = 'Overall... 0% Complete'
+    glb.GUI.motifs['singlestatus'].SetProgressPercent(0.0)
+    glb.GUI.motifs['overallstatus'].SetProgressPercent(0.0)
+    glb.GUI.motifs['single'].update()
     for pdb in pdbs:
+        founds = {}
+        foundso = []
         pdb = pdb.strip()
-        if glb.GUI.motifs['cancel'] == True:
-            glb.GUI.motifs['single']['text'] = 'Click Start to begin'
-            glb.GUI.motifs['overall']['text'] = 'Cancelled... %.3s%% Complete'%baro
-            glb.GUI.motifs['single'].update()
-            break
         found = []
         last = 0.0
-        keys = glb.MOTIFS.keys()
-        keysL = len(keys)-1
+        keys = []
+        if setChoice == 4:
+            keys = glb.MOTIFS.keys() #gets all motifs that have been loaded in MOTIFS
+            setName = 'All'
+        else:
+            allKeys = glb.MOTIFS.keys() #gets all motifs that have been loaded in MOTIFS
+            if setChoice == 1:
+                for key in allKeys:
+                    if key[0] == 'P': #gets the motifs that begin with 'P'
+                        keys.append(key)
+                        setName = 'P_Set'
+            if setChoice == 2:
+                for key in allKeys:
+                    if key[0] == 'J': #gets the motifs that begin with 'J'
+                        keys.append(key)
+                        setName = 'J_Set'
+            if setChoice == 3:
+                for key in allKeys:
+                    if key[0] == 'N': #gets the motifs that begin with 'N'
+                        keys.append(key)
+                        setName = 'N_Set'
+            if setChoice == 5:
+                for key in allKeys:
+                    if key[0] == 'U': #gets the motifs that begin with 'U'
+                        keys.append(key)
+                        setName = 'U_Set'
+                        
+        glb.searchSet = keys #Alex added, modified by Kip
+        # I changed the following lines up to the break statement.  Hopefully it's right now. -Kip
+        keysL = len(keys)
+        if 'errors' in keys:
+            # Don't count it
+            keysL = keysL - 1
+        if keysL == 0:
+            break
         keysLo = keysL*len(pdbs)
         glb.GUI.motifs['csvprep'][pdb] = {}
         cmd.reinitialize()
-        fetchresult = glb.fetch(pdb,True)
-        if fetchresult != '':
-            founds[pdb] = ['    %s'%fetchresult]
+        cmd.fetch(pdb, async=0, path=glb.FETCH_PATH)
+        if (pdb not in cmd.get_names('all')) or (cmd.count_atoms(pdb) == 0):
+            founds[pdb] = ['Could not fetch {0}'.format(pdb)] # Apparently never used anyway
             lasto += keysL
             glb.GUI.motifs['singlestatus'].SetProgressPercent(100)
             glb.GUI.motifs['overallstatus'].SetProgressPercent((lasto/keysLo)*100)
             continue
         cmd.hide('everything', 'all')
         cmd.remove("all and hydro")
-        
+       
         for motif in keys:
+            # Check for cancellation and break out of inner loop
+            if glb.GUI.motifs['cancel']:
+                glb.GUI.motifs['single']['text'] = 'Click Start to begin'
+                glb.GUI.motifs['overall']['text'] = 'Cancelled... {0}% Complete'.format(int(baro))
+                break
+                
+            # List of motif loading errors is currently stored inside motif dictionary
             if motif == 'errors':
                 continue
-            last += 1
-            lasto += 1
-            bar = (last/keysL)*100
-            baro = (lasto/keysLo)*100
-            if glb.GUI.motifs['cancel'] == True:
-                break
-            if len(str(bar).split('.')[0]) < 3:
-                glb.GUI.motifs['single']['text'] = 'Searching... %.2s%% Complete'%(bar)
-            else:
-                glb.GUI.motifs['single']['text'] = '%.3s%% Complete'%(bar)
-            if len(str(baro).split('.')[0]) < 3:
-                glb.GUI.motifs['overall']['text'] = 'Overall... %.2s%% Complete'%(baro)
-            else:
-                glb.GUI.motifs['overall']['text'] = '%.3s%% Complete'%(baro)
-            glb.GUI.motifs['singlestatus'].SetProgressPercent(bar)
-            glb.GUI.motifs['overallstatus'].SetProgressPercent(baro)
-            glb.GUI.motifs['single'].update()
+            
+            # Determine whether or not we have a match
             if MotifCaller(motif,False):
                 x = count(motif,pdb)
                 if x != None:
                     motifStr = '    %s-%s'%(x,motif)
                     found.append(motifStr)
             cmd.delete(motif)
+            
+            # Update progress bars
+            # Calling update() on GUI widgets from here may not be thread safe
+            # We will try to fix as soon as possible
+            
+            last += 1
+            lasto += 1
+            bar = (last/keysL)*100
+            baro = (lasto/keysLo)*100
+            glb.GUI.motifs['single']['text'] = 'Searching... {0}% Complete'.format(int(bar))
+            glb.GUI.motifs['overall']['text'] = 'Overall... {0}% Complete'.format(int(baro))
+            glb.GUI.motifs['singlestatus'].SetProgressPercent(bar)
+            glb.GUI.motifs['overallstatus'].SetProgressPercent(baro)
+            glb.GUI.motifs['single'].update()
+
+        # If cancelled, break out of outer loop too
+        if glb.GUI.motifs['cancel']:
+            break
         found.sort()
         founds[pdb] = found
+
+        # This loop only iterates once per outer loop
+        # It is unnecessary and will be removed in the next major release
+        for f in founds:
+            foundso.extend([f])
+            foundso.extend(founds[f])
+
+        for foundo in foundso:
+            # pdb keeps track of the last query code in the list
+            # before the current indented results (foundo)
+            # pdb is the query that yielded the result foundo
+            if len(foundo) == 4:
+                pdb = foundo
+            glb.GUI.motifs['motifbox'].insert(tk.END,foundo)
+            glb.GUI.motifs['hidmotif'].insert(tk.END,pdb)
+
+        # Export CSV file automatically
+        # To-do: Combine this with the other CSV code and/or reimplement using Python's CSV library
+        csv = ['PDB Entry,PDB Homologue,Motifs Found,Rank,Residues,,,,Motifs Not Found', #added Alg version and not found columns
+        ',,,,Chain,Name,Number']
+        motifs = foundso
+        allMotifs = []
+        pdbMotifs = []
+        motifSet = glb.searchSet #MODIFIED for subset of motifs
+        for item in motifSet:
+            if item == 'errors':
+                continue
+            allMotifs.append(item)
+        lastpdb = None
+        fillFrom = 2
+        motifl = 0
+        motifsl = len(motifs)
+        while motifl < motifsl:
+            try:
+                motif = motifs[motifl].split('-')[1]
+            except IndexError:
+                motifl += 1
+                continue
+            
+            x = glb.GUI.motifs['csvprep'][pdb][motif]['x']
+            pf = glb.GUI.motifs['csvprep'][pdb][motif]['pf']
+            pdbstr = '%s@PF%s'%(pdb,pf)
+            if 'hom' in glb.GUI.motifs['csvprep'][pdb][motif]:
+                hom = '%s@PF%s'%(glb.GUI.motifs['csvprep'][pdb][motif]['hom'],pf)
+            else:
+                hom = ''
+            residues = glb.GUI.motifs['csvprep'][pdb][motif]['res']
+            same = {}
+            motifline = True
+            for residue in residues:
+                chain = residue[0]
+                resn = residue[1]
+                resi = residue[2]
+                key = '%s%s'%(resn,resi)
+                if key in same:
+                    line = same[key]
+                    s = csv[line].split(',')
+                    csv[line] = '%s,%s,%s,%s,%s&%s,%s,%s'%(s[0],s[1],s[2],s[3],s[4],chain,s[5],s[6])
+                    continue
+                same[key] = len(csv)
+                if lastpdb != pdb:
+                    csv.append('%s,%s,%s,[%s],%s,%s,%s'%(pdbstr,hom,motif,x,chain,resn,resi))
+                    lastpdb = pdb
+                    motifline = False
+                    continue
+                if motifline == True:
+                    csv.append(',,%s,[%s],%s,%s,%s'%(motif,x,chain,resn,resi))
+                    motifline = False
+                    continue
+                csv.append(',,,,%s,%s,%s'%(chain,resn,resi))
+            if not motif in pdbMotifs:
+                pdbMotifs.append(motif)
+            motifl += 1
+        # Fix for if there are absolutely no matches: make room for not found list
+        # Before I rewrote the bigger loop it created an infinite loop because pdbfnl
+        # (the not found list loop index) was never incremented, causing ProMol to hang
+        # because the inner lines for loop was never run (fillFrom and len(csv) were both 2)
+        # That for loop is now gone; now, without this while loop, it would cause
+        # an IndexError instead (csv[2] with csv of length 2) -Kip
+        notFoundList = list(set(allMotifs) - set(pdbMotifs)) # motifs not found for this structure = all motifs - motifs found for this structure
+        while len(csv) < fillFrom + min(20, len(notFoundList)):
+            csv.append(',,,,,,')
+        line = fillFrom
+        wrapped = False
+        for notFoundMotif in notFoundList: # Add motifs not found for this structure
+            if (line >= len(csv)): # Start over at the top
+                line = fillFrom
+                wrapped = True
+            if not wrapped:
+                csv[line] += ',' # Don't spread out the results to the right so much if they wrap
+            csv[line] += ',{0}'.format(notFoundMotif)
+            line += 1
+        csv.append('Precision Factor: %s'%(glb.GUI.motifs['delta'].get()))
+        csv.append('Algorithm Version: %s'%(glb.ALG_VERSION))
+
+        csvfile = "\n".join(csv)
+        stamp = time.ctime()
+        stamp = stamp.split()
+        stamp = stamp[1] + '_' + stamp[2] + '_' + stamp[4]
+        with open(os.path.join(glb.OFFSITE,'motiffinder_{0}_{1}_{2}.csv'.format(pdb, setName, stamp)), 'w') as csvhandle:
+            csvhandle.write(csvfile)
+
+    # I patched this code because lengtho - len(pdbs) was not returning the proper number of results.
+    # -Kip
+    numberOfResults = 0
+    for result in glb.GUI.motifs['motifbox'].get(0, tk.END):
+        if result.startswith(' '): # Motif results are indented
+           numberOfResults += 1
     
-    for f in founds:
-        foundso.extend([f])
-        foundso.extend(founds[f])
-    glb.GUI.motifs['single']['text'] = 'Click Start to begin'
-    glb.GUI.motifs['overall']['text'] = 'Motif Finder finished with %s results.'%(len(foundso)-len(pdbs))
+    if not glb.GUI.motifs['cancel']:
+        glb.GUI.motifs['single']['text'] = 'Click Start to begin'
+        glb.GUI.motifs['overall']['text'] = 'Motif Finder finished with {0} results.'.format(numberOfResults)
     cmd.orient('all')
-    for foundo in foundso:
-        if len(foundo) == 4:
-            pdb = foundo
-        glb.GUI.motifs['motifbox'].insert(tk.END,foundo)
-        glb.GUI.motifs['hidmotif'].insert(tk.END,pdb)
+    
     cmd.show('cartoon', 'all')
     cmd.color('gray', 'all')
     glb.GUI.motifs['csv']['state'] = tk.NORMAL
@@ -468,6 +732,7 @@ def motifchecker():
     glb.GUI.motifs['delta']['state'] = tk.NORMAL
     glb.GUI.motifs['multipdb']['state'] = tk.NORMAL
     glb.GUI.motifs['cancelbutton']['state'] = tk.DISABLED
+            
         
 def makemotif(mode):
     glb.GUI.motif_maker['file'] = None
@@ -520,7 +785,8 @@ def makemotif(mode):
     
     def release(event):
         pass
-    
+        
+  
     def write(string=None,**options):
         if string != None:
             glb.GUI.motif_maker['motif'].append(string)
@@ -529,18 +795,18 @@ def makemotif(mode):
                 glb.GUI.motif_maker['motif'] = []
             if mode == 1:
                 if os.path.exists(glb.pathmaker((name,'.py'),root=glb.USRMOTIFSFOLDER)) or os.path.exists(glb.pathmaker((name,'.py'),root=glb.MOTIFSFOLDER)):
-                    answer = askyesno('Motif Exist', 
+                    answer = askyesno('Motif Exists', 
                     'A motif has already been made for EC:%s on PDB:%s.\n'%(ec,pdb)+
                     'Are you sure you want to replace it?')
                     if answer == False:
-                        return False
+                         return False
                 glb.GUI.motif_maker['file'] = open(glb.pathmaker((name,'.py'),root=glb.USRMOTIFSFOLDER), 'wb')
             if mode == 2:
                 pref = askdirectory(initialdir=glb.HOME)
                 if os.access(pref,os.W_OK | os.X_OK):
                     if os.path.exists(glb.pathmaker('Motifs',(name,'.py'),root=pref)):
-                        answer = askyesno('Motif Exist', 
-                        'This file exist at this location.\n'+
+                        answer = askyesno('Motif Exists', 
+                        'This file exists at this location.\n'+
                         'Are you sure you want to replace it?')
                         if answer == False:
                             return False
@@ -552,7 +818,7 @@ def makemotif(mode):
             if mode == 4:
                 if glb.GUI.motif_maker['radio'].get() == 1:
                     cmd.reinitialize()
-                    glb.fetch(glb.GUI.motif_maker['testpdb'].get())
+                    cmd.fetch(glb.GUI.motif_maker['testpdb'].get(), async=0, path=glb.FETCH_PATH)
                     glb.update()
                 elif glb.GUI.motif_maker['radio'].get() == 2:
                     glb.randompdb()
@@ -566,12 +832,17 @@ def makemotif(mode):
                 cmd.orient(name)
                 cmd.deselect()
             else:
-                glb.GUI.motif_maker['file'].writelines(glb.GUI.motif_maker['motif'])
-                glb.GUI.motif_maker['file'].close()
-                if mode == 1:
-                    glb.motifstore(glb.USRMOTIFSFOLDER)
+                if glb.GUI.motif_maker['file'] != None:
+                    glb.GUI.motif_maker['file'].writelines(glb.GUI.motif_maker['motif'])
+                    glb.GUI.motif_maker['file'].close()
+                    if mode == 1:
+                        glb.loadMotifs(glb.USRMOTIFSFOLDER)
+                        
+                else:
+                    print 'No file written'
         return True
     
+                    
     def getlocistr():
         locistr = ''
         tmpdict = {}
@@ -608,7 +879,9 @@ def makemotif(mode):
             return None
         return addresn(newresn,y,z)
     
-    exceptions += '%s%s'%(glb.fetch(pdb,True),'\n')
+    cmd.fetch(pdb, async=0, path=glb.FETCH_PATH)
+    if (pdb not in cmd.get_names('all')) or (cmd.count_atoms(pdb) == 0):
+        exceptions += 'Could not fetch {0}'.format(pdb)
     glb.update()
     preecs = ecen.split(',')
     for preec in preecs:
@@ -752,7 +1025,7 @@ def makemotif(mode):
                 glb.GUI.motif_maker['cancel'].grid_remove()
             return True
         
-        name = 'P_%s_%s'%(pdb,ec)
+        name = 'U_%s_%s'%(pdb,ec)
         write("'''\n")
         write("FUNC:%s\n"%(name))
         write("PDB:%s\n"%(pdb))
@@ -764,7 +1037,7 @@ def makemotif(mode):
             return False
         atomlist = {}
         ### backbone off aka just side chains from beta carbon onwards
-        atomlist[0] = {'ala':('CB'),
+        atomlist[0] = {'ala':('CB',), # First comma added by Kip to make it a tuple
                        'arg':('CB','CG','CD','NE','CZ','NH1','NH2'),
                        'asn':('CB','CG','OD1','ND2'),
                        'asp':('CB','CG','OD1','OD2'),
@@ -923,7 +1196,7 @@ def makemotif(mode):
     
         if mode == 0:
             print '%s Amino Acid Motif `%s` Run\n'%(len(resnlist)-1,name)
-        if mode == 1:
-            print '%s Amino Acid Motif `%s` Saved To Motifs Folder\n'%(len(resnlist)-1,name)
+        if mode == 1:#changed to "Saved to User Motifs Folder"
+            print '%s Amino Acid Motif `%s` Saved To User Motifs Folder\n'%(len(resnlist)-1,name)
         if mode == 2:
             print '%s Amino Acid Motif `%s` Exported\n'%(len(resnlist)-1,name)

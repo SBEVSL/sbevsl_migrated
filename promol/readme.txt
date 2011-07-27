@@ -1,13 +1,12 @@
 README
-ProMOL
-assist in visualization and identification of small catalytic sites.
-ProMOL (C) Copyright 2004-2010
+ProMOL (C) Copyright 2004-2011
 Charlie Westin, Brett Hanson & Paul Craig
 GPL, No Warranty
 
-4.1 Release Candidate 1 by 
-Mario Rosa
-5 August 2010
+4.2 by Cyprian Corwin and Greg Dodge
+Monday, July 25, 2011
+
+Based on Maddy's and Mario Rosa's versions
 
 Special Thanks to the following for their contributions to ProMOL:
 Laura Grell, Chris Parkin, T.J. Esposito, C. Wischmeyer
@@ -39,8 +38,8 @@ necessarily represent the official views of the National Institute Of
 General Medical Sciences or the National Institutes of Health.
 
 The purpose of ProMOL is to assist in the visualization of protein structures
-in PyMOL. As well as assist in the identification of small catalytic site, and
-creation of catalytic site motifs.
+in PyMOL, as well as assist in the identification of small catalytic sites, and
+the creation of catalytic site motifs.
 
 =========================================================================
 
@@ -51,7 +50,7 @@ from
 
 http://sourceforge.net/projects/pymol/
 
-and is incorpoated into many unix releases.  PyMOL is also available in
+and is incorporated into many Unix releases.  PyMOL is also available in
 proprietary versions from
 
 http://www.pymol.org.  See that website for information on PyMOL licensing.
@@ -72,44 +71,85 @@ ProMOL can be downloaded in a compressed file format from
 http://sourceforge.net/projects/sbevsl/files
 
 You can choose to download either a .tar.gz compressed file
-(ProMOL-4.1rc1.tar.gz as of September 15, 2010) or a zip compressed file
-(ProMOL-4.1rc1.zip as of September 15, 2010.). The way you expand the 
+(ProMOL-4.2.tar.gz) or a zip compressed file
+(ProMOL-4.2.zip). The way you expand the 
 file depends on your operating system.
 
-In unix or linux systems, or using MINGW under windows you may unpack the
+On Unix or Linux systems, or using MINGW under Windows you may unpack the
 tarball with
 
-gunzip < ProMOL-4.1rc1.tar.gz | tar xvf -
+gunzip < ProMOL-4.2.tar.gz | tar xvf -
 
 Windows and Macintosh systems may have a native application that will expand
 your .tar.gz or .zip files; if not you may wish to consider using Stuffit
 Expander or WinZip.
 
-If you have not already done so, first install PyMOL. Under Macintosh OSX 
+If you have not already done so, first install PyMOL. Under Mac OS X 
 you may need to rename the MacPymol application to MacPymolX11Hybrid, in
-order to get access to plugins.  
+order to get access to plugins.  You will also need to have the X window
+system installed.  This is included on your Mac OS install disc, but may
+not be installed by default.
 
-To install ProMol.py, copy ProMol.py and the folder ProMol into the correct
+To install ProMOL, copy ProMol.py and the folder ProMol into the correct
 place in the directory tree used by PyMOL for plugins.  For example, for
-PyMOL 0.99 under MS windows:
+PyMOL 1.4.1 under Microsoft Windows:
 
-C:\Program Files\DeLano Scientific\pymol\modules\pmg_tk\startup\
+C:\Program Files\PyMol\modules\pmg_tk\startup\
 
-On other systems you will need to find the portion of the pymol installation
+On other systems you will need to find the portion of the PyMOL installation
 tree that contains
 
 modules/pmg_tk/startup
 
 and place ProMol.py and the folder ProMol in the startup folder.
 For example in a fink PyMOL installation for python 2.4, 2.5 or 2.6 under
-Macintosh OSX, the ProMol.py file and ProMol folder belongs under
+Mac OS X, the ProMol.py file and ProMol folder belongs under
 
 /sw/lib/pymol-py24/modules/pmg_tk/startup or
 /sw/lib/pymol-py25/modules/pmg_tk/startup or
 /sw/lib/pymol-py26/modules/pmg_tk/startup
 
+However, we believe that this version of ProMOL may use features of the Python
+language that were introduced in 2.6, so it may not run with earlier versions.
+Furthermore, has only been tested on Python 2.7.x, and will not work with Python 3.
+
+For PyMOL installed from the Ubuntu Software Center (it may be the same
+from source), ProMol.py and the ProMol folder can be placed under:
+
+/usr/lib/pymodules/python2.7/pmg_tk/startup
+
 When all files are in place, the ProMOL interface can be run by choosing
 ProMOL from the PyMOL plug-in menu.
+
+=========================================================================
+
+WARNING: While running a search with the Motif Finder, PLEASE DO NOT
+double-click in the results list of a previous search, or load, modify,
+manipulate, or clear any structures or named selections present in PyMOL.
+Doing so will likely lead to erroneous results!
+
+Other important notes and tips:
+
+- Motifs generated using the Motif Maker tab are stored the subfolder
+UserMotifs in the ProMOL application data directory.  This folder is usually
+located in the following places:
+
+Windows: %AppData%/SBEVSL/ProMol/
+(On Windows 7, %AppData% may be located at C:\Users\[User Name]\AppData\Roaming)
+Mac OS X/Darwin: ~/Library/Application Support/SBEVSL/ProMol
+Other platforms, including Ubuntu: ~/.sbevsl/ProMol
+
+- Do not install motifs obtained from any source except SBEVSL or your Motif Maker
+tab inside either ProMOL's Motifs folder or your UserMotifs folder.  You have been
+warned!
+
+- Motif finder searches tend to run significantly faster if, once the search is
+started, the user selects the PyMOL Viewer window and presses Escape to switch
+into text mode.  To switch back, simply press Escape again.
+
+- Exporting CSV files via the user interface button for a search with no results
+will cause ProMOL to hang.  As a workaround, check the CSV file generated for each
+search located in your application data directory (see above).
 
 =========================================================================
 
@@ -154,35 +194,104 @@ categories will be presented and compared, along with suggestions for
 implementing more effective alignment strategies with the motif tool in ProMOL.
 
 =========================================================================
+[Update by current developers: there are 440 motifs as of July 20, 2011.]
+=========================================================================
 
-ChangeLog:
+The previous developers of ProMOL had incorporated a modified version of the
+PDB Loader Service plugin into promolglobals.py.  We have removed that code
+from ProMOL in favor of launching the existing copy on the user's machine
+that is distributed with PyMol, and using PyMOL's built-in functionality.
+The following notice was included with older versions of ProMOL, and may no
+longer be required, but we have included it for the sake of completeness.
+We believe it no longer applies to anything in ProMOL.
 
-Revision 116
-Modified Sat Sep 11 03:50:24 2010 UTC (4 days, 15 hours ago) by vinnyrose
-File length: 3070 byte(s)
+# Copyright Notice
+# ================
+# 
+# The PyMOL Plugin source code [below this point] is copyrighted, but you can
+# freely use and copy it as long as you don't change or remove any of
+# the copyright notices.
+# 
+# ----------------------------------------------------------------------
+# This PyMOL Plugin is Copyright (C) 2004 by Charles Moad <cmoad@indiana.edu>
+# 
+#                        All Rights Reserved
+# 
+# Permission to use, copy, modify, distribute, and distribute modified
+# versions of this software and its documentation for any purpose and
+# without fee is hereby granted, provided that the above copyright
+# notice appear in all copies and that both the copyright notice and
+# this permission notice appear in supporting documentation, and that
+# the name(s) of the author(s) not be used in advertising or publicity
+# pertaining to distribution of the software without specific, written
+# prior permission.
+# 
+# THE AUTHOR(S) DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+# INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.  IN
+# NO EVENT SHALL THE AUTHOR(S) BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+# CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+# USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+# OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+# PERFORMANCE OF THIS SOFTWARE.
+# ----------------------------------------------------------------------
 
-Most changes are in the hidden tabs. The PDB entries for the random pdb are 
-now in a database instead of a txt file. Got rid of remote_pdb_load file and 
-incorporated it into globals.  In general trying to get rid of PMW where 
-possible.
+=========================================================================
+
+Change log:
+Revision 149
+Modified Monday, July 25, 2011 by Cyprian Corwin and Greg Dodge
+Version 4.2.  Many bug fixes, a few enhancements, and code cleanup
+based on Maddy's Revision 142.  Major changes from 142 include a new,
+larger set of 440 motifs, removal of PERSISTENT database code,
+changes to the way PDB structures are fetched and the way
+the PDB Loader Service dialog is launched from within ProMOL, simplification of
+the way in which aligned matches are rendered and named (when double-clicking
+a result in Motif Finder), a fix for the issue preventing the creation of
+motifs for active sites containing alanine, and a fix for the hang that
+would formerly happen when a motif search returned zero results, among others.
+For the full list, please see the file promol-changes.txt.
+
+Revision 119
+Modified Tue Dec 7 by vinnyrose
+Version 4.1rc2. Minor backwards compatibility fix. Updated readme.
+
+Revision 115
+Modified Thu Aug 5 by vinnyrose 
+Version 4.1rc1. Added and alignment option in the motif finder. [Turn alignment
+on and double click on a motif in the result box to see the alignment of the
+template pdb to the test pdb. The color of each may be specified by clicking on
+the color boxes adjacent to "template color" and "motif color". These boxes are
+only clickable if alignment is clicked on. The alignment box does not have to be
+clicked on prior to starting a test, but it does need to be clicked on prior to
+double clicking a result if you want the alignment to appear. You cannot align a
+PDB with itself.] Many sorts have been changed to be faster and to have
+backwards and forwards compatibility. All motifs have been changed to include a
+LOCI attribute which includes information on where the residues were located in
+the original template pdb. The motif maker has been updated to include the LOCI
+attribute. The color functions have been changed to make the custom colors more
+optimized and to avoid conflicting colors. global.show_as function added to
+compensate for cmd.as being changed to cmd.show_as due to reservation of 'as' in
+python 2.6. More reliable and faster finding of chains in global.update
+function.
 
 Revision 110
-Modified Tue Jul 20 18:47:53 2010 UTC (2 weeks, 1 day ago) by vinnyrose 
+Modified Tue Jul 20 by vinnyrose 
 Fetch falls back to non-compressed on zlib error. Thanks button removed.
 
 Revision 109 
-Modified Wed Jul 14 02:15:09 2010 UTC (15 hours, 24 minutes ago) by yaya-hjb 
+Modified Wed Jul 14 by yaya-hjb 
 
 Add actual authors on copyright line.
 Add gpl.txt
 Needs a readme. -- HJB
+
 Revision 107 
-Modified Tue Jul 13 19:52:53 2010 UTC (21 hours, 59 minutes ago) by vinnyrose 
+Modified Tue Jul 13 by vinnyrose 
 
 System dependent bug fix.
 
 Revision 105 
-Modified Tue Jul 13 19:13:49 2010 UTC (22 hours, 26 minutes ago) by vinnyrose 
+Modified Tue Jul 13 by vinnyrose 
 
 ProMol
 Changed persistent storage. Changed gui dictionary to a class object. Several 
@@ -193,12 +302,12 @@ ConSCRIPT
 Some small fixes. 2.0rc4.1
 
 Revision 98 
-Modified Tue Jul 6 20:00:26 2010 UTC (7 days, 21 hours ago) by yaya-hjb 
+Modified Tue Jul 6 by yaya-hjb 
 
 Raise rc number to 3.2 -- HJB
 
 Revision 94 
-Modified Tue Jun 29 19:55:13 2010 UTC (2 weeks ago) by vinnyrose 
+Modified Tue Jun 29 by vinnyrose 
 
 ConSCRIPT select function fixed. Many changes made to the structure of the code 
 including making the class truly classified. Before all the functions were in 
@@ -210,12 +319,12 @@ motif files is needed when this is all distributed. Version changed to 3.6.2.
 Version 4.0 candidate 3.2
 
 Revision 93 
-Modified Fri Jun 25 14:23:54 2010 UTC (2 weeks, 5 days ago) by vinnyrose 
+Modified Fri Jun 25 by vinnyrose 
 
 Some small bug fixes. Version changed to 3.6.1. Version 4.0 candidate 3.1.
 
 Revision 92 
-Modified Tue Jun 22 20:32:46 2010 UTC (3 weeks ago) by vinnyrose 
+Modified Tue Jun 22 by vinnyrose 
 
 Some small bug fixes. Updated the motif finder to support batch processing.
 Motif maker has the capablity to change the order of the motifs being made.
@@ -225,14 +334,14 @@ Pmw has been replace by tkinter functions in many places.
 Version changed to 3.06. Version 4.0 candidate 3.
 
 Revision 88 
-Modified Fri Jun 11 18:32:01 2010 UTC (4 weeks, 4 days ago) by vinnyrose 
+Modified Fri Jun 11 by vinnyrose 
 
 Added all the motifs made so far. Created error reporting on motif loading.
 Changed welcome screen. All pdb's entered into motif maker will be lowercased.
 4.0 release candidate 2. (3.05)
 
 Revision 87 
-Modified Thu Jun 10 15:12:33 2010 UTC (4 weeks, 6 days ago) by vinnyrose 
+Modified Thu Jun 10 by vinnyrose 
 
 Several changes. The motif maker has some bug fixes, as well as the ability to
 check against homologs and random pdb's. The motif finder uses a levenshtein
@@ -243,25 +352,25 @@ it searches through every permutation of residues in cases where that is
 applicable. Version changed to 3.04. Version 4.0 candidate.
 
 Revision 86 
-Modified Mon Mar 22 01:10:22 2010 UTC (3 months, 3 weeks ago) by vinnyrose 
+Modified Mon Mar 22 by vinnyrose 
 
 Residues are capital insensitive in motif maker, multiple ec numbers can be
 entered separated by a comma. The motifs are going through the last steps to
 transfer them to individual files.
 
 Revision 85 
-Modified Sun Mar 21 17:47:34 2010 UTC (3 months, 3 weeks ago) by vinnyrose 
+Modified Sun Mar 21 by vinnyrose 
 
 Some small changes, and preparing the motifs to be separated into individual 
 files
 
 Revision 83 
-Modified Wed Mar 17 15:38:55 2010 UTC (3 months, 3 weeks ago) by vinnyrose 
+Modified Wed Mar 17 by vinnyrose 
 
 More changes to the motif maker.
 
 Revision 82 
-Modified Wed Mar 17 02:44:19 2010 UTC (3 months, 4 weeks ago) by vinnyrose 
+Modified Wed Mar 17 by vinnyrose 
 
 Changes to ConSCRIPT to make it compatible with Linux.
 
@@ -274,46 +383,46 @@ Changed the GUI in many areas.
 Deleted many motifs that don't seem to have a use right now. 
 
 Revision 81 
-Modified Tue Feb 16 19:57:50 2010 UTC (4 months, 3 weeks ago) by vinnyrose 
+Modified Tue Feb 16 by vinnyrose 
 
 Remove reference to batch motif.
 
 Revision 74 
-Modified Wed Feb 3 04:33:32 2010 UTC (5 months, 1 week ago) by vinnyrose 
+Modified Wed Feb 3 by vinnyrose 
 
 Temporarily commented out some tabs.
 
 Revision 73 
-Modified Mon Feb 1 22:33:21 2010 UTC (5 months, 1 week ago) by vinnyrose 
+Modified Mon Feb 1 by vinnyrose 
 
 Moved remote_pdb_load into the Promol_dir as well as make a few changes in the
 code. Made the motif finder faster.
 
 Revision 65 
-Modified Tue Jan 26 00:22:39 2010 UTC (5 months, 2 weeks ago) by vinnyrose 
+Modified Tue Jan 26 by vinnyrose 
 
 Jess templates are done. Motif finder reworked. Random PDB finder is working
 again.
 
 Revision 63 
-Modified Thu Jan 7 22:57:36 2010 UTC (6 months ago) by vinnyrose 
+Modified Thu Jan 7 by vinnyrose 
 
 Hooking stuff onto the new organization. Most Motif related functions have been
 hooked on.
 
 Revision 62 
-Modified Thu Dec 24 23:08:05 2009 UTC (6 months, 2 weeks ago) by vinnyrose 
+Modified Thu Dec 24 by vinnyrose 
 
 Made lots of organizational changes. Stable but with many bugs.
 
 Revision 60 
-Modified Tue Dec 15 04:18:52 2009 UTC (6 months, 4 weeks ago) by vinnyrose 
+Modified Tue Dec 15 by vinnyrose 
 
 Made changes to the built-in motifs. No functionality changes, just making
 things prettier. Still unstable, latest stable in 57.
 
 Revision 59 
-Modified Mon Dec 14 20:03:31 2009 UTC (6 months, 4 weeks ago) by vinnyrose 
+Modified Mon Dec 14 by vinnyrose 
 
 This revision is absolutely positively unstable, DO NOT USE IT!
 
@@ -334,12 +443,12 @@ Much of the indentation is not correct due an attempt to standardize.
 Indentations will be fixed in a future revision.
 
 Revision 58 
-Modified Mon Dec 14 19:55:47 2009 UTC (6 months, 4 weeks ago) by vinnyrose 
+Modified Mon Dec 14 by vinnyrose 
 
 ~/Desktop/commit.rtf
 
 Revision 57 
-Modified Thu Jul 9 22:22:54 2009 UTC (12 months ago) by vinnyrose 
+Modified Thu Jul 9 by vinnyrose 
 
 the make motif function can now handle between 2 and 10 residue motifs and is
 much faster. The make motif window can now handle empty rows. Amino acid list
@@ -348,7 +457,7 @@ list of amino acids three letter codes. And made global list of alphabetical
 letters.
 
 Revision 55 
-Modified Fri Jun 12 18:47:45 2009 UTC (13 months ago) by vinnyrose 
+Modified Fri Jun 12 by vinnyrose 
 
 Revisions made to makemotif fuction:
 This revision is able to build a motif for active sites that have repeating
@@ -357,12 +466,12 @@ and the motifs that are built now have a smaller file size. The while loops
 were improved and variable names were changed. -MROSA
 
 Revision 40 
-Modified Tue Jul 22 02:03:43 2008 UTC (23 months, 3 weeks ago) by yaya-hjb 
+Modified Tue Jul 22 by yaya-hjb 
 
 Correct spacing garbled on last upload -- HJB
 
 Revision 39 
-Modified Wed Jul 16 01:26:36 2008 UTC (23 months, 4 weeks ago) by yaya-hjb 
+Modified Wed Jul 16 by yaya-hjb 
 
 This update allows users to use commands that were once only available
 in ProMOL in the command line as well as scripts (as long as
@@ -370,13 +479,13 @@ ProMOL itself is open).  See ProMOL_README.txt.
 Mod by C. Wischmeyer. -- HJB
 
 Revision 36 
-Modified Wed Jun 25 14:27:11 2008 UTC (2 years ago) by yaya-hjb 
+Modified Wed Jun 25 by yaya-hjb 
 
 Mods by Corey Wischmeyer introducing commands for ProMol ops
 See the sbevsl wiki on sourceforge for details.
 
 Revision 34 
-Added Wed Jun 11 17:37:10 2008 UTC (2 years, 1 month ago) by yaya-hjb 
+Added Wed Jun 11 by yaya-hjb 
 Copied from: trunk/promol/ProMOL_302.py revision 33
 Remove version from name of ProMol.py, update to 303 with
 batch motifier.  Mods by Corey Wischmeyer. -- HJB
