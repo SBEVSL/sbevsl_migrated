@@ -10,13 +10,18 @@ import random
 import platform
 from Tkinter import *
 
-VERSION = '4.2'
+VERSION = '4.2.5 (development)'
 ALG_VERSION = '1.0' #added by Alex
 PLATFORM = platform.system()
 PROMOL_DIR_PATH = os.path.dirname(__file__)
 MASTERFILE_URL = 'ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_entry_type.txt' # For random PDB selection
 MOTIFS = {} # Empty dictionary to replace shelve-based database
 searchSet = [] # Replaces MOTIFS' keysUsed, actually a list
+# hidmotif used to be a list box containing the query PDB associated with a result
+# Now I am using a list of tuples containing the PDB entry and the result
+# and calling it matchpairs: format is (query, result) for results and (query, query)
+# for headers
+matchpairs = []
 
 try:
     HOME = os.environ['HOME']
@@ -43,6 +48,7 @@ GUI = PROMOLGUI()
 SELE = 'All'
 NEWCOLOR = 0
 def incnewcolor():
+    global NEWCOLOR
     tmp = NEWCOLOR
     NEWCOLOR += 1
     return tmp
@@ -505,20 +511,27 @@ def set_selection(tag='all'):
     GUI.view['advanced_selection'].set(tag)
     SELE = tag
            
-class ProgressBar:
-    def __init__(self, Parent, Height=10, Width=100, Row=0, Column=0, Span=1,
-                 ForegroundColor="black", BackgroundColor=None):
-        self.Height=Height
-        self.Width=Width
-        self.BarCanvas = tk.Canvas(Parent,
-            width=Width, height=Height,
-            background=BackgroundColor, borderwidth=1,
-            relief=tk.SUNKEN)
-        self.BarCanvas.grid(row=Row, column=Column, columnspan=Span, padx=5,
-            pady=2)
-        self.RectangleID=self.BarCanvas.create_rectangle(0, 0, 0, Height,
-            fill=ForegroundColor)
-    def SetProgressPercent(self, NewLevel):
-        self.BarCanvas.coords(self.RectangleID, 0, 0,
-            (max(0, min(100, math.floor(NewLevel)))/100.0)*self.Width,
-            self.Height)
+class ScalableProgressBar:
+    def __init__(self, parent):
+        self.widget = tk.Frame(parent)
+        self.leftPortion = tk.Label(self.widget, background='black')
+        self.rightPortion = tk.Label(self.widget, background='white')
+        self.leftPortion.grid(row=0, column=0, sticky=tk.N+tk.E+tk.S+tk.W)
+        self.rightPortion.grid(row=0, column=1, sticky=tk.N+tk.E+tk.S+tk.W)
+        self.setProgressPercent(0)
+    def getWidget(self):
+        return self.widget
+    def setProgressPercent(self, newLevel):
+        # Don't let either weight be zero
+        # Weights will go from 1 to 99,999
+        multiplier = 1000
+        
+        maxWeight = multiplier * 100
+        leftWeight = int(newLevel * multiplier)
+        someOfEach = (0 < leftWeight < maxWeight)
+        self.widget.columnconfigure(0, weight=leftWeight if someOfEach else 1)
+        self.widget.columnconfigure(1, weight=maxWeight - leftWeight if someOfEach else 1)
+        self.leftPortion.configure(background = 'black' if leftWeight > 0 else 'white')
+        self.rightPortion.configure(background = 'white' if leftWeight < maxWeight else 'black')
+    def SetProgressPercent(self, newLevel):
+        self.setProgressPercent(newLevel)

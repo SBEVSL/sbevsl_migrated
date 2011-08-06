@@ -93,8 +93,8 @@ def color_sel(tag):
     elif tag == 'Other':
         color = askcolor(title = "Selection Color Chooser")
         clr = str(color[1])
-        newcolor = 'newcolor%s' % glb.incnewcolor()
-        if clr != None:
+        if clr != 'None':
+            newcolor = 'newcolor%s' % glb.incnewcolor()
             cmd.set_color(newcolor,
                 ([int(n, 16) for n in (clr[1:3], clr[3:5], clr[5:7])]))
             cmd.color(newcolor, glb.SELE)

@@ -3,10 +3,11 @@ ProMOL (C) Copyright 2004-2011
 Charlie Westin, Brett Hanson & Paul Craig
 GPL, No Warranty
 
-4.2 by Cyprian Corwin and Greg Dodge
-Monday, July 25, 2011
+4.2.5 by Cyprian Corwin
+Friday, August 5, 2011
 
-Based on Maddy's and Mario Rosa's versions
+Based on 4.2 by Cyprian Corwin and Greg Dodge,
+based on Maddy's and Mario Rosa's versions
 
 Special Thanks to the following for their contributions to ProMOL:
 Laura Grell, Chris Parkin, T.J. Esposito, C. Wischmeyer
@@ -40,6 +41,14 @@ General Medical Sciences or the National Institutes of Health.
 The purpose of ProMOL is to assist in the visualization of protein structures
 in PyMOL, as well as assist in the identification of small catalytic sites, and
 the creation of catalytic site motifs.
+
+=========================================================================
+
+This is an internal development version of ProMOL.  Some things may be
+better than before, but some features may be removed, broken, or missing.
+See the change log below for further details on what was changed.
+In addition, the installation instructions below may need to be modified
+in order to work (for example, to reflect the new archive's filename).
 
 =========================================================================
 
@@ -147,8 +156,8 @@ warned!
 started, the user selects the PyMOL Viewer window and presses Escape to switch
 into text mode.  To switch back, simply press Escape again.
 
-- Exporting CSV files via the user interface button for a search with no results
-will cause ProMOL to hang.  As a workaround, check the CSV file generated for each
+- Exporting CSV files via the user interface button is not currently possible.
+As a workaround, check the CSV file generated for each
 search located in your application data directory (see above).
 
 =========================================================================
@@ -238,6 +247,66 @@ We believe it no longer applies to anything in ProMOL.
 =========================================================================
 
 Change log:
+Revision 152
+Modified Friday, August 5, 2011 by Cyprian Corwin
+Version 4.2.5 (development version).
+
+The good:
+- Removed the use of hidmotif, a GUI list box widget that
+  the program was using to store data but never
+  displaying.  Replaced with a more appropriate list of tuples
+  called matchpairs.
+- Fixed broken 'Other' selection in Color pop up menu in Automated
+  Commands section of EZ-Viz.  (Added global statement.)
+- On a related note, fixed error being thrown if Cancel was clicked in the
+  resulting color chooser.
+- Comprehensive graphical user interface refresh.  Includes a new, redesigned
+  welcome tab that can show both motif loading errors and about information at
+  once, completely rewritten progress bars in Motif Finder, a new scroll bar
+  on the PDB entry box, automatic resizing of the entire UI when the window
+  size changes, a more consolidated testing UI on Motif Maker, the ability to
+  set colors for matching residues as shown by the Motif Finder (with Show
+  Alignment unchecked) and the Motif Maker, and various other changes.
+- Changed text above Motif Finder progress bars to be more useful.
+- Deleted broken canvas-based re-ordering feature in Motif Maker.  Will replace
+  with something simpler soon.
+- Now highlight relevant areas of the cartoon in Motif Maker and when not
+  showing alignment on the Motif Finder.
+- Possibly, the query and motif color wells in the Tools area of Motif Finder
+  were disabled and enabled when the Show Alignment check box's state was
+  the opposite of what it should be, on Windows.  Discovered the problem when
+  tweaking that area of the UI; fixed by passing togglealign as the command
+  argument to the check box constructor, rather than binding it to a button
+  release event as was being done.  It seems that the order these events fire
+  may be platform-dependent, and togglealign was seeing the old value of the
+  variable just before it changed on Windows 7.
+- Removed duplicate CSV exporting code in preparation for combining the
+  automatic per-query version and the explicit per-run export.
+- Now, the CSVs generated automatically by the Motif Finder have the list
+  of motifs not found (on the right) appear in a predictable, stable order
+  (it is now sorted).
+- Removed redundant inner loop from Motif Finder that only ever iterated once
+  per outer loop.  This was a part of the matchpairs change described in the
+  first point above.
+- Refactored Motif Maker functionality, which was a single long function
+  with multiple execution paths.  It has its own class now, with the
+  functionality split up into methods.  Because parts of the original function
+  depended on variables defined earlier, in other parts that are now in other
+  methods, some instance fields were used to preserve those variables' scope.
+  It's not pretty, but I think it's better than what was there.
+- Now, the name of the selection returned by the motif (and named after it)
+  is deleted, in favor of transitioning to the more user-friendly 'match in'
+  selection names.  I don't know for sure whether anything else might depend
+  on that selection being there, but I don't think so.
+- Removed message of the day file.  It was redundant and did not function as
+  I think it was originally intended, and also created another place that
+  required an up-to-date version number.
+
+The bad:
+- The CSV export buttons on the Motif Finder GUI are currently broken, as I
+  am preparing to refactor the CSV code.  Automatic CSV generation still
+  works, however.
+
 Revision 149
 Modified Monday, July 25, 2011 by Cyprian Corwin and Greg Dodge
 Version 4.2.  Many bug fixes, a few enhancements, and code cleanup
