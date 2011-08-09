@@ -10,6 +10,7 @@ from tkSimpleDialog import askstring
 from tkColorChooser import askcolor
 from tkMessageBox import showinfo, showerror, askyesno
 from Tkinter import *
+import Tkinter as tk
 from pmg_tk.startup.ProMol import promolglobals as glb
 
 
@@ -802,7 +803,42 @@ class MotifMaker:
         except KeyError:
             return None
         return self.addresn(newresn,y,z)
+        
+    # Row reordering functionality
+    def updateMoveButtonState(self):
+        glb.GUI.motif_maker['moveup'].configure(state = (tk.NORMAL if glb.GUI.motif_maker['selection'].get() > 1 else tk.DISABLED))
+        glb.GUI.motif_maker['movedown'].configure(state = (tk.NORMAL if glb.GUI.motif_maker['selection'].get() < 10 else tk.DISABLED))
 
+    def moveRow(self, up):
+        startingRow = glb.GUI.motif_maker['selection'].get()
+        tempResn = glb.GUI.motif_maker['resn'][startingRow].get()
+        tempChain = glb.GUI.motif_maker['chain'][startingRow].get()
+        tempResi = glb.GUI.motif_maker['resi'][startingRow].get()
+        tempBone = glb.GUI.motif_maker['backbone'][startingRow].get()
+        swapRow = startingRow - 1 if up else startingRow + 1
+        glb.GUI.motif_maker['resn'][startingRow].delete(0, tk.END)
+        glb.GUI.motif_maker['chain'][startingRow].delete(0, tk.END)
+        glb.GUI.motif_maker['resi'][startingRow].delete(0, tk.END)
+        
+        glb.GUI.motif_maker['resn'][startingRow].insert(tk.END, glb.GUI.motif_maker['resn'][swapRow].get())
+        glb.GUI.motif_maker['chain'][startingRow].insert(tk.END, glb.GUI.motif_maker['chain'][swapRow].get())
+        glb.GUI.motif_maker['resi'][startingRow].insert(tk.END, glb.GUI.motif_maker['resi'][swapRow].get())
+        if tempBone != glb.GUI.motif_maker['backbone'][swapRow].get():
+			glb.GUI.motif_maker['backbone'][startingRow].invoke('buttonup')
+        
+        glb.GUI.motif_maker['resn'][swapRow].delete(0, tk.END)
+        glb.GUI.motif_maker['chain'][swapRow].delete(0, tk.END)
+        glb.GUI.motif_maker['resi'][swapRow].delete(0, tk.END)
+        
+        glb.GUI.motif_maker['resn'][swapRow].insert(tk.END, tempResn)
+        glb.GUI.motif_maker['chain'][swapRow].insert(tk.END, tempChain)
+        glb.GUI.motif_maker['resi'][swapRow].insert(tk.END, tempResi)
+        if tempBone != glb.GUI.motif_maker['backbone'][swapRow].get():
+            glb.GUI.motif_maker['backbone'][swapRow].invoke('buttonup')
+            
+        glb.GUI.motif_maker['selection'].set(swapRow)
+        self.updateMoveButtonState()
+        
     # Depends on doCommonSetup() already being called
     # Returns false if input was bad
     def validateInput(self):
