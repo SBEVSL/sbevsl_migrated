@@ -9,8 +9,8 @@ import linecache
 import random
 import platform
 from Tkinter import *
+from pmg_tk.startup.ProMol.version import VERSION
 
-VERSION = '4.2.6 (development)'
 ALG_VERSION = '1.0' #added by Alex
 PLATFORM = platform.system()
 PROMOL_DIR_PATH = os.path.dirname(__file__)

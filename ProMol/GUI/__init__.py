@@ -37,7 +37,7 @@ def __init__(pymol):
             ProMol.withdraw()
     
     ProMol = tk.Toplevel()
-    ProMol.minsize(420, 420)
+    ProMol.minsize(430, 420)
     ProMol.title('ProMOL %s'%(glb.VERSION))
     
     buttons = ('Open PDB', 'Fetch PDB', 'Random PDB', 'Clear', 'Help')

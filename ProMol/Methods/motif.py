@@ -679,16 +679,20 @@ class MotifMaker:
     # replaces makemotif(3)
     def clear(self):
         self.doCommonSetup()
+        self.resetRows()
+        glb.GUI.motif_maker['pf'].delete(0,tk.END)
+        glb.GUI.motif_maker['pf'].insert(0,'2.00')
+        glb.GUI.motif_maker['pdb'].delete(0,tk.END)
+        glb.GUI.motif_maker['ec'].delete(0,tk.END)
+
+        
+    def resetRows(self):
         for i in range(1,11):
             glb.GUI.motif_maker['resn'][i].delete(0,tk.END)
             glb.GUI.motif_maker['resi'][i].delete(0,tk.END)
             glb.GUI.motif_maker['chain'][i].delete(0,tk.END)
             if glb.GUI.motif_maker['backbone'][i].get() == 'On':
                 glb.GUI.motif_maker['backbone'][i].invoke('buttonup')
-        glb.GUI.motif_maker['pdb'].delete(0,tk.END)
-        glb.GUI.motif_maker['ec'].delete(0,tk.END)
-        glb.GUI.motif_maker['pf'].delete(0,tk.END)
-        glb.GUI.motif_maker['pf'].insert(0,'2.00')
         
     # replaces write(string != None)
     def buildMotif(self, string):
@@ -920,6 +924,27 @@ class MotifMaker:
             for key in keys:
                 residueorder.append(residuecounts[key])
             print residueorder
+            
+            # I hope this is what the order means
+            # I take it residueorder[newRowIndex] = oldRowIndex
+            # The reordering calculation code above was added by a previous
+            # developer
+            newList = []
+            for oldRowIndex in residueorder:
+                currentRow = {}
+                for field in ('resn', 'chain', 'resi', 'backbone'):
+                    currentRow[field] = glb.GUI.motif_maker[field][oldRowIndex].get()
+                newList.append(currentRow)
+            
+            self.resetRows()
+            
+            for newRowIndex in range(len(newList)):
+                currentRow = newList[newRowIndex]
+                for field in ('resn', 'chain', 'resi'):
+                    glb.GUI.motif_maker[field][newRowIndex + 1].delete(0, tk.END)
+                    glb.GUI.motif_maker[field][newRowIndex + 1].insert(tk.END, currentRow[field])
+                if currentRow['backbone'] != glb.GUI.motif_maker['backbone'][newRowIndex + 1].get():
+                    glb.GUI.motif_maker['backbone'][newRowIndex + 1].invoke('buttonup')
         
     # Replaces makemotif(0) and makemotif(4)
     def testMotif(self):

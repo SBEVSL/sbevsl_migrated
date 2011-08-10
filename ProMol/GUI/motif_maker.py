@@ -9,70 +9,75 @@ def initialise():
     glb.GUI.motif_maker['maker'] = tk.LabelFrame(glb.GUI.motif_maker['tab'], text='Motif Maker')
     glb.GUI.motif_maker['maker'].grid(row=0, column=0, sticky=tk.N+tk.E+tk.S+tk.W)
     
-    lpdb = tk.Label(glb.GUI.motif_maker['maker'], text='PDB:')
-    lpdb.grid(row=0, column=0, sticky=tk.E)
+    headerFrame = tk.Frame(glb.GUI.motif_maker['maker'])
+    bodyFrame = tk.Frame(glb.GUI.motif_maker['maker'])
     
-    glb.GUI.motif_maker['pdb'] = tk.Entry(glb.GUI.motif_maker['maker'], width=4)
-    glb.GUI.motif_maker['pdb'].grid(row=0, column=1, sticky=tk.E+tk.W)
+    lpdb = tk.Label(headerFrame, text='PDB:')
+    lpdb.pack(side=tk.LEFT)
     
-    lec = tk.Label(glb.GUI.motif_maker['maker'], text='EC #:')
-    lec.grid(row=0, column=2, sticky=tk.E)
+    glb.GUI.motif_maker['pdb'] = tk.Entry(headerFrame, width=10)
+    glb.GUI.motif_maker['pdb'].pack(side=tk.LEFT)
     
-    glb.GUI.motif_maker['ec'] = tk.Entry(glb.GUI.motif_maker['maker'], width=10)
-    glb.GUI.motif_maker['ec'].grid(row=0, column=3, columnspan=2, sticky=tk.E+tk.W)
+    lec = tk.Label(headerFrame, text='     EC #:')
+    lec.pack(side=tk.LEFT)
     
-    labrange = tk.Label(glb.GUI.motif_maker['maker'], text='Tolerance:')
-    labrange.grid(row=0, column=5,columnspan=2, sticky=tk.E)
-
-    glb.GUI.motif_maker['pf'] = tk.Spinbox(glb.GUI.motif_maker['maker'],width=4,increment="0.01",from_="0.01",
-        to="4.00",bg="#ffffff")
-    ballrange = Pmw.Balloon(glb.GUI.motif_maker['maker'])
+    glb.GUI.motif_maker['ec'] = tk.Entry(headerFrame, width=10)
+    glb.GUI.motif_maker['ec'].pack(side=tk.LEFT)
+    
+    glb.GUI.motif_maker['pf'] = tk.Spinbox(headerFrame,increment="0.01",from_="0.01",
+        to="4.00",bg="#ffffff", width=4)
+    ballrange = Pmw.Balloon(headerFrame)
     ballrange.bind(glb.GUI.motif_maker['pf'], 'Changes precision of motif definition\nby expanding the search radii.\n(Default is 2)')
-    glb.GUI.motif_maker['pf'].grid(row=0, column=7, sticky=tk.W)
+    glb.GUI.motif_maker['pf'].pack(side=tk.RIGHT)
     glb.GUI.motif_maker['pf'].delete(0,tk.END)
     glb.GUI.motif_maker['pf'].insert(0,'2.00')
     
+    labrange = tk.Label(headerFrame, text='Tolerance:')
+    labrange.pack(side=tk.RIGHT)
+    
+    headerFrame.grid(row=0, column=0, sticky=tk.N+tk.E+tk.W)
     
     glb.GUI.motif_maker['guinames'] = ('resn','resi','backbone',
         'chain', 'selector')
     for name in glb.GUI.motif_maker['guinames']:
         glb.GUI.motif_maker[name] = {}
     
-    glb.GUI.motif_maker['maker'].rowconfigure(0, weight=1)
+    glb.GUI.motif_maker['maker'].rowconfigure(1, weight=1)
+    glb.GUI.motif_maker['maker'].columnconfigure(0, weight=1)
+    
     glb.GUI.motif_maker['selection'] = tk.IntVar()
     
     for i in range(1,11):
-        glb.GUI.motif_maker['maker'].rowconfigure(i, weight=1)
-        glb.GUI.motif_maker['selector'][i] = tk.Radiobutton(glb.GUI.motif_maker['maker'],
+        bodyFrame.rowconfigure(i, weight=1)
+        glb.GUI.motif_maker['selector'][i] = tk.Radiobutton(bodyFrame, text='{0} Residue:'.format(i),
             variable=glb.GUI.motif_maker['selection'], value=i, command=lambda:MotifMaker().updateMoveButtonState())
-        glb.GUI.motif_maker['selector'][i].grid(row=i, column=0, sticky=tk.E)
+        glb.GUI.motif_maker['selector'][i].grid(row=i, column=0, sticky=tk.W)
+                
+        glb.GUI.motif_maker['resn'][i] = tk.Entry(bodyFrame, width=1)
+        glb.GUI.motif_maker['resn'][i].grid(row=i, column=1, sticky=tk.E+tk.W)
         
-        tk.Label(glb.GUI.motif_maker['maker'], text='%s Residue:'%(i)).grid(row=i, column=1, sticky=tk.E)
+        tk.Label(bodyFrame, text='Chain:').grid(row=i, column=2, sticky=tk.E)
         
-        glb.GUI.motif_maker['resn'][i] = tk.Entry(glb.GUI.motif_maker['maker'], width=8)
-        glb.GUI.motif_maker['resn'][i].grid(row=i, column=2, sticky=tk.E+tk.W)
-        
-        tk.Label(glb.GUI.motif_maker['maker'], text='Chain:').grid(row=i, column=3, sticky=tk.E)
-        
-        glb.GUI.motif_maker['chain'][i] = tk.Entry(glb.GUI.motif_maker['maker'], width=2)
-        glb.GUI.motif_maker['chain'][i].grid(row=i, column=4, sticky=tk.E+tk.W)
+        glb.GUI.motif_maker['chain'][i] = tk.Entry(bodyFrame, width=1)
+        glb.GUI.motif_maker['chain'][i].grid(row=i, column=3, sticky=tk.E+tk.W)
     
-        tk.Label(glb.GUI.motif_maker['maker'], text='Number:').grid(row=i, column=5, sticky=tk.E)
+        tk.Label(bodyFrame, text='Number:').grid(row=i, column=4, sticky=tk.E)
         
-        glb.GUI.motif_maker['resi'][i] = tk.Entry(glb.GUI.motif_maker['maker'], width=5)
-        glb.GUI.motif_maker['resi'][i].grid(row=i, column=6, sticky=tk.E+tk.W)
+        glb.GUI.motif_maker['resi'][i] = tk.Entry(bodyFrame, width=1)
+        glb.GUI.motif_maker['resi'][i].grid(row=i, column=5, sticky=tk.E+tk.W)
         
-        tk.Label(glb.GUI.motif_maker['maker'], text='Backbone:').grid(row=i, column=7, sticky=tk.E)
+        tk.Label(bodyFrame, text='Backbone:').grid(row=i, column=6, sticky=tk.E)
         
-        glb.GUI.motif_maker['backbone'][i] = tk.Spinbox(glb.GUI.motif_maker['maker'],values=('Off','On'),width=3,
-            wrap=True,state='readonly',readonlybackground='#ffffff')
-        glb.GUI.motif_maker['backbone'][i].grid(row=i, column=8, sticky=tk.W)
+        glb.GUI.motif_maker['backbone'][i] = tk.Spinbox(bodyFrame,values=('Off','On'),
+            wrap=True,state='readonly',readonlybackground='#ffffff', width=3)
+        glb.GUI.motif_maker['backbone'][i].grid(row=i, column=7, sticky=tk.W)
         
         # Deleted canvas
-    
-    glb.GUI.motif_maker['maker'].columnconfigure(2, weight=1)
-    glb.GUI.motif_maker['maker'].columnconfigure(4, weight=1)
-    glb.GUI.motif_maker['maker'].columnconfigure(6, weight=1)
+
+    bodyFrame.columnconfigure(1, weight=3)
+    bodyFrame.columnconfigure(3, weight=2)
+    bodyFrame.columnconfigure(5, weight=3)
+    bodyFrame.grid(row=1, column=0, sticky=tk.N+tk.E+tk.S+tk.W)
     
     # I know this should really use a singleton Motif Maker, but the MM refactor was kind of quick and dirty
     # It's better, but not perfect, so it still acts procedural
@@ -80,22 +85,25 @@ def initialise():
     # That way, any errors that don't show up the first time won't show up later
     
     buttonFrame = tk.Frame(glb.GUI.motif_maker['maker'])
-    buttonFrame.grid(row=11, column=0, columnspan=9, sticky=tk.S+tk.E+tk.W)
-    
-    glb.GUI.motif_maker['clear'] = tk.Button(buttonFrame, text='Clear',command=lambda:MotifMaker().clear())
-    glb.GUI.motif_maker['clear'].pack(side=tk.LEFT)
+    buttonFrame.grid(row=2, column=0, sticky=tk.S+tk.E+tk.W)
     
     glb.GUI.motif_maker['moveup'] = tk.Button(buttonFrame, text='Move Up', command=lambda:MotifMaker().moveRow(up=True), state=tk.DISABLED)
     glb.GUI.motif_maker['moveup'].pack(side=tk.LEFT)
     
     glb.GUI.motif_maker['movedown'] = tk.Button(buttonFrame, text='Move Down', command=lambda:MotifMaker().moveRow(up=False), state=tk.DISABLED)
     glb.GUI.motif_maker['movedown'].pack(side=tk.LEFT)
+    
+    glb.GUI.motif_maker['recommend'] = tk.Button(buttonFrame, text='Optimize', command=lambda:MotifMaker().recommendOrder())
+    glb.GUI.motif_maker['recommend'].pack(side=tk.LEFT)
 
     glb.GUI.motif_maker['save'] = tk.Button(buttonFrame, text= 'Save', command=lambda:MotifMaker().saveMotif())
     glb.GUI.motif_maker['save'].pack(side=tk.RIGHT)
     
     glb.GUI.motif_maker['export'] = tk.Button(buttonFrame, text= 'Export', command=lambda:MotifMaker().exportMotif())
     glb.GUI.motif_maker['export'].pack(side=tk.RIGHT)
+    
+    glb.GUI.motif_maker['clear'] = tk.Button(buttonFrame, text='Clear', command=lambda:MotifMaker().clear())
+    glb.GUI.motif_maker['clear'].pack(side=tk.RIGHT)
     
     group = tk.LabelFrame(glb.GUI.motif_maker['tab'], text='Testing')
     group.grid(row=1, column=0, sticky=tk.E+tk.S+tk.W)
