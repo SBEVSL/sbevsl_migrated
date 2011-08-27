@@ -63,16 +63,15 @@ def initialise():
     group.columnconfigure(0, weight=1)
     group.rowconfigure(1, weight=1)
         
-    group = tk.LabelFrame(glb.GUI.motifs['tab'], text='Export results to CSV')
+    group = tk.LabelFrame(glb.GUI.motifs['tab'], text='CSV Export')
     group.grid(row=2, column=0)
-    glb.GUI.motifs['exportall'] = tk.Button(group, text ='All',
-        command=exportCSVAll, state=tk.DISABLED)
-    glb.GUI.motifs['exportall'].grid(row = 0, column = 0)
-    glb.GUI.motifs['exportselected'] = tk.Button(group, text='Selected',
-        command=exportCSVSelected, state=tk.DISABLED)
-    glb.GUI.motifs['exportselected'].grid(row=0, column=1)
+    glb.GUI.motifs['viewexisting'] = tk.Button(group, text ='Show Individual Results',
+        command=viewExistingCSV)
+    glb.GUI.motifs['viewexisting'].grid(row = 0, column = 0)
+    glb.GUI.motifs['combine'] = tk.Button(group, text='Export Combined Results',
+        command=combineCSV, state=tk.DISABLED)
+    glb.GUI.motifs['combine'].grid(row=1, column=0)
     group.columnconfigure(0, weight=1)
-    group.columnconfigure(1, weight=1)
     
     group = tk.LabelFrame(glb.GUI.motifs['tab'], text='Tools')
     group.grid(row=3, column=0)

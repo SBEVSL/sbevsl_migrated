@@ -5,6 +5,7 @@ import Pmw
 import os
 import re
 import time
+import subprocess
 from tkFileDialog import asksaveasfile, askdirectory, askopenfile
 from tkSimpleDialog import askstring
 from tkColorChooser import askcolor
@@ -281,10 +282,32 @@ def doubleClickMotif(event):
 def export2ods():
     pass
 
-def exportCSVAll():
-    pass
+def viewExistingCSV():
+    if (glb.PLATFORM == 'Windows'):
+        try:
+            os.startfile(os.path.normpath(os.path.relpath(glb.CSV_PATH)))
+        finally:
+            pass
+    elif (glb.PLATFORM == 'Darwin'):
+        try:
+            subprocess.call(['open', glb.CSV_PATH])
+        finally:
+            pass
+    else:
+        try:
+            # I learned about xdg-open from having to configure my SVN client
+            # to open files in their default editor (the RapidSVN documentation)
+            subprocess.call(['xdg-open', glb.CSV_PATH])
+        except OSError:
+            try:
+                subprocess.call(['gnome-open', glb.CSV_PATH])
+            except OSError:
+                try:
+                    subprocess.call(['nautilus', '--no-default-window', '--no-desktop', glb.CSV_PATH])
+                finally:
+                    pass
     
-def exportCSVSelected():
+def combineCSV():
     pass
 
 def motifcancel():
@@ -346,8 +369,7 @@ def motifchecker(setChoice):
     glb.GUI.motifs['csvprep'] = {}
     glb.GUI.motifs['cancelbutton']['state'] = tk.NORMAL
     glb.GUI.motifs['delta']['state'] = tk.DISABLED
-    glb.GUI.motifs['exportall']['state'] = tk.DISABLED
-    glb.GUI.motifs['exportselected']['state'] = tk.DISABLED
+    glb.GUI.motifs['combine']['state'] = tk.DISABLED
     glb.GUI.motifs['multipdb']['state'] = tk.DISABLED
     pdbs = glb.GUI.motifs['multipdb'].get(1.0,'1.end').split(',')
     pdbsl = len(pdbs)
@@ -621,7 +643,7 @@ def motifchecker(setChoice):
         stamp = time.ctime()
         stamp = stamp.split()
         stamp = stamp[1] + '_' + stamp[2] + '_' + stamp[4]
-        with open(os.path.join(glb.OFFSITE,'motiffinder_{0}_{1}_{2}.csv'.format(pdb, setName, stamp)), 'w') as csvhandle:
+        with open(os.path.join(glb.CSV_PATH,'motiffinder_{0}_{1}_{2}.csv'.format(pdb, setName, stamp)), 'w') as csvhandle:
             csvhandle.write(csvfile)
 
     # I patched this code because lengtho - len(pdbs) was not returning the proper number of results.
@@ -639,8 +661,7 @@ def motifchecker(setChoice):
     
     cmd.show('cartoon', 'all')
     cmd.color('gray', 'all')
-    glb.GUI.motifs['exportall']['state'] = tk.NORMAL
-    glb.GUI.motifs['exportselected']['state'] = tk.NORMAL
+    glb.GUI.motifs['combine']['state'] = tk.NORMAL
     glb.GUI.motifs['findmotif']['state'] = tk.NORMAL
     glb.GUI.motifs['delta']['state'] = tk.NORMAL
     glb.GUI.motifs['multipdb']['state'] = tk.NORMAL
@@ -828,7 +849,7 @@ class MotifMaker:
         glb.GUI.motif_maker['chain'][startingRow].insert(tk.END, glb.GUI.motif_maker['chain'][swapRow].get())
         glb.GUI.motif_maker['resi'][startingRow].insert(tk.END, glb.GUI.motif_maker['resi'][swapRow].get())
         if tempBone != glb.GUI.motif_maker['backbone'][swapRow].get():
-			glb.GUI.motif_maker['backbone'][startingRow].invoke('buttonup')
+            glb.GUI.motif_maker['backbone'][startingRow].invoke('buttonup')
         
         glb.GUI.motif_maker['resn'][swapRow].delete(0, tk.END)
         glb.GUI.motif_maker['chain'][swapRow].delete(0, tk.END)

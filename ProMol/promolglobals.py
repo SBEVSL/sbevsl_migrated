@@ -35,7 +35,8 @@ elif PLATFORM == 'Darwin':
 else:
     OFFSITE = os.path.join(HOME, '.sbevsl', 'ProMol')
 PDBFOLDER = 'PDBDownloads'
-DIRS = ('UserMotifs', PDBFOLDER)#changed folder name to UserMotifs for clarity
+CSVFOLDER = 'CSV'
+DIRS = ('UserMotifs', PDBFOLDER, CSVFOLDER)#changed folder name to UserMotifs for clarity
 if not os.path.isdir(OFFSITE):
     os.makedirs(OFFSITE)
 for DIR in DIRS:
@@ -43,6 +44,7 @@ for DIR in DIRS:
     if not os.path.isdir(DIR):
         os.mkdir(DIR)
 FETCH_PATH = os.path.join(OFFSITE, PDBFOLDER)
+CSV_PATH = os.path.join(OFFSITE, CSVFOLDER)
 class PROMOLGUI:pass
 GUI = PROMOLGUI()
 SELE = 'All'
