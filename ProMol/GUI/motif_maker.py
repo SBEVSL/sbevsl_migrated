@@ -93,8 +93,8 @@ def initialise():
     glb.GUI.motif_maker['movedown'] = tk.Button(buttonFrame, text='Move Down', command=lambda:MotifMaker().moveRow(up=False), state=tk.DISABLED)
     glb.GUI.motif_maker['movedown'].pack(side=tk.LEFT)
     
-    glb.GUI.motif_maker['recommend'] = tk.Button(buttonFrame, text='Optimize', command=lambda:MotifMaker().recommendOrder())
-    glb.GUI.motif_maker['recommend'].pack(side=tk.LEFT)
+    #glb.GUI.motif_maker['recommend'] = tk.Button(buttonFrame, text='Optimize', command=lambda:MotifMaker().recommendOrder())
+    #glb.GUI.motif_maker['recommend'].pack(side=tk.LEFT)
 
     glb.GUI.motif_maker['save'] = tk.Button(buttonFrame, text= 'Save', command=lambda:MotifMaker().saveMotif())
     glb.GUI.motif_maker['save'].pack(side=tk.RIGHT)
