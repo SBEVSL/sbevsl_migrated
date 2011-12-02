@@ -63,15 +63,8 @@ def initialise():
     group.columnconfigure(0, weight=1)
     group.rowconfigure(1, weight=1)
         
-    group = tk.LabelFrame(glb.GUI.motifs['tab'], text='CSV Export')
-    group.grid(row=2, column=0)
-    glb.GUI.motifs['viewexisting'] = tk.Button(group, text ='Show Individual Results',
-        command=viewExistingCSV)
-    glb.GUI.motifs['viewexisting'].grid(row = 0, column = 0)
-    glb.GUI.motifs['combine'] = tk.Button(group, text='Export Combined Results',
-        command=combineCSV, state=tk.DISABLED)
-    glb.GUI.motifs['combine'].grid(row=1, column=0)
-    group.columnconfigure(0, weight=1)
+    glb.GUI.motifs['exportButton'] = tk.Button(glb.GUI.motifs['tab'], text='Export results', command=exportAllResults, state=tk.DISABLED)
+    glb.GUI.motifs['exportButton'].grid(row=2, column=0)
     
     group = tk.LabelFrame(glb.GUI.motifs['tab'], text='Tools')
     group.grid(row=3, column=0)
@@ -94,12 +87,12 @@ def initialise():
     
     glb.GUI.motifs['motifColorLabel'] = tk.Label(group, text="Motif Color")
     glb.GUI.motifs['motifColorLabel'].grid(row=2, column=0, sticky=tk.E)
-    glb.GUI.motifs['motifcolor'] = tk.Label(group, bg='#ffffff', bd=3, relief=tk.RIDGE)
+    glb.GUI.motifs['motifcolor'] = tk.Label(group, bg='#ffffff', bd=3, relief=tk.SUNKEN)
     glb.GUI.motifs['motifcolor'].grid(row=2,column=1, sticky=tk.N+tk.E+tk.S+tk.W, padx=2, pady=2)
     
     glb.GUI.motifs['queryColorLabel'] = tk.Label(group, text="Match Color")
     glb.GUI.motifs['queryColorLabel'].grid(row=3, column=0, sticky=tk.E)
-    glb.GUI.motifs['querycolor'] = tk.Label(group, bg='#ff0000', bd=3, relief=tk.RIDGE)
+    glb.GUI.motifs['querycolor'] = tk.Label(group, bg='#ff0000', bd=3, relief=tk.SUNKEN)
     glb.GUI.motifs['querycolor'].grid(row=3,column=1, sticky=tk.N+tk.E+tk.S+tk.W, padx=2, pady=2)
     
     glb.GUI.motifs['motifColorLabel'].grid_remove()

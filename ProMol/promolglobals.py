@@ -11,12 +11,17 @@ import platform
 from Tkinter import *
 from pmg_tk.startup.ProMol.version import VERSION
 
-ALG_VERSION = '1.0' #added by Alex
+# The algorithm version number constant was still at 1.0, so
+# I believe it would be more meaningful to report the version of ProMOL
+# in the CSV file, rather than a separately tracked and difficult-to-
+# maintain algorithm version.  If anything else were to be included,
+# I would suggest a motif library version number.  -Kip
+
 PLATFORM = platform.system()
 PROMOL_DIR_PATH = os.path.dirname(__file__)
 MASTERFILE_URL = 'ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_entry_type.txt' # For random PDB selection
 MOTIFS = {} # Empty dictionary to replace shelve-based database
-searchSet = [] # Replaces MOTIFS' keysUsed, actually a list
+# searchSet was unnecessary and has been removed
 # hidmotif used to be a list box containing the query PDB associated with a result
 # Now I am using a list of tuples containing the PDB entry and the result
 # and calling it matchpairs: format is (query, result) for results and (query, query)
@@ -45,7 +50,10 @@ for DIR in DIRS:
         os.mkdir(DIR)
 FETCH_PATH = os.path.join(OFFSITE, PDBFOLDER)
 CSV_PATH = os.path.join(OFFSITE, CSVFOLDER)
-class PROMOLGUI:pass
+
+class PROMOLGUI:
+    pass
+    
 GUI = PROMOLGUI()
 SELE = 'All'
 NEWCOLOR = 0
@@ -168,13 +176,14 @@ MOTIFSFOLDER = os.path.join(PROMOL_DIR_PATH, 'Motifs')
 USRMOTIFSFOLDER = os.path.join(OFFSITE, 'UserMotifs')
 
 def loadMotifs(*folders):
+    global motifErrors
     find = ('FUNC', 'PDB', 'EC', 'RESI', 'LOCI')
-    MOTIFS['errors'] = []
+    motifErrors = []
     for motdir in folders:
         motfiles = os.listdir(motdir)
         for motfile in motfiles:
             if not motfile.endswith('.py'):
-                MOTIFS['errors'].append('Error: Encountered unexpected filename extension with motif {0} in {1}; skipping file.'.format(motfile, motdir))
+                motifErrors.append('Error: Encountered unexpected filename extension with motif {0} in {1}; skipping file.'.format(motfile, motdir))
                 continue
             found = []
             func = motfile[0:-3]
@@ -189,29 +198,29 @@ def loadMotifs(*folders):
                         continue
                     if i == 1:
                         if len(line.split(':')) < 2:
-                            MOTIFS['errors'].append('Error: Motif `{0}` was missing a colon in one of its header lines.'.format(MOTIFS[func]['path']))
+                            motifErrors.append('Error: Motif `{0}` was missing a colon in one of its header lines.'.format(MOTIFS[func]['path']))
                             del MOTIFS[func]
                             break
                         if line[0:4] == 'FUNC':
                             if 'FUNC' in found:
-                                MOTIFS['errors'].append('Warning: Motif `%s` included an extra `FUNC` attribute, which was ignored.'%(MOTIFS[func]['path']))
+                                motifErrors.append('Warning: Motif `%s` included an extra `FUNC` attribute, which was ignored.'%(MOTIFS[func]['path']))
                                 continue
                             found.append('FUNC')
                             funccheck = line.split(':')[1][0:-1]
                             if func != funccheck:
-                                MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to an incorrect `FUNC` attribute.'%(MOTIFS[func]['path']))
+                                motifErrors.append('Error: Motif `%s` could not be loaded due to an incorrect `FUNC` attribute.'%(MOTIFS[func]['path']))
                                 del MOTIFS[func]
                                 # Unnecessary to close the file using with
                                 break
                             continue
                         if line[0:3] == 'PDB':
                             if 'PDB' in found:
-                                MOTIFS['errors'].append('Warning: Motif `%s` included an extra `PDB` attribute, which was ignored.'%(MOTIFS[func]['path']))
+                                motifErrors.append('Warning: Motif `%s` included an extra `PDB` attribute, which was ignored.'%(MOTIFS[func]['path']))
                                 continue
                             found.append('PDB')
                             pdbcheck = line.split(':')[1][0:-1].lower()
                             if func.split('_')[1].lower() != pdbcheck:
-                                MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to an incorrect `PDB` attribute.'%(MOTIFS[func]['path']))
+                                motifErrors.append('Error: Motif `%s` could not be loaded due to an incorrect `PDB` attribute.'%(MOTIFS[func]['path']))
                                 del MOTIFS[func]
                                 # Not necessary to close file using with
                                 break
@@ -219,19 +228,19 @@ def loadMotifs(*folders):
                             continue
                         if line[0:2] == 'EC':
                             if 'EC' in found:
-                                MOTIFS['errors'].append('Warning: Motif `%s` included an extra `EC` attribute, which was ignored.'%(MOTIFS[func]['path']))
+                                motifErrors.append('Warning: Motif `%s` included an extra `EC` attribute, which was ignored.'%(MOTIFS[func]['path']))
                                 continue
                             found.append('EC')
                             preec = func.split('_')
                             if len(preec) < 6:
-                                MOTIFS['errors'].append('Error: Motif {0} did not have enough components in its EC number.'.format(MOTIFS[func]['path']))
+                                motifErrors.append('Error: Motif {0} did not have enough components in its EC number.'.format(MOTIFS[func]['path']))
                                 del MOTIFS[func]
                                 # No need to close
                                 break
                             ec = '.'.join((preec[2], preec[3], preec[4], preec[5]))
                             eccheck = line.split(':')[1][0:-1]
                             if ec != eccheck:
-                                MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to an incorrect `EC` attribute.'%(MOTIFS[func]['path']))
+                                motifErrors.append('Error: Motif `%s` could not be loaded due to an incorrect `EC` attribute.'%(MOTIFS[func]['path']))
                                 del MOTIFS[func]
                                 # No need to close
                                 break
@@ -239,12 +248,12 @@ def loadMotifs(*folders):
                             continue
                         if line[0:4] == 'RESI':
                             if 'RESI' in found:
-                                MOTIFS['errors'].append('Warning: Motif `%s` included an extra `RESI` attribute, which was ignored.'%(MOTIFS[func]['path']))
+                                motifErrors.append('Warning: Motif `%s` included an extra `RESI` attribute, which was ignored.'%(MOTIFS[func]['path']))
                                 continue
                             found.append('RESI')
                             resi = line.split(':')[1][0:-1].lower()
                             if resi == '':
-                                MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to an incorrect `RESI` attribute.'%(MOTIFS[func]['path']))
+                                motifErrors.append('Error: Motif `%s` could not be loaded due to an incorrect `RESI` attribute.'%(MOTIFS[func]['path']))
                                 del MOTIFS[func]
                                 # No need to close
                                 break
@@ -252,12 +261,12 @@ def loadMotifs(*folders):
                             continue
                         if line[0:4] == 'LOCI':
                             if 'LOCI' in found:
-                                MOTIFS['errors'].append('Warning: Motif `%s` included an extra `LOCI` attribute, which was ignored.'%(MOTIFS[func]['path']))
+                                motifErrors.append('Warning: Motif `%s` included an extra `LOCI` attribute, which was ignored.'%(MOTIFS[func]['path']))
                                 continue
                             found.append('LOCI')
                             loci = line.split(':')[1][0:-1].split(';')
                             if len(loci) == 1: # Highly suspect equality check
-                                MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to an incorrect `LOCI` attribute.'%(MOTIFS[func]['path']))
+                                motifErrors.append('Error: Motif `%s` could not be loaded due to an incorrect `LOCI` attribute.'%(MOTIFS[func]['path']))
                                 del MOTIFS[func]
                                 # No need to close
                                 break
@@ -279,18 +288,18 @@ def loadMotifs(*folders):
                                 else:
                                     selection = '%s or (chain %s and (%s))' % (selection, chain, nums)
                             if badLoci:
-                                MOTIFS['errors'].append('Error: Motif `{0}` could not be loaded due to an incorrect `LOCI` attribute.'.format(MOTIFS[func]['path']))
+                                motifErrors.append('Error: Motif `{0}` could not be loaded due to an incorrect `LOCI` attribute.'.format(MOTIFS[func]['path']))
                                 del MOTIFS[func]
                                 break
                             MOTIFS[func]['loci'] = selection
                             continue
                     if line[0:4] != 'cmd.' and line != '':
-                        MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to potential malicious code.'%(MOTIFS[func]['path']))
+                        motifErrors.append('Error: Motif `%s` could not be loaded due to potential malicious code.'%(MOTIFS[func]['path']))
                         del MOTIFS[func]
                         # Unnecessary to close
                         break
                 if func in MOTIFS and len(find) != len(found):
-                    MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to missing required attributes.'%(MOTIFS[func]['path']))
+                    motifErrors.append('Error: Motif `%s` could not be loaded due to missing required attributes.'%(MOTIFS[func]['path']))
                     del MOTIFS[func]
                 # End with
     # I removed the following even though it said not to:

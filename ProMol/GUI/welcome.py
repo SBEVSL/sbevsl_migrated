@@ -13,10 +13,10 @@ def initialise():
     yscroll.grid(row=0, column=1, sticky=tk.N+tk.S)
     messagetext = tk.Text(messagebox, yscrollcommand=yscroll.set, wrap=tk.WORD, width=10, height=10)
     messagetext.insert(tk.END, 'Welcome to ProMOL.\n')
-    if len(glb.MOTIFS['errors']) == 0:
+    if len(glb.motifErrors) == 0:
         messagetext.insert(tk.END, 'All motifs loaded successfully.\n')
     else:
-        messagetext.insert(tk.END, 'Encountered {0} errors while loading motifs.\nSee below for details.\n'.format(len(glb.MOTIFS['errors'])))
+        messagetext.insert(tk.END, 'Encountered {0} errors while loading motifs.\nSee below for details.\n'.format(len(glb.motifErrors)))
     messagestring = '''
 Developed by the SBEVSL Project
 
@@ -41,10 +41,10 @@ along with this program; if not, write to the Free Software \
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA \
 02111-1307  USA'''
     messagetext.insert(tk.END, messagestring)
-    if len(glb.MOTIFS['errors']) > 0:
+    if len(glb.motifErrors) > 0:
         messagetext.insert(tk.END, '\n\nMotif loading errors:')
     # It's OK that this is not indented.  It doesn't matter.
-    for error in glb.MOTIFS['errors']:
+    for error in glb.motifErrors:
         messagetext.insert(tk.END, '\n\n')
         messagetext.insert(tk.END, error)
     messagetext.config(state=tk.DISABLED)

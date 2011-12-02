@@ -111,7 +111,7 @@ def initialise():
 
     matchColorLabel = tk.Label(group, text="Match color:")
     matchColorLabel.grid(row=1, column=0, sticky=tk.W)
-    glb.GUI.motif_maker['matchcolor'] = tk.Label(group, bg='#ff0000', bd=3, relief=tk.RIDGE)
+    glb.GUI.motif_maker['matchcolor'] = tk.Label(group, bg='#ff0000', bd=3, relief=tk.SUNKEN)
     glb.GUI.motif_maker['matchcolor'].grid(row=1,column=1, sticky=tk.N+tk.E+tk.S+tk.W, padx=2, pady=2)
     glb.GUI.motif_maker['matchcolor'].bind("<ButtonRelease-1>", changecolor)
     
