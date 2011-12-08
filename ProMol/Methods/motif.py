@@ -15,6 +15,7 @@ import pmg_tk.startup.ProMol.promolglobals as glb
 import pmg_tk.startup.ProMol.Methods.proutils as proutils
 import pmg_tk.startup.ProMol.Methods.motifset as motifset
 INDIVIDUAL_CSV_HEADER_LENGTH = 7
+CSVMergeInfo = {}
 
 Pmw.initialise()
 
@@ -280,7 +281,20 @@ def doubleClickMotif(event):
             glb.populate()
 
 def exportAllResults():
-    pass
+    defaultfile = fullCSVFilename(CSVMergeInfo['motif set short description'], CSVMergeInfo['start time'])
+    with asksaveasfile(initialfile=defaultfile, defaultextension='.csv', filetypes=[('Comma Separated Value files','*.csv'), ('All files','*.*')], title='Export Motif Finder Results As...') as outhandle:
+
+        firstFile = True # include the first header only
+        for partialCSVFile in CSVMergeInfo['partial files']:
+
+            with open(os.path.join(glb.CSV_PATH, partialCSVFile), 'rU') as inhandle:
+                lineIndex = 0
+                for eachLine in inhandle:
+                    lineIndex = lineIndex + 1
+                    if firstFile or (lineIndex > INDIVIDUAL_CSV_HEADER_LENGTH):
+                       outhandle.write(eachLine)
+            firstFile = False
+            outhandle.write('\n\n')
 
 def motifcancel():
     glb.GUI.motifs['cancel'] = True
@@ -341,38 +355,38 @@ def headerFromCharacter(character, delimiter=',', columnwidth=10, columns=8):
 # but changed it to be more in line with the standard split() method
 # of strings
 def splitRespectingQuotes(inputString, delimiter=' ', quote='"'):
-	resultList = []
-	insideQuotes = False
-	# The next block starts at one position after the last splittable comma
-	# The first block starts at 0 (= -1 + 1)
-	lastCommaOutsideQuotes = -1
-	commaIndex = inputString.find(delimiter)
-	quoteIndex = inputString.find(quote)
-	# Iterate while there's something left to find
-	while (commaIndex > -1) or (quoteIndex > -1):
-		# Find the leftmost comma or quote if both are present;
-		# if not, take the one that's not -1
-		# At least one of them isn't
-		currentPointOfInterest = min(commaIndex, quoteIndex) if min(commaIndex, quoteIndex) > -1 else max(commaIndex, quoteIndex)
-		# Next point of interest is not -1 because loop condition would have been false
-		if inputString[currentPointOfInterest] == quote:
-			# Toggle whether we split on the following comma(s)
-			insideQuotes = not insideQuotes
-		else:
-			assert inputString[currentPointOfInterest] == delimiter
-			if not insideQuotes:
-				# Split
-				# The resulting token shouldn't include either the last comma or this one
-				# The start point of a slice is included but the end point is not
-				resultList.append(inputString[(lastCommaOutsideQuotes + 1):currentPointOfInterest])
-				lastCommaOutsideQuotes = currentPointOfInterest
-		# Prepare for next loop iteration
-		commaIndex = inputString.find(delimiter, currentPointOfInterest + 1)
-		quoteIndex = inputString.find(quote, currentPointOfInterest + 1)
-	# After loop finishes, add the rest of the string as the last token
-	resultList.append(inputString[(lastCommaOutsideQuotes + 1):])
-	return resultList
-			
+    resultList = []
+    insideQuotes = False
+    # The next block starts at one position after the last splittable comma
+    # The first block starts at 0 (= -1 + 1)
+    lastCommaOutsideQuotes = -1
+    commaIndex = inputString.find(delimiter)
+    quoteIndex = inputString.find(quote)
+    # Iterate while there's something left to find
+    while (commaIndex > -1) or (quoteIndex > -1):
+        # Find the leftmost comma or quote if both are present;
+        # if not, take the one that's not -1
+        # At least one of them isn't
+        currentPointOfInterest = min(commaIndex, quoteIndex) if min(commaIndex, quoteIndex) > -1 else max(commaIndex, quoteIndex)
+        # Next point of interest is not -1 because loop condition would have been false
+        if inputString[currentPointOfInterest] == quote:
+            # Toggle whether we split on the following comma(s)
+            insideQuotes = not insideQuotes
+        else:
+            assert inputString[currentPointOfInterest] == delimiter
+            if not insideQuotes:
+                # Split
+                # The resulting token shouldn't include either the last comma or this one
+                # The start point of a slice is included but the end point is not
+                resultList.append(inputString[(lastCommaOutsideQuotes + 1):currentPointOfInterest])
+                lastCommaOutsideQuotes = currentPointOfInterest
+        # Prepare for next loop iteration
+        commaIndex = inputString.find(delimiter, currentPointOfInterest + 1)
+        quoteIndex = inputString.find(quote, currentPointOfInterest + 1)
+    # After loop finishes, add the rest of the string as the last token
+    resultList.append(inputString[(lastCommaOutsideQuotes + 1):])
+    return resultList
+
 # Exports the CSV file for a single query protein
 # motifSet must be a MotifSet object, not a native Python set
 # resultdb should usually be glb.GUI.motifs['csvprep'][pdb]
@@ -458,9 +472,21 @@ def exportCSVResults(searchStartTime, precisionFactor, motifSet, pdb, found, res
         line += 1
 
     csvfile = "\n".join(csv)
-    stamp = time.strftime('%b_%d_%Y_%H%M_%Z', searchStartTime)
-    with open(os.path.join(glb.CSV_PATH,'motiffinder_{0}_{1}_{2}.csv'.format(pdb, motifSet.shortDescription, stamp)), 'w') as csvhandle:
+    with open(os.path.join(glb.CSV_PATH, partialCSVFilename(pdb, motifSet.shortDescription, searchStartTime)), 'w') as csvhandle:
         csvhandle.write(csvfile)
+
+# Create uniform timestamp for CSV filenames
+def generateCSVTimeString(searchStartTime):
+    return time.strftime('%b_%d_%Y_%H%M_%Z', searchStartTime)
+
+# Create appropriate filenames for CSV files
+def partialCSVFilename(pdb, motifSetName, searchStartTime):
+    stamp = generateCSVTimeString(searchStartTime)
+    return 'motiffinder_partial_{0}_{1}_{2}.csv'.format(pdb, motifSetName, stamp)
+
+def fullCSVFilename(motifSetName, searchStartTime):
+    stamp = generateCSVTimeString(searchStartTime)
+    return 'motiffinder_{0}_{1}.csv'.format(motifSetName, stamp)
 
 def count(motif,pdb):
     last = None
@@ -514,9 +540,11 @@ def count(motif,pdb):
     return glb.GUI.motifs['csvprep'][pdb][motif]['levdistrange']
 
 def motifchecker(setChoice):
+    global CSVMergeInfo
     glb.GUI.motifs['cancel'] = False
     glb.GUI.motifs['motifbox'].delete(0,tk.END)
     glb.matchpairs = []
+    CSVMergeInfo = {}
     glb.GUI.motifs['csvprep'] = {}
     glb.GUI.motifs['cancelbutton']['state'] = tk.NORMAL
     glb.GUI.motifs['delta']['state'] = tk.DISABLED
@@ -619,7 +647,14 @@ def motifchecker(setChoice):
             glb.matchpairs.append((pdb, result))
 
         # Export the single-PDB CSV file
-        exportCSVResults(searchStartTime, glb.GUI.motifs['delta'].get(), motifset.MotifSet(setName, setName, keys), pdb, found, glb.GUI.motifs['csvprep'][pdb])
+        motifSet = motifset.MotifSet(setName, setName, keys)
+        exportCSVResults(searchStartTime, glb.GUI.motifs['delta'].get(), motifSet, pdb, found, glb.GUI.motifs['csvprep'][pdb])
+        if len(CSVMergeInfo) == 0:
+            CSVMergeInfo['motif set short description'] = setName
+            CSVMergeInfo['start time'] = searchStartTime
+            CSVMergeInfo['partial files'] = list()
+        # This should be outside the if
+        CSVMergeInfo['partial files'].append(partialCSVFilename(pdb, setName, searchStartTime))
 
     # I patched this code because lengtho - len(pdbs) was not returning the proper number of results.
     # -Kip
@@ -714,7 +749,7 @@ class MotifMaker:
             'Are you sure you want to replace it?')
             if answer == False:
                  return False
-        glb.GUI.motif_maker['file'] = open(glb.pathmaker((self.name,'.py'),root=glb.USRMOTIFSFOLDER), 'wb')
+        glb.GUI.motif_maker['file'] = open(glb.pathmaker((self.name,'.py'),root=glb.USRMOTIFSFOLDER), 'w')
         return True
         
     # Replaces write(open=True) with mode=2
@@ -727,7 +762,7 @@ class MotifMaker:
                 'Are you sure you want to replace it?')
                 if answer == False:
                     return False
-            glb.GUI.motif_maker['file'] = open(glb.pathmaker((self.name,'.py'),root=pref), 'wb')
+            glb.GUI.motif_maker['file'] = open(glb.pathmaker((self.name,'.py'),root=pref), 'w')
         else:
             showerror('Access Denied','You do not have access to write to this folder.')
             return False

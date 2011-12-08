@@ -22,12 +22,6 @@ def __init__(pymol):
                 glb.update()
         elif result == 'Random PDB':
             glb.randompdb()
-        elif result == 'Help':
-            import webbrowser
-            try:
-                webbrowser.open(glb.pathmaker('Help','EZ-Viz.chm'))
-            except:
-                webbrowser.open(glb.pathmaker('Help','EZ-VizWebMain.html'))
         elif result == 'Fetch PDB':
             showFetchDialog(pymol)
             glb.update()
@@ -40,7 +34,7 @@ def __init__(pymol):
     ProMol.minsize(430, 420)
     ProMol.title('ProMOL %s'%(glb.VERSION))
     
-    buttons = ('Open PDB', 'Fetch PDB', 'Random PDB', 'Clear', 'Help')
+    buttons = ('Open PDB', 'Fetch PDB', 'Random PDB', 'Clear')
     buttonsl = len(buttons)
 
     notebook = Pmw.NoteBook(ProMol)

@@ -190,7 +190,7 @@ def loadMotifs(*folders):
             if func not in MOTIFS:
                 MOTIFS[func] = {}
             MOTIFS[func]['path'] = os.path.join(motdir, motfile)
-            with open(MOTIFS[func]['path'], 'rbU') as motifFile:
+            with open(MOTIFS[func]['path'], 'rU') as motifFile:
                 i = 0
                 for line in motifFile:
                     if line[0:3] == "'''":

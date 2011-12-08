@@ -23,6 +23,10 @@ Developed by the SBEVSL Project
 Partial funding provided by:
 NSF DUE 0402408
 NIGMS 1R15GM078077
+NIGMS 1R15GM078077-01
+NIGMS 3R15GM078077-01S
+NIGMS 2R15GM078077-02 
+NIGMS 3R15GM078077-02S1
 RIT
 Dowling College
 
@@ -39,7 +43,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License \
 along with this program; if not, write to the Free Software \
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA \
-02111-1307  USA'''
+02111-1307 USA'''
     messagetext.insert(tk.END, messagestring)
     if len(glb.motifErrors) > 0:
         messagetext.insert(tk.END, '\n\nMotif loading errors:')
