@@ -1020,7 +1020,8 @@ class MotifMaker:
             print problem
         finally:
             if glb.GUI.motif_maker['file'] != None:
-                glb.GUI.motif_maker['file'].close()
+                if not glb.GUI.motif_maker['file'].closed:
+                    glb.GUI.motif_maker['file'].close()
         return retVal
     
     # Replaces most of makemotif(0, 1, 2, 4)
