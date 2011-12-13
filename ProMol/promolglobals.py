@@ -9,7 +9,7 @@ import linecache
 import random
 import platform
 from Tkinter import *
-from pmg_tk.startup.ProMol.version import VERSION
+from pmg_tk.startup.ProMol.version import VERSION, ALG_VERSION
 
 # The algorithm version number constant was still at 1.0, so
 # I believe it would be more meaningful to report the version of ProMOL
