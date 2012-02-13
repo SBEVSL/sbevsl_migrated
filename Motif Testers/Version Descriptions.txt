@@ -1,0 +1,17 @@
+1 - Not separately retained, became version 4
+2, 3 - May be incomplete and unrunnable development dead ends that tried to do too much
+4 - Runs interactively only, does not list atoms, but does run line by line
+5 - Added support for automated batch processing and way too many options
+6 - Switched from tokenization and running logical lines one by one to a single
+    execfile() call; also now separate by chain when listing atoms and residues
+7 - Add built-in result summary and analysis generation to a separate file along
+    with individual motif detail files.  Simplify code and remove most options.
+8 - Workaround for motifs that generate final selections with improperly capitalized
+    names that don't match their filename (without extension).  Note that this does
+    not fix ProMOL's potential problems with them, and there are 4 motifs that appear
+    to have a capitalization mismatch between their filename and their selection name.
+    There could be additional problems; this tester does not detect if there is a between
+    the FUNC header and the selection name or filename, even if the latter two match.
+9 - Remove the list of motifs that never qualified (some criteria don't filter at all);
+    display entire list instead of just top and bottom 50.
+10- Add additional criteria
