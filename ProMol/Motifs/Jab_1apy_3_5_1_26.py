@@ -3,7 +3,7 @@ FUNC:Jab_1apy_3_5_1_26
 PDB:1apy
 EC:3.5.1.26
 RESI:ser,thr,thr,thr,gly
-LOCI:a-49,;b-183,201,234,235;
+LOCI:a-49;b-183,201,234,235;
 '''
 cmd.select('temp0', 'name  ca ')
 cmd.select('temp1', 'resn thr')

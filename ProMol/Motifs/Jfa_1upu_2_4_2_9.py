@@ -3,7 +3,7 @@ FUNC:Jfa_1upu_2_4_2_9
 PDB:1upu
 EC:2.4.2.9
 RESI:arg,thr,asp
-LOCI:a-137,141,235;b-37,141,235;c-37,141,235;d-37,141,235;
+LOCI:a-137,141,235;b-137,141,235;c-137,141,235;d-137,141,235;
 '''
 cmd.select('temp0', 'name  ne ')
 cmd.select('temp1', 'resn arg')
