@@ -20,6 +20,7 @@ from pmg_tk.startup.ProMol.version import VERSION, ALG_VERSION
 PLATFORM = platform.system()
 PROMOL_DIR_PATH = os.path.dirname(__file__)
 MASTERFILE_URL = 'ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_entry_type.txt' # For random PDB selection
+allPDBEntries = [] # For random PDB selection
 MOTIFS = {} # Empty dictionary to replace shelve-based database
 # searchSet was unnecessary and has been removed
 # hidmotif used to be a list box containing the query PDB associated with a result
@@ -703,32 +704,25 @@ def update():
 # Make available from the PyMOL command line
 cmd.extend('update', update)
 
-# This function runs when the Random PDB button is clicked.  Before 4.2,
-# it fetched the list of PDB entries from the Internet only once, then stashed
-# the information in the PDB entry persistent database.  This was a second
-# instance of the class used for the motif database before it was changed to a
-# dictionary.  That class had problems, so both instances were removed.  Now,
-# it is fetched every time the button is clicked.  That is probably not an
-# improvement, since the file in question is rather large (over a 3G cellular
-# data connection, clicking this button will block everything for somewhere
-# between a few seconds to a couple of minutes).  This should probably be
-# fetched once per program run (or even once per week), then stored locally.
-# Whether a file download should run on and block the GUI thread is another
-# issue.
+# This function runs when the Random PDB button is clicked.  It now
+# downloads the list of PDB entries only once per run, and so should
+# no longer max out the number of socket connections.
 def randompdb():
     # Adapted from pdbstore function (removed)
     cmd.reinitialize()
-    database = []
     masterfile = None
-    try:
-        masterfile = urllib2.urlopen(MASTERFILE_URL)
-        for pdbline in masterfile:
-            database.append(pdbline.split('\t')[0])
-    finally:
-        if (masterfile):
-            masterfile.close()
-    if (len(database) > 0):
-        cmd.fetch(random.choice(database), async=0, path=FETCH_PATH)
+    if (len(allPDBEntries) == 0):
+        try:
+            masterfile = urllib2.urlopen(MASTERFILE_URL)
+            for pdbline in masterfile:
+                allPDBEntries.append(pdbline.split('\t')[0])
+        finally:
+            if (masterfile):
+                masterfile.close()
+    # This cannot be changed to an else branch, since the condition
+    # must be evaluated again.
+    if (len(allPDBEntries) > 0):
+        cmd.fetch(random.choice(allPDBEntries), async=0, path=FETCH_PATH)
         update()
 # Makes this functionality available from the PyMOL command line
 cmd.extend('randompdb',randompdb)
