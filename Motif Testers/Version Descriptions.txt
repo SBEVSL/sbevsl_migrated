@@ -15,3 +15,25 @@
 9 - Remove the list of motifs that never qualified (some criteria don't filter at all);
     display entire list instead of just top and bottom 50.
 10- Add additional criteria
+10S - Should be same as 10 but motifs are further sorted by name when their scores are equivalent
+11 - Based on 10; further accommodations for improperly capitalized final selections (now fixed in the repository);
+     more options for running motifs; output database to plugin window instead of standard out in PyMOL window;
+     fixed typographical error in results
+11S - Differs from 11 the same way 10S differs from 10
+12 - Runs motifs up until the point where their final selection is first defined (I have never seen
+     it redefined or changed later, though it is possible), then lists residues and atoms for all selections
+     at that point instead of at the end.  This is to get a listing of all temporary selections including
+     jessatoms which are deleted by the time the motif finishes.  Outputs a warning into the individual
+     motif's result file if it is possible that a final selection was redefined after its initial definition.
+     (None of the r167 motifs exhibited this behavior.)  The final result line is taken to be the FIRST
+     occurrence of a line containing both 'cmd.select(' and an underscore.  If a motif was created
+     that narrowed or redefined its final selection, or otherwise thwarted this assumption, all
+     selections would be evaluated after this first underscore selection, not when the final
+     selection is truly defined.  It might be more appropriate to do this at the last occurrence,
+     rather than the first, but there could be other complications (like if other selections were then defined
+     based on this one, maybe after a deletion...).  Similar complications are possible when doing it this
+     way, too, though.  None of the motifs generated a warning due to multiple occurrences of such a line,
+     but any future motifs that strayed from this pattern present in the existing ones might have problems.
+
+Some of all of these testers might assume that the final selection name always contains at least one underscore.
+If one didn't, they might fail to operate correctly, or appear to work but produce incorrect results.
