@@ -223,7 +223,8 @@ def doubleClickMotif(event):
         if motifName in glb.MOTIFS:
             MotifCaller(motifName)
             
-            querySubsetName = 'match_in_{0}'.format(queryPDBCode)
+            #querySubsetName = 'match_in_{0}'.format(queryPDBCode)
+            querySubsetName = 'match_in_%s'%(queryPDBCode)
             # Actually renames the query protein matching subset
             # because the selection named after the motif contains the matching subset
             # of atoms on the query protein given to us by the motif
@@ -240,7 +241,8 @@ def doubleClickMotif(event):
             # Run the motif
             MotifCaller(motifName)
             
-            querySubsetName = 'match_in_{0}'.format(queryPDBCode)
+            #querySubsetName = 'match_in_{0}'.format(queryPDBCode)
+            querySubsetName = 'match_in_%s'%(queryPDBCode)
             # Actually renames the query protein matching subset
             # because the selection named after the motif contains the matching subset
             # of atoms on the query protein given to us by the motif
@@ -249,7 +251,8 @@ def doubleClickMotif(event):
             cmd.fetch(motifPDBCode, async=0, path=glb.FETCH_PATH)
             # Removed cartoon show command
             # Create named subset of matching result protein atoms
-            motifSubsetName = 'match_in_{0}'.format(motifPDBCode)
+            #motifSubsetName = 'match_in_{0}'.format(motifPDBCode)
+            motifSubsetName = 'match_in_%s'%(motifPDBCode)
             cmd.select(motifSubsetName, '%s and (%s)' % (motifPDBCode,
                 glb.MOTIFS[motifName]['loci']))
             # Do final display
@@ -356,9 +359,16 @@ def export2csv():
     csv.append('Precision Factor: %s'%(glb.GUI.motifs['delta'].get()))
     csv.append('Algorithm Version: %s'%(glb.ALG_VERSION))
     csvfile = "\n".join(csv)
-    with asksaveasfile(initialfile='motiffinder.csv',defaultextension='.csv',
-    filetypes=[('CSV','*.csv')],title='Export Motif Finder Results As...') as csvhandle:
+    #with asksaveasfile(initialfile='motiffinder.csv',defaultextension='.csv',
+    #filetypes=[('CSV','*.csv')],title='Export Motif Finder Results As...') as csvhandle:
+    #    csvhandle.write(csvfile)
+    csvhandle = asksaveasfile(initialfile='motiffinder.csv',defaultextension='.csv', filetypes=[('CSV','*.csv')],title='Export Motif Finder Results As...')
+    try:
+        csvhandle.__enter__()
         csvhandle.write(csvfile)
+    finally:
+        csvhandle.__exit__()
+
 
 def motifcancel():
     glb.GUI.motifs['cancel'] = True
@@ -565,7 +575,8 @@ def motifchecker(setChoice):
         cmd.reinitialize()
         cmd.fetch(pdb, async=0, path=glb.FETCH_PATH)
         if (pdb not in cmd.get_names('all')) or (cmd.count_atoms(pdb) == 0):
-            founds[pdb] = ['Could not fetch {0}'.format(pdb)] # Apparently never used anyway
+            #founds[pdb] = ['Could not fetch {0}'.format(pdb)] # Apparently never used anyway
+            founds[pdb] = ['Could not fetch %s'%(pdb)]
             lasto += keysL
             glb.GUI.motifs['singlestatus'].SetProgressPercent(100)
             glb.GUI.motifs['overallstatus'].SetProgressPercent((lasto/keysLo)*100)
@@ -577,7 +588,8 @@ def motifchecker(setChoice):
             # Check for cancellation and break out of inner loop
             if glb.GUI.motifs['cancel']:
                 glb.GUI.motifs['single']['text'] = 'Click Start to begin'
-                glb.GUI.motifs['overall']['text'] = 'Cancelled... {0}% Complete'.format(int(baro))
+                #glb.GUI.motifs['overall']['text'] = 'Cancelled... {0}% Complete'.format(int(baro))
+                glb.GUI.motifs['overall']['text'] = 'Cancelled... %d%s Complete'%(int(baro),'%')
                 break
                 
             # List of motif loading errors is currently stored inside motif dictionary
@@ -600,8 +612,10 @@ def motifchecker(setChoice):
             lasto += 1
             bar = (last/keysL)*100
             baro = (lasto/keysLo)*100
-            glb.GUI.motifs['single']['text'] = 'Searching... {0}% Complete'.format(int(bar))
-            glb.GUI.motifs['overall']['text'] = 'Overall... {0}% Complete'.format(int(baro))
+            #glb.GUI.motifs['single']['text'] = 'Searching... {0}% Complete'.format(int(bar))
+            #glb.GUI.motifs['overall']['text'] = 'Overall... {0}% Complete'.format(int(baro))
+            glb.GUI.motifs['single']['text'] = 'Searching... %d%s Complete'%(int(bar),'%')
+            glb.GUI.motifs['overall']['text'] = 'Overall... %d%s Complete'%(int(baro),'%')
             glb.GUI.motifs['singlestatus'].SetProgressPercent(bar)
             glb.GUI.motifs['overallstatus'].SetProgressPercent(baro)
             glb.GUI.motifs['single'].update()
@@ -701,7 +715,8 @@ def motifchecker(setChoice):
                 wrapped = True
             if not wrapped:
                 csv[line] += ',' # Don't spread out the results to the right so much if they wrap
-            csv[line] += ',{0}'.format(notFoundMotif)
+            #csv[line] += ',{0}'.format(notFoundMotif)
+            csv[line] += ',%s'%(notFoundMotif)   
             line += 1
         csv.append('Precision Factor: %s'%(glb.GUI.motifs['delta'].get()))
         csv.append('Algorithm Version: %s'%(glb.ALG_VERSION))
@@ -710,8 +725,15 @@ def motifchecker(setChoice):
         stamp = time.ctime()
         stamp = stamp.split()
         stamp = stamp[1] + '_' + stamp[2] + '_' + stamp[4]
-        with open(os.path.join(glb.OFFSITE,'motiffinder_{0}_{1}_{2}.csv'.format(pdb, setName, stamp)), 'w') as csvhandle:
+        #with open(os.path.join(glb.OFFSITE,'motiffinder_{0}_{1}_{2}.csv'.format(pdb, setName, stamp)), 'w') as csvhandle:
+        #    csvhandle.write(csvfile)
+        csvhandle=open(os.path.join(glb.OFFSITE,'motiffinder_%s_%s_%s.csv'%(pdb, setName, stamp)), 'w')
+        try:
+            csvhandle.__enter__()
             csvhandle.write(csvfile)
+        finally:
+            csvhandle.__exit__()
+
 
     # I patched this code because lengtho - len(pdbs) was not returning the proper number of results.
     # -Kip
@@ -722,7 +744,8 @@ def motifchecker(setChoice):
     
     if not glb.GUI.motifs['cancel']:
         glb.GUI.motifs['single']['text'] = 'Click Start to begin'
-        glb.GUI.motifs['overall']['text'] = 'Motif Finder finished with {0} results.'.format(numberOfResults)
+        #glb.GUI.motifs['overall']['text'] = 'Motif Finder finished with {0} results.'(numberOfResults)
+        glb.GUI.motifs['overall']['text'] = 'Motif Finder finished with %d results.'%(numberOfResults)
     cmd.orient('all')
     
     cmd.show('cartoon', 'all')
@@ -881,7 +904,8 @@ def makemotif(mode):
     
     cmd.fetch(pdb, async=0, path=glb.FETCH_PATH)
     if (pdb not in cmd.get_names('all')) or (cmd.count_atoms(pdb) == 0):
-        exceptions += 'Could not fetch {0}'.format(pdb)
+        #exceptions += 'Could not fetch {0}'.format(pdb)
+        exceptions += 'Could not fetch %s'%(pdb)
     glb.update()
     preecs = ecen.split(',')
     for preec in preecs:
