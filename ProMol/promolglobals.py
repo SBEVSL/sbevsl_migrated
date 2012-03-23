@@ -166,14 +166,18 @@ def loadMotifs(*folders):
         motfiles = os.listdir(motdir)
         for motfile in motfiles:
             if not motfile.endswith('.py'):
-                MOTIFS['errors'].append('Error: Encountered unexpected filename extension with motif {0} in {1}; skipping file.'.format(motfile, motdir))
+                #MOTIFS['errors'].append('Error: Encountered unexpected filename extension with motif {0} in {1}; skipping file.'.format(motfile, motdir))
+                MOTIFS['errors'].append('Error: Encountered unexpected filename extension with motif %s in %s; skipping file.'%(motfile, motdir))
                 continue
             found = []
             func = motfile[0:-3]
             if func not in MOTIFS:
                 MOTIFS[func] = {}
             MOTIFS[func]['path'] = os.path.join(motdir, motfile)
-            with open(MOTIFS[func]['path'], 'rbU') as motifFile:
+            #with open(MOTIFS[func]['path'], 'rbU') as motifFile:
+            motifFile = open(MOTIFS[func]['path'], 'rbU')
+            try:
+                motifFile.__enter__()
                 i = 0
                 for line in motifFile:
                     if line[0:3] == "'''":
@@ -181,7 +185,8 @@ def loadMotifs(*folders):
                         continue
                     if i == 1:
                         if len(line.split(':')) < 2:
-                            MOTIFS['errors'].append('Error: Motif `{0}` was missing a colon in one of its header lines.'.format(MOTIFS[func]['path']))
+                            #MOTIFS['errors'].append('Error: Motif `{0}` was missing a colon in one of its header lines.'.format(MOTIFS[func]['path']))
+                            MOTIFS['errors'].append('Error: Motif `%s` was missing a colon in one of its header lines.'%(MOTIFS[func]['path']))
                             del MOTIFS[func]
                             break
                         if line[0:4] == 'FUNC':
@@ -216,7 +221,8 @@ def loadMotifs(*folders):
                             found.append('EC')
                             preec = func.split('_')
                             if len(preec) < 6:
-                                MOTIFS['errors'].append('Error: Motif {0} did not have enough components in its EC number.'.format(MOTIFS[func]['path']))
+                                #MOTIFS['errors'].append('Error: Motif {0} did not have enough components in its EC number.'.format(MOTIFS[func]['path']))
+                                MOTIFS['errors'].append('Error: Motif %s did not have enough components in its EC number.'%(MOTIFS[func]['path']))
                                 del MOTIFS[func]
                                 # No need to close
                                 break
@@ -271,7 +277,8 @@ def loadMotifs(*folders):
                                 else:
                                     selection = '%s or (chain %s and (%s))' % (selection, chain, nums)
                             if badLoci:
-                                MOTIFS['errors'].append('Error: Motif `{0}` could not be loaded due to an incorrect `LOCI` attribute.'.format(MOTIFS[func]['path']))
+                                #MOTIFS['errors'].append('Error: Motif `{0}` could not be loaded due to an incorrect `LOCI` attribute.'.format(MOTIFS[func]['path']))
+                                MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to an incorrect `LOCI` attribute.'%(MOTIFS[func]['path']))
                                 del MOTIFS[func]
                                 break
                             MOTIFS[func]['loci'] = selection
@@ -284,7 +291,9 @@ def loadMotifs(*folders):
                 if func in MOTIFS and len(find) != len(found):
                     MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to missing required attributes.'%(MOTIFS[func]['path']))
                     del MOTIFS[func]
-                # End with
+            finally:
+                mitifFile.__exit__()
+    # End with
     # I removed the following even though it said not to:
     # MOTIFS.switchwriteback() # DO NOT UNREMOVE!!
     # Switchwriteback was written incorrectly anyway (with == instead of = (x2))
