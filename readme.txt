@@ -1,13 +1,12 @@
 README
-ProMOL
-assist in visualization and identification of small catalytic sites.
-ProMOL (C) Copyright 2004-2010
+ProMOL (C) Copyright 2004-2011
 Charlie Westin, Brett Hanson & Paul Craig
 GPL, No Warranty
 
-4.1 Release Candidate 2 by 
-Mario Rosa
-7 December 2010
+4.2 by Cyprian Corwin and Greg Dodge
+Monday, July 25, 2011
+
+Based on Maddy's and Mario Rosa's versions
 
 Special Thanks to the following for their contributions to ProMOL:
 Laura Grell, Chris Parkin, T.J. Esposito, C. Wischmeyer
@@ -39,8 +38,8 @@ necessarily represent the official views of the National Institute Of
 General Medical Sciences or the National Institutes of Health.
 
 The purpose of ProMOL is to assist in the visualization of protein structures
-in PyMOL. As well as assist in the identification of small catalytic site, and
-creation of catalytic site motifs.
+in PyMOL, as well as assist in the identification of small catalytic sites, and
+the creation of catalytic site motifs.
 
 =========================================================================
 
@@ -51,7 +50,7 @@ from
 
 http://sourceforge.net/projects/pymol/
 
-and is incorpoated into many unix releases.  PyMOL is also available in
+and is incorporated into many Unix releases.  PyMOL is also available in
 proprietary versions from
 
 http://www.pymol.org.  See that website for information on PyMOL licensing.
@@ -72,44 +71,85 @@ ProMOL can be downloaded in a compressed file format from
 http://sourceforge.net/projects/sbevsl/files
 
 You can choose to download either a .tar.gz compressed file
-(ProMOL-4.1rc2.tar.gz as of July 13, 2010) or a zip compressed file
-(ProMOL-4.1rc2.zip as of July 13, 2010). The way you expand the 
+(ProMOL-4.2.tar.gz) or a zip compressed file
+(ProMOL-4.2.zip). The way you expand the 
 file depends on your operating system.
 
-In unix or linux systems, or using MINGW under windows you may unpack the
+On Unix or Linux systems, or using MINGW under Windows you may unpack the
 tarball with
 
-gunzip < ProMOL-4.1rc2.tar.gz | tar xvf -
+gunzip < ProMOL-4.2.tar.gz | tar xvf -
 
 Windows and Macintosh systems may have a native application that will expand
 your .tar.gz or .zip files; if not you may wish to consider using Stuffit
 Expander or WinZip.
 
-If you have not already done so, first install PyMOL. Under Macintosh OSX 
+If you have not already done so, first install PyMOL. Under Mac OS X 
 you may need to rename the MacPymol application to MacPymolX11Hybrid, in
-order to get access to plugins.  
+order to get access to plugins.  You will also need to have the X window
+system installed.  This is included on your Mac OS install disc, but may
+not be installed by default.
 
-To install ProMol.py, copy ProMol.py and the folder ProMol into the correct
+To install ProMOL, copy ProMol.py and the folder ProMol into the correct
 place in the directory tree used by PyMOL for plugins.  For example, for
-PyMOL 0.99 under MS windows:
+PyMOL 1.4.1 under Microsoft Windows:
 
-C:\Program Files\DeLano Scientific\pymol\modules\pmg_tk\startup\
+C:\Program Files\PyMol\modules\pmg_tk\startup\
 
-On other systems you will need to find the portion of the pymol installation
+On other systems you will need to find the portion of the PyMOL installation
 tree that contains
 
 modules/pmg_tk/startup
 
 and place ProMol.py and the folder ProMol in the startup folder.
 For example in a fink PyMOL installation for python 2.4, 2.5 or 2.6 under
-Macintosh OSX, the ProMol.py file and ProMol folder belongs under
+Mac OS X, the ProMol.py file and ProMol folder belongs under
 
 /sw/lib/pymol-py24/modules/pmg_tk/startup or
 /sw/lib/pymol-py25/modules/pmg_tk/startup or
 /sw/lib/pymol-py26/modules/pmg_tk/startup
 
+However, we believe that this version of ProMOL may use features of the Python
+language that were introduced in 2.6, so it may not run with earlier versions.
+Furthermore, has only been tested on Python 2.7.x, and will not work with Python 3.
+
+For PyMOL installed from the Ubuntu Software Center (it may be the same
+from source), ProMol.py and the ProMol folder can be placed under:
+
+/usr/lib/pymodules/python2.7/pmg_tk/startup
+
 When all files are in place, the ProMOL interface can be run by choosing
 ProMOL from the PyMOL plug-in menu.
+
+=========================================================================
+
+WARNING: While running a search with the Motif Finder, PLEASE DO NOT
+double-click in the results list of a previous search, or load, modify,
+manipulate, or clear any structures or named selections present in PyMOL.
+Doing so will likely lead to erroneous results!
+
+Other important notes and tips:
+
+- Motifs generated using the Motif Maker tab are stored the subfolder
+UserMotifs in the ProMOL application data directory.  This folder is usually
+located in the following places:
+
+Windows: %AppData%/SBEVSL/ProMol/
+(On Windows 7, %AppData% may be located at C:\Users\[User Name]\AppData\Roaming)
+Mac OS X/Darwin: ~/Library/Application Support/SBEVSL/ProMol
+Other platforms, including Ubuntu: ~/.sbevsl/ProMol
+
+- Do not install motifs obtained from any source except SBEVSL or your Motif Maker
+tab inside either ProMOL's Motifs folder or your UserMotifs folder.  You have been
+warned!
+
+- Motif finder searches tend to run significantly faster if, once the search is
+started, the user selects the PyMOL Viewer window and presses Escape to switch
+into text mode.  To switch back, simply press Escape again.
+
+- Exporting CSV files via the user interface button for a search with no results
+will cause ProMOL to hang.  As a workaround, check the CSV file generated for each
+search located in your application data directory (see above).
 
 =========================================================================
 
@@ -154,8 +194,63 @@ categories will be presented and compared, along with suggestions for
 implementing more effective alignment strategies with the motif tool in ProMOL.
 
 =========================================================================
+[Update by current developers: there are 440 motifs as of July 20, 2011.]
+=========================================================================
 
-ChangeLog:
+The previous developers of ProMOL had incorporated a modified version of the
+PDB Loader Service plugin into promolglobals.py.  We have removed that code
+from ProMOL in favor of launching the existing copy on the user's machine
+that is distributed with PyMol, and using PyMOL's built-in functionality.
+The following notice was included with older versions of ProMOL, and may no
+longer be required, but we have included it for the sake of completeness.
+We believe it no longer applies to anything in ProMOL.
+
+# Copyright Notice
+# ================
+# 
+# The PyMOL Plugin source code [below this point] is copyrighted, but you can
+# freely use and copy it as long as you don't change or remove any of
+# the copyright notices.
+# 
+# ----------------------------------------------------------------------
+# This PyMOL Plugin is Copyright (C) 2004 by Charles Moad <cmoad@indiana.edu>
+# 
+#                        All Rights Reserved
+# 
+# Permission to use, copy, modify, distribute, and distribute modified
+# versions of this software and its documentation for any purpose and
+# without fee is hereby granted, provided that the above copyright
+# notice appear in all copies and that both the copyright notice and
+# this permission notice appear in supporting documentation, and that
+# the name(s) of the author(s) not be used in advertising or publicity
+# pertaining to distribution of the software without specific, written
+# prior permission.
+# 
+# THE AUTHOR(S) DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+# INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.  IN
+# NO EVENT SHALL THE AUTHOR(S) BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+# CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+# USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+# OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+# PERFORMANCE OF THIS SOFTWARE.
+# ----------------------------------------------------------------------
+
+=========================================================================
+
+Change log:
+Revision 149
+Modified Monday, July 25, 2011 by Cyprian Corwin and Greg Dodge
+Version 4.2.  Many bug fixes, a few enhancements, and code cleanup
+based on Maddy's Revision 142.  Major changes from 142 include a new,
+larger set of 440 motifs, removal of PERSISTENT database code,
+changes to the way PDB structures are fetched and the way
+the PDB Loader Service dialog is launched from within ProMOL, simplification of
+the way in which aligned matches are rendered and named (when double-clicking
+a result in Motif Finder), a fix for the issue preventing the creation of
+motifs for active sites containing alanine, and a fix for the hang that
+would formerly happen when a motif search returned zero results, among others.
+For the full list, please see the file promol-changes.txt.
+
 Revision 119
 Modified Tue Dec 7 by vinnyrose
 Version 4.1rc2. Minor backwards compatibility fix. Updated readme.
