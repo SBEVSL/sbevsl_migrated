@@ -292,7 +292,7 @@ def loadMotifs(*folders):
                     MOTIFS['errors'].append('Error: Motif `%s` could not be loaded due to missing required attributes.'%(MOTIFS[func]['path']))
                     del MOTIFS[func]
             finally:
-                mitifFile.__exit__()
+                motifFile.__exit__()
     # End with
     # I removed the following even though it said not to:
     # MOTIFS.switchwriteback() # DO NOT UNREMOVE!!
