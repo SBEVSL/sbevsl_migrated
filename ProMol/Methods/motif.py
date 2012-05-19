@@ -11,6 +11,8 @@ from tkSimpleDialog import askstring
 from tkColorChooser import askcolor
 from tkMessageBox import showinfo, showerror, askyesno
 from Tkinter import *
+from treewidgets import widget, node, texttree
+from treewidgets.constants import *
 import Tkinter as tk
 import pmg_tk.startup.ProMol.promolglobals as glb
 import pmg_tk.startup.ProMol.Methods.proutils as proutils
@@ -192,7 +194,8 @@ def togglealign():
         glb.GUI.motifs['motifcolor'].grid()
 
 
-def doubleClickMotif(event):
+def showContent(node):
+  
     '''allows user to click on motif search field items
     and run the motif function'''
     # motifString is raw result string listed in results box
@@ -206,52 +209,15 @@ def doubleClickMotif(event):
     # The selection with that name is truly the query protein
     # motifSubsetName is the matching subset of the result protein motifPDBCode
     # motifName is the matching subset of the query protein queryPDBCode
-    selectionList = glb.GUI.motifs['motifbox'].curselection()
-    if len(selectionList) == 0:
-        return
-    motif = int(selectionList[0])
 
-    #added 2/19, edited 3/8
-   
-    if glb.GUI.motifs['motifbox'].size() > len(glb.matchpairs):
-        motifString = ""
-        index = 0
-        if motif <= (numResultsOfEachQuery[0]*5)+2:
-            print "i=" + repr(0)
-            index = int(math.floor((motif+3)/5))
-            motifString = glb.matchpairs[index][1]
-            print "motif =" + repr(motif)
-            print "motifstring=" + motifString
-        else:
-            current1 = 0
-            for i in range(0,pdbsl):
-                print "i=" + repr(i)
-                print "motif =" + repr(motif)
-                current2 = current1 + (numResultsOfEachQuery[i]*5)+2
-                print "numResultsOfEachQuery[i]*5=" + repr(numResultsOfEachQuery[i]*5)
-                print "current1=" + repr(current1)
-                print "current2=" + repr(current2)
-                if motif <= current2 and motif > current1:
-                        print "i=" + repr(i)
-                        if numResultsOfEachQuery[i] != 0:
-                            index = int(math.floor((motif+((i+1)*3))/5))  #3/18/12
-                        else:
-                            index = int(math.floor((motif+((i+1)*3)+1)/5)) 
-                        print "index=" + repr(index)
-                        motifString = glb.matchpairs[index][1]
-                        print "motifstring=" + motifString
-                        break
-                current1 = current2
-          
-          
-    else:
-        motifString = glb.matchpairs[motif][1]
-    ###
-
-
-        
+    motif = 1
+    motifString = node.getName()
+    ancs = node.ancestors()
+    querynode = ancs[0]
+    
     # The next three ifs added by Kip to prevent crash when double clicking header
     # One might have sufficed unless something unexpected ends up in motifbox
+    
     if not motifString.startswith(' '):
         return
     tag = motifString.split(': ')
@@ -262,20 +228,13 @@ def doubleClickMotif(event):
     if len(secondsplit) < 2:
         return
     motifPDBCode = secondsplit[1] # tpdb
-
-    #added 2/19
-    if glb.GUI.motifs['motifbox'].size() > len(glb.matchpairs):
-        queryPDBCode = glb.matchpairs[index][0]
-    else:
-        queryPDBCode = glb.matchpairs[motif][0]
-    ###
-
+    queryPDBCode = querynode.getName()
         
     cmd.reinitialize()
     motifColor = glb.GUI.motifs['motifcolor']['bg']
     queryColor = glb.GUI.motifs['querycolor']['bg']
     if glb.GUI.motifs['align'].get() == 0 or motifPDBCode == queryPDBCode:
-        cmd.fetch(queryPDBCode, async=0, path=glb.FETCH_PATH)
+        cmd.fetch(queryPDBCode, async=0, path=glb.FETCH_PATH)#accessing pdb file
         if motifName in glb.MOTIFS:
             MotifCaller(motifName)
             
@@ -668,7 +627,7 @@ def count(motif,pdb):
 def motifchecker(setChoice, rmsdchoice):
     global CSVMergeInfo
     glb.GUI.motifs['cancel'] = False
-    glb.GUI.motifs['motifbox'].delete(0,tk.END)
+    #glb.GUI.motifs['motifbox'].delete(0,tk.END)
     glb.matchpairs = []
     CSVMergeInfo = {}
     glb.GUI.motifs['csvprep'] = {}
@@ -717,7 +676,12 @@ def motifchecker(setChoice, rmsdchoice):
     setName = sets[setChoice][0]
     # This is a Python list comprehension
     keys = set([motifName for motifName in glb.MOTIFS.keys() if sets[setChoice][1](motifName)])
-
+    
+    #4/29 added
+    glb.GUI.motifs['tt'].destroy()#removes current tree displaying past results
+    glb.GUI.motifs['tt'] = texttree.TextTree(glb.GUI.motifs['motifbox'],funcs={'showContent':showContent})#create new tree
+    glb.GUI.motifs['tt'].pack(expand=YES,fill=BOTH)
+    
   
     global numResultsOfEachQuery #added 3/8
     for pdbIndex in range(len(pdbs)):
@@ -741,7 +705,7 @@ def motifchecker(setChoice, rmsdchoice):
             continue
         cmd.hide('everything', 'all')
         cmd.remove("all and hydro")
-       
+         
         for motif in keys:
             # Check for cancellation and break out of inner loop
             if glb.GUI.motifs['cancel']:
@@ -820,30 +784,52 @@ def motifchecker(setChoice, rmsdchoice):
     numberOfResults = len(glb.matchpairs)
     
     oldpdb = ""
+    struct = {}
     #edited 2/19
-    if rmsdchoice is 1:
+    #if rmsdchoice is 1:
+    struct['type'] = 'Document'
+    struct['name'] = 'Results'
+    struct['properties'] = NP_ROOT|NP_ALLOW_CHILDREN|NP_AUTOBUILD
+    struct['children']=[]
+    i = -1
+        
+    if rmsdchoice is 1: 
         for query, motif in glb.matchpairs:
             
             if query != oldpdb:
-                glb.GUI.motifs['motifbox'].insert(tk.END, "\n")
-                glb.GUI.motifs['motifbox'].insert(tk.END, query)
+                j = -1
+                struct['children'].append({'type':'Section','name':query,'children':[]}) 
+                i=i+1
             oldpdb = query
             tag = motif.split(': ')
-          
+             
             if len(tag) > 1:
                 motifName = tag[1]
-                glb.GUI.motifs['motifbox'].insert(tk.END, motif)
-                #fixed errors 2/26
+                struct['children'][i]['children'].append({'type':'Subsection','name':motif,'children':[]})
+                j=j+1
                 if len(glb.GUI.motifs['csvprep'][query][motifName]['rmsd']) > 0:
-                    glb.GUI.motifs['motifbox'].insert(tk.END, "       atoms      rmsd ")
-                    glb.GUI.motifs['motifbox'].insert(tk.END, "       all           " + repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][0], 4)))
-                    glb.GUI.motifs['motifbox'].insert(tk.END, "       ca           " + repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][1], 4)))
-                    glb.GUI.motifs['motifbox'].insert(tk.END, "       cb & ca   " + repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][2], 4)))
+                    struct['children'][i]['children'][j]['children'].append({'type':'Subsection','name':'RMSD All:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][0], 4))})
+                    struct['children'][i]['children'][j]['children'].append({'type':'Subsection','name':'RMSD alpha:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][1], 4))})
+                    struct['children'][i]['children'][j]['children'].append({'type':'Subsection','name':'RMSD alpha & beta:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][2], 4))})
+                 
             if query == motif:
                 numberOfResults -= 1
+            
+            
     else:
         for query, motif in glb.matchpairs:
-            glb.GUI.motifs['motifbox'].insert(tk.END, motif)
+            if query != oldpdb:
+                j = -1
+                struct['children'].append({'type':'Section','name':query,'children':[]}) 
+               
+                i=i+1
+            oldpdb = query
+            tag = motif.split(': ')
+             
+            if len(tag) > 1:
+                motifName = tag[1]
+                struct['children'][i]['children'].append({'type':'Subsection','name':motif,'children':[]})
+                j=j+1
         # The new matchpairs collection of ordered pairs
         # contains, in each element, the query PDB code and
         # the matching motif, in that order.  Header lines are
@@ -852,6 +838,12 @@ def motifchecker(setChoice, rmsdchoice):
             if query == motif:
                 numberOfResults -= 1
     ###
+    
+    
+    
+    glb.GUI.motifs['tt'].showTree(struct,DT_TWSTRUCT,-1,
+        props=NP_AUTOBUILD|NP_ALLOW_CHILDREN,
+        state=NS_EXPANDED)#add nodes from struct to the tree
     
     cmd.orient('all')
     cmd.show('cartoon', 'all')
