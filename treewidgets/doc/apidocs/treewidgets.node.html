@@ -1,0 +1,357 @@
+
+<!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module treewidgets.node</title>
+<style type="text/css"><!--
+TT { font-family: lucidatypewriter, lucida console, courier }
+--></style></head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#7799ee">
+<td valign=bottom><small>&nbsp;<br></small
+><font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="treewidgets.html"><font color="#ffffff">treewidgets</font></a>.node</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/usr/local/lib/python2.1/site-packages/treewidgets/node.py">/usr/local/lib/python2.1/site-packages/treewidgets/node.py</a></font></td></tr></table>
+    <p><small><tt><br>
+node.py<br>
+-------<br>
+&nbsp;<br>
+Provides&nbsp;<a href="#TreeNode">TreeNode</a>&nbsp;class,&nbsp;a&nbsp;base&nbsp;class&nbsp;for&nbsp;the&nbsp;nodes&nbsp;in&nbsp;tree&nbsp;widgets.<br>
+This&nbsp;is&nbsp;an&nbsp;abstract&nbsp;class.&nbsp;To&nbsp;create&nbsp;instances,&nbsp;use&nbsp;either&nbsp;TextTreeNode<br>
+or&nbsp;CanvasTreeNode,&nbsp;depending&nbsp;on&nbsp;which&nbsp;type&nbsp;of&nbsp;TreeWidget&nbsp;you&nbsp;use.<br>
+&nbsp;<br>
+Copyright&nbsp;(c)&nbsp;2002&nbsp;&nbsp;Matthew&nbsp;C.&nbsp;Gushee&nbsp;&lt;mgushee@havenrock.com&gt;<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;free&nbsp;software,&nbsp;released&nbsp;under&nbsp;the&nbsp;terms&nbsp;of&nbsp;the&nbsp;BSD&nbsp;License.&nbsp;See<br>
+the&nbsp;file&nbsp;LICENSE&nbsp;for&nbsp;details.</tt></small></p>
+
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#fffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;&nbsp;</td>
+<td width="100%"><table width="100%"><tr><td width="25%" valign=top><a href="os.html">os</a><br>
+</td><td width="25%" valign=top><a href="string.html">string</a><br>
+</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table>
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><small><a href="treewidgets.node.html#TreeNode">TreeNode</a>
+</small></font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><small><a href="treewidgets.node.html#CustomTreeNode">CustomTreeNode</a>
+</small></font></dt><dt><font face="helvetica, arial"><small><a href="treewidgets.node.html#DOMTreeNode">DOMTreeNode</a>
+</small></font></dt><dt><font face="helvetica, arial"><small><a href="treewidgets.node.html#FSTreeNode">FSTreeNode</a>
+</small></font></dt><dt><font face="helvetica, arial"><small><a href="treewidgets.node.html#TWTreeNode">TWTreeNode</a>
+</small></font></dt></dl>
+</dd>
+</dl>
+ 
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#000000" face="helvetica, arial"><a name="CustomTreeNode">class <strong>CustomTreeNode</strong></a>(<a href="treewidgets.node.html#TreeNode">TreeNode</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><small><tt>This&nbsp;<a href="#TreeNode">TreeNode</a>&nbsp;subclass&nbsp;encapsulates&nbsp;any&nbsp;hierarchical&nbsp;data&nbsp;structure.<br>
+&nbsp;<br>
+See&nbsp;<a href="#TreeNode">TreeNode</a>&nbsp;documentation&nbsp;for&nbsp;more&nbsp;details.<br>&nbsp;</tt></small></td></tr>
+<tr><td>&nbsp;&nbsp;</td>
+<td width="100%"><dl><dt><a name="CustomTreeNode-__init__"><strong>__init__</strong></a>(self, treewidget, parent, data, expand_limit, props<small><font color="#909090">=8</font></small>, state<small><font color="#909090">=0</font></small>, node_funcs<small><font color="#909090">={}</font></small>)<dd><small><tt>Create&nbsp;a&nbsp;<a href="#CustomTreeNode">CustomTreeNode</a>&nbsp;instance.<br>
+&nbsp;<br>
+All&nbsp;arguments&nbsp;are&nbsp;identical&nbsp;to&nbsp;those&nbsp;of&nbsp;the&nbsp;base&nbsp;class&nbsp;constructor;<br>
+however,&nbsp;unlike&nbsp;the&nbsp;other&nbsp;<a href="#TreeNode">TreeNode</a>&nbsp;classes,&nbsp;<a href="#CustomTreeNode">CustomTreeNode</a>&nbsp;uses&nbsp;the<br>
+value&nbsp;of&nbsp;'node_funcs',&nbsp;which&nbsp;is&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;functions&nbsp;conforming<br>
+to&nbsp;the&nbsp;following&nbsp;specification&nbsp;([R]&nbsp;=&nbsp;required):<br>
+&nbsp;<br>
+Key&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Arguments&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return&nbsp;type&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Notes<br>
+---&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---------&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-----------&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-----<br>
+'type'&nbsp;[R]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1]<br>
+'id'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+'get_name'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string<br>
+'set_name'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node,&nbsp;name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+'get_children'&nbsp;&nbsp;&nbsp;&nbsp;node&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list&nbsp;of&nbsp;nodes<br>
+'add_child'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node,&nbsp;child&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[2]<br>
+'del_child'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node,&nbsp;child_id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[3]<br>
+'get_props'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;integer&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4]<br>
+'get_state'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;integer&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4]<br>
+'set_state'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node,&nbsp;state&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[4]<br>
+'get_content'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;any<br>
+'set_content'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node,&nbsp;content&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+'get_attrs'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dictionary<br>
+'set_attrs'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node,&nbsp;attrs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+'get_attr'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node,&nbsp;attname&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;any<br>
+'set_attr'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node,&nbsp;name,&nbsp;value&nbsp;&nbsp;&nbsp;None<br>
+'get_icon'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Image<br>
+'set_icon'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node,&nbsp;icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;None<br>
+&nbsp;<br>
+[1]&nbsp;The&nbsp;value&nbsp;returned&nbsp;by&nbsp;the&nbsp;'type'&nbsp;function&nbsp;should&nbsp;be&nbsp;an&nbsp;application-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;specific&nbsp;node&nbsp;type&nbsp;identifier&nbsp;(e.g.&nbsp;for&nbsp;an&nbsp;XML&nbsp;document,&nbsp;the&nbsp;node<br>
+&nbsp;&nbsp;&nbsp;&nbsp;type&nbsp;would&nbsp;typically&nbsp;be&nbsp;the&nbsp;element&nbsp;name).<br>
+[2]&nbsp;The&nbsp;value&nbsp;of&nbsp;the&nbsp;'child'&nbsp;argument&nbsp;should&nbsp;be&nbsp;a&nbsp;node.<br>
+[3]&nbsp;The&nbsp;value&nbsp;of&nbsp;the&nbsp;'child_id'&nbsp;argument&nbsp;should&nbsp;be&nbsp;a&nbsp;string.<br>
+[4]&nbsp;Property&nbsp;and&nbsp;state&nbsp;values&nbsp;should&nbsp;always&nbsp;be&nbsp;integers.&nbsp;For&nbsp;best<br>
+&nbsp;&nbsp;&nbsp;&nbsp;results,&nbsp;use&nbsp;the&nbsp;constants&nbsp;defined&nbsp;in&nbsp;'constants.py'.<br>
+&nbsp;<br>
+If&nbsp;there&nbsp;are&nbsp;node&nbsp;functions&nbsp;you&nbsp;do&nbsp;not&nbsp;wish&nbsp;to&nbsp;enable,&nbsp;simply&nbsp;omit&nbsp;them<br>
+from&nbsp;the&nbsp;'node_funcs'&nbsp;dictionary,&nbsp;and&nbsp;the&nbsp;<a href="#CustomTreeNode">CustomTreeNode</a>&nbsp;instance&nbsp;will<br>
+disable&nbsp;them&nbsp;in&nbsp;an&nbsp;appropriate&nbsp;way.&nbsp;If&nbsp;you&nbsp;attempt&nbsp;to&nbsp;override&nbsp;the&nbsp;<br>
+built-in&nbsp;behavior&nbsp;by,&nbsp;e.g.&nbsp;passing&nbsp;a&nbsp;value&nbsp;of&nbsp;None&nbsp;for&nbsp;some&nbsp;function,<br>
+errors&nbsp;will&nbsp;probably&nbsp;occur.</tt></small></dl>
+<dl><dt><a name="CustomTreeNode-_assimilate_node_funcs"><strong>_assimilate_node_funcs</strong></a>(self, node_funcs)</dl>
+<dl><dt><a name="CustomTreeNode-_autobuild"><strong>_autobuild</strong></a>(self, data, expand_limit)</dl>
+<dl><dt><a name="CustomTreeNode-_doNothing"><strong>_doNothing</strong></a>(self, event<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="CustomTreeNode-_dump"><strong>_dump</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="CustomTreeNode-_onClick1"><strong>_onClick1</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="CustomTreeNode-_onClick2"><strong>_onClick2</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="CustomTreeNode-_onClick3"><strong>_onClick3</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="CustomTreeNode-_onDoubleClick"><strong>_onDoubleClick</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="CustomTreeNode-_onEnter"><strong>_onEnter</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="CustomTreeNode-_onLeave"><strong>_onLeave</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="CustomTreeNode-_refuse"><strong>_refuse</strong></a>(self, action)</dl>
+<dl><dt><a name="CustomTreeNode-_set_bindings"><strong>_set_bindings</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="CustomTreeNode-_set_id"><strong>_set_id</strong></a>(self, data<small><font color="#909090">=None</font></small>)</dl>
+<dl><dt><a name="CustomTreeNode-_show_props"><strong>_show_props</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="CustomTreeNode-_show_state"><strong>_show_state</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="CustomTreeNode-ancestors"><strong>ancestors</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="CustomTreeNode-collapseAll"><strong>collapseAll</strong></a>(self, is_top<small><font color="#909090">=1</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="CustomTreeNode-configure"><strong>configure</strong></a>(self, init<small><font color="#909090">=0</font></small>, node_type<small><font color="#909090">=None</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="CustomTreeNode-depth"><strong>depth</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="CustomTreeNode-expandAll"><strong>expandAll</strong></a>(self, is_top<small><font color="#909090">=1</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="CustomTreeNode-expandShallow"><strong>expandShallow</strong></a>(self, is_top<small><font color="#909090">=1</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="CustomTreeNode-lastInSubtree"><strong>lastInSubtree</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+</td></tr></table> 
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#000000" face="helvetica, arial"><a name="DOMTreeNode">class <strong>DOMTreeNode</strong></a>(<a href="treewidgets.node.html#TreeNode">TreeNode</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><small><tt>This&nbsp;<a href="#TreeNode">TreeNode</a>&nbsp;subclass&nbsp;encapsulates&nbsp;an&nbsp;XML&nbsp;DOM&nbsp;object.<br>
+&nbsp;<br>
+See&nbsp;<a href="#TreeNode">TreeNode</a>&nbsp;documentation&nbsp;for&nbsp;more&nbsp;details.<br>&nbsp;</tt></small></td></tr>
+<tr><td>&nbsp;&nbsp;</td>
+<td width="100%"><dl><dt><a name="DOMTreeNode-__init__"><strong>__init__</strong></a>(self, treewidget, parent, *args, **kw)<dd><small><tt>Create&nbsp;a&nbsp;<a href="#DOMTreeNode">DOMTreeNode</a>&nbsp;instance.<br>
+&nbsp;<br>
+Keyword&nbsp;argument:<br>
+id_qname&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;the&nbsp;QName&nbsp;of&nbsp;the&nbsp;ID-type&nbsp;attribute&nbsp;in&nbsp;this&nbsp;DOM<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(default:&nbsp;'id').<br>
+&nbsp;<br>
+All&nbsp;other&nbsp;arguments&nbsp;are&nbsp;identical&nbsp;to&nbsp;those&nbsp;of&nbsp;the&nbsp;base&nbsp;class<br>
+constructor.&nbsp;See&nbsp;class&nbsp;<a href="#TreeNode">TreeNode</a>&nbsp;for&nbsp;more&nbsp;info.<br>
+&nbsp;<br>
+Most&nbsp;of&nbsp;the&nbsp;initialization&nbsp;is&nbsp;done&nbsp;by&nbsp;<a href="#TreeNode">TreeNode</a>.__init__.<br>
+In&nbsp;addition&nbsp;to&nbsp;accepting&nbsp;the&nbsp;above&nbsp;variable,&nbsp;this&nbsp;constructor&nbsp;sets&nbsp;<br>
+the&nbsp;instance&nbsp;variable&nbsp;'root',&nbsp;which&nbsp;is&nbsp;peculiar&nbsp;to&nbsp;<a href="#DOMTreeNode">DOMTreeNode</a>.</tt></small></dl>
+<dl><dt><a name="DOMTreeNode-_autobuild"><strong>_autobuild</strong></a>(self, data, expand_limit)</dl>
+<dl><dt><a name="DOMTreeNode-_doNothing"><strong>_doNothing</strong></a>(self, event<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="DOMTreeNode-_dump"><strong>_dump</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="DOMTreeNode-_notEmpty"><strong>_notEmpty</strong></a>(self, n)</dl>
+<dl><dt><a name="DOMTreeNode-_onClick1"><strong>_onClick1</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="DOMTreeNode-_onClick2"><strong>_onClick2</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="DOMTreeNode-_onClick3"><strong>_onClick3</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="DOMTreeNode-_onDoubleClick"><strong>_onDoubleClick</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="DOMTreeNode-_onEnter"><strong>_onEnter</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="DOMTreeNode-_onLeave"><strong>_onLeave</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="DOMTreeNode-_set_bindings"><strong>_set_bindings</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="DOMTreeNode-_set_id"><strong>_set_id</strong></a>(self, data<small><font color="#909090">=None</font></small>)</dl>
+<dl><dt><a name="DOMTreeNode-_show_props"><strong>_show_props</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="DOMTreeNode-_show_state"><strong>_show_state</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="DOMTreeNode-ancestors"><strong>ancestors</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="DOMTreeNode-collapseAll"><strong>collapseAll</strong></a>(self, is_top<small><font color="#909090">=1</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="DOMTreeNode-configure"><strong>configure</strong></a>(self, init<small><font color="#909090">=0</font></small>, node_type<small><font color="#909090">=None</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="DOMTreeNode-depth"><strong>depth</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="DOMTreeNode-expandAll"><strong>expandAll</strong></a>(self, is_top<small><font color="#909090">=1</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="DOMTreeNode-expandShallow"><strong>expandShallow</strong></a>(self, is_top<small><font color="#909090">=1</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="DOMTreeNode-lastInSubtree"><strong>lastInSubtree</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+</td></tr></table> 
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#000000" face="helvetica, arial"><a name="FSTreeNode">class <strong>FSTreeNode</strong></a>(<a href="treewidgets.node.html#TreeNode">TreeNode</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><small><tt>This&nbsp;<a href="#TreeNode">TreeNode</a>&nbsp;subclass&nbsp;encapsulates&nbsp;a&nbsp;file&nbsp;system&nbsp;(AKA&nbsp;directory&nbsp;tree).<br>
+&nbsp;<br>
+See&nbsp;<a href="#TreeNode">TreeNode</a>&nbsp;documentation&nbsp;for&nbsp;more&nbsp;details.<br>&nbsp;</tt></small></td></tr>
+<tr><td>&nbsp;&nbsp;</td>
+<td width="100%"><dl><dt><a name="FSTreeNode-__init__"><strong>__init__</strong></a>(self, treewidget, parent, data, expand_limit, props<small><font color="#909090">=None</font></small>, state<small><font color="#909090">=None</font></small>, node_funcs<small><font color="#909090">={}</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="FSTreeNode-_autobuild"><strong>_autobuild</strong></a>(self, data, expand_limit)</dl>
+<dl><dt><a name="FSTreeNode-_doNothing"><strong>_doNothing</strong></a>(self, event<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="FSTreeNode-_dump"><strong>_dump</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="FSTreeNode-_onClick1"><strong>_onClick1</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="FSTreeNode-_onClick2"><strong>_onClick2</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="FSTreeNode-_onClick3"><strong>_onClick3</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="FSTreeNode-_onDoubleClick"><strong>_onDoubleClick</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="FSTreeNode-_onEnter"><strong>_onEnter</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="FSTreeNode-_onLeave"><strong>_onLeave</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="FSTreeNode-_set_bindings"><strong>_set_bindings</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="FSTreeNode-_set_id"><strong>_set_id</strong></a>(self, data<small><font color="#909090">=None</font></small>)</dl>
+<dl><dt><a name="FSTreeNode-_show_props"><strong>_show_props</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="FSTreeNode-_show_state"><strong>_show_state</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="FSTreeNode-ancestors"><strong>ancestors</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="FSTreeNode-collapseAll"><strong>collapseAll</strong></a>(self, is_top<small><font color="#909090">=1</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="FSTreeNode-configure"><strong>configure</strong></a>(self, init<small><font color="#909090">=0</font></small>, node_type<small><font color="#909090">=None</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="FSTreeNode-depth"><strong>depth</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="FSTreeNode-expandAll"><strong>expandAll</strong></a>(self, is_top<small><font color="#909090">=1</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="FSTreeNode-expandShallow"><strong>expandShallow</strong></a>(self, is_top<small><font color="#909090">=1</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="FSTreeNode-lastInSubtree"><strong>lastInSubtree</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+</td></tr></table> 
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#000000" face="helvetica, arial"><a name="TWTreeNode">class <strong>TWTreeNode</strong></a>(<a href="treewidgets.node.html#TreeNode">TreeNode</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><small><tt>This&nbsp;<a href="#TreeNode">TreeNode</a>&nbsp;subclass&nbsp;encapsulates&nbsp;a&nbsp;TWStruct&nbsp;data&nbsp;structure.<br>
+&nbsp;<br>
+See&nbsp;<a href="#TreeNode">TreeNode</a>&nbsp;documentation&nbsp;for&nbsp;more&nbsp;details.<br>&nbsp;</tt></small></td></tr>
+<tr><td>&nbsp;&nbsp;</td>
+<td width="100%"><dl><dt><a name="TWTreeNode-__init__"><strong>__init__</strong></a>(self, treewidget, parent, data, expand_limit, props<small><font color="#909090">=None</font></small>, state<small><font color="#909090">=None</font></small>, node_funcs<small><font color="#909090">={}</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="TWTreeNode-_autobuild"><strong>_autobuild</strong></a>(self, data, expand_limit)</dl>
+<dl><dt><a name="TWTreeNode-_doNothing"><strong>_doNothing</strong></a>(self, event<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="TWTreeNode-_dump"><strong>_dump</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="TWTreeNode-_onClick1"><strong>_onClick1</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="TWTreeNode-_onClick2"><strong>_onClick2</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="TWTreeNode-_onClick3"><strong>_onClick3</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="TWTreeNode-_onDoubleClick"><strong>_onDoubleClick</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="TWTreeNode-_onEnter"><strong>_onEnter</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="TWTreeNode-_onLeave"><strong>_onLeave</strong></a>(self, event)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="TWTreeNode-_set_bindings"><strong>_set_bindings</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="TWTreeNode-_set_id"><strong>_set_id</strong></a>(self, data<small><font color="#909090">=None</font></small>)</dl>
+<dl><dt><a name="TWTreeNode-_show_props"><strong>_show_props</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="TWTreeNode-_show_state"><strong>_show_state</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="TWTreeNode-ancestors"><strong>ancestors</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="TWTreeNode-collapseAll"><strong>collapseAll</strong></a>(self, is_top<small><font color="#909090">=1</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="TWTreeNode-configure"><strong>configure</strong></a>(self, init<small><font color="#909090">=0</font></small>, node_type<small><font color="#909090">=None</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="TWTreeNode-depth"><strong>depth</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="TWTreeNode-expandAll"><strong>expandAll</strong></a>(self, is_top<small><font color="#909090">=1</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="TWTreeNode-expandShallow"><strong>expandShallow</strong></a>(self, is_top<small><font color="#909090">=1</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+<dl><dt><a name="TWTreeNode-lastInSubtree"><strong>lastInSubtree</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.node.html#TreeNode">TreeNode</a></font></font></small></dl>
+</td></tr></table> 
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#000000" face="helvetica, arial"><a name="TreeNode">class <strong>TreeNode</strong></a></font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><small><tt>This&nbsp;is&nbsp;the&nbsp;basic&nbsp;unit&nbsp;of&nbsp;the&nbsp;tree&nbsp;data&nbsp;structure.<br>
+&nbsp;<br>
+<a href="#TreeNode">TreeNode</a>&nbsp;is&nbsp;a&nbsp;base&nbsp;class&nbsp;for&nbsp;several&nbsp;more&nbsp;specific&nbsp;node&nbsp;types;&nbsp;since<br>
+it&nbsp;lacks&nbsp;a&nbsp;few&nbsp;essential&nbsp;attributes,&nbsp;you&nbsp;should&nbsp;always&nbsp;use&nbsp;one&nbsp;of&nbsp;the<br>
+subclasses&nbsp;in&nbsp;your&nbsp;application.&nbsp;In&nbsp;any&nbsp;case,&nbsp;you&nbsp;will&nbsp;normally&nbsp;not&nbsp;<br>
+need&nbsp;to&nbsp;directly&nbsp;create&nbsp;any&nbsp;nodes:&nbsp;if&nbsp;you&nbsp;invoke&nbsp;TreeWidget.showTree()<br>
+with&nbsp;the&nbsp;appropriate&nbsp;arguments,&nbsp;an&nbsp;entire&nbsp;tree&nbsp;of&nbsp;nodes&nbsp;will&nbsp;be&nbsp;created<br>
+automatically.<br>&nbsp;</tt></small></td></tr>
+<tr><td>&nbsp;&nbsp;</td>
+<td width="100%"><dl><dt><a name="TreeNode-__init__"><strong>__init__</strong></a>(self, treewidget, parent, data, expand_limit, props<small><font color="#909090">=None</font></small>, state<small><font color="#909090">=None</font></small>, node_funcs<small><font color="#909090">={}</font></small>)<dd><small><tt>Create&nbsp;a&nbsp;<a href="#TreeNode">TreeNode</a>&nbsp;instance.<br>
+&nbsp;<br>
+Arguments:<br>
+treewidget&nbsp;&nbsp;&nbsp;--&nbsp;a&nbsp;TreeWidget&nbsp;instance<br>
+parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;the&nbsp;parent&nbsp;node&nbsp;(use&nbsp;none&nbsp;when&nbsp;creating&nbsp;the&nbsp;root&nbsp;node)<br>
+data&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;the&nbsp;underlying&nbsp;node&nbsp;in&nbsp;the&nbsp;data&nbsp;structure<br>
+expand_limit&nbsp;--&nbsp;number&nbsp;of&nbsp;levels&nbsp;to&nbsp;expand&nbsp;the&nbsp;node's&nbsp;subtree<br>
+&nbsp;<br>
+Keyword&nbsp;arguments:<br>
+props&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;property&nbsp;flags&nbsp;for&nbsp;the&nbsp;node*&nbsp;(default:&nbsp;None)<br>
+state&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;state&nbsp;flags&nbsp;for&nbsp;the&nbsp;node*&nbsp;&nbsp;&nbsp;&nbsp;(default:&nbsp;None)<br>
+node_funcs&nbsp;&nbsp;&nbsp;--&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;functions&nbsp;used&nbsp;to&nbsp;determine&nbsp;the&nbsp;node's<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name,&nbsp;type,&nbsp;children,&nbsp;and&nbsp;other&nbsp;characteristics<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--used&nbsp;only&nbsp;in&nbsp;<a href="#CustomTreeNode">CustomTreeNode</a>&nbsp;instances&nbsp;(default:&nbsp;{})<br>
+&nbsp;<br>
+*&nbsp;For&nbsp;more&nbsp;infomation&nbsp;about&nbsp;state&nbsp;and&nbsp;property&nbsp;flags,&nbsp;see&nbsp;constants.py</tt></small></dl>
+<dl><dt><a name="TreeNode-_doNothing"><strong>_doNothing</strong></a>(self, event<small><font color="#909090">=None</font></small>)</dl>
+<dl><dt><a name="TreeNode-_dump"><strong>_dump</strong></a>(self)</dl>
+<dl><dt><a name="TreeNode-_onClick1"><strong>_onClick1</strong></a>(self, event)</dl>
+<dl><dt><a name="TreeNode-_onClick2"><strong>_onClick2</strong></a>(self, event)</dl>
+<dl><dt><a name="TreeNode-_onClick3"><strong>_onClick3</strong></a>(self, event)</dl>
+<dl><dt><a name="TreeNode-_onDoubleClick"><strong>_onDoubleClick</strong></a>(self, event)</dl>
+<dl><dt><a name="TreeNode-_onEnter"><strong>_onEnter</strong></a>(self, event)</dl>
+<dl><dt><a name="TreeNode-_onLeave"><strong>_onLeave</strong></a>(self, event)</dl>
+<dl><dt><a name="TreeNode-_set_bindings"><strong>_set_bindings</strong></a>(self)</dl>
+<dl><dt><a name="TreeNode-_show_props"><strong>_show_props</strong></a>(self)</dl>
+<dl><dt><a name="TreeNode-_show_state"><strong>_show_state</strong></a>(self)</dl>
+<dl><dt><a name="TreeNode-ancestors"><strong>ancestors</strong></a>(self)<dd><small><tt>Return&nbsp;the&nbsp;list&nbsp;of&nbsp;all&nbsp;this&nbsp;node's&nbsp;ancestors.</tt></small></dl>
+<dl><dt><a name="TreeNode-collapseAll"><strong>collapseAll</strong></a>(self, is_top<small><font color="#909090">=1</font></small>)<dd><small><tt>Collapse&nbsp;this&nbsp;node&nbsp;and&nbsp;all&nbsp;its&nbsp;descendants.<br>
+&nbsp;<br>
+Keyword&nbsp;arguments:<br>
+is_top&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;1&nbsp;if&nbsp;this&nbsp;is&nbsp;the&nbsp;topmost&nbsp;node&nbsp;involved&nbsp;in&nbsp;the&nbsp;operation,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;otherwise&nbsp;(default:&nbsp;1)</tt></small></dl>
+<dl><dt><a name="TreeNode-configure"><strong>configure</strong></a>(self, init<small><font color="#909090">=0</font></small>, node_type<small><font color="#909090">=None</font></small>, **kw)<dd><small><tt>Set&nbsp;important&nbsp;attributes&nbsp;of&nbsp;the&nbsp;node&nbsp;object.<br>
+&nbsp;<br>
+Keyword&nbsp;arguments:<br>
+init&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;1&nbsp;for&nbsp;initial&nbsp;configuration,&nbsp;0&nbsp;for&nbsp;reconfiguration<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(default:&nbsp;0)<br>
+node_type&nbsp;&nbsp;&nbsp;--&nbsp;an&nbsp;application-specific&nbsp;type&nbsp;name&nbsp;for&nbsp;the&nbsp;node<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(default:&nbsp;None&nbsp;--&nbsp;but&nbsp;*must*&nbsp;be&nbsp;specified&nbsp;on&nbsp;initial<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;configuration)<br>
+name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;a&nbsp;human-readable&nbsp;name&nbsp;for&nbsp;the&nbsp;node<br>
+properties&nbsp;&nbsp;--&nbsp;property&nbsp;flags&nbsp;(see&nbsp;'constants.py')<br>
+state&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;state&nbsp;flag&nbsp;(see&nbsp;'constants.py')<br>
+content&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;textual&nbsp;content&nbsp;of&nbsp;the&nbsp;node&nbsp;(roughly&nbsp;equivalent&nbsp;to<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PCDATA&nbsp;element&nbsp;content&nbsp;in&nbsp;XML)<br>
+attributes&nbsp;&nbsp;--&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;arbitrary,&nbsp;application-specific<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;attributes<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+This&nbsp;method&nbsp;is&nbsp;normally&nbsp;called&nbsp;automatically&nbsp;by&nbsp;the&nbsp;autobuild&nbsp;process.</tt></small></dl>
+<dl><dt><a name="TreeNode-depth"><strong>depth</strong></a>(self)<dd><small><tt>Return&nbsp;the&nbsp;depth&nbsp;of&nbsp;this&nbsp;node&nbsp;in&nbsp;the&nbsp;tree&nbsp;(minus&nbsp;abstract&nbsp;nodes).</tt></small></dl>
+<dl><dt><a name="TreeNode-expandAll"><strong>expandAll</strong></a>(self, is_top<small><font color="#909090">=1</font></small>)<dd><small><tt>Expand&nbsp;this&nbsp;node&nbsp;and&nbsp;all&nbsp;its&nbsp;descendants.<br>
+&nbsp;<br>
+Keyword&nbsp;arguments:<br>
+is_top&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;1&nbsp;if&nbsp;this&nbsp;is&nbsp;the&nbsp;topmost&nbsp;node&nbsp;involved&nbsp;in&nbsp;the&nbsp;operation,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;otherwise&nbsp;(default:&nbsp;1)</tt></small></dl>
+<dl><dt><a name="TreeNode-expandShallow"><strong>expandShallow</strong></a>(self, is_top<small><font color="#909090">=1</font></small>)<dd><small><tt>Expand&nbsp;this&nbsp;node&nbsp;only&nbsp;--&nbsp;that&nbsp;is,&nbsp;display&nbsp;its&nbsp;children,&nbsp;then&nbsp;stop.<br>
+&nbsp;<br>
+Keyword&nbsp;arguments:<br>
+is_top&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;1&nbsp;if&nbsp;this&nbsp;is&nbsp;the&nbsp;topmost&nbsp;node&nbsp;involved&nbsp;in&nbsp;the&nbsp;operation,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;otherwise&nbsp;(default:&nbsp;1)</tt></small></dl>
+<dl><dt><a name="TreeNode-lastInSubtree"><strong>lastInSubtree</strong></a>(self)<dd><small><tt>Return&nbsp;the&nbsp;last&nbsp;descendant&nbsp;of&nbsp;this&nbsp;node.</tt></small></dl>
+</td></tr></table></td></tr></table>
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;&nbsp;</td>
+<td width="100%"><strong>DEBUG</strong> = 0<br>
+<strong>DEFAULT_PROPS</strong> = 12<br>
+<strong>DEFAULT_REFUSALS</strong> = {'default': 2}<br>
+<strong>DEFAULT_STATE</strong> = 36<br>
+<strong>DE_LOG_NODE_STATES</strong> = 1<br>
+<strong>DOWN</strong> = 2<br>
+<strong>DT_ALL</strong> = 15<br>
+<strong>DT_CUSTOM</strong> = 8<br>
+<strong>DT_FILESYSTEM</strong> = 4<br>
+<strong>DT_NONE</strong> = 0<br>
+<strong>DT_TWSTRUCT</strong> = 1<br>
+<strong>DT_XMLDOM</strong> = 2<br>
+<strong>ERR_FAIL</strong> = 4<br>
+<strong>ERR_IGNORE</strong> = 1<br>
+<strong>ERR_WARN</strong> = 2<br>
+<strong>FALSE</strong> = 2<br>
+<strong>NP_ABSTRACT</strong> = 16<br>
+<strong>NP_ALL</strong> = 31<br>
+<strong>NP_ALLOW_CHILDREN</strong> = 4<br>
+<strong>NP_AUTOBUILD</strong> = 8<br>
+<strong>NP_NONE</strong> = 1<br>
+<strong>NP_ROOT</strong> = 2<br>
+<strong>NS_ALL</strong> = 255<br>
+<strong>NS_EXPANDED</strong> = 32<br>
+<strong>NS_HAS_CHILDREN</strong> = 64<br>
+<strong>NS_LOCKED</strong> = 128<br>
+<strong>NS_NONE</strong> = 1<br>
+<strong>NS_PENDING_HIDE</strong> = 8<br>
+<strong>NS_PENDING_SHIFT</strong> = 16<br>
+<strong>NS_PENDING_SHOW</strong> = 4<br>
+<strong>NS_VISIBLE</strong> = 2<br>
+<strong>SHOW_EMPTY_TEXT_NODES</strong> = 0<br>
+<strong>TRUE</strong> = 1<br>
+<strong>UP</strong> = 1<br>
+<strong>__file__</strong> = '/usr/local/lib/python2.1/site-packages/treewidgets/node.pyc'<br>
+<strong>__name__</strong> = 'treewidgets.node'</td></tr></table>
+</body></html>
