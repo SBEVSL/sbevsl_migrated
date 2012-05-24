@@ -1,0 +1,316 @@
+
+<!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module treewidgets.widget</title>
+<style type="text/css"><!--
+TT { font-family: lucidatypewriter, lucida console, courier }
+--></style></head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#7799ee">
+<td valign=bottom><small>&nbsp;<br></small
+><font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="treewidgets.html"><font color="#ffffff">treewidgets</font></a>.widget</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/usr/local/lib/python2.1/site-packages/treewidgets/widget.py">/usr/local/lib/python2.1/site-packages/treewidgets/widget.py</a></font></td></tr></table>
+    <p><small><tt><br>
+widget.py<br>
+---------<br>
+&nbsp;<br>
+Provide&nbsp;the&nbsp;<a href="#TreeWidget">TreeWidget</a>&nbsp;class,&nbsp;an&nbsp;abstract&nbsp;base&nbsp;class&nbsp;for&nbsp;different&nbsp;types<br>
+of&nbsp;TreeWidgets.<br>
+&nbsp;<br>
+Copyright&nbsp;(c)&nbsp;2002&nbsp;&nbsp;Matthew&nbsp;C.&nbsp;Gushee&nbsp;&lt;mgushee@havenrock.com&gt;<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;free&nbsp;software,&nbsp;released&nbsp;under&nbsp;the&nbsp;terms&nbsp;of&nbsp;the&nbsp;BSD&nbsp;License.&nbsp;See<br>
+the&nbsp;file&nbsp;LICENSE&nbsp;for&nbsp;details.</tt></small></p>
+
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#fffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;&nbsp;</td>
+<td width="100%"><table width="100%"><tr><td width="25%" valign=top><a href="os.html">os</a><br>
+</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
+</td><td width="25%" valign=top><a href="tkFont.html">tkFont</a><br>
+</td><td width="25%" valign=top><a href="_tkinter.html">_tkinter</a><br>
+</td></tr></table></td></tr></table>
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><small><a href="treewidgets.widget.html#TreeWidget">TreeWidget</a>
+</small></font></dt></dl>
+ 
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#000000" face="helvetica, arial"><a name="TreeWidget">class <strong>TreeWidget</strong></a></font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><small><tt>Base&nbsp;class&nbsp;for&nbsp;GUI&nbsp;widgets&nbsp;that&nbsp;display&nbsp;tree&nbsp;structures.<br>
+&nbsp;<br>
+This&nbsp;class&nbsp;cannot&nbsp;be&nbsp;instantiated&nbsp;directly.&nbsp;Please&nbsp;use&nbsp;one&nbsp;of&nbsp;its<br>
+subclasses,&nbsp;TextTree&nbsp;or&nbsp;CanvasTree.<br>&nbsp;</tt></small></td></tr>
+<tr><td>&nbsp;&nbsp;</td>
+<td width="100%"><dl><dt><a name="TreeWidget-__init__"><strong>__init__</strong></a>(self, master, app<small><font color="#909090">=None</font></small>, funcs<small><font color="#909090">={}</font></small>)<dd><small><tt>Create&nbsp;a&nbsp;<a href="#TreeWidget">TreeWidget</a>&nbsp;instance.<br>
+&nbsp;<br>
+Arguments:<br>
+master&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;the&nbsp;widget&nbsp;that&nbsp;contains&nbsp;this&nbsp;one<br>
+&nbsp;<br>
+Keyword&nbsp;arguments:<br>
+app&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;the&nbsp;application&nbsp;object&nbsp;(default:&nbsp;None)</tt></small></dl>
+<dl><dt><a name="TreeWidget-_gui_setup"><strong>_gui_setup</strong></a>(self, iconmap, fontmap, **tkconfig)</dl>
+<dl><dt><a name="TreeWidget-_mkfonts"><strong>_mkfonts</strong></a>(self, fontmap<small><font color="#909090">=None</font></small>)</dl>
+<dl><dt><a name="TreeWidget-_mkicons"><strong>_mkicons</strong></a>(self, iconmap<small><font color="#909090">=None</font></small>)</dl>
+<dl><dt><a name="TreeWidget-_onDown"><strong>_onDown</strong></a>(self, event<small><font color="#909090">=None</font></small>)</dl>
+<dl><dt><a name="TreeWidget-_onSpace"><strong>_onSpace</strong></a>(self, event<small><font color="#909090">=None</font></small>)</dl>
+<dl><dt><a name="TreeWidget-_onUp"><strong>_onUp</strong></a>(self, event<small><font color="#909090">=None</font></small>)</dl>
+<dl><dt><a name="TreeWidget-addNode"><strong>addNode</strong></a>(self, node)</dl>
+<dl><dt><a name="TreeWidget-generateNodeID"><strong>generateNodeID</strong></a>(self, datanode)<dd><small><tt>Generate&nbsp;a&nbsp;unique&nbsp;string&nbsp;(within&nbsp;the&nbsp;current&nbsp;tree)&nbsp;for&nbsp;a&nbsp;node&nbsp;ID.<br>
+&nbsp;<br>
+Arguments:<br>
+datanode&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;any&nbsp;node&nbsp;from&nbsp;the&nbsp;tree&nbsp;data&nbsp;structure<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;the&nbsp;default&nbsp;means&nbsp;of&nbsp;generating&nbsp;node&nbsp;ID's.&nbsp;In&nbsp;an&nbsp;autobuilt<br>
+tree,&nbsp;it&nbsp;will&nbsp;be&nbsp;invoked&nbsp;automatically&nbsp;when&nbsp;needed--generally,&nbsp;any<br>
+case&nbsp;where&nbsp;the&nbsp;source&nbsp;data&nbsp;lacks&nbsp;"built-in"&nbsp;IDs,&nbsp;and&nbsp;you&nbsp;have&nbsp;not<br>
+provided&nbsp;a&nbsp;function&nbsp;for&nbsp;obtaining&nbsp;IDs.<br>
+&nbsp;<br>
+Common&nbsp;cases&nbsp;of&nbsp;objects&nbsp;with&nbsp;built-in&nbsp;IDs&nbsp;are&nbsp;XML&nbsp;elements&nbsp;with&nbsp;ID<br>
+attributes,&nbsp;and&nbsp;files&nbsp;in&nbsp;a&nbsp;file&nbsp;system.&nbsp;In&nbsp;the&nbsp;latter&nbsp;case,&nbsp;the&nbsp;full<br>
+path&nbsp;is&nbsp;the&nbsp;file's&nbsp;ID.<br>
+&nbsp;<br>
+If&nbsp;you&nbsp;have&nbsp;defined&nbsp;an&nbsp;application&nbsp;object,&nbsp;and&nbsp;it&nbsp;has&nbsp;a<br>
+<a href="#TreeWidget-generateNodeID">generateNodeID</a>()&nbsp;method,&nbsp;this&nbsp;method&nbsp;will&nbsp;delegate&nbsp;to&nbsp;it.</tt></small></dl>
+<dl><dt><a name="TreeWidget-getNodeByID"><strong>getNodeByID</strong></a>(self, node_id)<dd><small><tt>Return&nbsp;the&nbsp;node&nbsp;having&nbsp;a&nbsp;given&nbsp;ID.</tt></small></dl>
+<dl><dt><a name="TreeWidget-goNext"><strong>goNext</strong></a>(self, node)</dl>
+<dl><dt><a name="TreeWidget-goPrevious"><strong>goPrevious</strong></a>(self, node)</dl>
+<dl><dt><a name="TreeWidget-grid"><strong>grid</strong></a>(self, *args, **kw)<dd><small><tt>Override&nbsp;the&nbsp;Tkinter&nbsp;<a href="#TreeWidget-grid">grid</a>()&nbsp;method.</tt></small></dl>
+<dl><dt><a name="TreeWidget-grid_forget"><strong>grid_forget</strong></a>(self)<dd><small><tt>Override&nbsp;the&nbsp;Tkinter&nbsp;<a href="#TreeWidget-grid_forget">grid_forget</a>()&nbsp;method.</tt></small></dl>
+<dl><dt><a name="TreeWidget-hideNode"><strong>hideNode</strong></a>(self, node)</dl>
+<dl><dt><a name="TreeWidget-hideNodes"><strong>hideNodes</strong></a>(self)</dl>
+<dl><dt><a name="TreeWidget-hideNodes4Shift"><strong>hideNodes4Shift</strong></a>(self)</dl>
+<dl><dt><a name="TreeWidget-insertAfter"><strong>insertAfter</strong></a>(self, refnode, newnode)</dl>
+<dl><dt><a name="TreeWidget-insertBefore"><strong>insertBefore</strong></a>(self, refnode, newnode)</dl>
+<dl><dt><a name="TreeWidget-logNodeStates"><strong>logNodeStates</strong></a>(self, tag)<dd><small><tt>Logs&nbsp;a&nbsp;representation&nbsp;of&nbsp;all&nbsp;nodes&nbsp;in&nbsp;the&nbsp;tree&nbsp;for&nbsp;debugging.<br>
+&nbsp;<br>
+Arguments:<br>
+tag&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;an&nbsp;arbitrary&nbsp;string&nbsp;that&nbsp;can&nbsp;be&nbsp;used&nbsp;to&nbsp;associate&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;log&nbsp;entry&nbsp;with&nbsp;a&nbsp;known&nbsp;event&nbsp;or&nbsp;state</tt></small></dl>
+<dl><dt><a name="TreeWidget-nodesFollowing"><strong>nodesFollowing</strong></a>(self, node)<dd><small><tt>Return&nbsp;the&nbsp;list&nbsp;of&nbsp;all&nbsp;nodes&nbsp;following&nbsp;a&nbsp;given&nbsp;node&nbsp;in&nbsp;display&nbsp;order.</tt></small></dl>
+<dl><dt><a name="TreeWidget-nodesPreceding"><strong>nodesPreceding</strong></a>(self, node)<dd><small><tt>Return&nbsp;the&nbsp;list&nbsp;of&nbsp;all&nbsp;nodes&nbsp;preceding&nbsp;a&nbsp;given&nbsp;node&nbsp;in&nbsp;display&nbsp;order.</tt></small></dl>
+<dl><dt><a name="TreeWidget-pack"><strong>pack</strong></a>(self, *args, **kw)<dd><small><tt>Override&nbsp;the&nbsp;Tkinter&nbsp;<a href="#TreeWidget-pack">pack</a>()&nbsp;method.</tt></small></dl>
+<dl><dt><a name="TreeWidget-pack_forget"><strong>pack_forget</strong></a>(self)<dd><small><tt>Override&nbsp;the&nbsp;Tkinter&nbsp;<a href="#TreeWidget-pack_forget">pack_forget</a>()&nbsp;method.</tt></small></dl>
+<dl><dt><a name="TreeWidget-place"><strong>place</strong></a>(self, *args, **kw)<dd><small><tt>Override&nbsp;the&nbsp;Tkinter&nbsp;<a href="#TreeWidget-place">place</a>()&nbsp;method.</tt></small></dl>
+<dl><dt><a name="TreeWidget-place_forget"><strong>place_forget</strong></a>(self)<dd><small><tt>Override&nbsp;the&nbsp;Tkinter&nbsp;<a href="#TreeWidget-place_forget">place_forget</a>()&nbsp;method.</tt></small></dl>
+<dl><dt><a name="TreeWidget-redisplay"><strong>redisplay</strong></a>(self)<dd><small><tt>Refresh&nbsp;the&nbsp;tree&nbsp;display&nbsp;after&nbsp;showing,&nbsp;hiding,&nbsp;or&nbsp;moving&nbsp;nodes.</tt></small></dl>
+<dl><dt><a name="TreeWidget-removeNode"><strong>removeNode</strong></a>(self, node)</dl>
+<dl><dt><a name="TreeWidget-scheduleShiftFollowing"><strong>scheduleShiftFollowing</strong></a>(self, node)</dl>
+<dl><dt><a name="TreeWidget-showNode"><strong>showNode</strong></a>(self, node, row)</dl>
+<dl><dt><a name="TreeWidget-showNodes"><strong>showNodes</strong></a>(self)</dl>
+<dl><dt><a name="TreeWidget-showTree"><strong>showTree</strong></a>(self, data, datatype, expand_limit<small><font color="#909090">=None</font></small>, node_funcs<small><font color="#909090">={}</font></small>, props<small><font color="#909090">=0</font></small>, state<small><font color="#909090">=0</font></small>)<dd><small><tt>Build&nbsp;and&nbsp;display&nbsp;a&nbsp;tree&nbsp;of&nbsp;TreeNode&nbsp;objects.<br>
+&nbsp;<br>
+Arguments:<br>
+data&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;any&nbsp;hierarchical&nbsp;data&nbsp;structure<br>
+datatype&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;an&nbsp;integer&nbsp;representing&nbsp;an&nbsp;appropriate&nbsp;data&nbsp;type&nbsp;for<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;'data'&nbsp;argument.&nbsp;Should&nbsp;be&nbsp;one&nbsp;of&nbsp;the&nbsp;constants<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DT_TWSTRUCT,&nbsp;DT_XMLDOM,&nbsp;DT_FILESYSTEM,&nbsp;and&nbsp;DT_CUSTOM.<br>
+&nbsp;<br>
+Keyword&nbsp;arguments:<br>
+expand_limit&nbsp;&nbsp;--&nbsp;the&nbsp;number&nbsp;of&nbsp;levels&nbsp;to&nbsp;expand&nbsp;the&nbsp;tree&nbsp;display.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;value&nbsp;of&nbsp;0&nbsp;will&nbsp;cause&nbsp;only&nbsp;the&nbsp;root&nbsp;node&nbsp;to&nbsp;be<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;displayed;&nbsp;-1&nbsp;means&nbsp;no&nbsp;limit--be&nbsp;careful&nbsp;with&nbsp;this!<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If&nbsp;you&nbsp;try&nbsp;to&nbsp;show&nbsp;a&nbsp;filesystem&nbsp;tree&nbsp;starting&nbsp;at&nbsp;the&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;root&nbsp;directory&nbsp;with&nbsp;expand_limit=-1,&nbsp;the&nbsp;widget&nbsp;will&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try&nbsp;to&nbsp;display&nbsp;*every&nbsp;file&nbsp;in&nbsp;your&nbsp;filesystem*.&nbsp;That&nbsp;is<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;probably&nbsp;not&nbsp;what&nbsp;you&nbsp;want.&nbsp;(default:&nbsp;None&nbsp;--&nbsp;if&nbsp;you<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;don't&nbsp;pass&nbsp;a&nbsp;value,&nbsp;the&nbsp;built-in&nbsp;defaults&nbsp;of&nbsp;the&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;various&nbsp;node&nbsp;classes&nbsp;take&nbsp;precedence.)<br>
+props&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;property&nbsp;flags&nbsp;for&nbsp;the&nbsp;root&nbsp;node*&nbsp;(default:&nbsp;None)<br>
+state&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;state&nbsp;flags&nbsp;for&nbsp;the&nbsp;root&nbsp;node*&nbsp;&nbsp;&nbsp;&nbsp;(default:&nbsp;None)<br>
+node_funcs&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;functions&nbsp;used&nbsp;to&nbsp;determine&nbsp;node<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;names,&nbsp;types,&nbsp;children,&nbsp;and&nbsp;other&nbsp;characteristics<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--needed&nbsp;only&nbsp;for&nbsp;CustomTreeNode&nbsp;instances&nbsp;(default:&nbsp;{})<br>
+&nbsp;<br>
+*&nbsp;For&nbsp;more&nbsp;infomation&nbsp;about&nbsp;state&nbsp;and&nbsp;property&nbsp;flags,&nbsp;see&nbsp;constants.py<br>
+&nbsp;<br>
+AUTOBUILT&nbsp;TREES:<br>
+If&nbsp;you&nbsp;include&nbsp;NP_AUTOBUILD&nbsp;in&nbsp;the&nbsp;property&nbsp;flags&nbsp;('props'&nbsp;argument),&nbsp;<br>
+the&nbsp;entire&nbsp;tree&nbsp;will&nbsp;be&nbsp;constructed&nbsp;and&nbsp;displayed&nbsp;with&nbsp;no&nbsp;further<br>
+effort&nbsp;on&nbsp;your&nbsp;part.&nbsp;If&nbsp;the&nbsp;datatype&nbsp;is&nbsp;DT_CUSTOM,&nbsp;the&nbsp;'node_funcs'<br>
+argument&nbsp;comes&nbsp;into&nbsp;play.&nbsp;See&nbsp;CustomTreeNode.__init__&nbsp;for&nbsp;more<br>
+information&nbsp;on&nbsp;'node_funcs'.</tt></small></dl>
+<dl><dt><a name="TreeWidget-toggleNode"><strong>toggleNode</strong></a>(self, node)</dl>
+</td></tr></table></td></tr></table>
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;&nbsp;</td>
+<td width="100%"><dl><dt><a name="-getdouble"><strong>getdouble</strong></a> = float(...)<dd><small><tt>float(x)&nbsp;-&gt;&nbsp;floating&nbsp;point&nbsp;number<br>
+&nbsp;<br>
+Convert&nbsp;a&nbsp;string&nbsp;or&nbsp;number&nbsp;to&nbsp;a&nbsp;floating&nbsp;point&nbsp;number,&nbsp;if&nbsp;possible.</tt></small></dl>
+ <dl><dt><a name="-getint"><strong>getint</strong></a> = int(...)<dd><small><tt>int(x[,&nbsp;base])&nbsp;-&gt;&nbsp;integer<br>
+&nbsp;<br>
+Convert&nbsp;a&nbsp;string&nbsp;or&nbsp;number&nbsp;to&nbsp;an&nbsp;integer,&nbsp;if&nbsp;possible.&nbsp;&nbsp;A&nbsp;floating&nbsp;point<br>
+argument&nbsp;will&nbsp;be&nbsp;truncated&nbsp;towards&nbsp;zero&nbsp;(this&nbsp;does&nbsp;not&nbsp;include&nbsp;a&nbsp;string<br>
+representation&nbsp;of&nbsp;a&nbsp;floating&nbsp;point&nbsp;number!)&nbsp;&nbsp;When&nbsp;converting&nbsp;a&nbsp;string,&nbsp;use<br>
+the&nbsp;optional&nbsp;base.&nbsp;&nbsp;It&nbsp;is&nbsp;an&nbsp;error&nbsp;to&nbsp;supply&nbsp;a&nbsp;base&nbsp;when&nbsp;converting&nbsp;a<br>
+non-string.</tt></small></dl>
+</td></tr></table>
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;&nbsp;</td>
+<td width="100%"><strong>ACTIVE</strong> = 'active'<br>
+<strong>ACTIVE_FG</strong> = '#0000ff'<br>
+<strong>ALL</strong> = 'all'<br>
+<strong>ANCHOR</strong> = 'anchor'<br>
+<strong>ARC</strong> = 'arc'<br>
+<strong>BASELINE</strong> = 'baseline'<br>
+<strong>BEVEL</strong> = 'bevel'<br>
+<strong>BOTH</strong> = 'both'<br>
+<strong>BOTTOM</strong> = 'bottom'<br>
+<strong>BROWSE</strong> = 'browse'<br>
+<strong>BUTT</strong> = 'butt'<br>
+<strong>BufferType</strong> = &lt;type 'buffer'&gt;<br>
+<strong>BuiltinFunctionType</strong> = &lt;type 'builtin_function_or_method'&gt;<br>
+<strong>BuiltinMethodType</strong> = &lt;type 'builtin_function_or_method'&gt;<br>
+<strong>CASCADE</strong> = 'cascade'<br>
+<strong>CENTER</strong> = 'center'<br>
+<strong>CHAR</strong> = 'char'<br>
+<strong>CHECKBUTTON</strong> = 'checkbutton'<br>
+<strong>CHORD</strong> = 'chord'<br>
+<strong>COMMAND</strong> = 'command'<br>
+<strong>CURRENT</strong> = 'current'<br>
+<strong>ClassType</strong> = &lt;type 'class'&gt;<br>
+<strong>CodeType</strong> = &lt;type 'code'&gt;<br>
+<strong>ComplexType</strong> = &lt;type 'complex'&gt;<br>
+<strong>DE_LOG_NODE_STATES</strong> = 1<br>
+<strong>DISABLED</strong> = 'disabled'<br>
+<strong>DOWN</strong> = 2<br>
+<strong>DT_ALL</strong> = 15<br>
+<strong>DT_CUSTOM</strong> = 8<br>
+<strong>DT_FILESYSTEM</strong> = 4<br>
+<strong>DT_NONE</strong> = 0<br>
+<strong>DT_TWSTRUCT</strong> = 1<br>
+<strong>DT_XMLDOM</strong> = 2<br>
+<strong>DictType</strong> = &lt;type 'dictionary'&gt;<br>
+<strong>DictionaryType</strong> = &lt;type 'dictionary'&gt;<br>
+<strong>E</strong> = 'e'<br>
+<strong>END</strong> = 'end'<br>
+<strong>ERR_FAIL</strong> = 4<br>
+<strong>ERR_IGNORE</strong> = 1<br>
+<strong>ERR_WARN</strong> = 2<br>
+<strong>EW</strong> = 'ew'<br>
+<strong>EXCEPTION</strong> = 8<br>
+<strong>EXTENDED</strong> = 'extended'<br>
+<strong>EllipsisType</strong> = &lt;type 'ellipsis'&gt;<br>
+<strong>FALSE</strong> = 2<br>
+<strong>FIRST</strong> = 'first'<br>
+<strong>FLAT</strong> = 'flat'<br>
+<strong>FONTS</strong> = {'all': {'family': ['helvetica', 'arial', 'geneva', 'swiss'], 'size': 9}}<br>
+<strong>FileType</strong> = &lt;type 'file'&gt;<br>
+<strong>FloatType</strong> = &lt;type 'float'&gt;<br>
+<strong>FrameType</strong> = &lt;type 'frame'&gt;<br>
+<strong>FunctionType</strong> = &lt;type 'function'&gt;<br>
+<strong>GROOVE</strong> = 'groove'<br>
+<strong>HORIZONTAL</strong> = 'horizontal'<br>
+<strong>INSERT</strong> = 'insert'<br>
+<strong>INSIDE</strong> = 'inside'<br>
+<strong>InstanceType</strong> = &lt;type 'instance'&gt;<br>
+<strong>IntType</strong> = &lt;type 'int'&gt;<br>
+<strong>LAST</strong> = 'last'<br>
+<strong>LEFT</strong> = 'left'<br>
+<strong>LambdaType</strong> = &lt;type 'function'&gt;<br>
+<strong>ListType</strong> = &lt;type 'list'&gt;<br>
+<strong>LongType</strong> = &lt;type 'long int'&gt;<br>
+<strong>MITER</strong> = 'miter'<br>
+<strong>MOVETO</strong> = 'moveto'<br>
+<strong>MULTIPLE</strong> = 'multiple'<br>
+<strong>MethodType</strong> = &lt;type 'instance method'&gt;<br>
+<strong>ModuleType</strong> = &lt;type 'module'&gt;<br>
+<strong>N</strong> = 'n'<br>
+<strong>NE</strong> = 'ne'<br>
+<strong>NO</strong> = 0<br>
+<strong>NONE</strong> = 'none'<br>
+<strong>NORMAL</strong> = 'normal'<br>
+<strong>NORMAL_BG</strong> = '#ffffff'<br>
+<strong>NORMAL_FG</strong> = '#000000'<br>
+<strong>NP_ABSTRACT</strong> = 16<br>
+<strong>NP_ALL</strong> = 31<br>
+<strong>NP_ALLOW_CHILDREN</strong> = 4<br>
+<strong>NP_AUTOBUILD</strong> = 8<br>
+<strong>NP_NONE</strong> = 1<br>
+<strong>NP_ROOT</strong> = 2<br>
+<strong>NS</strong> = 'ns'<br>
+<strong>NSEW</strong> = 'nsew'<br>
+<strong>NS_ALL</strong> = 255<br>
+<strong>NS_EXPANDED</strong> = 32<br>
+<strong>NS_HAS_CHILDREN</strong> = 64<br>
+<strong>NS_LOCKED</strong> = 128<br>
+<strong>NS_NONE</strong> = 1<br>
+<strong>NS_PENDING_HIDE</strong> = 8<br>
+<strong>NS_PENDING_SHIFT</strong> = 16<br>
+<strong>NS_PENDING_SHOW</strong> = 4<br>
+<strong>NS_VISIBLE</strong> = 2<br>
+<strong>NUMERIC</strong> = 'numeric'<br>
+<strong>NW</strong> = 'nw'<br>
+<strong>NoneType</strong> = &lt;type 'None'&gt;<br>
+<strong>OFF</strong> = 0<br>
+<strong>ON</strong> = 1<br>
+<strong>OUTSIDE</strong> = 'outside'<br>
+<strong>PAGES</strong> = 'pages'<br>
+<strong>PIESLICE</strong> = 'pieslice'<br>
+<strong>PROJECTING</strong> = 'projecting'<br>
+<strong>RADIOBUTTON</strong> = 'radiobutton'<br>
+<strong>RAISED</strong> = 'raised'<br>
+<strong>READABLE</strong> = 2<br>
+<strong>RIDGE</strong> = 'ridge'<br>
+<strong>RIGHT</strong> = 'right'<br>
+<strong>ROUND</strong> = 'round'<br>
+<strong>S</strong> = 's'<br>
+<strong>SCROLL</strong> = 'scroll'<br>
+<strong>SE</strong> = 'se'<br>
+<strong>SEL</strong> = 'sel'<br>
+<strong>SELECTED_BG</strong> = '#000080'<br>
+<strong>SELECTED_FG</strong> = '#ffffff'<br>
+<strong>SEL_ACT_FG</strong> = '#ffff00'<br>
+<strong>SEL_FIRST</strong> = 'sel.first'<br>
+<strong>SEL_LAST</strong> = 'sel.last'<br>
+<strong>SEPARATOR</strong> = 'separator'<br>
+<strong>SINGLE</strong> = 'single'<br>
+<strong>SOLID</strong> = 'solid'<br>
+<strong>SUNKEN</strong> = 'sunken'<br>
+<strong>SW</strong> = 'sw'<br>
+<strong>SliceType</strong> = &lt;type 'slice'&gt;<br>
+<strong>StringType</strong> = &lt;type 'string'&gt;<br>
+<strong>TOP</strong> = 'top'<br>
+<strong>TRUE</strong> = 1<br>
+<strong>TclError</strong> = 'TclError'<br>
+<strong>TclVersion</strong> = 8.3000000000000007<br>
+<strong>TkVersion</strong> = 8.3000000000000007<br>
+<strong>TracebackType</strong> = &lt;type 'traceback'&gt;<br>
+<strong>TupleType</strong> = &lt;type 'tuple'&gt;<br>
+<strong>TypeType</strong> = &lt;type 'type'&gt;<br>
+<strong>UNITS</strong> = 'units'<br>
+<strong>UP</strong> = 1<br>
+<strong>UnboundMethodType</strong> = &lt;type 'instance method'&gt;<br>
+<strong>UnicodeType</strong> = &lt;type 'unicode'&gt;<br>
+<strong>VERTICAL</strong> = 'vertical'<br>
+<strong>W</strong> = 'w'<br>
+<strong>WORD</strong> = 'word'<br>
+<strong>WRITABLE</strong> = 4<br>
+<strong>X</strong> = 'x'<br>
+<strong>XRangeType</strong> = &lt;type 'xrange'&gt;<br>
+<strong>Y</strong> = 'y'<br>
+<strong>YES</strong> = 1<br>
+<strong>__file__</strong> = '/usr/local/lib/python2.1/site-packages/treewidgets/widget.pyc'<br>
+<strong>__name__</strong> = 'treewidgets.widget'</td></tr></table>
+</body></html>

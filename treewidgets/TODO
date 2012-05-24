@@ -1,0 +1,15 @@
+To-Do List for TreeWidgets
+==========================
+
+* Implement CanvasTree
+
+* Implement lazy instantiation of sub-trees. This is particularly valuable
+  for potentially large data structures such as file systems; currently,
+  regardless of how many levels are expanded in the display, the entire
+  data structure must be read in and wrapped in TreeNode objects before 
+  the tree is displayed.
+
+* Implement Tkinter configuration options and font selection.
+
+* Implement TreeWidget.showContentFunc, TreeWidget.showAttsFunc, and
+  TreeWidget.glimpseFunc.

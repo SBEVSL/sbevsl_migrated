@@ -1,0 +1,19 @@
+TWStruct is a tree data structure using built-in types.
+
+A TWStruct is a list containing zero or more NodeDict objects.
+A NodeDict is a dictionary having the following items:
+
+  key           datatype    description
+  ---           --------    -----------
+  'type'        string      [REQUIRED] An application-specific type
+                              (or field) name.
+  'id'          string      A unique ID for the node.
+  'name'        string      [DEFAULT: =type] The name that will be
+                              displayed to the user.
+  'content'     string      Textual content of the node. Equivalent to
+                              #PCDATA element content in XML.
+  'children'    list        [DEFAULT: []] A TWStruct.
+  'properties'  integer     [DEFAULT: see TreeNode docs] 
+  'state'       integer     [DEFAULT: see TreeNode docs] 
+  'attributes'  dictionary  Application-specific metadata. Roughly 
+                              equivalent to XML attributes.
