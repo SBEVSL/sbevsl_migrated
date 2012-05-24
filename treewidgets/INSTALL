@@ -1,0 +1,16 @@
+Installing TreeWidgets
+======================
+
+If you have Python 2.0 or later installed, you should be able to install
+TreeWidgets with the command:
+
+    python setup.py install
+
+Otherwise, you can either install the DistUtils package from:
+
+    http://www.python.org/sigs/distutils-sig/download.html
+
+or you can simply unpack the archive in your Python site-packages directory
+(typically found at /usr/lib/python<version>/site-packages or
+/usr/local/lib/python<version>/site-packages on POSIX systems, or at
+C:\Python<version>\Lib\site-packages on Windows).
