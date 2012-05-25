@@ -227,7 +227,8 @@ def loadMotifs(*folders):
             # Currently, the motifs are Python scripts (but that may
             # change)
             if not motfile.endswith('.py'):
-                motifErrors.append('Error: Encountered unexpected filename extension with motif {0} in {1}; skipping file.'.format(motfile, motdir))
+                #motifErrors.append('Error: Encountered unexpected filename extension with motif {0} in {1}; skipping file.'.format(motfile, motdir))
+                motifErrors.append('Error: Encountered unexpected filename extension with motif %s in %s; skipping file.'%(motfile, motdir))
                 continue
             # This is the list of header fields we have already encountered
             found = []
@@ -263,7 +264,8 @@ def loadMotifs(*folders):
                     if i == 1:
                         # Check that the header line contains a colon
                         if len(line.split(':')) < 2:
-                            motifErrors.append('Error: Motif `{0}` was missing a colon in one of its header lines.'.format(MOTIFS[func]['path']))
+                            #motifErrors.append('Error: Motif `{0}` was missing a colon in one of its header lines.'.format(MOTIFS[func]['path']))
+                            motifErrors.append('Error: Motif `%s` was missing a colon in one of its header lines.'%(MOTIFS[func]['path']))
                             del MOTIFS[func]
                             break
                         if line[0:4] == 'FUNC':
@@ -302,7 +304,8 @@ def loadMotifs(*folders):
                             # This checks the format of the EC number as specified in the FILENAME (not the header)...
                             preec = func.split('_')
                             if len(preec) < 6:
-                                motifErrors.append('Error: Motif {0} did not have enough components in its EC number.'.format(MOTIFS[func]['path']))
+                                #motifErrors.append('Error: Motif {0} did not have enough components in its EC number.'.format(MOTIFS[func]['path']))
+                                motifErrors.append('Error: Motif %s did not have enough components in its EC number.'%(MOTIFS[func]['path']))
                                 del MOTIFS[func]
                                 # No need to close
                                 break
@@ -379,7 +382,8 @@ def loadMotifs(*folders):
                                 else:
                                     selection = '%s or (chain %s and (%s))' % (selection, chain, nums)
                             if badLoci:
-                                motifErrors.append('Error: Motif `{0}` could not be loaded due to an incorrect `LOCI` attribute.'.format(MOTIFS[func]['path']))
+                                #motifErrors.append('Error: Motif `{0}` could not be loaded due to an incorrect `LOCI` attribute.'.format(MOTIFS[func]['path']))
+                                motifErrors.append('Error: Motif `%s` could not be loaded due to an incorrect `LOCI` attribute.'%(MOTIFS[func]['path']))
                                 del MOTIFS[func]
                                 break
                             MOTIFS[func]['loci'] = selection

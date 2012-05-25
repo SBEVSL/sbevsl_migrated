@@ -44,11 +44,13 @@ def createsubs(tup):
 
 def getRMSD(motifName, queryPDBCode, motifPDBCode):
             
-        querySubsetName = 'match_in_{0}'.format(queryPDBCode)
+        #querySubsetName = 'match_in_{0}'.format(queryPDBCode)
+        querySubsetName = 'match_in_%s'%(queryPDBCode)
         cmd.select(querySubsetName, motifName)
         cmd.hide('everything', 'all')
         cmd.fetch(motifPDBCode, async=0, path=glb.FETCH_PATH)
-        motifSubsetName = 'match_in_{0}'.format(motifPDBCode)
+        #motifSubsetName = 'match_in_{0}'.format(motifPDBCode)
+        motifSubsetName = 'match_in_%s'%(motifPDBCode)
         cmd.select(motifSubsetName, '%s and (%s)' % (motifPDBCode,
             glb.MOTIFS[motifName]['loci']))
         cmd.hide('everything', 'all')
