@@ -6,7 +6,8 @@ def initialise():
     tab = glb.GUI.welcome['tab']
     titleLabel = tk.Label(tab, text='ProMOL', font=('Times', 28))
     titleLabel.grid(row=0, column=0)
-    versionLabel = tk.Label(tab, text='Version {0}'.format(glb.VERSION), font=('Times', 18))
+    #versionLabel = tk.Label(tab, text='Version {0}'.format(glb.VERSION), font=('Times', 18))
+    versionLabel = tk.Label(tab, text='Version %s'%(glb.VERSION), font=('Times', 18))
     versionLabel.grid(row=1, column=0)
     messagebox = tk.Frame(tab)
     yscroll = tk.Scrollbar(messagebox, orient=tk.VERTICAL)
@@ -16,7 +17,8 @@ def initialise():
     if len(glb.motifErrors) == 0:
         messagetext.insert(tk.END, 'All motifs loaded successfully.\n')
     else:
-        messagetext.insert(tk.END, 'Encountered {0} errors while loading motifs.\nSee below for details.\n'.format(len(glb.motifErrors)))
+        #messagetext.insert(tk.END, 'Encountered {0} errors while loading motifs.\nSee below for details.\n'.format(len(glb.motifErrors)))
+        messagetext.insert(tk.END, 'Encountered %s errors while loading motifs.\nSee below for details.\n'%(len(glb.motifErrors)))
     messagestring = '''
 Developed by the SBEVSL Project
 

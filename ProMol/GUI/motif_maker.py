@@ -49,7 +49,8 @@ def initialise():
     
     for i in range(1,11):
         bodyFrame.rowconfigure(i, weight=1)
-        glb.GUI.motif_maker['selector'][i] = tk.Radiobutton(bodyFrame, text='{0} Residue:'.format(i),
+        #glb.GUI.motif_maker['selector'][i] = tk.Radiobutton(bodyFrame, text='{0} Residue:'.format(i),
+        glb.GUI.motif_maker['selector'][i] = tk.Radiobutton(bodyFrame, text='%s Residue:'%(i),
             variable=glb.GUI.motif_maker['selection'], value=i, command=lambda:MotifMaker().updateMoveButtonState())
         glb.GUI.motif_maker['selector'][i].grid(row=i, column=0, sticky=tk.W)
                 
