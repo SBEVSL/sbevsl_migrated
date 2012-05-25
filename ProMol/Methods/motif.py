@@ -791,7 +791,10 @@ def motifchecker(setChoice, rmsdchoice):
                     cmd.fetch(queryCode, async=0, path=glb.FETCH_PATH)
                     cmd.hide('everything', 'all')
                     MotifCaller(tag[1])
-                    rmsds = proutils.getRMSD(motifName, queryCode, motifPDBCode)#
+                    try:
+                        rmsds = proutils.getRMSD(motifName, queryCode, motifPDBCode)#
+                    except:
+                        rmsds=[-1,-1,-1]
                     glb.GUI.motifs['csvprep'][pdb][motifName]['rmsd'] = rmsds
                    
                 #count1 = count1+1
