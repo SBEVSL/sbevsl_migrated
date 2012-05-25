@@ -11,9 +11,9 @@
 # It might be better to assign version numbers when a version is
 # ready for release.
 # PLEASE try to keep this constant up to date with each commit!
-VERSION = 'r160 (Development)'
+VERSION = 'r186 (Development)'
 
 # The following constant had been removed by Cyprian Corwin in
 # revision 157.  It was restored in revision 160 at Alex's request.
 # Before its removal, this line had been in promolglobals.py.
-ALG_VERSION = '1.0' #added by Alex
+ALG_VERSION = '1.1' 
