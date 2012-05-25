@@ -389,7 +389,7 @@ def loadMotifs(*folders):
                             MOTIFS[func]['loci'] = selection
                             continue
                     # This is kind of pointless.  It would need to be replaced with something much more advanced to really be effective.
-                    if line[0:4] != 'cmd.' and line != '':
+                    if line[0:4] != 'cmd.' and line != '' and motfile[0:4] != 'Jab_' and motfile[0:4] != 'Jfa_':
                         motifErrors.append('Error: Motif `%s` could not be loaded due to potential malicious code.'%(MOTIFS[func]['path']))
                         del MOTIFS[func]
                         # Unnecessary to close
