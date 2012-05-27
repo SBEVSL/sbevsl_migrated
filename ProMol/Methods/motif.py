@@ -809,6 +809,7 @@ def motifchecker(setChoice, rmsdchoice):
             CSVMergeInfo['motif set short description'] = setName
             CSVMergeInfo['start time'] = searchStartTime
             CSVMergeInfo['partial files'] = list()
+        CSVMergeInfo['partial files'].append(partialCSVFilename(pdb, motifSet.shortDescription, searchStartTime))
 
     # I patched this code because lengtho - len(pdbs) was not returning the proper number of results.
     # -Kip
