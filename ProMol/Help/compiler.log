@@ -1,0 +1,11 @@
+Microsoft HTML Help Compiler 4.74.8702
+
+Compiling c:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup\EZ-Viz.chm
+
+HHC5003: Error: Compilation failed while compiling Custon_Motifs.htm.
+HHC5003: Error: Compilation failed while compiling sdfgsdfg.htm.
+
+
+The following files were not compiled:
+Custon_Motifs.htm
+sdfgsdfg.htm
