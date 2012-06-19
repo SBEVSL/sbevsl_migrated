@@ -38,7 +38,7 @@ def hide_interface(tag):
         cmd.set('internal_gui', '0')
 
 def ambient_update():
-    cmd.set("ambient", glb.GUI.view['asca'].get())
+    cmd.set("ambient", glb.GUI.view['ambientLight'].get())
 
 # Set Cartoon Thickness
 def cartoon_thickness():
