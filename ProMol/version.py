@@ -11,7 +11,7 @@
 # It might be better to assign version numbers when a version is
 # ready for release.
 # PLEASE try to keep this constant up to date with each commit!
-VERSION = 'r194 (Development)'
+VERSION = 'r201 (Development)'
 
 # The following constant had been removed by Cyprian Corwin in
 # revision 157.  It was restored in revision 160 at Alex's request.
