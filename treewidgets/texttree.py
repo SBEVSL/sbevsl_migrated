@@ -27,7 +27,7 @@ INDENT_WIDTH = 16
 SPACE_BEFORE = 2
 SPACE_AFTER = 2
 ICON_HSPACE = 6
-TREE_WIDTH = 24
+TREE_WIDTH = 36
 TREE_BG = 'white'
 
 class TextTree(TreeWidget,Text):

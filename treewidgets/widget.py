@@ -23,7 +23,7 @@ from constants import *
 from pmg_tk.startup.treewidgets.node import TWTreeNode, DOMTreeNode, FSTreeNode, CustomTreeNode
 from util import warn
 
-FONTS = {'all': {'family': ['helvetica','arial','geneva','swiss'], 'size': 8}}
+FONTS = {'all': {'family': ['helvetica','arial','geneva','swiss'], 'size': 11}}
 #NORMAL_FG = 'black'
 NORMAL_FG = '#000000'
 #NORMAL_BG = 'white'

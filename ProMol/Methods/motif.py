@@ -379,7 +379,8 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
     ###
     
     rb1 = Radiobutton(glb.GUI.motifs['root'], text="P set", variable = glb.GUI.motifs['var'], value = 1,  height = 2)
-    rb2 = Radiobutton(glb.GUI.motifs['root'], text="J set", variable = glb.GUI.motifs['var'], value = 2, height = 2)
+    if glb.USE_JESS:
+        rb2 = Radiobutton(glb.GUI.motifs['root'], text="J set", variable = glb.GUI.motifs['var'], value = 2, height = 2)
     #rb3 = Radiobutton(glb.GUI.motifs['root'], text="N set (NMR)", variable = glb.GUI.motifs['var'], value = 3, height = 2)
     rb4 = Radiobutton(glb.GUI.motifs['root'], text="All Motifs", variable = glb.GUI.motifs['var'], value = 4, height = 2)
     rb5 = Radiobutton(glb.GUI.motifs['root'], text="User Motifs", variable = glb.GUI.motifs['var'], value = 5, height = 2)
@@ -399,7 +400,8 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
     rb4.select()#added 2/19 (default button)
     rb5.pack(anchor = W)
     rb1.pack(anchor = W)
-    rb2.pack(anchor = W)
+    if glb.USE_JESS:
+        rb2.pack(anchor = W)
     #rb3.pack(anchor = W)
 
     #added 2/19
