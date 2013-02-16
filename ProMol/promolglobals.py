@@ -28,6 +28,8 @@ MOTIFS = {} # Empty dictionary to replace shelve-based database
 # for headers
 matchpairs = []
 
+LAST_USED_DIR = os.path.expanduser('~/') # needed to load locally stored files
+
 # Determine the location of the user data directory
 # We create the following folder structure underneath
 # the SBEVSL user data directory (which is also created if it does
