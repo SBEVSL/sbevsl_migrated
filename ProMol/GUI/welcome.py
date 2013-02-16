@@ -1,36 +1,63 @@
 import Tkinter as tk
-import tkFont as tkF
 import os
 from pmg_tk.startup.ProMol import promolglobals as glb
 
 def initialise():
-    canvas = tk.Canvas(glb.GUI.welcome['tab'],height=110, width=500)
-    canvas.grid(row=0, column=0, sticky=tk.NW)
-    canvas.create_text(10, 10, text = 'ProMOL', font='-*-new century schoolbook-bold-r-normal-*-34-*-*-*-*-*-*-*', anchor=tk.NW)
-    canvas.create_text(50, 50, text = 'Developed by the SBEVSL Project', font='-*-new century schoolbook-bold-r-normal-*-25-*-*-*-*-*-*-*', anchor=tk.NW)
-    canvas.create_text(50, 70, text = 'Licensed under GPL, No Warranty', font='-*-new century schoolbook-bold-r-normal-*-25-*-*-*-*-*-*-*', anchor=tk.NW)
-    if len(glb.MOTIFS['errors']) != 0:
-        errorbox = tk.LabelFrame(glb.GUI.welcome['tab'], text='Motif Loading Errors')
-        errorbox.grid(row=1, column=0)
-        xscroll = tk.Scrollbar(errorbox, orient=tk.HORIZONTAL)
-        xscroll.grid(row=1, column=0, sticky=tk.E+tk.W)
-        yscroll = tk.Scrollbar(errorbox, orient=tk.VERTICAL)
-        yscroll.grid(row=0, column=1, sticky=tk.N+tk.S)
-        errors = tk.Listbox(errorbox, height=10, width=70,
-            xscrollcommand=xscroll.set, yscrollcommand=yscroll.set)
-        errors.grid(row=0,column=0)
-        xscroll["command"] = errors.xview
-        yscroll["command"] = errors.yview
-        for error in glb.MOTIFS['errors']:
-            errors.insert(tk.END,error)
+    tab = glb.GUI.welcome['tab']
+    titleLabel = tk.Label(tab, text='ProMOL', font=('Times', 28))
+    titleLabel.grid(row=0, column=0)
+    #versionLabel = tk.Label(tab, text='Version {0}'.format(glb.VERSION), font=('Times', 18))
+    versionLabel = tk.Label(tab, text='Version %s'%(glb.VERSION), font=('Times', 18))
+    versionLabel.grid(row=1, column=0)
+    messagebox = tk.Frame(tab)
+    yscroll = tk.Scrollbar(messagebox, orient=tk.VERTICAL)
+    yscroll.grid(row=0, column=1, sticky=tk.N+tk.S)
+    messagetext = tk.Text(messagebox, yscrollcommand=yscroll.set, wrap=tk.WORD, width=10, height=10)
+    messagetext.insert(tk.END, 'Welcome to ProMOL.\n')
+    if len(glb.motifErrors) == 0:
+        messagetext.insert(tk.END, 'All motifs loaded successfully.\n')
     else:
-        canvas2 = tk.Canvas(glb.GUI.welcome['tab'], height=200, width=450)
-        canvas2.grid(row=1, column=0)
-        canvas2.create_text(10,10, text = 'Partial Funding Provided By',font='-*-new century schoolbook-bold-r-normal-*-15-*-*-*-*-*-*-*', anchor=tk.NW)
-        canvas2.create_text(20,25, text = 'NSF DUE 0402408',font='-*-new century schoolbook-bold-r-normal-*-10-*-*-*-*-*-*-*', anchor=tk.NW)
-        canvas2.create_text(20,40, text = 'NIGMS 1R15GM078077',font='-*-new century schoolbook-bold-r-normal-*-10-*-*-*-*-*-*-*', anchor=tk.NW)
-        canvas2.create_text(20,55, text = 'RIT and Dowling College',font='-*-new century schoolbook-bold-r-normal-*-10-*-*-*-*-*-*-*', anchor=tk.NW)
-        motd=open(os.path.join(glb.PROMOL_DIR_PATH,'motd'),"r")
-        motdall = motd.read()          
-        canvas2.create_text(10,70, text = motdall, font='-*-new century schoolbook-bold-r-normal-*-10-*-*-*-*-*-*-*', anchor=tk.NW)
-        motd.close()
+        #messagetext.insert(tk.END, 'Encountered {0} errors while loading motifs.\nSee below for details.\n'.format(len(glb.motifErrors)))
+        messagetext.insert(tk.END, 'Encountered %s errors while loading motifs.\nSee below for details.\n'%(len(glb.motifErrors)))
+    messagestring = '''
+Developed by the SBEVSL Project
+
+Partial funding provided by:
+NSF DUE 0402408
+NIGMS 1R15GM078077
+NIGMS 1R15GM078077-01
+NIGMS 3R15GM078077-01S
+NIGMS 2R15GM078077-02 
+NIGMS 3R15GM078077-02S1
+RIT
+Dowling College
+
+This program is free software; you can redistribute it and/or \
+modify it under the terms of the GNU General Public License as \
+published by the Free Software Foundation; either version 2 of \
+the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, \
+but WITHOUT ANY WARRANTY; without even the implied warranty of \
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the \
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License \
+along with this program; if not, write to the Free Software \
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA \
+02111-1307 USA'''
+    messagetext.insert(tk.END, messagestring)
+    if len(glb.motifErrors) > 0:
+        messagetext.insert(tk.END, '\n\nMotif loading errors:')
+    # It's OK that this is not indented.  It doesn't matter.
+    for error in glb.motifErrors:
+        messagetext.insert(tk.END, '\n\n')
+        messagetext.insert(tk.END, error)
+    messagetext.config(state=tk.DISABLED)
+    messagetext.grid(row=0,column=0, sticky=tk.N+tk.E+tk.S+tk.W)
+    yscroll['command'] = messagetext.yview
+    messagebox.columnconfigure(0, weight=1)
+    messagebox.rowconfigure(0, weight=1)
+    messagebox.grid(row=2, column=0, sticky=tk.N+tk.E+tk.S+tk.W)
+    tab.rowconfigure(2, weight=1)
+    tab.columnconfigure(0, weight=1)

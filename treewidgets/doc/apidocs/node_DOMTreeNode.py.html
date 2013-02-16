@@ -1,0 +1,259 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+          "http://www.w3.org/TR/html40/loose.dtd">
+
+<html>
+         
+  <head>
+    <title>Class: DOMTreeNode</title>
+  </head>
+
+  <body bgcolor="#ffffff">
+
+        <p><i><a href="index.html">Table of Contents</a></i></p>
+        
+        <table border="0" cellpadding="5" cellspacing="0" width="100%">
+        <tr bgcolor="#88bbee">
+            <th rowspan="2"
+                valign="top"
+                align="left"
+                width="10%"><font color="#000000">Class: DOMTreeNode</font>
+            </th>
+            <th width="90%" align="right"><font color="#000000">node.py</font></th>
+        </tr>
+        <tr>
+        <td>
+        
+<h3>This TreeNode subclass encapsulates an XML DOM object.</h3>
+<p>    See TreeNode documentation for more details.</p>
+<table border="0" cellpadding="5" cellspacing="0" width="100%">
+
+        <tr>
+            <th bgcolor="#99ccff"
+                rowspan="2"
+                valign="top"
+                align="left"
+                width="20%"
+                >
+                <font color="#000000">
+                  <a name="Base Classes">Base Classes</a>&nbsp;
+                </font>
+            </th>
+            <th bgcolor="#99ccff"
+                valign="top"
+                align="left"
+                width="80%"
+                >
+                <font color="#000000">&nbsp;</font>
+            </th>
+        </tr>
+        <tr>
+        <td>
+        
+<a href="node_TreeNode.py.html">TreeNode</a><br>
+
+</td></tr>
+</table>
+<table border="0" cellpadding="5" cellspacing="0" width="100%">
+
+        <tr>
+            <th bgcolor="#99ccff"
+                rowspan="2"
+                valign="top"
+                align="left"
+                width="20%"
+                >
+                <font color="#000000">
+                  <a name="Methods">Methods</a>&nbsp;
+                </font>
+            </th>
+            <th bgcolor="#99ccff"
+                valign="top"
+                align="left"
+                width="80%"
+                >
+                <font color="#000000">&nbsp;</font>
+            </th>
+        </tr>
+        <tr>
+        <td>
+        
+<a href="#__init__">__init__</a><br>
+<a href="#_autobuild">_autobuild</a><br>
+<a href="#_notEmpty">_notEmpty</a><br>
+<a href="#_set_id">_set_id</a><br>
+
+
+        <tr>
+            <th bgcolor="#99ccff"
+                rowspan="2"
+                valign="top"
+                align="left"
+                width="20%"
+                >
+                <font color="#000000">
+                  <a name="__init__"></a>&nbsp;
+                </font>
+            </th>
+            <th bgcolor="#99ccff"
+                valign="top"
+                align="left"
+                width="80%"
+                >
+                <font color="#000000">__init__&nbsp;</font>
+            </th>
+        </tr>
+        <tr>
+        <td>
+        <font color="#000088"><pre>
+__init__ (
+        self,
+        treewidget,
+        parent,
+        *args,
+        *kw,
+        )
+
+</pre></font>
+
+<h3>Create a DOMTreeNode instance.</h3>
+<p>        Keyword argument:
+        id_qname     -- the QName of the ID-type attribute in this DOM
+                        (default: <code>id</code>).</p>
+<p>        All other arguments are identical to those of the base class
+        constructor. See class TreeNode for more info.</p>
+<p>        Most of the initialization is done by TreeNode.__init__.
+        In addition to accepting the above variable, this constructor sets 
+        the instance variable <code>root</code>, which is peculiar to DOMTreeNode.</p>
+
+        <tr>
+            <th bgcolor="#99ccff"
+                rowspan="2"
+                valign="top"
+                align="left"
+                width="20%"
+                >
+                <font color="#000000">
+                  <a name="_autobuild"></a>&nbsp;
+                </font>
+            </th>
+            <th bgcolor="#99ccff"
+                valign="top"
+                align="left"
+                width="80%"
+                >
+                <font color="#000000">_autobuild&nbsp;</font>
+            </th>
+        </tr>
+        <tr>
+        <td>
+        <font color="#000088"><pre>
+_autobuild (
+        self,
+        data,
+        expand_limit,
+        )
+
+</pre></font>
+
+
+        <tr>
+            <th bgcolor="#99ccff"
+                rowspan="2"
+                valign="top"
+                align="left"
+                width="20%"
+                >
+                <font color="#000000">
+                  <a name="_notEmpty"></a>&nbsp;
+                </font>
+            </th>
+            <th bgcolor="#99ccff"
+                valign="top"
+                align="left"
+                width="80%"
+                >
+                <font color="#000000">_notEmpty&nbsp;</font>
+            </th>
+        </tr>
+        <tr>
+        <td>
+        <font color="#000088"><pre>
+_notEmpty ( self,  n )
+
+</pre></font>
+
+
+        <tr>
+            <th bgcolor="#99ccff"
+                rowspan="2"
+                valign="top"
+                align="left"
+                width="20%"
+                >
+                <font color="#000000">
+                  <a name="_set_id"></a>&nbsp;
+                </font>
+            </th>
+            <th bgcolor="#99ccff"
+                valign="top"
+                align="left"
+                width="80%"
+                >
+                <font color="#000000">_set_id&nbsp;</font>
+            </th>
+        </tr>
+        <tr>
+        <td>
+        <font color="#000088"><pre>
+_set_id ( self,  data=None )
+
+</pre></font>
+
+<table border="0" cellpadding="5" cellspacing="0" width="100%">
+
+        <tr>
+            <th bgcolor="#99ccff"
+                rowspan="2"
+                valign="top"
+                align="left"
+                width="20%"
+                >
+                <font color="#000000">
+                  <a name="Exceptions">Exceptions</a>&nbsp;
+                </font>
+            </th>
+            <th bgcolor="#99ccff"
+                valign="top"
+                align="left"
+                width="80%"
+                >
+                <font color="#000000">&nbsp;</font>
+            </th>
+        </tr>
+        <tr>
+        <td>
+        
+ValueError( "Invalid QName: '%s' has more than one colon." % qname )<br>
+
+</td></tr>
+</table>
+</td></tr>
+</td></tr>
+</table>
+
+        </td>
+        </tr>
+        </table>
+
+        <hr>
+
+        <p><i><a href="index.html">Table of Contents</a></i></p>
+
+        <font size="-2"><i>This document was automatically generated
+        on Wed Sep 18 11:25:07 2002 by
+        <a href="http://happydoc.sourceforge.net">HappyDoc</a> version
+        2.0.1</i></font>
+        
+        </body>
+        </html>
+        
