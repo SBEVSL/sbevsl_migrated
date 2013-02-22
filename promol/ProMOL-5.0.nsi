@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "ProMOL"
-!define PRODUCT_VERSION "202"
+!define PRODUCT_VERSION "5.0-r208"
 !define PRODUCT_PUBLISHER "SBEVSL Project"
 !define PRODUCT_WEB_SITE "sf.net/projects/sbevsl"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
@@ -38,7 +38,7 @@
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "ProMOL-202.exe"
+OutFile "ProMOL-5.0-r208.exe"
 InstallDir "C:\Python27\Lib\site-packages\pmg_tk\startup"
 ShowInstDetails show
 ShowUnInstDetails show
@@ -259,6 +259,7 @@ Section "ProMOL Plugin" SEC01
   File "ProMol\Help\Using_Motifs.htm"
   SetOutPath "$INSTDIR\ProMol\Methods"
   File "ProMol\Methods\__init__.py"
+  File "ProMol\Methods\local.py"
   File "ProMol\Methods\motif.py"
   File "ProMol\Methods\motifset.py"
   File "ProMol\Methods\movie.py"
@@ -1319,6 +1320,7 @@ Section Uninstall
   Delete "$INSTDIR\ProMol\Methods\movie.py"
   Delete "$INSTDIR\ProMol\Methods\motifset.py"
   Delete "$INSTDIR\ProMol\Methods\motif.py"
+  Delete "$INSTDIR\ProMol\Methods\local.py"
   Delete "$INSTDIR\ProMol\Methods\__init__.py"
   Delete "$INSTDIR\ProMol\Help\Using_Motifs.htm"
   Delete "$INSTDIR\ProMol\Help\The_Toolbox_Tab.htm"

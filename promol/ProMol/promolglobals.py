@@ -674,6 +674,8 @@ def populate():
     cmd.disable('protein')
     # Create named selections for each chain, and leave them off by default
     for letter in cmd.get_chains():
+        if letter=="":
+            letter="\"\""
         chain = 'Chain-%s'%(letter)
         cmd.select(chain, "chain %s"%(letter))
         cmd.disable(chain)
