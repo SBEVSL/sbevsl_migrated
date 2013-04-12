@@ -1,9 +1,9 @@
 '''Starts the ProMol Plugin for Pymol.
-   ProMOL (C) Copyright 2004-2010
+   ProMOL (C) Copyright 2004-2013
    Charlie Westin, Brett Hanson & Paul Craig
    GPL, No Warranty
 
-   Release 4.1 RC 1 by Mario Rosa, 5 August 2010
+   Release 5.0 RC 2, by HJB, 11 Apr 2013
    
 /*************************** GPL NOTICES ******************************
  *                                                                    *
