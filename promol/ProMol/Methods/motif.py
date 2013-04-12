@@ -697,7 +697,7 @@ def motifchecker(setChoice, rmsdchoice):
     sets = {1: ('P_Set', lambda key: key[0] == 'P'),
     2: ('J_Set', lambda key: key[0] == 'J'),
     3: ('N_Set', lambda key: key[0] == 'N'),
-    4: ('All', lambda key: True),
+    4: ('All', lambda key: glb.USE_JESS or key[0] != 'J'),
     5: ('U_Set', lambda key: key[0] == 'U')}
     setName = sets[setChoice][0]
     # This is a Python list comprehension

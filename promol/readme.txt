@@ -1,5 +1,5 @@
 README
-ProMOL (C) Copyright 2004-2011
+ProMOL (C) Copyright 2004-2013
 Charlie Westin, Brett Hanson & Paul Craig
 GPL, No Warranty
 
@@ -7,6 +7,9 @@ GPL, No Warranty
 Monday, July 25, 2011
 
 Based on Maddy's and Mario Rosa's versions
+
+5.0 RC 2 by the SBEVSL team, see the User's Guide
+Thursday, 11 April 2013 -- HJB
 
 Special Thanks to the following for their contributions to ProMOL:
 Laura Grell, Chris Parkin, T.J. Esposito, C. Wischmeyer
@@ -71,14 +74,14 @@ ProMOL can be downloaded in a compressed file format from
 http://sourceforge.net/projects/sbevsl/files
 
 You can choose to download either a .tar.gz compressed file
-(ProMOL-4.2.tar.gz) or a zip compressed file
-(ProMOL-4.2.zip). The way you expand the 
+(ProMOL-5.0-r209.tar.gz) or a zip compressed file
+(ProMOL-5.0-r209.zip). The way you expand the 
 file depends on your operating system.
 
 On Unix or Linux systems, or using MINGW under Windows you may unpack the
 tarball with
 
-gunzip < ProMOL-4.2.tar.gz | tar xvf -
+gunzip < ProMOL-5.0-r209.tar.gz | tar xvf -
 
 Windows and Macintosh systems may have a native application that will expand
 your .tar.gz or .zip files; if not you may wish to consider using Stuffit
