@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "ProMOL"
-!define PRODUCT_VERSION "5.0-r209"
+!define PRODUCT_VERSION "5.0-r212"
 !define PRODUCT_PUBLISHER "SBEVSL Project"
 !define PRODUCT_WEB_SITE "sf.net/projects/sbevsl"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
@@ -38,7 +38,7 @@
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "ProMOL-5.0-r209.exe"
+OutFile "ProMOL-5.0-r212.exe"
 InstallDir "C:\Python27\Lib\site-packages\pmg_tk\startup"
 ShowInstDetails show
 ShowUnInstDetails show
@@ -152,7 +152,6 @@ Section "ProMOL Plugin" SEC01
   File "ProMol\Help\Color_By_Chain_View.htm"
   File "ProMol\Help\Color_options.htm"
   File "ProMol\Help\Color_Space.htm"
-  File "ProMol\Help\colortables.html"
   File "ProMol\Help\Commands_Interface.htm"
   File "ProMol\Help\compiler.log"
   File "ProMol\Help\Customizable_Motifs.htm"
@@ -205,7 +204,6 @@ Section "ProMOL Plugin" SEC01
   File "ProMol\Help\Open.htm"
   File "ProMol\Help\Open.htm.tmp.htm"
   File "ProMol\Help\Overview_of_the_Interface.htm"
-  File "ProMol\Help\pdb_index_search.py"
   File "ProMol\Help\Polarity_View.htm"
   File "ProMol\Help\Predefined_Views.htm"
   File "ProMol\Help\Prespective.htm"
