@@ -9,7 +9,7 @@ Monday, July 25, 2011
 Based on Maddy's and Mario Rosa's versions
 
 5.0 RC 2 by the SBEVSL team, see the User's Guide
-Thursday, 11 April 2013 -- HJB
+Friday, 19 April 2013 -- HJB
 
 Special Thanks to the following for their contributions to ProMOL:
 Laura Grell, Chris Parkin, T.J. Esposito, C. Wischmeyer
@@ -74,14 +74,14 @@ ProMOL can be downloaded in a compressed file format from
 http://sourceforge.net/projects/sbevsl/files
 
 You can choose to download either a .tar.gz compressed file
-(ProMOL-5.0-r209.tar.gz) or a zip compressed file
-(ProMOL-5.0-r209.zip). The way you expand the 
+(ProMOL-5.0-r210.tar.gz) or a zip compressed file
+(ProMOL-5.0-r210.zip). The way you expand the 
 file depends on your operating system.
 
 On Unix or Linux systems, or using MINGW under Windows you may unpack the
 tarball with
 
-gunzip < ProMOL-5.0-r209.tar.gz | tar xvf -
+gunzip < ProMOL-5.0-r210.tar.gz | tar xvf -
 
 Windows and Macintosh systems may have a native application that will expand
 your .tar.gz or .zip files; if not you may wish to consider using Stuffit
@@ -102,7 +102,7 @@ C:\Program Files\PyMol\modules\pmg_tk\startup\
 On other systems you will need to find the portion of the PyMOL installation
 tree that contains
 
-modules/pmg_tk/startup
+pmg_tk/startup
 
 and place ProMol.py and the folder ProMol in the startup folder.
 For example in a fink PyMOL installation for python 2.4, 2.5 or 2.6 under
@@ -114,7 +114,7 @@ Mac OS X, the ProMol.py file and ProMol folder belongs under
 
 However, we believe that this version of ProMOL may use features of the Python
 language that were introduced in 2.6, so it may not run with earlier versions.
-Furthermore, has only been tested on Python 2.7.x, and will not work with Python 3.
+Furthermore, has only been tested on Python 2.{5,6,7}.x, and will not work with Python 3.
 
 For PyMOL installed from the Ubuntu Software Center (it may be the same
 from source), ProMol.py and the ProMol folder can be placed under:
