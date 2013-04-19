@@ -74,14 +74,14 @@ ProMOL can be downloaded in a compressed file format from
 http://sourceforge.net/projects/sbevsl/files
 
 You can choose to download either a .tar.gz compressed file
-(ProMOL-5.0-r210.tar.gz) or a zip compressed file
-(ProMOL-5.0-r210.zip). The way you expand the 
+(ProMOL-5.0-r212.tar.gz) or a zip compressed file
+(ProMOL-5.0-r212.zip). The way you expand the 
 file depends on your operating system.
 
 On Unix or Linux systems, or using MINGW under Windows you may unpack the
 tarball with
 
-gunzip < ProMOL-5.0-r210.tar.gz | tar xvf -
+gunzip < ProMOL-5.0-r212.tar.gz | tar xvf -
 
 Windows and Macintosh systems may have a native application that will expand
 your .tar.gz or .zip files; if not you may wish to consider using Stuffit
