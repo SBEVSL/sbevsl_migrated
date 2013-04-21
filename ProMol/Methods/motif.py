@@ -384,6 +384,7 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
     #rb3 = Radiobutton(glb.GUI.motifs['root'], text="N set (NMR)", variable = glb.GUI.motifs['var'], value = 3, height = 2)
     rb4 = Radiobutton(glb.GUI.motifs['root'], text="All Motifs", variable = glb.GUI.motifs['var'], value = 4, height = 2)
     rb5 = Radiobutton(glb.GUI.motifs['root'], text="User Motifs", variable = glb.GUI.motifs['var'], value = 5, height = 2)
+    rbA = Radiobutton(glb.GUI.motifs['root'], text="A set", variable = glb.GUI.motifs['var'], value = 6, height = 2)
 
     #added 2/19
     rb6 = Radiobutton(glb.GUI.motifs['root'], text="Yes (will take longer)", variable = glb.GUI.motifs['varrmsd'], value = 1,  height = 2)
@@ -400,6 +401,7 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
     rb4.select()#added 2/19 (default button)
     rb5.pack(anchor = W)
     rb1.pack(anchor = W)
+    rbA.pack(anchor = W)
     if glb.USE_JESS:
         rb2.pack(anchor = W)
     #rb3.pack(anchor = W)
@@ -697,12 +699,14 @@ def motifchecker(setChoice, rmsdchoice):
     sets = {1: ('P_Set', lambda key: key[0] == 'P'),
     2: ('J_Set', lambda key: key[0] == 'J'),
     3: ('N_Set', lambda key: key[0] == 'N'),
-    4: ('All', lambda key: True),
-    5: ('U_Set', lambda key: key[0] == 'U')}
+    4: ('All', lambda key: glb.USE_JESS or key[0] != 'J'),
+    5: ('U_Set', lambda key: key[0] == 'U'),
+    6: ('A_Set', lambda key: key[0] == 'A')}
     setName = sets[setChoice][0]
+
     # This is a Python list comprehension
     keys = set([motifName for motifName in glb.MOTIFS.keys() if sets[setChoice][1](motifName)])
-    
+
     #4/29 added
     glb.GUI.motifs['tt'].destroy()#removes current tree displaying past results
     glb.GUI.motifs['tt'] = texttree.TextTree(glb.GUI.motifs['motifbox'],funcs={'showContent':showContent})#create new tree

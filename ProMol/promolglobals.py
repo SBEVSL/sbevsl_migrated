@@ -419,6 +419,7 @@ def loadMotifs(*folders):
     # Refreshing at runtime will be better than using shelve for now. -Kip
     # MOTIFS is no longer a shelf-based database class but a simple dictionary.
 
+	
 # This will run immediately when promolglobals gets imported.
 loadMotifs(MOTIFSFOLDER, USRMOTIFSFOLDER) #add all folders here
 
@@ -674,6 +675,8 @@ def populate():
     cmd.disable('protein')
     # Create named selections for each chain, and leave them off by default
     for letter in cmd.get_chains():
+        if letter=="":
+            letter="\"\""
         chain = 'Chain-%s'%(letter)
         cmd.select(chain, "chain %s"%(letter))
         cmd.disable(chain)
