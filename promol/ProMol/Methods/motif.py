@@ -165,6 +165,12 @@ def MotifCaller(motif, camera=True):
         if execfile(glb.MOTIFS[motif]['path']) != False:
             if (motif not in cmd.get_names('all')) or (cmd.count_atoms(motif) == 0):
                 raise Warning
+            else:
+                #print("Print the number of residues: ")
+                num_residues = cmd.count_atoms("name ca and " + motif)
+                #print(num_residues)
+                if num_residues < 2:
+                  raise Warning
             if camera:
                 glb.procolor(motif, show_all='cartoon',color_all='gray')
                 cmd.orient(motif)
