@@ -106,6 +106,8 @@ def showsubstrate():
                 cmd.delete('substrate')
             if 'substrate' in objects:
                 cmd.show('sticks', 'substrate')
+                cmd.set('sphere_scale','0.15','substrate')
+                cmd.show('spheres', 'substrate')
                 cmd.deselect()
                 cpksubstrate()
         except:
@@ -117,6 +119,8 @@ def showsubstrate():
                 cmd.delete('substrate')
             if 'substrate' in objects:
                 cmd.show('sticks', 'substrate')
+                cmd.set('sphere_scale','0.15','substrate')
+                cmd.show('spheres', 'substrate')
                 cmd.deselect()
                 cpksubstrate()
     except:
@@ -125,6 +129,7 @@ def showsubstrate():
 def hidesubstrate():
     try:
         cmd.hide('sticks', 'substrate')
+        cmd.hide('spheres', 'substrate')
     except:
         showinfo('Alert', "No substrate selected")
 
@@ -281,7 +286,11 @@ def showContent(node):
             # Do final display
             cmd.hide('everything', 'all')
             cmd.show('sticks', motifSubsetName)
+            cmd.show('spheres',motifSubsetName)
+            cmd.set('sphere_scale','0.15',motifSubsetName)
             cmd.show('sticks', querySubsetName)
+            cmd.show('spheres',querySubsetName)
+            cmd.set('sphere_scale','0.15',querySubsetName)
             # Removed ineffective cmd.color of matching subset
 
             #aligns and gets the rmsd of the alignment by all atoms
@@ -653,6 +662,8 @@ def count(motif,pdb):
         editdist.append(proutils.levenshteinDistance(sub,ordered))
     mini = min(editdist)
     maxi = max(editdist)
+    if maxi > 1:
+        return None
     #glb.GUI.motifs['csvprep'][pdb][motif]['levdistrange'] = '{0}-{1}'.format(mini,maxi) if mini<maxi else mini
     glb.GUI.motifs['csvprep'][pdb][motif]['levdistrange'] = '%s-%s'%(mini,maxi) if mini<maxi else mini
     # Removed storage of precision factor as it is the same for the entire search
