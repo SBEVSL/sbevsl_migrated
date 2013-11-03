@@ -17,7 +17,7 @@ from pmg_tk.startup.ProMol.version import VERSION, ALG_VERSION
 # maintain algorithm version.  If anything else were to be included,
 # I would suggest a motif library version number.  -Kip
 
-ADMIN = None #This will be a globally available adminmanager object
+ADMIN = None #This will be a globally available adminmanager object.
 
 LAST_USED_DIR = os.path.expanduser('~/')
 
