@@ -2,10 +2,9 @@ import Tkinter as tk
 from Tkinter import *
 from ttk import *
 import Pmw
-from pmg_tk.startup.treewidgets import widget, node, texttree
+#from pmg_tk.startup.treewidgets import widget, node, texttree
 from pmg_tk.startup.ProMol import promolglobals as glb
 from pmg_tk.startup.ProMol.Methods.motif import *
-from pmg_tk.startup.ProMol.Methods.local import *
 Pmw.initialise()
 
 
@@ -71,19 +70,20 @@ def initialise():
     group.columnconfigure(0, weight=1)
     group.rowconfigure(1, weight=1)
         
-    ### modified by Mik ========================================================================
+    #glb.GUI.motifs['exportButton'] = tk.Button(glb.GUI.motifs['tab'], text='Export results', command=exportAllResults, state=tk.DISABLED)
+    #glb.GUI.motifs['exportButton'].grid(row=2, column=0)
     group = tk.Frame(glb.GUI.motifs['tab'])
     group.grid(row=2, column=0)
-    # button to load a PDB file from system
+	# button to a PDB load a file from system
     glb.GUI.motifs['browseButton'] = tk.Button(group, text='Browse for file', command=loadlocal)
     glb.GUI.motifs['browseButton'].grid(row=2, column=0, padx=1)
-    # button to clear the input textbox
+	# button to clear the input textbox
     glb.GUI.motifs['clearButton'] = tk.Button(group, text='Clear input', command=clearpdbinput)
     glb.GUI.motifs['clearButton'].grid(row=2, column=1, padx=1)
-    # this was here before
+	# this was here before
     glb.GUI.motifs['exportButton'] = tk.Button(group, text='Export results', command=exportAllResults, state=tk.DISABLED)
     glb.GUI.motifs['exportButton'].grid(row=2, column=2, padx=1)
-    ### ========================================================================================
+
     
     group = tk.LabelFrame(glb.GUI.motifs['tab'], text='Tools')
     group.grid(row=3, column=0)

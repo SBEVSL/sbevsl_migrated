@@ -1,27 +1,55 @@
 from pymol import cmd
 from pymol import stored
 import Tkinter as tk
+import tkMessageBox
 import Pmw
 import os
 import re
 import time
 import math
-from tkFileDialog import asksaveasfile, askdirectory, askopenfile
+from shutil import copy
+from tkFileDialog import asksaveasfile, askdirectory, askopenfile, askopenfilename
 from tkSimpleDialog import askstring
 from tkColorChooser import askcolor
 from tkMessageBox import showinfo, showerror, askyesno
 from Tkinter import *
-from pmg_tk.startup.treewidgets import widget, node, texttree
-from pmg_tk.startup.treewidgets.constants import *
+from treewidgets import widget, node, texttree #for t/w
+from treewidgets.constants import * #for t/w
 import Tkinter as tk
 import pmg_tk.startup.ProMol.promolglobals as glb
 import pmg_tk.startup.ProMol.Methods.proutils as proutils
 import pmg_tk.startup.ProMol.Methods.motifset as motifset
+import pmg_tk.startup.ProMol.resultsmanager as manager #Added for db functionality
+import pmg_tk.startup.ProMol.databasemanager as dbm #Added for db functionality
 INDIVIDUAL_CSV_HEADER_LENGTH = 7
 CSVMergeInfo = {}
 numResultsOfEachQuery = []
 pdbsl = 0
 Pmw.initialise()
+
+
+#loads a PDB file from hard drive
+#the custom file is added to multipdb textbox, saved to the PDBDownloads file, and read from there
+#as of now (6/6/12) it does not work in Linux
+def loadlocal(): 
+    last_used_dir = glb.LAST_USED_DIR
+    pdb = askopenfilename(filetypes = (("PDB files", "*.pdb"),("PDB files", "*.pdb")), initialdir = last_used_dir, multiple=False)
+    if pdb is not None:
+        glb.LAST_USED_DIR = os.path.dirname(pdb)
+    if pdb: 
+        try: 	
+            copy(pdb, glb.FETCH_PATH)
+            data = pdb.split("/")
+            name = data[len(data) - 1].split(".")[0]
+            name += ', '
+            glb.GUI.motifs['multipdb'].insert(END, name) 
+            print "Loaded local file " + pdb
+        except: 
+            showerror("Open Source File", "Failed to read file \n'%s'"%pdb)
+            return
+
+def clearpdbinput():
+    glb.GUI.motifs['multipdb'].delete(1.0, END)
 
 #motif options
 def motifoption(tag):
@@ -165,12 +193,6 @@ def MotifCaller(motif, camera=True):
         if execfile(glb.MOTIFS[motif]['path']) != False:
             if (motif not in cmd.get_names('all')) or (cmd.count_atoms(motif) == 0):
                 raise Warning
-            else:
-                #print("Print the number of residues: ")
-                num_residues = cmd.count_atoms("name ca and " + motif)
-                #print(num_residues)
-                if num_residues < 2:
-                  raise Warning
             if camera:
                 glb.procolor(motif, show_all='cartoon',color_all='gray')
                 cmd.orient(motif)
@@ -201,7 +223,6 @@ def togglealign():
 
 
 def showContent(node):
-  
     '''allows user to click on motif search field items
     and run the motif function'''
     # motifString is raw result string listed in results box
@@ -216,14 +237,48 @@ def showContent(node):
     # motifSubsetName is the matching subset of the result protein motifPDBCode
     # motifName is the matching subset of the query protein queryPDBCode
 
+    #selectionList = glb.GUI.motifs['motifbox'].curselection()
+    #if len(selectionList) == 0:
+    #    return
+    #motif = int(selectionList[0])
+    #COMMENTED OUT ABOVE FOR T/W
+
+    #added 2/19, edited 3/8-3/20, still needs to be fixed
+    ###
+    #if glb.GUI.motifs['motifbox'].size() > len(glb.matchpairs):
+    #    motifString = ""
+    #    index = 0
+    #    if motif <= (numResultsOfEachQuery[0]*5)+2:
+    #        index = int(math.floor((motif+3)/5))
+    #        motifString = glb.matchpairs[index][1] 
+    #    else:
+    #        current1 = 0
+    #        for i in range(0,pdbsl):
+    #            current2 = current1 + (numResultsOfEachQuery[i]*5)+2 
+    #            if motif <= current2 and motif > current1:
+    #                    if numResultsOfEachQuery[i] != 0:
+    #                        index = int(math.floor((motif+((i+1)*3))/5))  #3/18/12
+    #                    else:
+    #                        index = int(math.floor((motif+((i+1)*3)+1)/5)) 
+    #                    motifString = glb.matchpairs[index][1]
+    #                    break
+    #            current1 = current2     
+    #else:
+    #    motifString = glb.matchpairs[motif][1]
+    ###
+
+    #commented out above for t/w
+
+    ##selectionList = glb.GUI.motifs['motifbox'].curselection()
+    #if len(selectionList) == 0:
+        #return
     motif = 1
     motifString = node.getName()
     ancs = node.ancestors()
     querynode = ancs[0]
-    
+        
     # The next three ifs added by Kip to prevent crash when double clicking header
     # One might have sufficed unless something unexpected ends up in motifbox
-    
     if not motifString.startswith(' '):
         return
     tag = motifString.split(': ')
@@ -234,13 +289,19 @@ def showContent(node):
     if len(secondsplit) < 2:
         return
     motifPDBCode = secondsplit[1] # tpdb
-    queryPDBCode = querynode.getName()
-        
+
+    #if glb.GUI.motifs['motifbox'].size() > len(glb.matchpairs):
+    #    queryPDBCode = glb.matchpairs[index][0]
+    #else:
+    #    queryPDBCode = glb.matchpairs[motif][0]
+
+    queryPDBCode = querynode.getName() #replaced above for t/w
+       
     cmd.reinitialize()
     motifColor = glb.GUI.motifs['motifcolor']['bg']
     queryColor = glb.GUI.motifs['querycolor']['bg']
     if glb.GUI.motifs['align'].get() == 0 or motifPDBCode == queryPDBCode:
-        cmd.fetch(queryPDBCode, async=0, path=glb.FETCH_PATH)#accessing pdb file
+        cmd.fetch(queryPDBCode, async=0, path=glb.FETCH_PATH)
         if motifName in glb.MOTIFS:
             MotifCaller(motifName)
             
@@ -274,8 +335,8 @@ def showContent(node):
             cmd.fetch(motifPDBCode, async=0, path=glb.FETCH_PATH)
             # Removed cartoon show command
             # Create named subset of matching result protein atoms
-            #motifSubsetName = 'match_in_{0}'.format(motifPDBCode)
             motifSubsetName = 'match_in_%s'%(motifPDBCode)
+            #motifSubsetName = 'match_in_{0}'.format(motifPDBCode)
             cmd.select(motifSubsetName, '%s and (%s)' % (motifPDBCode,
                 glb.MOTIFS[motifName]['loci']))
             # Do final display
@@ -285,7 +346,7 @@ def showContent(node):
             # Removed ineffective cmd.color of matching subset
 
             #aligns and gets the rmsd of the alignment by all atoms
-            data1 = cmd.align(motifSubsetName, querySubsetName)#edited 2/19
+            dataAll = cmd.align(motifSubsetName, querySubsetName)
             cmd.set_color('motifColor',
                 ([int(n, 16) for n in (motifColor[1:3], motifColor[3:5], motifColor[5:7])]))
             cmd.set_color('queryColor',
@@ -294,28 +355,27 @@ def showContent(node):
             cmd.color('queryColor', queryPDBCode)
             cmd.orient(motifSubsetName)           
 
-            #added 2/19
+            #if RMSD is selected after motif finder was run and a visual alignment is done,
+            #the RMSDs are calculated and the number of atoms aligned is printed out
             if glb.GUI.motifs['rmsd'].get() != 0:
-                print repr(data1[6]) + " residues were aligned and " + repr(data1[1]) + " atoms."
-                print "rmsd of the alignment using all atoms = " + repr(data1[0]) #added         
+                print repr(dataAll[6]) + " residues were aligned and " + repr(dataAll[1]) + " atoms."
+                print "rmsd of the alignment using all atoms = " + repr(dataAll[0])        
                 #aligns and gets the rmsd of the alignment by C alpha atoms
-                cmd.select(querySubsetName, motifName+" and name ca")#added
+                cmd.select(querySubsetName, motifName+" and name ca")
                 cmd.select(motifSubsetName, '%s and (%s) and name %s' % (motifPDBCode,
-                glb.MOTIFS[motifName]['loci'], "ca"))#added
-                data2 = cmd.align(motifSubsetName, querySubsetName)#added
-                print repr(data2[6]) + " residues were aligned and " + repr(data2[1]) + " atoms."
-                print "rmsd of the alignment using ca atoms = " + repr(data2[0]) #added
-
+                glb.MOTIFS[motifName]['loci'], "ca"))
+                dataAlpha = cmd.align(motifSubsetName, querySubsetName)
+                print repr(dataAlpha[6]) + " residues were aligned and " + repr(dataAlpha[1]) + " atoms."
+                print "rmsd of the alignment using ca atoms = " + repr(dataAlpha[0])
                 #aligns and gets the rmsd of the alignment by C alpha and C beta atoms
-                cmd.select(querySubsetName, motifName+" and name ca,cb")#edited
+                cmd.select(querySubsetName, motifName+" and name ca,cb")
                 cmd.select(motifSubsetName, '%s and (%s) and name %s' % (motifPDBCode,
-                glb.MOTIFS[motifName]['loci'], "ca,cb"))#edited
-                data3 = cmd.align(motifSubsetName, querySubsetName)#edited
-                print repr(data3[6]) + " residues were aligned and " + repr(data3[1]) + " atoms."
-                print "rmsd of the alignment using ca and cb atoms = " + repr(data3[0]) #added
-            ###
+                glb.MOTIFS[motifName]['loci'], "ca,cb"))
+                dataAlphaBeta = cmd.align(motifSubsetName, querySubsetName)
+                print repr(dataAlphaBeta[6]) + " residues were aligned and " + repr(dataAlphaBeta[1]) + " atoms."
+                print "rmsd of the alignment using ca and cb atoms = " + repr(dataAlphaBeta[0])             ###
 
-    
+                
             
             # I hope this is OK to delete
             cmd.delete(motifName)
@@ -379,46 +439,32 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
         w.destroy()
    
     glb.GUI.motifs['var'] = IntVar()
-
-    #added 2/19
     glb.GUI.motifs['varrmsd'] = IntVar()
-    ###
     
     rb1 = Radiobutton(glb.GUI.motifs['root'], text="P set", variable = glb.GUI.motifs['var'], value = 1,  height = 2)
-    if glb.USE_JESS:
-        rb2 = Radiobutton(glb.GUI.motifs['root'], text="J set", variable = glb.GUI.motifs['var'], value = 2, height = 2)
+    rb2 = Radiobutton(glb.GUI.motifs['root'], text="J set", variable = glb.GUI.motifs['var'], value = 2, height = 2)
     #rb3 = Radiobutton(glb.GUI.motifs['root'], text="N set (NMR)", variable = glb.GUI.motifs['var'], value = 3, height = 2)
     rb4 = Radiobutton(glb.GUI.motifs['root'], text="All Motifs", variable = glb.GUI.motifs['var'], value = 4, height = 2)
     rb5 = Radiobutton(glb.GUI.motifs['root'], text="User Motifs", variable = glb.GUI.motifs['var'], value = 5, height = 2)
-    rbA = Radiobutton(glb.GUI.motifs['root'], text="A set", variable = glb.GUI.motifs['var'], value = 6, height = 2)
 
-    #added 2/19
     rb6 = Radiobutton(glb.GUI.motifs['root'], text="Yes (will take longer)", variable = glb.GUI.motifs['varrmsd'], value = 1,  height = 2)
     rb7 = Radiobutton(glb.GUI.motifs['root'], text="No", variable = glb.GUI.motifs['varrmsd'], value = 2, height = 2)
 
     spacelabel = Label(glb.GUI.motifs['root'], text="")
     rmsdlabel = Label(glb.GUI.motifs['root'], text="Calculate RMSD?")
-    ###
-
-
-
 
     rb4.pack(anchor = W)
-    rb4.select()#added 2/19 (default button)
+    rb4.select()#default button that is selected
     rb5.pack(anchor = W)
     rb1.pack(anchor = W)
-    rbA.pack(anchor = W)
-    if glb.USE_JESS:
-        rb2.pack(anchor = W)
+    rb2.pack(anchor = W)
     #rb3.pack(anchor = W)
 
-    #added 2/19
     spacelabel.pack(anchor = W)
     rmsdlabel.pack(anchor = W)
     rb6.pack(anchor = W)
     rb7.pack(anchor = W)
     rb7.select()
-    ###
     
     frame = Frame(glb.GUI.motifs['root'], width=200, height=250, bd=1)
     frame.pack()
@@ -474,6 +520,14 @@ def splitRespectingQuotes(inputString, delimiter=' ', quote='"'):
 # motifSet must be a MotifSet object, not a native Python set
 # resultdb should usually be glb.GUI.motifs['csvprep'][pdb]
 def exportCSVResults(searchStartTime, precisionFactor, motifSet, pdb, found, resultdb, rmsdState):
+
+    if glb.ADMIN.useDB:
+        if glb.ADMIN.isDB:
+            #dbm and rm construction and update db
+            dm = dbm.databaseManager() #Create a databaseManager to maintain parts of the db
+            dm.updateStructures(glb.GUI.motifs['multipdb'].get(1.0,'1.end').split(',')) #Adds the structures from the text field in the gui to the db if needed
+            rm = manager.resultsManager() #Create a resultsManager to interact with the db
+
     # Export CSV file automatically
     # Include the algorithm version now, as well
     # This pulls it from promolglobals.py, which in turn pulls it from version.py
@@ -499,6 +553,9 @@ def exportCSVResults(searchStartTime, precisionFactor, motifSet, pdb, found, res
     allMotifs = motifSet.motifs
     lastpdb = None
     # Changed from 2. -Kip
+
+    pfv = [precisionFactor, glb.ALG_VERSION] #for db entries, precision factor and version as a pair
+    
     fillFrom = INDIVIDUAL_CSV_HEADER_LENGTH
     # The following loop iterates once for each motif found
     for result in found:
@@ -509,21 +566,21 @@ def exportCSVResults(searchStartTime, precisionFactor, motifSet, pdb, found, res
         
         ldr = resultdb[motif]['levdistrange']
 
-        #added 2/19
+        #get rmsds if RMSD option was select by user,
+        #if not fill in motifrmsds with -1s
         if rmsdState == True:
+            #print "rmsdState == True, 1st check"
             motifrmsds = resultdb[motif]['rmsd']
         else:
             motifrmsds = [-1,-1,-1]
-        ###
-
-
         
         # Remove precision factor from every PDB entry listing.
         # It is the same for all of them. -Kip
 
+        #x = ldr #for db entries, using x for this previously
+
         # Homologue functionality was unimplemented and was wasting
         # an entire column in the CSV, so I removed it. -Kip
-
         residues = resultdb[motif]['res']
         same = {}
         motifline = True
@@ -543,17 +600,39 @@ def exportCSVResults(searchStartTime, precisionFactor, motifSet, pdb, found, res
                 continue
             same[key] = len(csv)
             if lastpdb != pdb:
-                #edited 2/19
-                csv.append('%s,%s,"%s","%s","%s","%s",%s,%s,%s'%(pdb,motif,ldr,round(motifrmsds[0],4),round(motifrmsds[1],4),round(motifrmsds[2],4),chain,resn,resi))
+                #print "RMSDs:"
+                #print str(motifrmsds)
+                csv.append('%s,%s,"%s","%s","%s","%s",%s,%s,%s'%(pdb,motif,ldr,round(float(motifrmsds[0]),4),round(float(motifrmsds[1]),4),round(float(motifrmsds[2]),4),chain,resn,resi))
+                if glb.ADMIN.useDB:
+                    if glb.ADMIN.isDB:
+                        rm.addR(pdb, motif, ldr, pfv) #Submits a positive result to the rm
+                        rm.addSpec(chain, resn, resi, pdb, motif) #Submit the residue details
+                        if rmsdState == True:
+                            #print "lastpdb != pdb"
+                            rm.addRMSD(round(float(motifrmsds[0]), 4), round(float(motifrmsds[1]), 4), round(float(motifrmsds[2]), 4), pdb, motif)
                 lastpdb = pdb
                 motifline = False
                 continue
             if motifline:
-                #edited 2/19
-                csv.append(',%s,"%s","%s","%s","%s",%s, %s,%s'%(motif,ldr,round(motifrmsds[0],4),round(motifrmsds[1],4),round(motifrmsds[2],4),chain,resn,resi))
+                #print "RMSDS:"
+                #print motifrmsds
+                csv.append(',%s,"%s","%s","%s","%s",%s, %s,%s'%(motif,ldr,round(float(motifrmsds[0]),4),round(float(motifrmsds[1]),4),round(float(motifrmsds[2]),4),chain,resn,resi))
+                if glb.ADMIN.useDB:
+                    if glb.ADMIN.isDB:
+                        rm.addR(pdb, motif, ldr, pfv) #Submits a positive result to the rm
+                        rm.addSpec(chain, resn, resi, pdb, motif) #Submit the residue details
+                        if rmsdState == True:
+                            #print "motifline"
+                            rm.addRMSD(round(float(motifrmsds[0]), 4), round(float(motifrmsds[1]), 4), round(float(motifrmsds[2]), 4), pdb, motif)
                 motifline = False
                 continue
             csv.append(',,,,,,%s,%s,%s'%(chain,resn,resi))
+            if glb.ADMIN.useDB:
+                if glb.ADMIN.isDB:
+                    rm.addSpec(chain, resn, resi, pdb, motif) #Submit the residue details
+                    if rmsdState == True:
+                        #print "rmsdState == True, 2nd check"
+                        rm.addRMSD(round(float(motifrmsds[0]), 4), round(float(motifrmsds[1]), 4), round(float(motifrmsds[2]), 4), pdb, motif)
         pdbMotifs.add(motif)
     # Fix for if there are absolutely no matches: make room for not found list
     # Before I rewrote the bigger loop it created an infinite loop because pdbfnl
@@ -578,16 +657,34 @@ def exportCSVResults(searchStartTime, precisionFactor, motifSet, pdb, found, res
             csv[line] += ',' # Don't spread out the results to the right so much if they wrap
         #csv[line] += ',{0}'.format(notFoundMotif)
         csv[line] += ',%s'%(notFoundMotif)
+        if glb.ADMIN.useDB:
+            if glb.ADMIN.isDB:
+                rm.addR(pdb, notFoundMotif, 'NF', pfv) #Submits a negative result to the rm
+                rm.addRMSD(-1, -1, -1, pdb, notFoundMotif)
         line += 1
 
     csvfile = "\n".join(csv)
     #with open(os.path.join(glb.CSV_PATH, partialCSVFilename(pdb, motifSet.shortDescription, searchStartTime)), 'w') as csvhandle:
     csvhandle = open(os.path.join(glb.CSV_PATH, partialCSVFilename(pdb, motifSet.shortDescription, searchStartTime)), 'w')
     try:
-        csvhandle.__enter__() 
+        csvhandle.__enter__()
         csvhandle.write(csvfile)
+        
     finally:
         csvhandle.__exit__()
+
+    if glb.ADMIN.useDB:
+        if glb.ADMIN.isDB:
+            if motifSet.shortDescription == "All":
+                dm.allRun(pdb) # Informs db that this pdb was run against all motifs.
+
+            dm.close()#Closes dm after analysis so rm can enter new results
+
+            rm.inputFinished() #Informs the rm that there are no more results to be entered.
+            
+            dm.openCon() #Reopens dm for update
+            dm.update(pdbs) #Updates the secondary tables in the database
+            dm.close() #Closes the databaseManager's connection to the db
 
 # Create uniform timestamp for CSV filenames
 def generateCSVTimeString(searchStartTime):
@@ -611,8 +708,6 @@ def count(motif,pdb):
     bannedchain = []
     stored.motif = []
     editdist = []
-    
-    
     cmd.iterate(motif, 'stored.motif.append((chain,resn,resi))')
     residues = glb.MOTIFS[motif]['resi']
     residuesl = len(residues)*2
@@ -659,6 +754,7 @@ def count(motif,pdb):
     return glb.GUI.motifs['csvprep'][pdb][motif]['levdistrange']
 
 def motifchecker(setChoice, rmsdchoice):
+    t1 = time.clock()
     global CSVMergeInfo
     glb.GUI.motifs['cancel'] = False
     #glb.GUI.motifs['motifbox'].delete(0,tk.END)
@@ -692,10 +788,8 @@ def motifchecker(setChoice, rmsdchoice):
     
     glb.GUI.motifs['single']['text'] = 'Starting search...'
     glb.GUI.motifs['overall']['text'] = 'Starting search...'
-    #glb.GUI.motifs['rmsdlabel']['text'] = 'Starting search...' #added 2/20
     glb.GUI.motifs['singlestatus'].SetProgressPercent(0.0)
     glb.GUI.motifs['overallstatus'].SetProgressPercent(0.0)
-    #glb.GUI.motifs['rmsdstatus'].SetProgressPercent(0.0)#added 2/20
     glb.GUI.motifs['single'].update()
     
     # Only define the search set once now, instead of
@@ -705,24 +799,36 @@ def motifchecker(setChoice, rmsdchoice):
     sets = {1: ('P_Set', lambda key: key[0] == 'P'),
     2: ('J_Set', lambda key: key[0] == 'J'),
     3: ('N_Set', lambda key: key[0] == 'N'),
-    4: ('All', lambda key: glb.USE_JESS or key[0] != 'J'),
-    5: ('U_Set', lambda key: key[0] == 'U'),
-    6: ('A_Set', lambda key: key[0] == 'A')}
+    4: ('All', lambda key: True),
+    5: ('U_Set', lambda key: key[0] == 'U')}
     setName = sets[setChoice][0]
-
     # This is a Python list comprehension
     keys = set([motifName for motifName in glb.MOTIFS.keys() if sets[setChoice][1](motifName)])
+    access = False
 
+    if glb.ADMIN.useDB:
+        #All .isDB functionality is defunct and should be removed.
+        if glb.ADMIN.isDB:
+            rm = manager.resultsManager() #Create a resultsManager to interact with the db
+        else:
+            if glb.ADMIN.permissions != "0":
+                access = True
+            if access:
+                glb.ADMIN.structureUpdate(glb.GUI.motifs['multipdb'].get(1.0,'1.end').split(','))
+            queryResults = glb.ADMIN.submitQuery(glb.GUI.motifs['delta'].get(), glb.ALG_VERSION, keys, pdbs, rmsdchoice)
+            novelResults = {}
+
+    pfv = [glb.GUI.motifs['delta'].get(), glb.ALG_VERSION] #for db entries, precision factor and version as a pair
     #4/29 added
     glb.GUI.motifs['tt'].destroy()#removes current tree displaying past results
     glb.GUI.motifs['tt'] = texttree.TextTree(glb.GUI.motifs['motifbox'],funcs={'showContent':showContent})#create new tree
     glb.GUI.motifs['tt'].pack(expand=YES,fill=BOTH)
-    
-  
-    global numResultsOfEachQuery #added 3/8
+
+    global numResultsOfEachQuery 
     for pdbIndex in range(len(pdbs)):
         rmsds = []
         pdb = pdbs[pdbIndex]
+        
         # Deleted founds initializer
         pdb = pdb.strip()
         found = []
@@ -741,7 +847,7 @@ def motifchecker(setChoice, rmsdchoice):
             continue
         cmd.hide('everything', 'all')
         cmd.remove("all and hydro")
-         
+       
         for motif in keys:
             # Check for cancellation and break out of inner loop
             if glb.GUI.motifs['cancel']:
@@ -749,17 +855,78 @@ def motifchecker(setChoice, rmsdchoice):
                 #glb.GUI.motifs['overall']['text'] = 'Search cancelled at {0}%'.format(int(baro))
                 glb.GUI.motifs['overall']['text'] = 'Search cancelled at %s%%'%(int(baro))
                 break
-                
+
             # List of motif loading errors is no longer stored inside motif dictionary
 
-            # Determine whether or not we have a match
-            if MotifCaller(motif,False):
-                ldr = count(motif,pdb)
-                if ldr != None:
-                    #motifStr = '    {0}: {1}'.format(ldr, motif)
-                    motifStr = '    %s: %s'%(ldr, motif)
+            # Determine if this analysis is novel or if there is
+            # an existing result in the database
+            # dbResult is [False] when no existing entry is found
+            # and is [True, ldr] if a result is found, where x is
+            # that result's count(motif,pdb) entry
+            dbResult = [False]
+            if glb.ADMIN.useDB:
+                if glb.ADMIN.isDB:
+                    dbResult = rm.getResults(pdb, motif, pfv)
+                elif access:
+                    if pdb in queryResults.keys():
+                        if motif in queryResults[pdb].keys():
+                            dbResult = [True, queryResults[pdb][motif][0]]
+                            if rmsdchoice is 1 and queryResults[pdb][motif][-1] == ['-1.0', '-1.0', '-1.0']:
+                                if not pdb in novelResults.keys():
+                                    novelResults[pdb] = {}
+                                novelResults[pdb][motif] = []
+                        else:
+                            if not pdb in novelResults.keys():
+                                novelResults[pdb] = {}
+                            novelResults[pdb][motif] = []
+                    else:
+                        #print "Creating entry for:"
+                        #print pdb + " | " + motif
+                        if not pdb in novelResults.keys():
+                            novelResults[pdb] = {}
+                        novelResults[pdb][motif] = []
+
+                    
+            if not dbResult[0]:
+               # Determine whether or not we have a match
+                if MotifCaller(motif,False):
+                    ldr = count(motif,pdb)
+                    #print "LDR:"
+                    #print str(ldr)
+                    if access:
+                        if ldr != None:
+                            if glb.ADMIN.useDB and not glb.ADMIN.isDB:
+                                novelResults[pdb][motif].append(ldr)
+                                novelResults[pdb][motif].extend(glb.GUI.motifs['csvprep'][pdb][motif]['res'])
+                            motifStr = '    {0}: {1}'.format(ldr, motif)
+                            found.append(motifStr)
+                        elif glb.ADMIN.useDB and not glb.ADMIN.isDB:
+                            #print "Making NF entry for:"
+                            #print pdb + " | " + motif
+                            novelResults[pdb][motif].append('NF')
+                elif access and glb.ADMIN.useDB and not glb.ADMIN.isDB:
+                    #print "Making NF entry for:"
+                    #print pdb + " | " + motif
+                    novelResults[pdb][motif].append('NF')
+
+            else:
+                if dbResult[1] != 'NF':
+                    if glb.ADMIN.isDB:
+                        resultResidues = rm.getResidues(dbResult[2])
+                    else:
+                        resultResidues = queryResults[pdb][motif][1:-1]
+                        if not rmsdchoice is 1:
+                            resultResidues.append(queryResults[pdb][motif][-1])
+                    motifStr = '    {0}: {1}'.format(dbResult[1], motif)
                     found.append(motifStr)
-            cmd.delete(motif)
+                    glb.GUI.motifs['csvprep'][pdb][motif] = {}
+                    glb.GUI.motifs['csvprep'][pdb][motif]['res'] = resultResidues
+                    glb.GUI.motifs['csvprep'][pdb][motif]['levdistrange'] = dbResult[1]
+                    
+                    #glb.GUI.motifs['csvprep'][pdb][motif]['pf'] = glb.GUI.motifs['delta'].get()
+                    #Commented out because I dont think it's needed.
+
+            cmd.delete(motif) #STOPPED HERE, should work, remember to confirm db format and connection info in rm and dm modules!
             
             # Update progress bars
             # Calling update() on GUI widgets from here may not be thread safe
@@ -781,46 +948,88 @@ def motifchecker(setChoice, rmsdchoice):
         if glb.GUI.motifs['cancel']:
             break
         found.sort()
-        numResultsOfEachQuery.append(len(found))#added 3/8
+        numResultsOfEachQuery.append(len(found))
         # Header line entry: both elements are the query PDB code
         glb.matchpairs.append((pdb, pdb))
-        rmsdState=False#added 2/19
+        #tkMessageBox.showerror("About to enter RMSD calculations...", "Ok")
+        rmsdState=False
+        currentRMSD = 0
+        rmsdBar = 0
         for result in found:
             glb.matchpairs.append((pdb, result))
-            
-            #added 2/19
             if rmsdchoice is 1:
+                currentRMSD = currentRMSD + 1
+                if len(found) > 0:
+                    rmsdBar = currentRMSD*100/len(found)
+                glb.GUI.motifs['single']['text'] = '%s RMSDs - %s of %s: %s%% complete'%(pdb, currentRMSD, len(found), rmsdBar)
+                glb.GUI.motifs['singlestatus'].SetProgressPercent(rmsdBar)
+                glb.GUI.motifs['single'].update()
                 rmsdState = True
                 tag = result.split(': ')
                 if len(tag) > 1:
                     motifName = tag[1]                    
                     queryCode = pdb
-                    secondsplit = motifName.split('_')
-                    if len(secondsplit) < 2:
-                        return
-                    motifPDBCode = secondsplit[1] # tpdb (pdb of result)
-                    cmd.reinitialize()
-                    cmd.fetch(queryCode, async=0, path=glb.FETCH_PATH)
-                    cmd.hide('everything', 'all')
-                    MotifCaller(tag[1])
-                    try:
-                        rmsds = proutils.getRMSD(motifName, queryCode, motifPDBCode)#
-                    except:
-                        rmsds=[-1,-1,-1]
-                    glb.GUI.motifs['csvprep'][pdb][motifName]['rmsd'] = rmsds
-                   
-                #count1 = count1+1
-                #rmsdBar=(float(count1)/(len(pdbs)+len(found)-1))*100
-                #glb.GUI.motifs['rmsdstatus'].SetProgressPercent(rmsdBar)
-                #glb.GUI.motifs['rmsdlabel']['text'] = 'RMSD: {0}% complete'.format(int(rmsdBar))
-                        
+                    #tkMessageBox.showerror("About to try to retreive results...", "Ok.")
+                    dbResult = [False]
+                    if glb.ADMIN.useDB:
+                        if glb.ADMIN.isDB:
+                            dbResult = rm.getResults(queryCode, motifName, pfv) #get the result for this pdb,motif,pfv
+                        else:
+                            if queryCode in queryResults.keys() and motifName in queryResults[queryCode].keys():
+                                dbResult = [True]
+                    resultRMSD = [False]
+                    if glb.ADMIN.useDB:
+                        if dbResult[0]:
+                            if glb.ADMIN.isDB:
+                                resultRMSD = rm.getRMSD(dbResult[2]) #check for an rmsd result
+                            else:
+                                if queryResults[queryCode][motifName][-1] != ['-1.0','-1.0','-1.0']:
+                                    resultRMSD = [True]
+                                    resultRMSD.extend(queryResults[queryCode][motifName][-1])
+                                elif access:
+                                    if queryCode not in novelResults.keys():
+                                        novelResults[queryCode] = {}
+                                    novelResults[queryCode][motifName] = ['RMSD']
+                    if resultRMSD[0]: #if there was an rmsd result
+                        #Set the values of the deliverable rmsd result to those from the db
+                        #print "resultRMSD[1] = " + repr(resultRMSD[1])
+                        glb.GUI.motifs['csvprep'][pdb][motifName]['rmsd'] = resultRMSD[1:]
+                        #glb.GUI.motifs['csvprep'][pdb][motifName]['rmsd'][1] = resultRMSD[2]
+                        #glb.GUI.motifs['csvprep'][pdb][motifName]['rmsd'][2] = resultRMSD[3]
+                    else:
+                        #tkMessageBox.showerror("About to try to calculate result...", "Ok")
+                        secondsplit = motifName.split('_')
+                        if len(secondsplit) < 2:
+                            return
+                        motifPDBCode = secondsplit[1] # tpdb (pdb of result)
+                        cmd.reinitialize()
+                        cmd.fetch(queryCode, async=0, path=glb.FETCH_PATH)
+                        cmd.hide('everything', 'all')
+                        MotifCaller(tag[1])
+
+                        #print "UNECESSARY WORK!!!!"
+                        #Otherwise, calculate the rmsd and store it as the deliverable result
+                        rmsds = proutils.getRMSD(motifName, queryCode, motifPDBCode)
+                        glb.GUI.motifs['csvprep'][pdb][motifName]['rmsd'] = rmsds
+                        for i in range(len(rmsds)):
+                            if rmsds[i] > 99:
+                                rmsds[i] = 0.0
+                        if glb.ADMIN.useDB and access:
+                            novelResults[queryCode][motifName].append(rmsds)
+
+
+                    #tkMessageBox.showerror("Got the RMSD value.", "Ok")
+        #tkMessageBox.showerror("Got the RMSD value.", "Exporting CSV.")
         # Export the single-PDB CSV file
         motifSet = motifset.MotifSet(setName, setName, keys)
         exportCSVResults(searchStartTime, glb.GUI.motifs['delta'].get(), motifSet, pdb, found, glb.GUI.motifs['csvprep'][pdb], rmsdState)
+        #tkMessageBox.showerror("Got the RMSD value.", "Export finished, setting mergeinfo.")
         if len(CSVMergeInfo) == 0:
             CSVMergeInfo['motif set short description'] = setName
             CSVMergeInfo['start time'] = searchStartTime
             CSVMergeInfo['partial files'] = list()
+        # This should be outside the if
+        #CSVMergeInfo['partial files'].append(partialCSVFilename(pdb, setName, searchStartTime))
         CSVMergeInfo['partial files'].append(partialCSVFilename(pdb, motifSet.shortDescription, searchStartTime))
 
     # I patched this code because lengtho - len(pdbs) was not returning the proper number of results.
@@ -829,6 +1038,8 @@ def motifchecker(setChoice, rmsdchoice):
     
     oldpdb = ""
     struct = {}
+
+
     #edited 2/19
     #if rmsdchoice is 1:
     struct['type'] = 'Document'
@@ -836,30 +1047,31 @@ def motifchecker(setChoice, rmsdchoice):
     struct['properties'] = NP_ROOT|NP_ALLOW_CHILDREN|NP_AUTOBUILD
     struct['children']=[]
     i = -1
-        
-    if rmsdchoice is 1: 
+
+    #tkMessageBox.showerror("Got the RMSD value.", "About to do treelist stuff...")
+    if rmsdchoice is 1:
         for query, motif in glb.matchpairs:
             
             if query != oldpdb:
+                #glb.GUI.motifs['motifbox'].insert(tk.END, "\n")
+                #glb.GUI.motifs['motifbox'].insert(tk.END, query)   -Replaced with below for t/w
                 j = -1
                 struct['children'].append({'type':'Section','name':query,'children':[]}) 
                 i=i+1
             oldpdb = query
             tag = motif.split(': ')
-             
+          
             if len(tag) > 1:
                 motifName = tag[1]
                 struct['children'][i]['children'].append({'type':'Subsection','name':motif,'children':[]})
                 j=j+1
                 if len(glb.GUI.motifs['csvprep'][query][motifName]['rmsd']) > 0:
-                    struct['children'][i]['children'][j]['children'].append({'type':'Subsection','name':'RMSD All:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][0], 4))})
-                    struct['children'][i]['children'][j]['children'].append({'type':'Subsection','name':'RMSD alpha:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][1], 4))})
-                    struct['children'][i]['children'][j]['children'].append({'type':'Subsection','name':'RMSD alpha & beta:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][2], 4))})
+                    struct['children'][i]['children'][j]['children'].append({'type':'Subsection','name':'RMSD All:  '+ repr(round(float(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][0]), 4))})
+                    struct['children'][i]['children'][j]['children'].append({'type':'Subsection','name':'RMSD alpha:  '+ repr(round(float(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][1]), 4))})
+                    struct['children'][i]['children'][j]['children'].append({'type':'Subsection','name':'RMSD alpha & beta:  '+ repr(round(float(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][2]), 4))})
                  
             if query == motif:
                 numberOfResults -= 1
-            
-            
     else:
         for query, motif in glb.matchpairs:
             if query != oldpdb:
@@ -882,32 +1094,49 @@ def motifchecker(setChoice, rmsdchoice):
             if query == motif:
                 numberOfResults -= 1
     ###
-    
-    
-    
+    #tkMessageBox.showerror("Got the RMSD value.", "Out of treelist stuff...")
     glb.GUI.motifs['tt'].showTree(struct,DT_TWSTRUCT,-1,
         props=NP_AUTOBUILD|NP_ALLOW_CHILDREN,
         state=NS_EXPANDED)#add nodes from struct to the tree
-    
-    cmd.orient('all')
+    #tkMessageBox.showerror("Got the RMSD value.", "Visualizing...")
+
+    #tkMessageBox.showerror("Got the RMSD value.", "cmd.orient...")
+    #cmd.orient('all')
+    cmd.reset()
+    #tkMessageBox.showerror("Got the RMSD value.", "cmd.show...")
     cmd.show('cartoon', 'all')
+    #tkMessageBox.showerror("Got the RMSD value.", "cmd.color...")
     cmd.color('gray', 'all')
+
+    #tkMessageBox.showerror("Got the RMSD value.", "Past cmd calls.  Announcing finish....")
     if not glb.GUI.motifs['cancel']:
         glb.GUI.motifs['single']['text'] = 'Click Start to begin'
         #glb.GUI.motifs['overall']['text'] = 'Motif Finder finished with {0} results.'.format(numberOfResults)
         glb.GUI.motifs['overall']['text'] = 'Motif Finder finished with %s results.'%(numberOfResults)
-    
+    #tkMessageBox.showerror("Got the RMSD value.", "Reseting buttons...")
     if numberOfResults > 0:
         glb.GUI.motifs['exportButton']['state'] = tk.NORMAL
-        
+    #tkMessageBox.showerror("Got the RMSD value.", "Still reseting buttons...")
     # The rest of these should be outside the if
     glb.GUI.motifs['findmotif']['state'] = tk.NORMAL
     glb.GUI.motifs['delta']['state'] = tk.NORMAL
     glb.GUI.motifs['multipdb']['state'] = tk.NORMAL
     glb.GUI.motifs['cancelbutton']['state'] = tk.DISABLED
-    
+    #tkMessageBox.showerror("Got the RMSD value.", "Showing window...")
+
     # Show the PyMOL viewer window
     cmd.window('show')
+
+    #tkMessageBox.showerror("Got the RMSD value.", "Submitting results to db...")
+    if access and glb.ADMIN.useDB and not glb.ADMIN.isDB:
+        if setChoice == 4:
+            allrun = 1
+        else:
+            allrun = 0
+        glb.ADMIN.submitEntries(pfv[0], pfv[1], rmsdchoice, novelResults, allrun)
+        glb.ADMIN.fullUpdate(pdbs)
+    #tkMessageBox.showerror("Got the RMSD value.", "Finished!")
+    print "Runtime = %s"%(time.clock() - t1)
 
 # Refactored motif maker
 
@@ -1244,6 +1473,7 @@ class MotifMaker:
         retVal = False
         try:
             retVal = self.makeMotifCore(openFunction, closeFunction)
+        #except IOError as problem:
         except IOError, problem:
             print problem
         finally:
@@ -1278,7 +1508,7 @@ class MotifMaker:
                            'glu':('CB','CG','CD','OE1','OE2'),
                            'gly':(),
                            'his':('CB','CG','ND1','CD2','CE1','NE2'),
-                           'ile':('CB','CG1','CG2','CD'),
+                           'ile':('CB','CG1','CG2','CD1'),
                            'leu':('CB','CG','CD1','CD2'),
                            'lys':('CB','CG','CD','CE','NZ'),
                            'met':('CB','CG','SD','CE'),

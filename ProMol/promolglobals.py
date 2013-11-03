@@ -9,13 +9,17 @@ import linecache
 import random
 import platform
 from Tkinter import *
-from pmg_tk.startup.ProMol.version import VERSION, ALG_VERSION, USE_JESS
+from pmg_tk.startup.ProMol.version import VERSION, ALG_VERSION
 
 # The algorithm version number constant was still at 1.0, so
 # I believe it would be more meaningful to report the version of ProMOL
 # in the CSV file, rather than a separately tracked and difficult-to-
 # maintain algorithm version.  If anything else were to be included,
 # I would suggest a motif library version number.  -Kip
+
+ADMIN = None #This will be a globally available adminmanager object
+
+LAST_USED_DIR = os.path.expanduser('~/')
 
 PLATFORM = platform.system()
 PROMOL_DIR_PATH = os.path.dirname(__file__)
@@ -27,8 +31,6 @@ MOTIFS = {} # Empty dictionary to replace shelve-based database
 # and calling it matchpairs: format is (query, result) for results and (query, query)
 # for headers
 matchpairs = []
-
-LAST_USED_DIR = os.path.expanduser('~/') # needed to load locally stored files
 
 # Determine the location of the user data directory
 # We create the following folder structure underneath
@@ -69,14 +71,6 @@ class PROMOLGUI:
     
 GUI = PROMOLGUI()
 SELE = 'All'
-
-# Pick up the PROMOL_JESS environment variable
-
-GUI.jess={}
-if 'PROMOL_JESS' in os.environ:
-    USE_JESS=True
-else:
-    USE_JESS=False
 
 # I think this keeps track of the colors in the custom color chooser in EZ-Viz
 NEWCOLOR = 0
@@ -674,8 +668,6 @@ def populate():
     cmd.disable('protein')
     # Create named selections for each chain, and leave them off by default
     for letter in cmd.get_chains():
-        if letter=="":
-            letter="\"\""
         chain = 'Chain-%s'%(letter)
         cmd.select(chain, "chain %s"%(letter))
         cmd.disable(chain)

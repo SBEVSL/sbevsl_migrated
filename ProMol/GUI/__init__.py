@@ -4,6 +4,7 @@ import Tkinter as tk
 from tkFileDialog import askopenfilename
 import Pmw
 from pmg_tk.startup.ProMol import promolglobals as glb
+from pmg_tk.startup.ProMol import adminmanager as adm #Added for db functionality
 from pmg_tk.startup.remote_pdb_load import FetchPDB as showFetchDialog
 Pmw.initialise()
 
@@ -31,7 +32,7 @@ def __init__(pymol):
             ProMol.withdraw()
     
     ProMol = tk.Toplevel()
-    ProMol.minsize(600, 600)
+    ProMol.minsize(450, 450)
     ProMol.title('ProMOL %s'%(glb.VERSION))
     
     buttons = ('Open PDB', 'Fetch PDB', 'Random PDB', 'Clear')
@@ -41,7 +42,7 @@ def __init__(pymol):
     notebook.grid(row=0, column=0, padx=3, pady=3, sticky=tk.N+tk.E+tk.S+tk.W)
 
     from pmg_tk.startup.ProMol.GUI import welcome, ez_viz, motifs, \
-        motif_maker, view
+        motif_maker, view, db_admin
         
     # Removed unused toolboxes, movie_maker and save modules
     # We think we made sure this won't have side effects or
@@ -64,6 +65,12 @@ def __init__(pymol):
     
     glb.GUI.view = {'tab':notebook.add('View Options')}
     view.initialise()
+
+    glb.ADMIN = adm.adminManager()
+
+    glb.GUI.db_admin = {'tab':notebook.add('Database')}
+    db_admin.initialise()
+    
     buttonsref = []
     buttonframe = tk.Frame(ProMol)
     for i in range(buttonsl):
@@ -75,3 +82,7 @@ def __init__(pymol):
     ProMol.columnconfigure(0, weight=1)
     ProMol.rowconfigure(0, weight=1)
     glb.update()
+
+    #dm = dbm.databaseManager() #Creates a databasemanager
+    #dm.update() #Updates the database
+    #dm.close() #Closes the dbm's connection to the db
