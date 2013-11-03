@@ -19,7 +19,7 @@ import Tkinter as tk
 import pmg_tk.startup.ProMol.promolglobals as glb
 import pmg_tk.startup.ProMol.Methods.proutils as proutils
 import pmg_tk.startup.ProMol.Methods.motifset as motifset
-import pmg_tk.startup.ProMol.resultsmanager as manager #Added for db functionality
+import pmg_tk.startup.ProMol.resultsmanager as manager #Added for db functionality.
 import pmg_tk.startup.ProMol.databasemanager as dbm #Added for db functionality
 INDIVIDUAL_CSV_HEADER_LENGTH = 7
 CSVMergeInfo = {}
