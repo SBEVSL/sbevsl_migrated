@@ -4,7 +4,7 @@ import Tkinter as tk
 from tkFileDialog import askopenfilename
 import Pmw
 from pmg_tk.startup.ProMol import promolglobals as glb
-from pmg_tk.startup.ProMol import adminmanager as adm #Added for db functionality
+from pmg_tk.startup.ProMol import adminmanager as adm #Added for db functionality.
 from pmg_tk.startup.remote_pdb_load import FetchPDB as showFetchDialog
 Pmw.initialise()
 
