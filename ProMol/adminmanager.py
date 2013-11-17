@@ -2,7 +2,6 @@ import MySQLdb
 import atexit
 from ZSI.client import AUTH, Binding
 from pmg_tk.startup.ProMol import promolglobals as glb
-from pmg_tk.startup.ProMol import databasemanager as dbm
 import tkMessageBox
 import platform
 import os
