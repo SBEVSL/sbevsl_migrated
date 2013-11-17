@@ -5,6 +5,7 @@ import Pmw
 #from pmg_tk.startup.treewidgets import widget, node, texttree
 from pmg_tk.startup.ProMol import promolglobals as glb
 from pmg_tk.startup.ProMol.Methods.motif import *
+from pmg_tk.startup.ProMol.Methods.local import *
 Pmw.initialise()
 
 
