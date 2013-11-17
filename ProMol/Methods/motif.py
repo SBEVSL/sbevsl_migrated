@@ -19,8 +19,14 @@ import Tkinter as tk
 import pmg_tk.startup.ProMol.promolglobals as glb
 import pmg_tk.startup.ProMol.Methods.proutils as proutils
 import pmg_tk.startup.ProMol.Methods.motifset as motifset
-import pmg_tk.startup.ProMol.resultsmanager as manager #Added for db functionality
-import pmg_tk.startup.ProMol.databasemanager as dbm #Added for db functionality
+#In order to not require MySQLdb as a prerequisite, all the functionality
+#associated with hosting the SQL server locally (i.e. Server = localhost in Database tab)
+#is commented out with #ldb#
+#if you want this feature, you need to install MySQLdb and remove this tag wherever it occurs in
+#this file
+
+#ldb#import pmg_tk.startup.ProMol.resultsmanager as manager #Added for db functionality
+#ldb#import pmg_tk.startup.ProMol.databasemanager as dbm #Added for db functionality
 INDIVIDUAL_CSV_HEADER_LENGTH = 7
 CSVMergeInfo = {}
 numResultsOfEachQuery = []
@@ -460,11 +466,12 @@ def splitRespectingQuotes(inputString, delimiter=' ', quote='"'):
 def exportCSVResults(searchStartTime, precisionFactor, motifSet, pdb, found, resultdb, rmsdState):
 
     if glb.ADMIN.useDB:
-        if glb.ADMIN.isDB:
-            #dbm and rm construction and update db
-            dm = dbm.databaseManager() #Create a databaseManager to maintain parts of the db
-            dm.updateStructures(glb.GUI.motifs['multipdb'].get(1.0,'1.end').split(',')) #Adds the structures from the text field in the gui to the db if needed
-            rm = manager.resultsManager() #Create a resultsManager to interact with the db
+        print "Using database..."
+        #ldb#if glb.ADMIN.isDB:
+        #ldb#    #dbm and rm construction and update db
+        #ldb#    dm = dbm.databaseManager() #Create a databaseManager to maintain parts of the db
+        #ldb#    dm.updateStructures(glb.GUI.motifs['multipdb'].get(1.0,'1.end').split(',')) #Adds the structures from the text field in the gui to the db if needed
+        #ldb#    rm = manager.resultsManager() #Create a resultsManager to interact with the db
 
     # Export CSV file automatically
     # Include the algorithm version now, as well
@@ -541,13 +548,13 @@ def exportCSVResults(searchStartTime, precisionFactor, motifSet, pdb, found, res
                 #print "RMSDs:"
                 #print str(motifrmsds)
                 csv.append('%s,%s,"%s","%s","%s","%s",%s,%s,%s'%(pdb,motif,ldr,round(float(motifrmsds[0]),4),round(float(motifrmsds[1]),4),round(float(motifrmsds[2]),4),chain,resn,resi))
-                if glb.ADMIN.useDB:
-                    if glb.ADMIN.isDB:
-                        rm.addR(pdb, motif, ldr, pfv) #Submits a positive result to the rm
-                        rm.addSpec(chain, resn, resi, pdb, motif) #Submit the residue details
-                        if rmsdState == True:
-                            #print "lastpdb != pdb"
-                            rm.addRMSD(round(float(motifrmsds[0]), 4), round(float(motifrmsds[1]), 4), round(float(motifrmsds[2]), 4), pdb, motif)
+                #ldb#if glb.ADMIN.useDB:
+                    #ldb#if glb.ADMIN.isDB:
+                    #ldb#    rm.addR(pdb, motif, ldr, pfv) #Submits a positive result to the rm
+                    #ldb#    rm.addSpec(chain, resn, resi, pdb, motif) #Submit the residue details
+                    #ldb#    if rmsdState == True:
+                    #ldb#        #print "lastpdb != pdb"
+                    #ldb#        rm.addRMSD(round(float(motifrmsds[0]), 4), round(float(motifrmsds[1]), 4), round(float(motifrmsds[2]), 4), pdb, motif)
                 lastpdb = pdb
                 motifline = False
                 continue
@@ -555,22 +562,22 @@ def exportCSVResults(searchStartTime, precisionFactor, motifSet, pdb, found, res
                 #print "RMSDS:"
                 #print motifrmsds
                 csv.append(',%s,"%s","%s","%s","%s",%s, %s,%s'%(motif,ldr,round(float(motifrmsds[0]),4),round(float(motifrmsds[1]),4),round(float(motifrmsds[2]),4),chain,resn,resi))
-                if glb.ADMIN.useDB:
-                    if glb.ADMIN.isDB:
-                        rm.addR(pdb, motif, ldr, pfv) #Submits a positive result to the rm
-                        rm.addSpec(chain, resn, resi, pdb, motif) #Submit the residue details
-                        if rmsdState == True:
-                            #print "motifline"
-                            rm.addRMSD(round(float(motifrmsds[0]), 4), round(float(motifrmsds[1]), 4), round(float(motifrmsds[2]), 4), pdb, motif)
+                #ldb#if glb.ADMIN.useDB:
+                    #ldb#if glb.ADMIN.isDB:
+                    #ldb#    rm.addR(pdb, motif, ldr, pfv) #Submits a positive result to the rm
+                    #ldb#    rm.addSpec(chain, resn, resi, pdb, motif) #Submit the residue details
+                    #ldb#    if rmsdState == True:
+                    #ldb#        #print "motifline"
+                    #ldb#        rm.addRMSD(round(float(motifrmsds[0]), 4), round(float(motifrmsds[1]), 4), round(float(motifrmsds[2]), 4), pdb, motif)
                 motifline = False
                 continue
             csv.append(',,,,,,%s,%s,%s'%(chain,resn,resi))
-            if glb.ADMIN.useDB:
-                if glb.ADMIN.isDB:
-                    rm.addSpec(chain, resn, resi, pdb, motif) #Submit the residue details
-                    if rmsdState == True:
-                        #print "rmsdState == True, 2nd check"
-                        rm.addRMSD(round(float(motifrmsds[0]), 4), round(float(motifrmsds[1]), 4), round(float(motifrmsds[2]), 4), pdb, motif)
+            #ldb#if glb.ADMIN.useDB:
+                #ldb#if glb.ADMIN.isDB:
+                #ldb#    rm.addSpec(chain, resn, resi, pdb, motif) #Submit the residue details
+                #ldb#    if rmsdState == True:
+                #ldb#        #print "rmsdState == True, 2nd check"
+                #ldb#        rm.addRMSD(round(float(motifrmsds[0]), 4), round(float(motifrmsds[1]), 4), round(float(motifrmsds[2]), 4), pdb, motif)
         pdbMotifs.add(motif)
     # Fix for if there are absolutely no matches: make room for not found list
     # Before I rewrote the bigger loop it created an infinite loop because pdbfnl
@@ -595,10 +602,10 @@ def exportCSVResults(searchStartTime, precisionFactor, motifSet, pdb, found, res
             csv[line] += ',' # Don't spread out the results to the right so much if they wrap
         #csv[line] += ',{0}'.format(notFoundMotif)
         csv[line] += ',%s'%(notFoundMotif)
-        if glb.ADMIN.useDB:
-            if glb.ADMIN.isDB:
-                rm.addR(pdb, notFoundMotif, 'NF', pfv) #Submits a negative result to the rm
-                rm.addRMSD(-1, -1, -1, pdb, notFoundMotif)
+        #ldb#if glb.ADMIN.useDB:
+            #ldb#if glb.ADMIN.isDB:
+            #ldb#    rm.addR(pdb, notFoundMotif, 'NF', pfv) #Submits a negative result to the rm
+            #ldb#    rm.addRMSD(-1, -1, -1, pdb, notFoundMotif)
         line += 1
 
     csvfile = "\n".join(csv)
@@ -611,18 +618,18 @@ def exportCSVResults(searchStartTime, precisionFactor, motifSet, pdb, found, res
     finally:
         csvhandle.__exit__()
 
-    if glb.ADMIN.useDB:
-        if glb.ADMIN.isDB:
-            if motifSet.shortDescription == "All":
-                dm.allRun(pdb) # Informs db that this pdb was run against all motifs.
+    #ldb#if glb.ADMIN.useDB:
+        #ldb#if glb.ADMIN.isDB:
+        #ldb#    if motifSet.shortDescription == "All":
+        #ldb#        dm.allRun(pdb) # Informs db that this pdb was run against all motifs.
 
-            dm.close()#Closes dm after analysis so rm can enter new results
+        #ldb#    dm.close()#Closes dm after analysis so rm can enter new results
 
-            rm.inputFinished() #Informs the rm that there are no more results to be entered.
+        #ldb#    rm.inputFinished() #Informs the rm that there are no more results to be entered.
             
-            dm.openCon() #Reopens dm for update
-            dm.update(pdbs) #Updates the secondary tables in the database
-            dm.close() #Closes the databaseManager's connection to the db
+        #ldb#    dm.openCon() #Reopens dm for update
+        #ldb#    dm.update(pdbs) #Updates the secondary tables in the database
+        #ldb#    dm.close() #Closes the databaseManager's connection to the db
 
 # Create uniform timestamp for CSV filenames
 def generateCSVTimeString(searchStartTime):
@@ -747,7 +754,8 @@ def motifchecker(setChoice, rmsdchoice):
     if glb.ADMIN.useDB:
         #All .isDB functionality is defunct and should be removed.
         if glb.ADMIN.isDB:
-            rm = manager.resultsManager() #Create a resultsManager to interact with the db
+            print "Database is locally hosted..."
+            #ldb#rm = manager.resultsManager() #Create a resultsManager to interact with the db
         else:
             if glb.ADMIN.permissions != "0":
                 access = True
@@ -804,7 +812,8 @@ def motifchecker(setChoice, rmsdchoice):
             dbResult = [False]
             if glb.ADMIN.useDB:
                 if glb.ADMIN.isDB:
-                    dbResult = rm.getResults(pdb, motif, pfv)
+                    print "Database is hosted locally..."
+                    #ldb#dbResult = rm.getResults(pdb, motif, pfv)
                 elif access:
                     if pdb in queryResults.keys():
                         if motif in queryResults[pdb].keys():
@@ -850,7 +859,8 @@ def motifchecker(setChoice, rmsdchoice):
             else:
                 if dbResult[1] != 'NF':
                     if glb.ADMIN.isDB:
-                        resultResidues = rm.getResidues(dbResult[2])
+                        print "Database is hosted locally..."
+                        #ldb#resultResidues = rm.getResidues(dbResult[2])
                     else:
                         resultResidues = queryResults[pdb][motif][1:-1]
                         if not rmsdchoice is 1:
@@ -911,7 +921,8 @@ def motifchecker(setChoice, rmsdchoice):
                     dbResult = [False]
                     if glb.ADMIN.useDB:
                         if glb.ADMIN.isDB:
-                            dbResult = rm.getResults(queryCode, motifName, pfv) #get the result for this pdb,motif,pfv
+                            print "Database is hosted locally..."
+                            #ldb#dbResult = rm.getResults(queryCode, motifName, pfv) #get the result for this pdb,motif,pfv
                         else:
                             if queryCode in queryResults.keys() and motifName in queryResults[queryCode].keys():
                                 dbResult = [True]
@@ -919,7 +930,8 @@ def motifchecker(setChoice, rmsdchoice):
                     if glb.ADMIN.useDB:
                         if dbResult[0]:
                             if glb.ADMIN.isDB:
-                                resultRMSD = rm.getRMSD(dbResult[2]) #check for an rmsd result
+                                print "Database is hosted locally..."
+                                #ldb#resultRMSD = rm.getRMSD(dbResult[2]) #check for an rmsd result
                             else:
                                 if queryResults[queryCode][motifName][-1] != ['-1.0','-1.0','-1.0']:
                                     resultRMSD = [True]
