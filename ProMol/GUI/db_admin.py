@@ -10,11 +10,11 @@ def initialise():
 
     glb.GUI.db_admin['Server'] = tk.Entry(glb.GUI.db_admin['tab'])
     glb.GUI.db_admin['Server'].pack()
-    glb.GUI.db_admin['Server'].insert(0, "Host Server")
+    glb.GUI.db_admin['Server'].insert(0, "https://oldmomtong.rit.edu/agrier/ProMolHandler.py")
 
     glb.GUI.db_admin['Database'] = tk.Entry(glb.GUI.db_admin['tab'])
     glb.GUI.db_admin['Database'].pack()
-    glb.GUI.db_admin['Database'].insert(0, "Database")
+    glb.GUI.db_admin['Database'].insert(0, "ProMol")
 
     glb.GUI.db_admin['Username'] = tk.Entry(glb.GUI.db_admin['tab'])
     glb.GUI.db_admin['Username'].pack()

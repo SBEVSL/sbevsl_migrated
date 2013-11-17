@@ -9,7 +9,7 @@ import linecache
 import random
 import platform
 from Tkinter import *
-from pmg_tk.startup.ProMol.version import VERSION, ALG_VERSION
+from pmg_tk.startup.ProMol.version import VERSION, ALG_VERSION, USE_JESS
 
 # The algorithm version number constant was still at 1.0, so
 # I believe it would be more meaningful to report the version of ProMOL
@@ -71,6 +71,14 @@ class PROMOLGUI:
     
 GUI = PROMOLGUI()
 SELE = 'All'
+
+# Pick up the PROMOL_JESS environment variable
+
+GUI.jess={}
+if 'PROMOL_JESS' in os.environ:
+    USE_JESS=True
+else:
+    USE_JESS=False
 
 # I think this keeps track of the colors in the custom color chooser in EZ-Viz
 NEWCOLOR = 0

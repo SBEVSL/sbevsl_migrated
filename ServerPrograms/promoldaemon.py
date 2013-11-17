@@ -1,27 +1,26 @@
 #ProMol Daemon
+#This program is dispatched by ProMolHandler to handle all requests.
 from ZSI import dispatch
 import sessionmanager as sm
 
-ADMINUSER = "fill_in"
-
-ADMINPASS = "fill_in"
-HOST = "fill_in"
-DATABASE = "fill_in"
-
-KEY = "fill_in"
+#These must be filled in with the location of the MySQL server (likely localhost),
+#the database to use on that server, credentials with administrative privilages
+#on that database, and a secret key for encrypting passwords.
+ADMINUSER = "FILL_IN"
+ADMINPASS = "FILL_IN"
+HOST = "FILL_IN"
+DATABASE = "FILL_IN"
+KEY = "FILL_IN"
 
 MANAGER = sm.SessionManager(HOST, ADMINUSER, ADMINPASS, DATABASE, KEY)
 
 def login():
-    #print "In promoldaemon -- login()"
     try:
         creds = dispatch.GetClientBinding().GetAuth()
     except Exception, e:
         print "Failed to get credentials: ", e
-    #print "creds:"
-    #print str(creds)
     try:
-        sessionInfo = MANAGER.requestSession(creds[1], creds[2], HOST, DATABASE)
+        sessionInfo = MANAGER.requestSession(creds[1], creds[2])
     except Exception, e:
         print "Failed to generate session: ", e
     print "Got sessionInfo"
@@ -35,8 +34,7 @@ def login():
 def logout(**kwargs):
     args = kwargs.values()[0]
     token = args[0]
-    creds = dispatch.GetClientBinding().GetAuth()
-    if MANAGER.retireSession(token, creds[1]):
+    if MANAGER.retireSession(token):
         return "Logout successful"
     else:
         return None
@@ -53,10 +51,11 @@ def doQuery(**kwargs):
     creds = dispatch.GetClientBinding().GetAuth()
     thisSession = MANAGER.getSession(token, creds[1], creds[2])
     if thisSession is None:
-        return None
+        return "Session not found."
     else:
         return thisSession.query(pf, v, mids, pids, rmsd)
 
+#This function is still experimental.
 def csvCheck(**kwargs):
     args = kwargs.values()[0]
     token = args[0]
@@ -97,6 +96,7 @@ def makeUpdate(**kwargs):
     creds = dispatch.GetClientBinding().GetAuth()
     print "In promoldaemon -- makeUpdate"
     thisSession = MANAGER.getSession(token, creds[1], creds[2])
+    #return "Got a session..."
     print "Got a session..."
     try:
         if thisSession is None or thisSession.permissions is 0:
@@ -108,8 +108,5 @@ def makeUpdate(**kwargs):
     except Exception, e:
         print "Failed session assessment:"
         print e
-
-#For Local test
-#dispatch.AsServer(port=9100, rpc=True)
 
 print "Starting server..."

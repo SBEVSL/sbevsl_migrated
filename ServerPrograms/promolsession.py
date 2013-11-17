@@ -1,4 +1,5 @@
 #ProMol Session
+#Session objects are used to do the work on the actual data of interest
 import MySQLdb
 import time
 import datetime
@@ -8,14 +9,9 @@ import os
 class Session:
 
     def __init__(self, host, name, pw, db, perms):
-        #self.token = token
         self.rm = resultsManager(host, name, pw, db)
         self.dbm = databaseManager(host, name, pw, db)
         self.permissions = int(perms)
-        #self.expiration = time.time() + 6000.0
-
-    #def refresh(self):
-    #    self.expiration += 6000.0
 
     def query(self, pf, v, mids, pids, rmsd):
         if rmsd is 1:
@@ -45,8 +41,6 @@ class Session:
                     else:
                         pdbResLst.append([mid, result[pdb][mid]])
                 resultLst.append(pdbResLst)
-            #print "SENDING:"
-            #print resultLst
             return resultLst
         except Exception, e:
             print "Query failed: ", e
@@ -73,8 +67,6 @@ class Session:
                 for i in range(0, len(entryLst), 2):
                     self.dbm.allRun(entryLst[i])
                 self.dbm.close()
-            #print "RECEIVED:"
-            #print entryLst
             result = self.rm.batchEntry(pf, ver, rmsdOn, entryLst)
             self.rm.close()
             return result
@@ -83,14 +75,12 @@ class Session:
             return e
 
     def update(self, structures, full):
-        #print "In sessionmanager -- update"
-        #print "Structures | full:"
-        #print str(structures) + " | " + str(full)
         try:
             print "Updating..."
             self.dbm.openCon()
             print "Connection opened."
             if full is 1:
+                return "Performing full update..."
                 print "Performing full update..."
                 self.dbm.update(structures)
                 print "Full update complete."
@@ -166,25 +156,12 @@ class resultsManager:
             return [True, RMSD[0], RMSD[1], RMSD[2]]
         
     def addSpec(self, chain, resname, resnum, pid, mid):
-        #print "Adding the following values to the Spec buffer..."
-        #print "chain: " + repr(chain)
-        #print "name: " + repr(resname)
-        #print "number: " + repr(resnum)
-        #print "pid: " + pid.upper()
-        #print "mid: " + repr(mid)
         self.residueBuffer.append((chain, resname, resnum, pid.upper(), mid))
 
     def addRMSD(self, allAtoms, A, AB, pid, mid):
-        #print "Adding the following values to the RMSD buffer..."
-        #print "allAtoms: " + repr(allAtoms)
-        #print "A: " + repr(A)
-        #print "AB: " + repr(AB)
-        #print "pid: " + pid.upper()
-        #print "mid: " + repr(mid)
         self.rmsdBuffer.append((allAtoms, A, AB, pid.upper(), mid))
     
     def inputFinished(self):
-        #print "INPUT FINISHED"
         entries = []
         existingResults = []
         residueEntries = []
@@ -198,21 +175,15 @@ class resultsManager:
             maxID = 0
         else:
             maxID = maxID[0]
-        #print "MAXID = " + repr(maxID)
-        #print "LENGTH OF resultsBuffer: " + repr(len(self.resultsBuffer))
-        #retrieve existing matching results
         for r in self.resultsBuffer:
             self.c.execute(
                 """select pdbid, motif, pf, version from results
                 where pdbid = %s and motif = %s and pf = %s and version = %s""",
                 r)
             existingResults.extend(self.c.fetchall())
-        #print "LENGTH OF existingResults: " + repr(len(existingResults))                                    
-        #enter in novel results
         for r in self.resultsBuffer:
             if r not in existingResults:
                 entries.append(self.entryBuffer[self.resultsBuffer.index(r)])
-        #print "LENGTH OF ENTRIES: " + repr(len(entries)) 
         if len(entries) > 0:
             self.c.executemany(
                 """insert into results (pdbid, motif, pf, version, result, date)
@@ -223,10 +194,8 @@ class resultsManager:
         #Clear buffers
         self.resultsBuffer = []
         self.entryBuffer = []
-        #print "ABOUT TO ADD RESIDUES"
         for res in self.residueBuffer:
             resultInfo = (maxID, res[3], res[4])
-            #print "resultInfo = %s, %s, %s"%(resultInfo[0], resultInfo[1], resultInfo[2])
             self.c.execute(
                 """select id from results
                 where id > %s and pdbid = %s and motif = %s""",
@@ -239,30 +208,20 @@ class resultsManager:
             else:
                 resultID = resultID[0]
             residueEntries.append((res[0], res[1], res[2], resultID))
-        #print "LENGTH OF RESIDUE ENTRIES: " + repr(len(residueEntries))
         if len(residueEntries) > 0:
             if not residueEntries[0][3] == 0:
-                #print "Adding the following values to resultSpecs..."
-                #print "chain: " + repr(residueEntries[0][0])
-                #print "name: " + repr(residueEntries[0][1])
-                #print "number: " + repr(residueEntries[0][2])
-                #print "resultid: " + repr(residueEntries[0][3])
                 self.c.executemany(
                     """insert into resultspecs (chain, name, number, resultid)
                     values (%s, %s, %s, %s)""",
                     residueEntries)
-                #print "ABOUT TO COMMIT RESIDUE ENTRIES"
             self.db.commit()
         self.residueBuffer = []
-        #print "ABOUT TO ADD RMSDs"
-        #print "Length of rmsdBuffer = %s"%(len(self.rmsdBuffer))
 
 
         self.c.execute(
             """select id from results
             where id not in (select distinct resultid from resultrmsd)""")
         nonRmsdIDs = self.c.fetchall() #List of resultid's without corresponding rmsd entries
-        #print "Length of nonRmsdIDs = %s"%(len(nonRmsdIDs))
         idLst = [] #List of resultid's without corresponding rmsd entries, reformatted
         for row in nonRmsdIDs:
             idLst.append(row[0])
@@ -270,7 +229,6 @@ class resultsManager:
             if len(idLst) == 0:
                 break
             resultInfo = (idLst, dist[3], dist[4])
-            #print "resultInfo = %s, %s, %s"%(resultInfo[0], resultInfo[1], resultInfo[2])
             if len(idLst) > 1:
                 self.c.execute(
                     """select id from results
@@ -288,30 +246,17 @@ class resultsManager:
                 continue
             else:
                 resultID = resultID[0]
-            #print "resultID = %s"%(resultID)
             rmsdEntries.append((dist[0], dist[1], dist[2], resultID))
             idLst.remove(resultID)
-        #print "LENGTH OF RMSD ENTRIES: " + repr(len(rmsdEntries))
         if len(rmsdEntries) > 0:
             if not rmsdEntries[0][0] == -1:
-                #print "Adding the following values to resultRMSD..."
-                #print "total: " + repr(rmsdEntries[0][0])
-                #print "alpha: " + repr(rmsdEntries[0][1])
-                #print "alpha_beta: " + repr(rmsdEntries[0][2])
-                #print "resultid: " + repr(rmsdEntries[0][3])
                 self.c.executemany(
                     """insert into resultrmsd (total, alpha, alpha_beta, resultid)
                     values (%s, %s, %s, %s)""",
                     rmsdEntries)
-                #print "ABOUT TO COMMIT RMSD ENTRIES"
             self.db.commit()
         self.rmsdBuffer = []
-        
-        #Close the cursor and the database
-        #Move these lines to a close function as this class gains
-        #additional capabitities.
-        #self.c.close()
-        #self.db.close()
+
 
     #Below here is for client-server web-based database functions
 
@@ -351,8 +296,6 @@ class resultsManager:
             for mid in mids:
                 #Query the database
                 result = self.getResults(pid, mid, pv)
-                #print ("Result for " + pid + " & " + mid + ": " +
-                #           str(result))
                 if not result[0]:
                     #If there's no db entry, move on
                     continue
@@ -394,14 +337,8 @@ class resultsManager:
         pfv = [pf, ver]
         for i in range(0, len(entryLst), 2):
             pid = entryLst[i]
-            #print "pdb:"
-            #print str(pid)
             for j in entryLst[i+1]:
                 mid = j[0]
-                #print "mid:"
-                #print str(mid)
-                #print "j:"
-                #print str(j)
                 res = j[1]
                 if res[0] != 'NF':
                     if res[0] != 'RMSD':
@@ -425,7 +362,6 @@ class resultsManager:
                 else:
                     #If the result was NF, enter a negative result
                     self.addR(pid, mid, 'NF', pfv)
-                    #self.addRMSD(-1, -1, -1, pid, mid)
 
         self.inputFinished()
 
@@ -589,36 +525,12 @@ class databaseManager:
         
         
     def updateMotifsFully(self):
-        #Check the motifs folder in pymol and the usermotifs folder in sbevsl
+
         #get the names of all the motifs
-
-        PLATFORM = platform.system()
-
-        PROMOL_DIR_PATH = os.path.dirname(__file__)
-        
-        try:
-            HOME = os.environ['HOME']
-        except KeyError:
-            HOME = os.environ['USERPROFILE']
-        if PLATFORM == 'Windows':
-            OFFSITE = os.path.join(os.environ['AppData'], 'SBEVSL', 'ProMol')
-        elif PLATFORM == 'Darwin':
-            OFFSITE = os.path.join(HOME, 'Library', 'Application Support', 'SBEVSL',
-                'ProMol')
-        else:
-            OFFSITE = os.path.join(HOME, '.sbevsl', 'ProMol')
-
-        #USE THE FOLLOWING ON THE SERVER
-
-        HOME = os.environ['home']
-        OFFSITE = os.path.join(HOME, 'fill_in', 'fill_in')
-        
-        motfolder = os.path.join(PROMOL_DIR_PATH, 'Motifs')
-        usrmotfolder = os.path.join(OFFSITE, 'UserMotifs')
-
-        #The above identifies the directories that should store the motifs:
-        #/home/.sbevsl/ProMol/Motifs and /UserMotifs
-        #the .sbevsl folder is hidden...
+        #Fill these in with the absolute file paths of these two folders,
+        #which must be present on the server and contain all motifs
+        motfolder = "/FILL_IN/Motifs")
+        usrmotfolder = "/FILL_IN/UserMotifs")
         
         motnames = []
         motfiles = os.listdir(motfolder)
@@ -643,10 +555,7 @@ class databaseManager:
         for name in motnames:
             if name not in mids:
                 newMotifs.append(name)
-        #oldMotifs = []
-        #for mid in mids:
-        #    if mid not in motnames:
-        #        oldMotifs.append(mid)
+
         for motif in newMotifs:
             if motif[0] == 'J':
                 setName = 'J Set'
@@ -661,12 +570,6 @@ class databaseManager:
                 values (%s, %s, curdate())""",
                 (motif, setName))
         self.dbc.commit()
-        #for motif in oldMotifs:
-        #    self.cur.execute(
-        #        """delete from motifs
-        #        where id = %s""",
-        #        motif)
-        #self.dbc.commit()
         #Check the results table for all hits from each motif in the motifs
         #table.  Count the hits and update the foundin field for the motif.
         self.cur.execute(
@@ -775,14 +678,6 @@ class databaseManager:
         self.dbc.commit()
 
     def structureQuery(self, pdbs):
-    
-        #print "Converting original list:"
-        #print str(pdbs)
-        #for i in range(len(pdbs)):
-        #    print (pdbs[i] + " => " + str(pdbs[i]))
-        #    pdbs[i] = str(pdbs[i])
-
-        #pdbtup = tuple(pdbs)
 
         print "In DBM, about to query for structures in:"
         print pdbs

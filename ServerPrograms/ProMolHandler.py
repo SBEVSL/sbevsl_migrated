@@ -1,3 +1,6 @@
+#ProMolHandler
+#Must be identified in apache configuration file as the handler to use
+#for the URI specifying the directory containing all of these programs.
 from ZSI import dispatch
 from mod_python import apache
 

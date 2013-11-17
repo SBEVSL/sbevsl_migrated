@@ -32,33 +32,32 @@ class adminManager:
         if self.useDB:
             
             #USE IN PRODUCTION
-            #self.hostName = glb.GUI.db_admin['Server'].get()
-            #self.user = glb.GUI.db_admin['Username'].get()
-            #self.pw = glb.GUI.db_admin['Password'].get()
-            #self.dbName = glb.GUI.db_admin['Database'].get()
-            #self.binding = Binding(url=self.hostName)
+            self.hostName = glb.GUI.db_admin['Server'].get()
+            self.user = glb.GUI.db_admin['Username'].get()
+            self.pw = glb.GUI.db_admin['Password'].get()
 
-            #USE FOR REMOTE SERVER TESTING
-            self.hostName = 'fill_in'
-            self.user = 'fill_in'
-            self.pw = 'fill_in'
-            self.dbName = 'fill_in'
-            fp = open('debug.txt', 'a')
-            self.binding = Binding(host='fill_in', port=443, ssl=1,
-                                   url=self.hostName, tracefile=fp)
-            self.binding.SetAuth(AUTH.zsibasic, self.user, self.pw)
+            if self.user is 'Username' or self.pw is 'Password':
+                self.useDB = not self.useDB
+                tkMessageBox.showerror("Connection Attempt Aborted",
+                                           "You must enter your username and password" +
+                                           "  into the appropriate boxes.")
+                return
+            
+            self.dbName = glb.GUI.db_admin['Database'].get()
+            fp = open('tracefile_log.txt', 'w')
+            self.binding = Binding(host=self.hostName[8:].split('/')[0],
+                                   port=443, ssl=1, url=self.hostName, tracefile=fp)
 
             print "Successfully connected."
             
             try:
                 print "About to try to get a session..."
-                sessionInfo = self.binding.login()#[0]
+                sessionInfo = self.binding.login()
                 print "RECEIVED"
                 print "sessionInfo :", str(sessionInfo)
                 if sessionInfo is None:
                     self.useDB = False
                     self.isDB = False
-                    #print "Failed to connect to the database: Invalid credentials."
                     tkMessageBox.showerror("Database Connection Failed",
                                            "Failed to connect to the database." +
                                            "  See the PyMOL console for details.")
@@ -72,7 +71,6 @@ class adminManager:
             except Exception as e:
                 self.useDB = False
                 self.isDB = False
-                #print "Failed to connect to the database: ", e
                 tkMessageBox.showerror("Database Connection Failed",
                                        "Failed to connect to the database." +
                                        "  See the PyMOL console for details.")
@@ -91,12 +89,11 @@ class adminManager:
                     tkMessageBox.showerror("No active session found")
                 else:
                     print "Success"
-                    #tkMessageBox.showerror("Success", response)
             except Exception, e:
                 print "Logout failed: ", e
             glb.GUI.db_admin['Use Database'].config(text='Connect')
             
-
+    #Experimental...should not use.
     def submitCSVs(self):
         if self.permissions != "2":
             print "You don't have access to that feature."
@@ -246,31 +243,24 @@ class adminManager:
         results = self.binding.doQuery([self.token, pf, v, list(motifs),
                                            list(pdbs), rmsdchoice])#[0]
         resDict = {}
-        if results is None:
+        
+        if results is "Session not found.":
             tkMessageBox.showerror("No active session found")
-        elif len(results) == 0:
+        elif results is None or len(results) == 0:
             return resDict;
         elif results[0] is None:
-            #print "Query failed: ", e
             tkMessageBox.showerror("Query failed", "Query failed.  See console.")
         else:
-            #print "result:"
-            #print str(results)
             if len(results) > 0:
                 for i in range(0, len(results), 2):
                     pdb = results[i]
-                    #print "pdb:"
-                    #print str(pdb)
                     resDict[pdb] = {}
                     for j in results[i+1]:
                         mid = j[0]
-                        #print "mid:"
-                        #print str(mid)
                         res = j[1]
                         resDict[pdb][mid] = res
             if resDict != None:
                 print "Received results."
-                #print str(resDict)
             else:
                 print "You must be logged in to query the database."
             return resDict;
@@ -281,9 +271,6 @@ class adminManager:
             print "You don't have permissions to submit entries."
             return
         
-        #tkMessageBox.showerror("Got the RMSD value.", "In submitEntries.")
-        #print "entries dictionary:"
-        #print str(entries)
         if rmsdchoice is 1:
             getRmsd = True
         else:
@@ -292,7 +279,6 @@ class adminManager:
         pdbEntryLst = None
         rmsds = None
         ent = None
-        #tkMessageBox.showerror("Got the RMSD value.", "About to parse entries for export...")
         for pdb in entries.keys():
             entryLst.append(pdb)
             pdbEntryLst = []
@@ -307,16 +293,12 @@ class adminManager:
                 else:
                     pdbEntryLst.append([mid, entries[pdb][mid]])
             entryLst.append(pdbEntryLst)
-            #print "Entry: "
-            #print pdbEntryLst
         try:
-            #tkMessageBox.showerror("Got the RMSD value.", "Exporting entries...")
-            response = self.binding.makeEntry([self.token, pf, v, rmsdchoice, entryLst, allrun])#[0]
+            response = self.binding.makeEntry([self.token, pf, v, rmsdchoice, entryLst, allrun])
             if response is None:
                 tkMessageBox.showerror("No active session found")
             else:
                 print "Upload successful"
-                #tkMessageBox.showerror("Success", "Results uploaded successfully.")
         except Exception, e:
             print "Query failed: ", e
             tkMessageBox.showerror("Upload failed.  See console.")   
@@ -328,12 +310,11 @@ class adminManager:
             return
         
         try:
-            response = self.binding.makeUpdate([self.token, structures, 0])#[0]
+            response = self.binding.makeUpdate([self.token, structures, 0])
             if response is None:
                 tkMessageBox.showerror("No active session found")
             else:
                 print "Update successful"
-                #tkMessageBox.showerror("Success", "Update successful.")
         except Exception, e:
             print "Update failed: ", e
             tkMessageBox.showerror("Update failed.  See console.")   
@@ -351,16 +332,13 @@ class adminManager:
             print "Sending update queue..."
             print "token: " + str(self.token)
             print "structures: " + str(structures)
-            #if len(structures) is 0:
-            #    structures = ["None"]
-            response = self.binding.makeUpdate([self.token, structures, 1])#[0]
+            response = self.binding.makeUpdate([self.token, structures, 1])
             print "Update response received:"
             print response
             if response is None:
                 tkMessageBox.showerror("Action failed.", "No active session was found.")
             else:
                 print "Full update successful"
-                #tkMessageBox.showerror("Success", "Update successful.")
         except Exception, e:
             print "Update failed: ", e
             tkMessageBox.showerror("Update failed...", "Update failed.  See console.")
@@ -373,7 +351,6 @@ class adminManager:
                     print "No active session found"
                 else:
                     print "Logged out."
-                    #tkMessageBox.showerror("Success", response)
             except Exception, e:
                 print "Logout failed: ", e
         if not fp.closed:

@@ -19,37 +19,13 @@ import Tkinter as tk
 import pmg_tk.startup.ProMol.promolglobals as glb
 import pmg_tk.startup.ProMol.Methods.proutils as proutils
 import pmg_tk.startup.ProMol.Methods.motifset as motifset
-import pmg_tk.startup.ProMol.resultsmanager as manager #Added for db functionality.
+import pmg_tk.startup.ProMol.resultsmanager as manager #Added for db functionality
 import pmg_tk.startup.ProMol.databasemanager as dbm #Added for db functionality
 INDIVIDUAL_CSV_HEADER_LENGTH = 7
 CSVMergeInfo = {}
 numResultsOfEachQuery = []
 pdbsl = 0
 Pmw.initialise()
-
-
-#loads a PDB file from hard drive
-#the custom file is added to multipdb textbox, saved to the PDBDownloads file, and read from there
-#as of now (6/6/12) it does not work in Linux
-def loadlocal(): 
-    last_used_dir = glb.LAST_USED_DIR
-    pdb = askopenfilename(filetypes = (("PDB files", "*.pdb"),("PDB files", "*.pdb")), initialdir = last_used_dir, multiple=False)
-    if pdb is not None:
-        glb.LAST_USED_DIR = os.path.dirname(pdb)
-    if pdb: 
-        try: 	
-            copy(pdb, glb.FETCH_PATH)
-            data = pdb.split("/")
-            name = data[len(data) - 1].split(".")[0]
-            name += ', '
-            glb.GUI.motifs['multipdb'].insert(END, name) 
-            print "Loaded local file " + pdb
-        except: 
-            showerror("Open Source File", "Failed to read file \n'%s'"%pdb)
-            return
-
-def clearpdbinput():
-    glb.GUI.motifs['multipdb'].delete(1.0, END)
 
 #motif options
 def motifoption(tag):
@@ -237,41 +213,6 @@ def showContent(node):
     # motifSubsetName is the matching subset of the result protein motifPDBCode
     # motifName is the matching subset of the query protein queryPDBCode
 
-    #selectionList = glb.GUI.motifs['motifbox'].curselection()
-    #if len(selectionList) == 0:
-    #    return
-    #motif = int(selectionList[0])
-    #COMMENTED OUT ABOVE FOR T/W
-
-    #added 2/19, edited 3/8-3/20, still needs to be fixed
-    ###
-    #if glb.GUI.motifs['motifbox'].size() > len(glb.matchpairs):
-    #    motifString = ""
-    #    index = 0
-    #    if motif <= (numResultsOfEachQuery[0]*5)+2:
-    #        index = int(math.floor((motif+3)/5))
-    #        motifString = glb.matchpairs[index][1] 
-    #    else:
-    #        current1 = 0
-    #        for i in range(0,pdbsl):
-    #            current2 = current1 + (numResultsOfEachQuery[i]*5)+2 
-    #            if motif <= current2 and motif > current1:
-    #                    if numResultsOfEachQuery[i] != 0:
-    #                        index = int(math.floor((motif+((i+1)*3))/5))  #3/18/12
-    #                    else:
-    #                        index = int(math.floor((motif+((i+1)*3)+1)/5)) 
-    #                    motifString = glb.matchpairs[index][1]
-    #                    break
-    #            current1 = current2     
-    #else:
-    #    motifString = glb.matchpairs[motif][1]
-    ###
-
-    #commented out above for t/w
-
-    ##selectionList = glb.GUI.motifs['motifbox'].curselection()
-    #if len(selectionList) == 0:
-        #return
     motif = 1
     motifString = node.getName()
     ancs = node.ancestors()
@@ -289,11 +230,6 @@ def showContent(node):
     if len(secondsplit) < 2:
         return
     motifPDBCode = secondsplit[1] # tpdb
-
-    #if glb.GUI.motifs['motifbox'].size() > len(glb.matchpairs):
-    #    queryPDBCode = glb.matchpairs[index][0]
-    #else:
-    #    queryPDBCode = glb.matchpairs[motif][0]
 
     queryPDBCode = querynode.getName() #replaced above for t/w
        
@@ -442,7 +378,8 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
     glb.GUI.motifs['varrmsd'] = IntVar()
     
     rb1 = Radiobutton(glb.GUI.motifs['root'], text="P set", variable = glb.GUI.motifs['var'], value = 1,  height = 2)
-    rb2 = Radiobutton(glb.GUI.motifs['root'], text="J set", variable = glb.GUI.motifs['var'], value = 2, height = 2)
+    if glb.USE_JESS:
+        rb2 = Radiobutton(glb.GUI.motifs['root'], text="J set", variable = glb.GUI.motifs['var'], value = 2, height = 2)
     #rb3 = Radiobutton(glb.GUI.motifs['root'], text="N set (NMR)", variable = glb.GUI.motifs['var'], value = 3, height = 2)
     rb4 = Radiobutton(glb.GUI.motifs['root'], text="All Motifs", variable = glb.GUI.motifs['var'], value = 4, height = 2)
     rb5 = Radiobutton(glb.GUI.motifs['root'], text="User Motifs", variable = glb.GUI.motifs['var'], value = 5, height = 2)
@@ -457,7 +394,8 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
     rb4.select()#default button that is selected
     rb5.pack(anchor = W)
     rb1.pack(anchor = W)
-    rb2.pack(anchor = W)
+    if glb.USE_JESS:
+        rb2.pack(anchor = W)
     #rb3.pack(anchor = W)
 
     spacelabel.pack(anchor = W)
@@ -1508,7 +1446,7 @@ class MotifMaker:
                            'glu':('CB','CG','CD','OE1','OE2'),
                            'gly':(),
                            'his':('CB','CG','ND1','CD2','CE1','NE2'),
-                           'ile':('CB','CG1','CG2','CD1'),
+                           'ile':('CB','CG1','CG2','CD'),
                            'leu':('CB','CG','CD1','CD2'),
                            'lys':('CB','CG','CD','CE','NZ'),
                            'met':('CB','CG','SD','CE'),
