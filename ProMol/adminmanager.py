@@ -123,6 +123,7 @@ class adminManager:
         setsDone = {}
         setsDone['P'] = set()
         setsDone['J'] = set()
+        setsDone['A'] = set()
         setsDone['U'] = set()
         setsDone['All'] = set()
         print "Files in submitCSVs:"
@@ -134,7 +135,7 @@ class adminManager:
                 if not pid in setsDone[fn[3]] and not pid in setsDone['All']:
                     resultFiles.add(f)
                     setsDone[fn[3]].add(pid)
-                    if pid in setsDone['P'] and pid in setsDone['J'] and pid in setsDone['U']:
+                    if pid in setsDone['P'] and pid in setsDone['J'] and pid in setsDone['A'] and pid in setsDone['U']:
                         setsDone['All'].add(pid)
                     pdbs.add(pid)
 
@@ -156,6 +157,7 @@ class adminManager:
         if records != None and len(records) > 0:
             existing = {}
             existing['P'] = set()
+            existing['A'] = set()
             existing['J'] = set()
             existing['U'] = set()
             existing['All'] = set()
@@ -166,8 +168,10 @@ class adminManager:
                     if rec[2]:
                         existing['J'].add(rec[0])
                     if rec[3]:
-                        existing['P'].add(rec[0])
+                        existing['A'].add(rec[0])
                     if rec[4]:
+                        existing['P'].add(rec[0])
+                    if rec[5]:
                         existing['U'].add(rec[0])
 
 

@@ -455,7 +455,7 @@ class databaseManager:
                 
         self.dbc.commit()
         #Check the date the results in the results table for each
-        #id and for each type of motif (j, p, other).  Update the
+        #id and for each type of motif (j, a, p, other).  Update the
         #run dates in the structures table.
         #the allrun date has to be update at the time of the run
         for i in pids:
@@ -465,6 +465,12 @@ class databaseManager:
                 and pdbid = %s""",
                 ('J%', i))
             jdateresult = self.cur.fetchone()
+            self.cur.execute(
+                """select max(date) from results
+                where motif like %s
+                and pdbid = %s""",
+                ('A%', i))
+            adateresult = self.cur.fetchone()
             self.cur.execute(
                 """select max(date) from results
                 where motif like %s
@@ -482,15 +488,19 @@ class databaseManager:
                 where motif not like %s
                 and motif not like %s
                 and motif not like %s
+                and motif not like %s
                 and pdbid = %s""",
-                ('J%', 'P%', 'N%', i))
+                ('J%', 'A%', 'P%', 'N%', i))
             udateresult = self.cur.fetchone()
             jdate = None
+            adate = None
             pdate = None
             ndate = None
             udate = None
             if not jdateresult[0] == None:
                 jdate = str(jdateresult[0])
+            if not adateresult[0] == None:
+                adate = str(adateresult[0])
             if not pdateresult[0] == None:
                 pdate = str(pdateresult[0])
             if not ndateresult[0] == None:
@@ -503,6 +513,12 @@ class databaseManager:
                     set jrun = %s
                     where id = %s""",
                     (jdate, i))
+            if not adate == None:
+                self.cur.execute(
+                    """update structures
+                    set arun = %s
+                    where id = %s""",
+                    (adate, i))
             if not pdate == None:
                 self.cur.execute(
                     """update structures
@@ -559,6 +575,8 @@ class databaseManager:
         for motif in newMotifs:
             if motif[0] == 'J':
                 setName = 'J Set'
+            elif motif[0] == 'A':
+                setName = 'A Set'
             elif motif[0] == 'P':
                 setName = 'P Set'
             elif motif[0] == 'N':
@@ -686,7 +704,7 @@ class databaseManager:
         
         for pdb in pdbs:           
             self.cur.execute(
-                """select id, allrun, jrun, prun, myrun from structures
+                """select id, allrun, jrun, arun, prun, myrun from structures
                 where id = %s""",
                 pdb)
 

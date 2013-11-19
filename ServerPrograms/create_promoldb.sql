@@ -9,6 +9,7 @@ create table structures(
 id char(4),
 allrun date,
 jrun date,
+arun date,
 prun date,
 nrun date,
 myrun date,
@@ -23,6 +24,7 @@ constraint pk_motifsets primary key (id));
 
 insert into motifsets values 
 ('J Set', 0, curdate()),
+('A Set', 0, curdate()),
 ('P Set', 0, curdate()),
 ('N Set', 0, curdate()),
 ('User Set', 0, curdate());
