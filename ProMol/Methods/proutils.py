@@ -43,34 +43,69 @@ def createsubs(tup):
     return matrix
 
 def getRMSD(motifName, queryPDBCode, motifPDBCode):
-            
-        #querySubsetName = 'match_in_{0}'.format(queryPDBCode)
-        querySubsetName = 'match_in_%s'%(queryPDBCode)
-        cmd.select(querySubsetName, motifName)
-        cmd.hide('everything', 'all')
-        cmd.fetch(motifPDBCode, async=0, path=glb.FETCH_PATH)
-        #motifSubsetName = 'match_in_{0}'.format(motifPDBCode)
-        motifSubsetName = 'match_in_%s'%(motifPDBCode)
-        cmd.select(motifSubsetName, '%s and (%s)' % (motifPDBCode,
-            glb.MOTIFS[motifName]['loci']))
-        cmd.hide('everything', 'all')
-     
-        #aligns and gets the rmsd of the alignment by all atoms
-        dataAll = cmd.align(motifSubsetName, querySubsetName)  
-        #aligns and gets the rmsd of the alignment by C alpha atoms
-        cmd.select(querySubsetName, motifName+" and name ca")
-        cmd.select(motifSubsetName, '%s and (%s) and name %s' % (motifPDBCode,
-        glb.MOTIFS[motifName]['loci'], "ca"))
-        dataAlpha = cmd.align(motifSubsetName, querySubsetName)
-        #aligns and gets the rmsd of the alignment by C alpha and C beta atoms
-        cmd.select(querySubsetName, motifName+" and name ca,cb")
-        cmd.select(motifSubsetName, '%s and (%s) and name %s' % (motifPDBCode,
-        glb.MOTIFS[motifName]['loci'], "ca,cb"))
-        dataAlphaBeta = cmd.align(motifSubsetName, querySubsetName)
-        rmsds = []
-        rmsds.append(dataAll[0])
-        rmsds.append(dataAlpha[0])
-        rmsds.append(dataAlphaBeta[0])
-        cmd.delete(motifName) 
-        return rmsds
+    
+	#motifpdbcode to motif
+	residues = glb.MOTIFS[motifPDBCode]['resi']
+	residuesl = len(residues)*2
+	
+	#querypdbcode to querymotif
+	otherResidues = glb.MOTIFS[queryPDBCode]['resi']
+	otherResiduesl = len(residues)*2
+	#levenshtein distance between the two residues
+	dist = levenshteinDistance(residues,otherResidues)
+	
+	#Calculation Threshold, multiplying residues times 1.0 so the result is not int
+	T = (residues - dist) / (residues * 1.0)
+	
+		
+	#querySubsetName = 'match_in_{0}'.format(queryPDBCode)
+	querySubsetName = 'match_in_%s'%(queryPDBCode)
+	cmd.select(querySubsetName, motifName)
+	cmd.hide('everything', 'all')
+	cmd.fetch(motifPDBCode, async=0, path=glb.FETCH_PATH)
+	
+	#motifSubsetName = 'match_in_{0}'.format(motifPDBCode)
+	motifSubsetName = 'match_in_%s'%(motifPDBCode)
+	cmd.select(motifSubsetName, '%s and (%s)' % (motifPDBCode,
+		glb.MOTIFS[motifName]['loci']))
+	cmd.hide('everything', 'all')
+	 
+	rmsds = []
+	
+	#implemented 10/23/13
+	#if there is at least an 80% difference between the residues, calculate only for a,b, and all
+	#if there is at least a 50% difference between the residues, calculate for only the carbon alpha
+	
+	if (T >= 0.8):
+		
+		#aligns and gets the rmsd of the alignment by C alpha atoms
+		cmd.select(querySubsetName, motifName+" and name ca")
+		cmd.select(motifSubsetName, '%s and (%s) and name %s' % (motifPDBCode,
+		glb.MOTIFS[motifName]['loci'], "ca"))
+		dataAlpha = cmd.align(motifSubsetName, querySubsetName)
+		rmsds.append(dataAlpha[0])
+		
+		#aligns and gets the rmsd of the alignment by C alpha and C beta atoms
+		cmd.select(querySubsetName, motifName+" and name ca,cb")
+		cmd.select(motifSubsetName, '%s and (%s) and name %s' % (motifPDBCode,
+		glb.MOTIFS[motifName]['loci'], "ca,cb"))
+		dataAlphaBeta = cmd.align(motifSubsetName, querySubsetName)
+	
+		#aligns and gets the rmsd of the alignment by all atoms
+		dataAll = cmd.align(motifSubsetName, querySubsetName)  
+		rmsds.append(dataAll[0])
+		rmsds.append(dataAlphaBeta[0])
+		
+	elif (T >= 0.50):
+	
+		#aligns and gets the rmsd of the alignment by C alpha atoms
+		cmd.select(querySubsetName, motifName+" and name ca")
+		cmd.select(motifSubsetName, '%s and (%s) and name %s' % (motifPDBCode,
+		glb.MOTIFS[motifName]['loci'], "ca"))
+		dataAlpha = cmd.align(motifSubsetName, querySubsetName)
+		rmsds.append(dataAlpha[0])
+		
+	cmd.delete(motifName) 
+	
+	return rmsds
 
