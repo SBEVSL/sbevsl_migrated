@@ -851,6 +851,9 @@ def motifchecker(setChoice, rmsdchoice):
                             #print "Making NF entry for:"
                             #print pdb + " | " + motif
                             novelResults[pdb][motif].append('NF')
+                    elif ldr != None:
+                        motifStr = '    {0}: {1}'.format(ldr, motif)
+                        found.append(motifStr)
                 elif access and glb.ADMIN.useDB and not glb.ADMIN.isDB:
                     #print "Making NF entry for:"
                     #print pdb + " | " + motif
