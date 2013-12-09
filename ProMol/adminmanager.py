@@ -1,4 +1,4 @@
-import MySQLdb
+#import MySQLdb
 import atexit
 from ZSI.client import AUTH, Binding
 from pmg_tk.startup.ProMol import promolglobals as glb
