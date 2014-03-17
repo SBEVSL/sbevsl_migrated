@@ -9,7 +9,7 @@ import linecache
 import random
 import platform
 from Tkinter import *
-from pmg_tk.startup.ProMol.version import VERSION, ALG_VERSION, USE_JESS
+from pmg_tk.startup.ProMol.version import VERSION, ALG_VERSION
 
 # The algorithm version number constant was still at 1.0, so
 # I believe it would be more meaningful to report the version of ProMOL
@@ -28,7 +28,8 @@ MOTIFS = {} # Empty dictionary to replace shelve-based database
 # for headers
 matchpairs = []
 
-LAST_USED_DIR = os.path.expanduser('~/') # needed to load locally stored files
+# for opening locally stored PDB files, remembers last used directory /mik
+LAST_USED_DIR = os.path.expanduser('~/')
 
 # Determine the location of the user data directory
 # We create the following folder structure underneath
@@ -53,7 +54,8 @@ else:
     OFFSITE = os.path.join(HOME, '.sbevsl', 'ProMol')
 PDBFOLDER = 'PDBDownloads'
 CSVFOLDER = 'CSV'
-DIRS = ('UserMotifs', PDBFOLDER, CSVFOLDER)#changed folder name to UserMotifs for clarity
+# AutoMotifs folder for automatically created motifs
+DIRS = ('UserMotifs', 'AutoMotifs', PDBFOLDER, CSVFOLDER)#changed folder name to UserMotifs for clarity
 if not os.path.isdir(OFFSITE):
     os.makedirs(OFFSITE)
 for DIR in DIRS:
@@ -69,14 +71,6 @@ class PROMOLGUI:
     
 GUI = PROMOLGUI()
 SELE = 'All'
-
-# Pick up the PROMOL_JESS environment variable
-
-GUI.jess={}
-if 'PROMOL_JESS' in os.environ:
-    USE_JESS=True
-else:
-    USE_JESS=False
 
 # I think this keeps track of the colors in the custom color chooser in EZ-Viz
 NEWCOLOR = 0
@@ -111,11 +105,13 @@ AminoMenuList = ('', 'ala', 'arg', 'asn', 'asp', 'cys', 'gln', 'glu', 'gly',
 AminoLongList = ('alanine', 'arginine', 'asparagine', 'aspartate', 'cysteine',
     'glutamine', 'glutamate', 'glycine', 'histidine', 'isoleucine', 'leucine',
     'lysine', 'methionine', 'phenylalanine', 'proline', 'serine', 'threonine',
-    'tryptophan', 'tyrosine', 'valine')
+    'tryptophan', 'tyrosine', 'valine', 'magnesium', 'zinc', 'manganese', 'sodium', 'hemes',
+    'cobalt', 'nickle', 'iron', 'copper')
 AminoList = ('ala', 'arg', 'asn', 'asp', 'cys', 'gln', 'glu', 'gly', 'his',
-    'ile', 'leu', 'lys', 'met', 'phe', 'pro', 'ser', 'thr', 'trp', 'tyr', 'val')
+    'ile', 'leu', 'lys', 'met', 'phe', 'pro', 'ser', 'thr', 'trp', 'tyr', 'val', 
+    'mg', 'zn', 'mn', 'na', 'hem', 'co', 'ni', 'fe', 'cu')
 AminoShortList = ('a', 'r', 'n', 'd', 'c', 'q', 'e', 'g', 'h', 'i', 'l', 'k',
-    'm', 'f', 'p', 's', 't', 'w', 'y', 'v')
+    'm', 'f', 'p', 's', 't', 'w', 'y', 'v', 'mg', 'zn', 'mn', 'na', 'hem', 'co', 'ni', 'fe', 'cu')
 AminoSubsList = {
         3:'glu',
         6:'asp',
@@ -125,10 +121,10 @@ AminoSubsList = {
         16:'ser'
     }
 AminoNumberList = (5, 11, 8, 8, 6, 9, 9, 4, 10, 8, 8, 9, 8, 11, 7, 6, 7, 14, 12,
-    7)
+    7, 19, 20, 21, 22, 23, 24, 25, 26, 27)
 
 AminoHashTable = {}
-for i in range(0, 20):
+for i in range(0, 29):
     AminoHashTable[AminoLongList[i]] = {}
     AminoHashTable[AminoList[i]] = {}
     AminoHashTable[AminoShortList[i]] = {}
@@ -214,9 +210,12 @@ CPKNewDict = {
 # Deleted persistent database class
 # MOTIFSFOLDER is the location of the built-in motifs
 # USRMOTIFSFOLDER is the location of user-generated motifs
+# AUTOMOTIFSFOLDER is the location of automatically generated motifs /mik
 
 MOTIFSFOLDER = os.path.join(PROMOL_DIR_PATH, 'Motifs')
 USRMOTIFSFOLDER = os.path.join(OFFSITE, 'UserMotifs')
+AUTOMOTIFSFOLDER = os.path.join(OFFSITE, 'AutoMotifs')
+tempfolder = os.path.join(OFFSITE, 'temp')
 
 # This function reads motif files from the specified folder(s),
 # performs some rudimentary validation (mostly on their headers),
@@ -419,9 +418,8 @@ def loadMotifs(*folders):
     # Refreshing at runtime will be better than using shelve for now. -Kip
     # MOTIFS is no longer a shelf-based database class but a simple dictionary.
 
-	
 # This will run immediately when promolglobals gets imported.
-loadMotifs(MOTIFSFOLDER, USRMOTIFSFOLDER) #add all folders here
+loadMotifs(MOTIFSFOLDER, USRMOTIFSFOLDER, AUTOMOTIFSFOLDER) #add all folders here
 
 # This clears out loaded motif information and reloads built-in and user motifs.
 # This function is not called from within ProMOL currently, but can be called
@@ -431,8 +429,18 @@ def reset_motif_database():
     MOTIFS.clear() # This should still work because dictionaries have such a method
     del MOTIFS
     MOTIFS = {}
-    loadMotifs(MOTIFSFOLDER, USRMOTIFSFOLDER)
+    loadMotifs(MOTIFSFOLDER, USRMOTIFSFOLDER, AUTOMOTIFSFOLDER)
 cmd.extend('reset_motif_database', reset_motif_database)
+
+
+def reset_user_motif_database():
+    print 'user motifs reloaded'
+    global MOTIFS
+    MOTIFS.clear() # This should still work because dictionaries have such a method
+    del MOTIFS
+    MOTIFS = {}
+    loadMotifs(USRMOTIFSFOLDER)
+
 
 # This is a convoluted way of making a pathname.  It is only called from the
 # motif maker (albeit 4 times) and should be replaced with simple concatenation
@@ -663,7 +671,23 @@ def populate():
     cmd.select('basic', 'resn ARG+HIS+LYS')
     cmd.select('ligands', 'het')
     cmd.select('heme', 'resn hem')
+    cmd.select('sodium', 'symbol na')
+    cmd.select('zinc', 'symbol zn')
+    cmd.select('Cobalt', 'symbol co')
+    cmd.select('Nickle', 'symbol ni')
+    cmd.select('Iron', 'symbol fe')
+    cmd.select('Copper', 'symbol cu')
+    cmd.select('Manganese', 'symbol mn')
+    cmd.select('Magnesium', 'symbol mg')
     # Then turn them off
+    cmd.disable('mg')
+    cmd.disable('mn')
+    cmd.disable('cu')
+    cmd.disable('fe')
+    cmd.disable('ni')
+    cmd.disable('co')
+    cmd.disable('zn')
+    cmd.disable('na')
     cmd.disable('heme')
     cmd.disable('ligands')
     cmd.disable('basic')
@@ -675,8 +699,6 @@ def populate():
     cmd.disable('protein')
     # Create named selections for each chain, and leave them off by default
     for letter in cmd.get_chains():
-        if letter=="":
-            letter="\"\""
         chain = 'Chain-%s'%(letter)
         cmd.select(chain, "chain %s"%(letter))
         cmd.disable(chain)

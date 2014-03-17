@@ -31,7 +31,7 @@ def __init__(pymol):
             ProMol.withdraw()
     
     ProMol = tk.Toplevel()
-    ProMol.minsize(600, 600)
+    ProMol.minsize(450, 450)
     ProMol.title('ProMOL %s'%(glb.VERSION))
     
     buttons = ('Open PDB', 'Fetch PDB', 'Random PDB', 'Clear')
@@ -61,7 +61,7 @@ def __init__(pymol):
     
     glb.GUI.motif_maker = {'tab':notebook.add('Motif Maker')}
     motif_maker.initialise()
-    
+	
     glb.GUI.view = {'tab':notebook.add('View Options')}
     view.initialise()
     buttonsref = []

@@ -6,7 +6,9 @@ import os
 import re
 import time
 import math
-from tkFileDialog import asksaveasfile, askdirectory, askopenfile
+import tkFileDialog
+from shutil import copy
+from tkFileDialog import asksaveasfile, askdirectory, askopenfile, askopenfilename
 from tkSimpleDialog import askstring
 from tkColorChooser import askcolor
 from tkMessageBox import showinfo, showerror, askyesno
@@ -15,6 +17,7 @@ from pmg_tk.startup.treewidgets import widget, node, texttree
 from pmg_tk.startup.treewidgets.constants import *
 import Tkinter as tk
 import pmg_tk.startup.ProMol.promolglobals as glb
+import pmg_tk.startup.ProMol.load_csa_lit as lib
 import pmg_tk.startup.ProMol.Methods.proutils as proutils
 import pmg_tk.startup.ProMol.Methods.motifset as motifset
 INDIVIDUAL_CSV_HEADER_LENGTH = 7
@@ -157,12 +160,15 @@ def labelmotif():
         showinfo('Alert', "Select a motif first")
 
 def MotifCaller(motif, camera=True):
+    path = folder = "C:\Program Files\PyMOL\PyMOL\modules\pmg_tk\startup\ProMol\Motifs\\"
     d = float(glb.GUI.motifs['delta'].get())
     if camera:
         glb.deletemotif()
         glb.update()
     try:
+        #print "here: ",str(glb.MOTIFS[motif]['path'])
         if execfile(glb.MOTIFS[motif]['path']) != False:
+        #if execfile(path+motif+".py") != False:
             if (motif not in cmd.get_names('all')) or (cmd.count_atoms(motif) == 0):
                 raise Warning
             if camera:
@@ -174,6 +180,7 @@ def MotifCaller(motif, camera=True):
     except Warning:
         if camera:
             showinfo('Not Found', 'The selected motif did not return a result.')
+        print "motif NOT found, return false..."
         return False
     else:
         return True
@@ -379,12 +386,10 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
     ###
     
     rb1 = Radiobutton(glb.GUI.motifs['root'], text="P set", variable = glb.GUI.motifs['var'], value = 1,  height = 2)
-    if glb.USE_JESS:
-        rb2 = Radiobutton(glb.GUI.motifs['root'], text="J set", variable = glb.GUI.motifs['var'], value = 2, height = 2)
+    rb2 = Radiobutton(glb.GUI.motifs['root'], text="J set", variable = glb.GUI.motifs['var'], value = 2, height = 2)
     #rb3 = Radiobutton(glb.GUI.motifs['root'], text="N set (NMR)", variable = glb.GUI.motifs['var'], value = 3, height = 2)
     rb4 = Radiobutton(glb.GUI.motifs['root'], text="All Motifs", variable = glb.GUI.motifs['var'], value = 4, height = 2)
     rb5 = Radiobutton(glb.GUI.motifs['root'], text="User Motifs", variable = glb.GUI.motifs['var'], value = 5, height = 2)
-    rbA = Radiobutton(glb.GUI.motifs['root'], text="A set", variable = glb.GUI.motifs['var'], value = 6, height = 2)
 
     #added 2/19
     rb6 = Radiobutton(glb.GUI.motifs['root'], text="Yes (will take longer)", variable = glb.GUI.motifs['varrmsd'], value = 1,  height = 2)
@@ -401,9 +406,7 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
     rb4.select()#added 2/19 (default button)
     rb5.pack(anchor = W)
     rb1.pack(anchor = W)
-    rbA.pack(anchor = W)
-    if glb.USE_JESS:
-        rb2.pack(anchor = W)
+    rb2.pack(anchor = W)
     #rb3.pack(anchor = W)
 
     #added 2/19
@@ -599,6 +602,7 @@ def fullCSVFilename(motifSetName, searchStartTime):
     return 'motiffinder_%s_%s.csv'%(motifSetName, stamp)
 
 def count(motif,pdb):
+    #print motif ### !!!
     last = None
     ordered = []
     orderedchain = {}
@@ -606,13 +610,17 @@ def count(motif,pdb):
     stored.motif = []
     editdist = []
     
-    
     cmd.iterate(motif, 'stored.motif.append((chain,resn,resi))')
+    #print stored.motif ### !!!
     residues = glb.MOTIFS[motif]['resi']
+    #print residues ### !!!
     residuesl = len(residues)*2
     glb.GUI.motifs['csvprep'][pdb][motif] = {}
     glb.GUI.motifs['csvprep'][pdb][motif]['res'] = []
+    count = 1 ### !!!
     for iteration in stored.motif:
+        #print 'iteration ', count, ' : ', iteration ### !!!
+        count += 1 ### !!!
         if last != iteration:
             last = iteration
             glb.GUI.motifs['csvprep'][pdb][motif]['res'].append(iteration)
@@ -652,7 +660,665 @@ def count(motif,pdb):
     # Removed storage of precision factor as it is the same for the entire search
     return glb.GUI.motifs['csvprep'][pdb][motif]['levdistrange']
 
+def automateMotifChecker():
+
+    filelist_n0 = ["U_132l_3_2_1_17.py",
+                "U_135l_3_2_1_17.py",
+                "U_1lz1_3_2_1_17.py"]
+    
+    filelist_n0_1 = ["U_1a4s_1_2_1_8.py"]
+
+    filelist_n1 = ["U_132l_3_2_1_17.py",
+                "U_135l_3_2_1_17.py",
+                "U_1lz1_3_2_1_17.py",
+                "U_2eql_3_2_1_17.py",
+                "U_1a0j_3_4_21_4.py",
+                "U_1a4s_1_2_1_8.py",
+                "U_1a50_4_2_1_20.py",
+                "U_1a65_1_10_3_2.py",
+                "U_1a69_2_4_2_1.py",
+                "U_1a7u_1_11_1_10.py",
+                "U_1a8q_1_11_1_10.py",
+                "U_1a8s_1_11_1_10.py",
+                "U_1a95_2_4_2_22.py",
+                "U_1aam_2_6_1_1.py",
+                "U_1abr_3_2_2_22.py",
+                "U_1afr_1_14_19_2.py",
+                "U_1afw_2_3_1_16.py",
+                "U_1agy_3_1_1_-.py",
+                "U_1aj0_2_5_1_15.py",
+                "U_1aj8_4_1_3_7.py",
+                "U_1akd_1_14_15_1.py",
+                "U_1akm_2_1_3_3.py",
+                "U_1ako_3_1_11_2.py",
+                "U_1ald_4_1_2_13.py",
+                "U_1alk_3_1_3_1.py",
+                "U_1am2_5_99_1_3.py",
+                "U_1am5_3_4_23_1.py",
+                "U_1amy_3_2_1_1.py",
+                "U_1apt_3_4_23_20.py",
+                "U_1apx_1_11_1_11.py",
+                "U_1aq0_3_2_1_73.py",
+                "U_1aq2_4_1_1_49.py",
+                "U_1aql_3_1_1_13.py",
+                "U_1arz_1_3_1_26.py",
+                "U_1aui_3_1_3_16.py",
+                "U_1auo_3_1_1_1.py",
+                "U_1ay4_2_6_1_57.py",
+                "U_1azw_3_4_11_5.py",
+                "U_1azy_2_4_2_4.py",
+                "U_1b02_2_1_1_45.py",
+                "U_1b2m_3_1_27_3.py",
+                "U_1b5d_2_1_2_8.py",
+                "U_1b65_3_4_11_19.py",
+                "U_1b6g_3_8_1_5.py",
+                "U_1b6t_2_7_7_3.py",
+                "U_1b73_5_1_1_3.py",
+                "U_1b8g_4_4_1_14.py",
+                "U_1b93_4_2_3_3.py",
+                "U_1bbs_3_4_23_15.py",
+                "U_1be1_5_4_99_1.py"]
+    filelist_n2 = ["U_1bf2_3_2_1_68.py",
+                "U_1bg0_2_7_3_3.py",
+                "U_1bg6_1_5_1_28.py",
+                "U_1bhg_3_2_1_31.py",
+                "U_1bmt_2_1_1_13.py",
+                "U_1bol_3_1_27_1.py",
+                "U_1boo_2_1_1_113.py",
+                "U_1bp2_3_1_1_4.py",
+                "U_1bqc_3_2_1_78.py",
+                "U_1brm_1_2_1_11.py",
+                "U_1bs0_2_3_1_47.py",
+                "U_1bs9_3_1_1_6.py",
+                "U_1bsj_3_5_1_88.py",
+                "U_1btl_3_5_2_6.py",
+                "U_1bvv_3_2_1_8.py",
+                "U_1bwd_2_1_4_2.py",
+                "U_1bwz_5_1_1_7.py",
+                "U_1bzc_3_1_3_48.py",
+                "U_1c2t_2_1_2_2.py",
+                "U_1c4x_3_7_1_8.py",
+                "U_1c82_4_2_2_1.py",
+                "U_1c9u_1_1_5_2.py",
+                "U_1ca3_4_2_1_1.py",
+                "U_1cb8_4_2_2_5.py",
+                "U_1cbg_3_2_1_21.py",
+                "U_1cd5_3_5_99_6.py",
+                "U_1cde_2_1_2_2.py",
+                "U_1cdg_2_4_1_19.py",
+                "U_1cel_3_2_1_91.py",
+                "U_1cf2_1_2_1_59.py",
+                "U_1cg2_3_4_17_11.py",
+                "U_1cgk_2_3_1_74.py",
+                "U_1chd_3_1_1_61.py",
+                "U_1ci8_3_1_1_1.py",
+                "U_1cm0_7_0_0_0.py",
+                "U_1cms_3_4_23_4.py",
+                "U_1cns_3_2_1_14.py",
+                "U_1coy_1_1_3_6.py",
+                "U_1cqg_4_2_99_18.py",
+                "U_1cqq_2_7_7_48.py",
+                "U_1ct9_6_3_5_4.py",
+                "U_1ctn_3_2_1_14.py",
+                "U_1cv2_3_8_1_5.py",
+                "U_1cvr_3_4_22_37.py",
+                "U_1cwy_2_4_1_25.py",
+                "U_1d1q_3_1_3_2.py",
+                "U_1d2t_3_1_3_2.py",
+                "U_1d4c_1_3_99_1.py",
+                "U_1d5r_3_1_3_67.py"]
+    filelist_n3 = ["U_1d6m_5_99_1_2.py",
+                "U_1d6o_5_2_1_8.py",
+                "U_1d7r_4_1_1_64.py",
+                "U_1d8c_2_3_3_9.py",
+                "U_1d8h_3_1_3_33.py",
+                "U_1daa_2_6_1_21.py",
+                "U_1dae_6_3_3_3.py",
+                "U_1db3_4_2_1_47.py",
+                "U_1dbt_4_1_1_23.py",
+                "U_1dd8_2_3_1_41.py",
+                "U_1de3_3_1_27_10.py",
+                "U_1de6_5_3_1_14.py",
+                "U_1dhp_4_2_1_52.py",
+                "U_1dhr_1_5_1_34.py",
+                "U_1di1_4_2_3_9.py",
+                "U_1djl_1_6_1_2.py",
+                "U_1dki_7_0_0_0.py",
+                "U_1dli_1_1_1_22.py",
+                "U_1dnk_3_1_21_1.py",
+                "U_1dpg_1_1_1_49.py",
+                "U_1dub_4_2_1_17.py",
+                "U_1dve_1_14_99_3.py",
+                "U_1dxe_4_1_2_20.py",
+                "U_1dzr_5_1_3_13.py",
+                "U_1e2a_2_7_1_69.py",
+                "U_1e2t_2_3_1_118.py",
+                "U_1e3v_5_3_3_1.py",
+                "U_1eag_3_4_23_24.py",
+                "U_1ebf_1_1_1_3.py",
+                "U_1ec9_4_2_1_40.py",
+                "U_1ecf_2_4_2_14.py",
+                "U_1ecl_5_99_1_2.py",
+                "U_1ecx_7_0_0_0.py",
+                "U_1eed_3_4_23_22.py",
+                "U_1eej_5_3_4_1.py",
+                "U_1ef8_4_1_1_41.py",
+                "U_1eh5_3_1_2_22.py",
+                "U_1eh6_2_1_1_63.py",
+                "U_1ei5_3_4_11_19.py",
+                "U_1eix_4_1_1_23.py",
+                "U_1elq_7_0_0_0.py",
+                "U_1els_4_2_1_11.py",
+                "U_1emd_1_1_1_37.py",
+                "U_1eq2_5_1_3_20.py",
+                "U_1esc_3_1_1_-.py",
+                "U_1evy_1_1_1_8.py",
+                "U_1exp_3_2_1_8.py",
+                "U_1eyi_3_1_3_11.py",
+                "U_1eyp_5_5_1_6.py"]
+    filelist_n4 = ["U_1f2d_4_1_99_4.py",
+                "U_1f7u_6_1_1_19.py",
+                "U_1f8m_4_1_3_1.py",
+                "U_1fcb_1_1_2_3.py",
+                "U_1fcq_3_2_1_35.py",
+                "U_1fdy_4_1_3_3.py",
+                "U_1fgh_4_2_1_3.py",
+                "U_1fhl_3_2_1_89.py",
+                "U_1fnb_1_18_1_2.py",
+                "U_1fob_3_2_1_89.py",
+                "U_1foh_1_14_13_7.py",
+                "U_1fr8_2_4_1_38.py",
+                "U_1fy2_3_4_13_21.py",
+                "U_1g0d_2_3_2_13.py",
+                "U_1g6t_2_5_1_19.py",
+                "U_1g99_2_7_2_1.py",
+                "U_1ga8_2_4_1_44.py",
+                "U_1gal_1_1_3_4.py",
+                "U_1gcb_3_4_22_40.py",
+                "U_1gcu_1_3_1_24.py",
+                "U_1gdh_1_1_1_29.py",
+                "U_1geq_4_2_1_20.py",
+                "U_1gim_6_3_4_4.py",
+                "U_1glo_3_4_22_27.py",
+                "U_1gog_1_1_3_9.py",
+                "U_1gox_1_1_3_15.py",
+                "U_1gpr_2_7_1_69.py",
+                "U_1gq8_3_1_1_11.py",
+                "U_1grc_2_1_2_2.py",
+                "U_1gz6_1_1_1_35.py",
+                "U_1h7o_4_2_1_24.py",
+                "U_1hfs_3_4_24_17.py",
+                "U_1hka_2_7_6_3.py",
+                "U_1hpl_3_1_1_3.py",
+                "U_1hrk_4_99_1_1.py",
+                "U_1hxq_2_7_7_12.py",
+                "U_1hy3_2_8_2_4.py",
+                "U_1hzd_4_1_2_18.py",
+                "U_1hzf_3_4_21_43.py",
+                "U_1i78_3_4_21_87.py",
+                "U_1inp_3_1_3_57.py",
+                "U_1iph_1_11_1_6.py",
+                "U_1j49_1_1_1_28.py",
+                "U_1j7g_3_1_-_-.py",
+                "U_1jdw_2_1_4_1.py",
+                "U_1jh6_3_1_4_-.py",
+                "U_1jkm_7_0_0_0.py",
+                "U_1jof_5_5_1_5.py",
+                "U_1k30_2_3_1_15.py",
+                "U_1k32_3_4_21_-.py",
+                "U_1kas_2_3_1_41.py"]
+    filelist_n5 = ["U_1kfu_3_4_22_53.py",
+                "U_1kfx_3_4_22_53.py",
+                "U_1kp2_6_3_4_5.py",
+                "U_1kra_3_5_1_5.py",
+                "U_1kzh_2_7_1_90.py",
+                "U_1kzl_2_5_1_9.py",
+                "U_1l1l_1_17_4_2.py",
+                "U_1l6p_1_8_1_8.py",
+                "U_1l7q_3_1_1_1.py",
+                "U_1l9x_3_4_19_9.py",
+                "U_1lam_3_4_11_1.py",
+                "U_1lcb_2_1_1_45.py",
+                "U_1ldm_1_1_1_27.py",
+                "U_1ljl_1_20_4_1.py",
+                "U_1m53_5_4_99_11.py",
+                "U_1mbb_1_1_1_158.py",
+                "U_1mek_5_3_4_1.py",
+                "U_1mka_4_2_1_60.py",
+                "U_1mla_2_3_1_39.py",
+                "U_1moq_2_6_1_16.py",
+                "U_1mpp_3_4_23_23.py",
+                "U_1mpx_3_1_1_43.py",
+                "U_1mpy_1_13_11_2.py",
+                "U_1mrq_1_3_1_20.py",
+                "U_1muc_5_5_1_1.py",
+                "U_1myr_3_2_3_1.py",
+                "U_1naa_1_1_99_18.py",
+                "U_1nba_3_5_1_59.py",
+                "U_1nln_3_4_22_39.py",
+                "U_1nlu_3_4_21_100.py",
+                "U_1nmw_5_2_1_8.py",
+                "U_1nu3_3_3_2_8.py",
+                "U_1nw9_7_0_0_0.py",
+                "U_1nww_3_3_2_8.py",
+                "U_1nzy_3_8_1_6.py",
+                "U_1odt_3_1_1_41.py",
+                "U_1ofg_1_1_99_28.py",
+                "U_1og1_2_4_2_31.py",
+                "U_1ok4_4_1_2_13.py",
+                "U_1onr_2_2_1_2.py",
+                "U_1opm_1_14_17_3.py",
+                "U_1ord_4_1_1_17.py",
+                "U_1otg_5_3_3_10.py",
+                "U_1oya_1_6_99_1.py",
+                "U_1oyg_2_4_1_10.py",
+                "U_1p4n_2_3_2_10.py",
+                "U_1p7m_3_2_2_20.py",
+                "U_1pa9_3_1_3_48.py",
+                "U_1pad_3_4_22_2.py",
+                "U_1pd2_5_3_99_2.py"]
+    filelist_n6 = ["U_1pfq_3_4_14_5.py",
+                "U_1pgs_3_5_1_52.py",
+                "U_1pii_4_1_1_48.py",
+                "U_1pja_3_1_2_22.py",
+                "U_1pjb_1_4_1_1.py",
+                "U_1pjh_5_3_3_8.py",
+                "U_1pkn_2_7_1_40.py",
+                "U_1pnl_3_5_1_11.py",
+                "U_1pnt_3_1_3_2.py",
+                "U_1pow_1_2_3_3.py",
+                "U_1pp4_3_1_1_-.py",
+                "U_1ps9_1_3_1_34.py",
+                "U_1ptd_4_6_1_13.py",
+                "U_1pyl_3_1_4_8.py",
+                "U_1pym_5_4_2_9.py",
+                "U_1qam_2_1_1_48.py",
+                "U_1qaz_3_5_1_45.py",
+                "U_1qba_3_2_1_52.py",
+                "U_1qe3_3_1_1_-.py",
+                "U_1qfe_4_2_1_10.py",
+                "U_1qfm_3_4_21_26.py",
+                "U_1qfn_1_17_4_1.py",
+                "U_1qgn_4_2_99_9.py",
+                "U_1qhf_5_4_2_1.py",
+                "U_1qho_3_2_1_133.py",
+                "U_1qk2_3_2_1_91.py",
+                "U_1qq5_3_8_1_2.py",
+                "U_1qrz_3_4_21_7.py",
+                "U_1qx3_3_4_22_-.py",
+                "U_1r4z_3_1_1_3.py",
+                "U_1ra2_1_5_1_3.py",
+                "U_1rba_4_1_1_39.py",
+                "U_1rk2_2_7_1_15.py",
+                "U_1rne_3_4_23_15.py",
+                "U_1rpt_3_1_3_2.py",
+                "U_1rpx_5_1_3_1.py",
+                "U_1rql_7_0_0_0.py",
+                "U_1rtf_3_4_21_68.py",
+                "U_1rtu_3_1_27_4.py",
+                "U_1s3i_1_5_1_6.py",
+                "U_1s9c_4_2_1_-.py",
+                "U_1sca_3_4_21_62.py",
+                "U_1ses_6_1_1_11.py",
+                "U_1smn_3_1_30_2.py",
+                "U_1snn_5_4_99_-.py",
+                "U_1snz_5_1_3_3.py",
+                "U_1stc_2_7_1_37.py",
+                "U_1std_4_2_1_94.py",
+                "U_1szd_3_5_1_-.py",
+                "U_1szj_1_2_1_12.py"]
+    filelist_n7 = ["U_1tah_3_1_1_3.py",
+                "U_1tde_1_8_1_9.py",
+                "U_1teh_1_1_1_1.py",
+                "U_1thg_3_1_1_3.py",
+                "U_1tht_2_3_1_-.py",
+                "U_1tph_5_3_1_1.py",
+                "U_1tyf_3_4_21_92.py",
+                "U_1tys_2_1_1_45.py",
+                "U_1tz3_3_6_1_26.py",
+                "U_1u5u_4_2_1_92.py",
+                "U_1uae_2_5_1_7.py",
+                "U_1uag_6_3_2_9.py",
+                "U_1uch_3_4_19_12.py",
+                "U_1uf7_3_5_1_77.py",
+                "U_1uk7_3_7_1_9.py",
+                "U_1un1_2_4_1_207.py",
+                "U_12as_6_3_1_1.py",
+                "U_1uok_3_2_1_10.py",
+                "U_1v0e_3_2_1_129.py",
+                "U_1v0y_3_1_4_4.py",
+                "U_1vao_1_1_3_38.py",
+                "U_1vas_3_1_25_1.py",
+                "U_1vie_1_5_1_3.py",
+                "U_1vom_7_0_0_0.py",
+                "U_1vr7_4_1_1_50.py",
+                "U_1vzz_5_3_3_1.py",
+                "U_1wd8_3_5_3_15.py",
+                "U_1wnw_1_14_99_3.py",
+                "U_1x9y_3_4_22_-.py",
+                "U_1xqw_3_4_11_5.py",
+                "U_1xtc_2_4_2_36.py",
+                "U_1xyz_3_2_1_8.py",
+                "U_1ybv_1_1_1_252.py",
+                "U_1ysc_3_4_16_5.py",
+                "U_1ytw_3_1_3_48.py",
+                "U_1z9h_5_3_99_3.py",
+                "U_1zio_2_7_4_3.py",
+                "U_1zoi_3_1_-_-.py",
+                "U_1zrz_2_7_1_37.py",
+                "U_1zym_2_7_3_9.py",
+                "U_2a86_6_3_2_1.py",
+                "U_2abk_4_2_99_18.py",
+                "U_2ace_3_1_1_7.py",
+                "U_2acy_3_6_1_7.py",
+                "U_2adm_2_1_1_72.py",
+                "U_2apr_3_4_23_21.py"]
+    filelist_n8 = ["U_2ayh_3_2_1_73.py",
+                "U_2bif_3_1_3_46.py",
+                "U_2bkr_3_4_22_-.py",
+                "U_2bx4_2_7_7_48.py",
+                "U_2cnd_1_7_1_1.py",
+                "U_2cpo_1_11_1_10.py",
+                "U_2cpu_3_2_1_1.py",
+                "U_2dhn_4_1_2_25.py",
+                "U_2dln_6_3_2_4.py",
+                "U_2ebn_3_2_1_96.py",
+                "U_2f61_3_2_1_45.py",
+                "U_2f9z_3_1_1_61.py",
+                "U_2gsa_5_4_3_8.py",
+                "U_2hgs_6_3_2_3.py",
+                "U_2isd_3_1_4_11.py",
+                "U_2jcw_1_15_1_1.py",
+                "U_2jxr_3_4_23_25.py",
+                "U_2lip_3_1_1_3.py",
+                "U_2nac_1_2_1_2.py",
+                "U_2nmt_2_3_1_97.py",
+                "U_2pda_1_2_7_1.py",
+                "U_2pfl_2_3_1_54.py",
+                "U_2phk_2_7_1_38.py",
+                "U_2pia_1_-_-_-.py",
+                "U_2plc_4_6_1_13.py",
+                "U_2pth_3_1_1_29.py",
+                "U_2rnf_3_1_-_-.py",
+                "U_2thi_2_5_1_2.py",
+                "U_2tmd_1_5_8_2.py",
+                "U_2tps_2_5_1_3.py",
+                "U_2xis_5_3_1_5.py",
+                "U_2ypn_2_5_1_61.py",
+                "U_3cla_2_3_1_28.py",
+                "U_3csm_5_4_99_5.py",
+                "U_3eca_3_5_1_1.py",
+                "U_3nos_1_14_13_39.py",
+                "U_3pva_3_5_1_11.py",
+                "U_5cox_1_14_99_1.py",
+                "U_5enl_4_2_1_11.py",
+                "U_5fit_3_6_1_29.py",
+                "U_5rsa_3_1_27_5.py",
+                "U_7odc_4_1_1_17.py",
+                "U_8pch_3_4_22_16.py"]
+
+    filelist_p1_1 = ["P_1chd_3_1_1_61.py"]
+
+    filelist_p1 = ["P_12as_6_3_1_1.py",
+            "P_1a2f_1_11_1_5.py",
+            "P_1a30_3_1_26_4.py",
+            "P_1a9t_2_4_2_1.py",
+            "P_1afr_1_14_19_2.py",
+            "P_1ahy_2_6_1_1.py",
+            "P_1ajo_3_2_1_73.py",
+            "P_1ajz_2_5_1_15.py",
+            "P_1ak9_3_4_21_62.py",
+            "P_1ako_3_1_11_2.py",
+            "P_1apy_3_5_1_26.py",
+            "P_1aug_3_4_19_3.py",
+            "P_1aur_3_1_1_1.py",
+            "P_1aw5_4_2_1_24.py",
+            "P_1b0p_1_2_7_1.py",
+            "P_1b31_3_2_1_8.py",
+            "P_1b3r_3_3_1_1.py",
+            "P_1b73_5_1_1_3.py",
+            "P_1bcs_3_4_16_6.py",
+            "P_1bgg_3_2_1_21.py",
+            "P_1bk7_3_1_27_1.py",
+            "P_1brl_1_14_14_3.py",
+            "P_1bwr_3_1_1_47.py",
+            "P_1c1h_4_99_1_1.py",
+            "P_1c8v_4_2_1_20.py",
+            "P_1cf3_1_1_3_4.py",
+            "P_1cg4_6_3_4_4.py",
+            "P_1chd_3_1_1_61.py",
+            "P_1cns_3_2_1_14.py",
+            "P_1cnz_1_1_1_85.py",
+            "P_1csi_2_3_3_1.py",
+            "P_1cy8_5_99_1_2.py",
+            "P_1d5l_1_11_1_7.py",
+            "P_1d8h_3_1_3_33.py",
+            "P_1daa_2_6_1_21.py",
+            "P_1dah_6_3_3_3.py",
+            "P_1dbr_2_4_2_22.py",
+            "P_1dcp_4_2_1_96.py",
+            "P_1dd8_2_3_1_41.py",
+            "P_1de5_5_3_1_14.py",
+            "P_1dg9_3_1_3_2.py",
+            "P_1diz_3_2_2_21.py",
+            "P_1dj9_2_3_1_47.py",
+            "P_1djq_1_5_8_2.py"]
+    filelist_p2 = ["P_1dlu_2_3_1_9.py",
+            "P_1dvj_4_1_1_23.py",
+            "P_1e2m_2_7_1_21.py",
+            "P_1e7d_3_1_22_4.py",
+            "P_1ecg_2_4_2_14.py",
+            "P_1egv_4_2_1_28.py",
+            "P_1ei9_3_1_2_22.py",
+            "P_1ez2_3_1_8_1.py",
+            "P_1ezr_3_2_2_1.py",
+            "P_1f17_1_1_1_35.py",
+            "P_1f61_4_1_3_1.py",
+            "P_1f6d_5_1_3_14.py",
+            "P_1fm7_5_5_1_6.py",
+            "P_1foh_1_14_13_7.py",
+            "P_1fp8_2_4_1_25.py",
+            "P_1frz_3_5_99_6.py",
+            "P_1ftq_2_4_1_1.py",
+            "P_1fva_1_8_4_6.py",
+            "P_1fwa_3_5_1_5.py",
+            "P_1g99_2_7_2_1.py",
+            "P_1ga8_2_4_1_44.py",
+            "P_1ghr_3_2_1_73.py",
+            "P_1gk2_4_3_1_3.py",
+            "P_1gpi_3_2_1_91.py",
+            "P_1gpk_3_1_1_7.py",
+            "P_1gy0_2_4_2_31.py",
+            "P_1h16_2_3_1_54.py",
+            "P_1h1y_5_1_3_1.py",
+            "P_1h2x_3_4_21_26.py",
+            "P_1hl2_4_1_3_3.py",
+            "P_1i1e_3_4_24_69.py",
+            "P_1i2r_2_2_1_2.py",
+            "P_1iov_6_3_2_4.py",
+            "P_1j96_1_3_1_20.py",
+            "P_1jf9_4_2_1_24.py",
+            "P_1jz6_3_2_1_23.py",
+            "P_1k9z_3_1_3_7.py",
+            "P_1kcw_1_16_3_1.py",
+            "P_1kdn_2_7_4_6.py",
+            "P_1kfw_3_2_1_14.py",
+            "P_1kkt_3_2_1_113.py",
+            "P_1ko0_4_1_1_20.py",
+            "P_1kuv_2_3_1_87.py",
+            "P_1kwb_1_13_11_39.py",
+            "P_1l1n_2_7_7_48.py"]
+    filelist_p3 = ["P_1lcp_3_4_11_1.py",
+            "P_1lt3_2_4_2_36.py",
+            "P_1mbb_1_1_1_158.py",
+            "P_1mqf_1_11_1_6.py",
+            "P_1n68_1_10_3_2.py",
+            "P_1n7n_4_2_2_1.py",
+            "P_1n7n_4_2_2_5.py",
+            "P_1n8p_4_4_1_1.py",
+            "P_1naw_2_5_1_7.py",
+            "P_1ndw_3_5_4_4.py",
+            "P_1nhc_3_2_1_15.py",
+            "P_1njs_2_1_2_2.py",
+            "P_1nkh_2_4_1_38.py",
+            "P_1npx_1_11_1_1.py",
+            "P_1nv2_3_1_3_11.py",
+            "P_1nwc_1_2_1_11.py",
+            "P_1o2u_3_4_21_4.py",
+            "P_1oc6_3_2_1_91.py",
+            "P_1od1_3_4_23_22.py",
+            "P_1opm_1_14_17_3.py",
+            "P_1orv_3_4_14_5.py",
+            "P_1os1_4_1_1_49.py",
+            "P_1oyc_1_6_99_1.py",
+            "P_1p7t_2_3_3_9.py",
+            "P_1pfk_2_7_1_11.py",
+            "P_1pgp_1_1_1_44.py",
+            "P_1pj3_1_1_1_38.py",
+            "P_1pjb_1_4_1_1.py",
+            "P_1pno_1_6_1_2.py",
+            "P_1pow_1_2_3_3.py",
+            "P_1pyd_4_1_1_1.py",
+            "P_1pzp_3_5_2_6.py",
+            "P_1q2o_1_14_13_39.py",
+            "P_1qfe_4_2_1_10.py",
+            "P_1qj5_2_6_1_62.py",
+            "P_1ql0_3_1_30_2.py",
+            "P_1qnf_4_1_99_3.py",
+            "P_1qnt_2_1_1_63.py",
+            "P_1qpq_2_4_2_19.py",
+            "P_1qq5_3_8_1_2.py",
+            "P_1qtq_6_1_1_18.py",
+            "P_1que_1_18_1_2.py",
+            "P_1rab_2_1_3_2.py",
+            "P_1s2i_2_4_2_6.py",
+            "P_1sry_6_1_1_11.py"]
+    filelist_p4 = ["P_1t4c_2_8_3_16.py",
+            "P_1ueh_2_5_1_31.py",
+            "P_1uou_2_4_2_4.py",
+            "P_1upu_2_4_2_9.py",
+            "P_1vas_3_1_25_1.py",
+            "P_1xic_5_3_1_5.py",
+            "P_2ald_4_1_2_13.py",
+            "P_2dnj_3_1_21_1.py",
+            "P_2f3g_2_7_1_69.py",
+            "P_2had_3_8_1_5.py",
+            "P_2nac_1_2_1_2.py",
+            "P_2pth_3_1_1_29.py",
+            "P_2tps_2_5_1_3.py",
+            "P_2uag_6_3_2_9.py",
+            "P_3cox_1_1_3_6.py",
+            "P_3csm_5_4_99_5.py",
+            "P_3fit_3_6_1_29.py",
+            "P_3lip_3_1_1_3.py",
+            "P_4hoh_3_1_27_3.py",
+            "P_5csm_5_4_99_5.py",
+            "P_5mdh_1_1_1_37.py",
+            "P_5rsa_3_1_27_5.py",
+            "P_5yas_4_1_2_39.py",
+            "P_6enl_4_2_1_11.py",
+            "Pab_1ah3_1_1_1_21.py",
+            "Pab_1b8f_4_3_1_3.py",
+            "Pab_1cjw_2_3_1_87.py",
+            "Pab_1csc_4_1_3_7.py",
+            "Pab_1edd_3_8_1_5.py",
+            "Pab_1g9r_2_4_1_44.py",
+            "Pab_1hdq_3_4_17_1.py",
+            "Pab_1jz7_3_2_1_31.py",
+            "Pab_1nyy_3_5_2_6.py",
+            "Pab_1qgy_1_18_1_2.py",
+            "Pab_4pfk_2_7_1_11.py",
+            "Pfa_1csi_2_3_3_1.py",
+            "Pfa_1ga8_2_4_1_44.py",
+            "Pfa_1gk2_4_3_1_3.py",
+            "Pfa_1j96_1_3_1_20.py",
+            "Pfa_1jz6_3_2_1_23.py",
+            "Pfa_1kuv_2_3_1_87.py",
+            "Pfa_1pfk_2_7_1_11.py",
+            "Pfa_1pzp_3_5_2_6.py",
+            "Pfa_1que_1_18_1_2.py",
+            "Pfa_1rab_2_1_3_2.py",
+            "Pfa_2ctb_3_4_17_1.py",
+            "Pfa_2had_3_8_1_5.py"]                
+            
+    reportfile = open(glb.pathmaker(('report','.txt'),root=glb.AUTOMOTIFSFOLDER), 'w')
+    rmsdfile = open(glb.pathmaker(('rmsd','.txt'),root=glb.AUTOMOTIFSFOLDER), 'w')
+    
+    #filelist = filelist_n0
+    #filelist = filelist_n0_1
+    #filelist = filelist_n1
+    #filelist = filelist_n2
+    #filelist = filelist_n3
+    #filelist = filelist_n4
+    #filelist = filelist_n5
+    #filelist = filelist_n6
+    #filelist = filelist_n7
+    #filelist = filelist_n8
+    
+    #filelist = filelist_p1
+    #filelist = filelist_p2
+    #filelist = filelist_p3
+    #filelist = filelist_p4
+    
+    filelist = filelist_p1_1
+    
+    for i in range(len(filelist)):
+        print '  running ',i+1," out of ",len(filelist)
+        #path = glb.AUTOMOTIFSFOLDER+"\\"
+        #path = glb.tempfolder+"\\"
+        #path = "C:\Users\Mik\AppData\Roaming\SBEVSL\ProMol\temp\\"
+        #path = "C:\Program Files\PyMOL\PyMOL\modules\pmg_tk\startup\ProMol\Motifs\\"
+        current_file = filelist[i]
+        
+        #folder = glb.USRMOTIFSFOLDER
+        #folder = "C:\Program Files\PyMOL\PyMOL\modules\pmg_tk\startup\ProMol\Motifs\\"
+        #for the_file in os.listdir(folder):
+        #    file_path = os.path.join(folder, the_file)
+        #try:
+        #    os.unlink(file_path)
+        #except Exception, e:
+        #    print e
+
+        #try:
+        #copy(path+current_file, "C:\Program Files\PyMOL\PyMOL\modules\pmg_tk\startup\ProMol\Motifs\\")
+        #glb.reset_user_motif_database()
+        #except:
+        #    continue
+        
+        id = current_file.split("_")[1]
+        generated_homolog_list = lib.getH3(id)
+        existing_homolog_list = lib.get_existing_homologs(id)
+        non_homolog_list = lib.getNonHomologs(id)
+        
+        this_list = generated_homolog_list
+        #this_list = existing_homolog_list
+        #this_list = non_homolog_list
+        
+        if this_list is None:
+            continue
+        else:
+            pdb_str = ""
+            for pdb in this_list:
+                pdb_str = pdb_str + pdb + ","
+            
+            glb.GUI.motifs['multipdb'].insert(END, pdb_str[0:-1])
+            #c = motifchecker(5, 1, rmsdfile)
+            c = motifchecker(1, 1, rmsdfile, current_file.split(".")[0])
+            write_report(reportfile, id, c, len(this_list), pdb_str[0:-1])
+            glb.GUI.motifs['multipdb'].delete(1.0, END)
+            #os.remove(glb.USRMOTIFSFOLDER+"\\"+current_file)
+        
+    reportfile.close()
+    rmsdfile.close()
+
+def write_report(reportfile, id, c, n, pdb_str):
+    reportfile.write('>' + '\t' + id + '\t' + str(c) + '\t' + str(n) + '\t' + pdb_str + '\n')
+        
+#def motifchecker(setChoice, rmsdchoice, reportfile, motifname):
 def motifchecker(setChoice, rmsdchoice):
+    #print '  in motifchecker'
+    print setChoice,", ",rmsdchoice
+    t1 = time.clock()
     global CSVMergeInfo
     glb.GUI.motifs['cancel'] = False
     #glb.GUI.motifs['motifbox'].delete(0,tk.END)
@@ -699,30 +1365,35 @@ def motifchecker(setChoice, rmsdchoice):
     sets = {1: ('P_Set', lambda key: key[0] == 'P'),
     2: ('J_Set', lambda key: key[0] == 'J'),
     3: ('N_Set', lambda key: key[0] == 'N'),
-    4: ('All', lambda key: glb.USE_JESS or key[0] != 'J'),
-    5: ('U_Set', lambda key: key[0] == 'U'),
-    6: ('A_Set', lambda key: key[0] == 'A')}
+    4: ('All', lambda key: True),
+    5: ('U_Set', lambda key: key[0] == 'U')}
     setName = sets[setChoice][0]
-
     # This is a Python list comprehension
     keys = set([motifName for motifName in glb.MOTIFS.keys() if sets[setChoice][1](motifName)])
-
+    #keys = set([motifname])
+    #these_keys = []
+    #these_keys.append(motifname)
+    #print "keys: ",str(keys)
+    #print "these_keys: ",str(these_keys)
     #4/29 added
     glb.GUI.motifs['tt'].destroy()#removes current tree displaying past results
     glb.GUI.motifs['tt'] = texttree.TextTree(glb.GUI.motifs['motifbox'],funcs={'showContent':showContent})#create new tree
     glb.GUI.motifs['tt'].pack(expand=YES,fill=BOTH)
-    
-  
+    c_ = 0
     global numResultsOfEachQuery #added 3/8
+    print "length of pdbs: ",len(pdbs)
     for pdbIndex in range(len(pdbs)):
         rmsds = []
         pdb = pdbs[pdbIndex]
         # Deleted founds initializer
         pdb = pdb.strip()
+        print "  checking for pdbIndex ",pdbIndex,"\t",pdb
         found = []
         last = 0.0
         keysL = len(keys)
+        #keysL = len(these_keys)
         if keysL == 0:
+            print ' keysL == 0'
             break
         keysLo = keysL*len(pdbs)
         glb.GUI.motifs['csvprep'][pdb] = {}
@@ -735,8 +1406,10 @@ def motifchecker(setChoice, rmsdchoice):
             continue
         cmd.hide('everything', 'all')
         cmd.remove("all and hydro")
-         
+        
         for motif in keys:
+        #for motif in these_keys:
+            print "     checking motif ",str(motif)
             # Check for cancellation and break out of inner loop
             if glb.GUI.motifs['cancel']:
                 glb.GUI.motifs['single']['text'] = 'Click Start to begin'
@@ -747,9 +1420,12 @@ def motifchecker(setChoice, rmsdchoice):
             # List of motif loading errors is no longer stored inside motif dictionary
 
             # Determine whether or not we have a match
+            here = True
             if MotifCaller(motif,False):
+            #if here:
                 ldr = count(motif,pdb)
                 if ldr != None:
+                    c_ += 1
                     #motifStr = '    {0}: {1}'.format(ldr, motif)
                     motifStr = '    %s: %s'%(ldr, motif)
                     found.append(motifStr)
@@ -791,14 +1467,18 @@ def motifchecker(setChoice, rmsdchoice):
                     queryCode = pdb
                     secondsplit = motifName.split('_')
                     if len(secondsplit) < 2:
-                        return
+                        return c_
                     motifPDBCode = secondsplit[1] # tpdb (pdb of result)
                     cmd.reinitialize()
                     cmd.fetch(queryCode, async=0, path=glb.FETCH_PATH)
                     cmd.hide('everything', 'all')
                     MotifCaller(tag[1])
                     try:
-                        rmsds = proutils.getRMSD(motifName, queryCode, motifPDBCode)#
+                        rmsds = proutils.getRMSD(motifName, queryCode, motifPDBCode)
+                        rmsd_str = ""
+                        for value in rmsds:
+                            rmsd_str = rmsd_str + str(value) + '\t'
+                        reportfile.write(motifName+ "\t" + queryCode + "\t" + rmsd_str + "\n")
                     except:
                         rmsds=[-1,-1,-1]
                     glb.GUI.motifs['csvprep'][pdb][motifName]['rmsd'] = rmsds
@@ -883,9 +1563,9 @@ def motifchecker(setChoice, rmsdchoice):
         props=NP_AUTOBUILD|NP_ALLOW_CHILDREN,
         state=NS_EXPANDED)#add nodes from struct to the tree
     
-    cmd.orient('all')
-    cmd.show('cartoon', 'all')
-    cmd.color('gray', 'all')
+    #cmd.reset() # changed from cmd.orient('all')
+    #cmd.show('cartoon', 'all')
+    #cmd.color('gray', 'all')
     if not glb.GUI.motifs['cancel']:
         glb.GUI.motifs['single']['text'] = 'Click Start to begin'
         #glb.GUI.motifs['overall']['text'] = 'Motif Finder finished with {0} results.'.format(numberOfResults)
@@ -903,6 +1583,10 @@ def motifchecker(setChoice, rmsdchoice):
     # Show the PyMOL viewer window
     cmd.window('show')
 
+    print(time.clock() - t1)
+    return c_
+    
+    
 # Refactored motif maker
 
 class MotifMaker:
@@ -1208,6 +1892,7 @@ class MotifMaker:
         
     # Replaces makemotif(0) and makemotif(4)
     def testMotif(self):
+        print 'Testing motif from MotifMaker'
         if self.makeMotifWrapper(self.openMotifForTesting, self.closeMotifForTesting):
             #print 'Motif {0} with {1} amino acids was run.'.format(self.name, self.numberOfAcids)
             print 'Motif %s with %s amino acids was run.'%(self.name, self.numberOfAcids)
@@ -1282,7 +1967,16 @@ class MotifMaker:
                            'thr':('CB','OG1','CG2'),
                            'trp':('CB','CG','CD1','CD2','NE1','CE2','CE3','CZ2','CZ3','CH2'),
                            'tyr':('CB','CG','CD1','CD2','CE1','CE2','CZ','OH'),
-                           'val':('CB','CG1','CG2')}
+                           'val':('CB','CG1','CG2'),
+                           'mg':('MG',),
+                           'zn':('ZN',),
+                           'mn':('MN',),
+                           'na':('NA',),
+                           'hem':('FE','CHA','CHB','CHC','CHD','NA','C1A','C2A','C3A','C4A','CMA','CAA','CBA','CGA','O1A','O2A','NB','C1B','C2B','C3B','C4B','CMB','CAB','CBB','NC','C1C','C2C','C3C','C4C','CMC','CAC','CBC','ND','C1D','C2D','C3D','C4D','CMD','CAD','CBD','CGD','O1D','O2D'),
+                           'co':('CO',),
+                           'ni':('NI',),
+                           'fe':('FE',),
+                           'cu':('CU',)}
             atomlist[1] = ('O','C','CA','N')### backbone on
             resnlist = ['']### residue list
             resnlistf = ['']### residue list with appended 'i', making them unique

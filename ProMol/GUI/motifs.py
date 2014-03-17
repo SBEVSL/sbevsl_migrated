@@ -5,9 +5,10 @@ import Pmw
 from pmg_tk.startup.treewidgets import widget, node, texttree
 from pmg_tk.startup.ProMol import promolglobals as glb
 from pmg_tk.startup.ProMol.Methods.motif import *
-from pmg_tk.startup.ProMol.Methods.local import *
+from pmg_tk.startup.ProMol.Methods.local import * #contains the method to load locally stored PDB files /mik
 Pmw.initialise()
 
+from pymol import cmd
 
 def initialise():
     group = tk.Frame(glb.GUI.motifs['tab'])
@@ -43,12 +44,17 @@ def initialise():
     glb.GUI.motifs['overallstatus'].getWidget().grid(row=3, column=0, columnspan=2, sticky=tk.E+tk.W)
     glb.GUI.motifs['findmotif'] = tk.Button(group, text ='Start', 
         command=setChoiceDialogBox)#start button now calls setChoiceDialogBox in motif.py
-    glb.GUI.motifs['findmotif'].grid(row=4, column=0, padx=5)#7
+    glb.GUI.motifs['findmotif'].grid(row=4, column=0, padx=2)#7
+    
+    #glb.GUI.motifs['autofindmotif'] = tk.Button(group, text ='Auto',command=setChoiceDialogBox)
+    #glb.GUI.motifs['autofindmotif'].grid(row=4, column=1, padx=2)#7
+    
     glb.GUI.motifs['cancelbutton'] = tk.Button(group, text='Cancel', command=motifcancel)
-    glb.GUI.motifs['cancelbutton'].grid(row=4, column=1, padx=5)#7
+    glb.GUI.motifs['cancelbutton'].grid(row=4, column=1, padx=2)#7
     glb.GUI.motifs['cancelbutton']['state'] = tk.DISABLED
     group.columnconfigure(0, weight=1)
     group.columnconfigure(1, weight=1)
+    #group.columnconfigure(2, weight=1)
 
     # Creates, then hides, the root for the dialog box that allows user to
     # choose a set of motifs to compare to  
@@ -70,23 +76,28 @@ def initialise():
     pdbscroll['command'] = glb.GUI.motifs['multipdb'].yview
     group.columnconfigure(0, weight=1)
     group.rowconfigure(1, weight=1)
-        
-    ### modified by Mik ========================================================================
+	
+	### modified by Mik ========================================================================
+	
     group = tk.Frame(glb.GUI.motifs['tab'])
     group.grid(row=2, column=0)
-    # button to load a PDB file from system
+	# button that will start to automatically test motifs from 388 folder
+    glb.GUI.motifs['autofinder'] = tk.Button(group, text='Auto', command=automateMotifChecker)
+    glb.GUI.motifs['autofinder'].grid(row=2, column=0, padx=1)
+	# button to a PDB load a file from system, the command is stored in local.py file
     glb.GUI.motifs['browseButton'] = tk.Button(group, text='Browse for file', command=loadlocal)
-    glb.GUI.motifs['browseButton'].grid(row=2, column=0, padx=1)
-    # button to clear the input textbox
-    glb.GUI.motifs['clearButton'] = tk.Button(group, text='Clear input', command=clearpdbinput)
-    glb.GUI.motifs['clearButton'].grid(row=2, column=1, padx=1)
-    # this was here before
+    glb.GUI.motifs['browseButton'].grid(row=2, column=1, padx=1)
+	# button to clear the input textbox, the command is stored in local.py file
+    glb.GUI.motifs['clearButton'] = tk.Button(group, text='Clear', command=clearpdbinput)
+    glb.GUI.motifs['clearButton'].grid(row=2, column=2, padx=1)
+	# this was here before
     glb.GUI.motifs['exportButton'] = tk.Button(group, text='Export results', command=exportAllResults, state=tk.DISABLED)
-    glb.GUI.motifs['exportButton'].grid(row=2, column=2, padx=1)
-    ### ========================================================================================
-    
+    glb.GUI.motifs['exportButton'].grid(row=2, column=3, padx=1)
+	
+	### ========================================================================================
+	
     group = tk.LabelFrame(glb.GUI.motifs['tab'], text='Tools')
-    group.grid(row=3, column=0)
+    group.grid(row=3, column=0) # row changed from 2 to 3
     
     labrange = tk.Label(group, text='Precision Factor:')
     labrange.grid(row=0, column=0, sticky=tk.E)
@@ -111,12 +122,12 @@ def initialise():
     glb.GUI.motifs['motifColorLabel'] = tk.Label(group, text="Motif Color")
     glb.GUI.motifs['motifColorLabel'].grid(row=3, column=0, sticky=tk.E)
     glb.GUI.motifs['motifcolor'] = tk.Label(group, bg='#ffffff', bd=3, relief=tk.SUNKEN)
-    glb.GUI.motifs['motifcolor'].grid(row=3,column=1, sticky=tk.N+tk.E+tk.S+tk.W, padx=2, pady=2)
+    glb.GUI.motifs['motifcolor'].grid(row=3,column=1, sticky=tk.N+tk.E+tk.S+tk.W, padx=2, pady=2) # row changed from 2 to 3
     
     glb.GUI.motifs['queryColorLabel'] = tk.Label(group, text="Match Color")
-    glb.GUI.motifs['queryColorLabel'].grid(row=4, column=0, sticky=tk.E)
+    glb.GUI.motifs['queryColorLabel'].grid(row=4, column=0, sticky=tk.E) # row changed from 3 to 4
     glb.GUI.motifs['querycolor'] = tk.Label(group, bg='#ff0000', bd=3, relief=tk.SUNKEN)
-    glb.GUI.motifs['querycolor'].grid(row=4,column=1, sticky=tk.N+tk.E+tk.S+tk.W, padx=2, pady=2)
+    glb.GUI.motifs['querycolor'].grid(row=4,column=1, sticky=tk.N+tk.E+tk.S+tk.W, padx=2, pady=2) # row changed from 3 to 4
     
     glb.GUI.motifs['motifColorLabel'].grid_remove()
     glb.GUI.motifs['motifcolor'].grid_remove()
