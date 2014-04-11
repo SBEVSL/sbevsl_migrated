@@ -111,11 +111,13 @@ AminoMenuList = ('', 'ala', 'arg', 'asn', 'asp', 'cys', 'gln', 'glu', 'gly',
 AminoLongList = ('alanine', 'arginine', 'asparagine', 'aspartate', 'cysteine',
     'glutamine', 'glutamate', 'glycine', 'histidine', 'isoleucine', 'leucine',
     'lysine', 'methionine', 'phenylalanine', 'proline', 'serine', 'threonine',
-    'tryptophan', 'tyrosine', 'valine')
+    'tryptophan', 'tyrosine', 'valine', 'magnesium', 'zinc', 'manganese', 'sodium', 'hemes',
+    'cobalt', 'nickle', 'iron', 'copper')
 AminoList = ('ala', 'arg', 'asn', 'asp', 'cys', 'gln', 'glu', 'gly', 'his',
-    'ile', 'leu', 'lys', 'met', 'phe', 'pro', 'ser', 'thr', 'trp', 'tyr', 'val')
+    'ile', 'leu', 'lys', 'met', 'phe', 'pro', 'ser', 'thr', 'trp', 'tyr', 'val', 
+    'mg', 'zn', 'mn', 'na', 'hem', 'co', 'ni', 'fe', 'cu')
 AminoShortList = ('a', 'r', 'n', 'd', 'c', 'q', 'e', 'g', 'h', 'i', 'l', 'k',
-    'm', 'f', 'p', 's', 't', 'w', 'y', 'v')
+    'm', 'f', 'p', 's', 't', 'w', 'y', 'v', 'mg', 'zn', 'mn', 'na', 'hem', 'co', 'ni', 'fe', 'cu')
 AminoSubsList = {
         3:'glu',
         6:'asp',
@@ -125,10 +127,10 @@ AminoSubsList = {
         16:'ser'
     }
 AminoNumberList = (5, 11, 8, 8, 6, 9, 9, 4, 10, 8, 8, 9, 8, 11, 7, 6, 7, 14, 12,
-    7)
+    7, 19, 20, 21, 22, 23, 24, 25, 26, 27)
 
 AminoHashTable = {}
-for i in range(0, 20):
+for i in range(0, 29):
     AminoHashTable[AminoLongList[i]] = {}
     AminoHashTable[AminoList[i]] = {}
     AminoHashTable[AminoShortList[i]] = {}
@@ -662,7 +664,23 @@ def populate():
     cmd.select('basic', 'resn ARG+HIS+LYS')
     cmd.select('ligands', 'het')
     cmd.select('heme', 'resn hem')
+    cmd.select('sodium', 'symbol na')
+    cmd.select('zinc', 'symbol zn')
+    cmd.select('Cobalt', 'symbol co')
+    cmd.select('Nickle', 'symbol ni')
+    cmd.select('Iron', 'symbol fe')
+    cmd.select('Copper', 'symbol cu')
+    cmd.select('Manganese', 'symbol mn')
+    cmd.select('Magnesium', 'symbol mg')
     # Then turn them off
+    cmd.disable('mg')
+    cmd.disable('mn')
+    cmd.disable('cu')
+    cmd.disable('fe')
+    cmd.disable('ni')
+    cmd.disable('co')
+    cmd.disable('zn')
+    cmd.disable('na')
     cmd.disable('heme')
     cmd.disable('ligands')
     cmd.disable('basic')
