@@ -544,13 +544,13 @@ def exportCSVResults(searchStartTime, precisionFactor, motifSet, pdb, found, res
             same[key] = len(csv)
             if lastpdb != pdb:
                 #edited 2/19
-                csv.append('%s,%s,"%s","%s","%s","%s",%s,%s,%s'%(pdb,motif,ldr,round(motifrmsds[0],4),round(motifrmsds[1],4),round(motifrmsds[2],4),chain,resn,resi))
+                csv.append('%s,%s,"%s","%s","%s","%s",%s,%s,%s'%(pdb,motif,ldr,round(float(motifrmsds[0]),4),round(float(motifrmsds[1]),4),round(float(motifrmsds[2]),4),chain,resn,resi))
                 lastpdb = pdb
                 motifline = False
                 continue
             if motifline:
                 #edited 2/19
-                csv.append(',%s,"%s","%s","%s","%s",%s, %s,%s'%(motif,ldr,round(motifrmsds[0],4),round(motifrmsds[1],4),round(motifrmsds[2],4),chain,resn,resi))
+                csv.append(',%s,"%s","%s","%s","%s",%s, %s,%s'%(motif,ldr,round(float(motifrmsds[0]),4),round(float(motifrmsds[1]),4),round(float(motifrmsds[2]),4),chain,resn,resi))
                 motifline = False
                 continue
             csv.append(',,,,,,%s,%s,%s'%(chain,resn,resi))
@@ -611,8 +611,6 @@ def count(motif,pdb):
     bannedchain = []
     stored.motif = []
     editdist = []
-    
-    
     cmd.iterate(motif, 'stored.motif.append((chain,resn,resi))')
     residues = glb.MOTIFS[motif]['resi']
     residuesl = len(residues)*2
@@ -858,8 +856,6 @@ def motifchecker(setChoice, rmsdchoice):
                  
             if query == motif:
                 numberOfResults -= 1
-            
-            
     else:
         for query, motif in glb.matchpairs:
             if query != oldpdb:
@@ -1288,7 +1284,16 @@ class MotifMaker:
                            'thr':('CB','OG1','CG2'),
                            'trp':('CB','CG','CD1','CD2','NE1','CE2','CE3','CZ2','CZ3','CH2'),
                            'tyr':('CB','CG','CD1','CD2','CE1','CE2','CZ','OH'),
-                           'val':('CB','CG1','CG2')}
+                           'val':('CB','CG1','CG2'),
+                           'mg':('MG',),
+                           'zn':('ZN',),
+                           'mn':('MN',),
+                           'na':('NA',),
+                           'hem':('FE','CHA','CHB','CHC','CHD','NA','C1A','C2A','C3A','C4A','CMA','CAA','CBA','CGA','O1A','O2A','NB','C1B','C2B','C3B','C4B','CMB','CAB','CBB','NC','C1C','C2C','C3C','C4C','CMC','CAC','CBC','ND','C1D','C2D','C3D','C4D','CMD','CAD','CBD','CGD','O1D','O2D'),
+                           'co':('CO',),
+                           'ni':('NI',),
+                           'fe':('FE',),
+                           'cu':('CU',)}
             atomlist[1] = ('O','C','CA','N')### backbone on
             resnlist = ['']### residue list
             resnlistf = ['']### residue list with appended 'i', making them unique
