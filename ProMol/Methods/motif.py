@@ -219,7 +219,7 @@ def showContent(node):
     motif = 1
     motifString = node.getName()
     ancs = node.ancestors()
-    querynode = ancs[0]
+    querynode = ancs[1] # we want the query name, which is the 2nd ancestor... EC# is the first
     
     # The next three ifs added by Kip to prevent crash when double clicking header
     # One might have sufficed unless something unexpected ends up in motifbox
@@ -236,12 +236,16 @@ def showContent(node):
     motifPDBCode = secondsplit[1] # tpdb
     queryPDBCode = querynode.getName()
         
+    print motifPDBCode
+    print queryPDBCode
+    
     cmd.reinitialize()
     motifColor = glb.GUI.motifs['motifcolor']['bg']
     queryColor = glb.GUI.motifs['querycolor']['bg']
     if glb.GUI.motifs['align'].get() == 0 or motifPDBCode == queryPDBCode:
         cmd.fetch(queryPDBCode, async=0, path=glb.FETCH_PATH)#accessing pdb file
         if motifName in glb.MOTIFS:
+            
             MotifCaller(motifName)
             
             querySubsetName = 'matching_subset'
@@ -355,11 +359,51 @@ def storeSetChoice(): #stores button value, action of the select button
     glb.GUI.motifs['root'].withdraw()
     selectedSet = glb.GUI.motifs['var'].get()
     rmsdchoice = glb.GUI.motifs['varrmsd'].get()
-    motifchecker(selectedSet, rmsdchoice)
+    ecchoice1 = glb.GUI.motifs['ec1'].get()
+    ecchoice2 = glb.GUI.motifs['ec2'].get()
+    ecchoice3 = glb.GUI.motifs['ec3'].get()
+    ecchoice4 = glb.GUI.motifs['ec4'].get()
+    ecchoices = [ecchoice1, ecchoice2, ecchoice3, ecchoice4]
+    motifchecker(selectedSet, rmsdchoice, ecchoices)
 
 def cancelSetChoice():#action of the cancel button
     glb.GUI.motifs['root'].withdraw()
     glb.GUI.motifs['findmotif']['state'] = tk.NORMAL
+
+## Used to set EC input boxes to be enabled/disabled as user inputs numbers.
+#  @param event Keyboard event.
+#  @param maxNum Maximum value that the EC number can have.
+#  @param nextBoxes The rest of the boxes following the current input box.
+#
+#  Utility function
+def checkEC(event, maxNum, nextBoxes):
+    # if arrow keys were pressed, do nothing
+    if event.keysym == 'Right' or event.keysym == 'Left' or event.keysym == 'Up' or event.keysym == 'Down':
+        return
+    
+    input = event.widget.get()
+    
+    # if content was deleted, disable next boxes
+    if event.keysym == 'BackSpace' and len(input) == 0:
+        for box in nextBoxes:
+            box.delete(0, END)
+            box.config(state = DISABLED)
+    
+    if len(input) > 0:
+        # if current input is invalid, erase it
+        if not input.isdigit() or int(input) < 1 or int(input) > maxNum:
+            event.widget.delete(0, END)
+            for box in nextBoxes:
+                box.delete(0, END)
+                box.config(state = DISABLED)
+            return
+        # if input is valid, let next box be enabled
+        nextBoxes[0].config(state = NORMAL)
+        if maxNum == 6: # if this is the first EC box, there are only 6 options
+            nextBoxes[0].focus()
+        if len(input) == 2: # if not first box, shift focus to next box when there are two digits
+            nextBoxes[0].focus()
+
 
 def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when the user selects the start button in motif finder
     pdbs = glb.GUI.motifs['multipdb'].get(1.0,'1.end').split(',')
@@ -419,6 +463,35 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
     rb7.pack(anchor = W)
     rb7.select()
     ###
+    
+    #########################################################################
+    ##  EC NUMBER                                                          ##
+    #########################################################################
+    # create Entry boxes for EC numbers. All are disabled except for first box (to start)
+    EClabel = Label(glb.GUI.motifs['root'], text="\nLimit results by EC number")
+    ECLabel1 = Label(glb.GUI.motifs['root'], text="EC Number: ")
+    EC1 = Entry(glb.GUI.motifs['root'], state=NORMAL, textvariable = glb.GUI.motifs['ec1'], width=1)
+    ECLabel2 = Label(glb.GUI.motifs['root'], text=".")
+    EC2 = Entry(glb.GUI.motifs['root'], state=DISABLED, textvariable = glb.GUI.motifs['ec2'], width=2)
+    ECLabel3 = Label(glb.GUI.motifs['root'], text=".")
+    EC3 = Entry(glb.GUI.motifs['root'], state=DISABLED, textvariable = glb.GUI.motifs['ec3'], width=2)
+    ECLabel4 = Label(glb.GUI.motifs['root'], text=".")
+    EC4 = Entry(glb.GUI.motifs['root'], state=DISABLED, textvariable = glb.GUI.motifs['ec4'], width=2)
+    
+    EClabel.pack(anchor = W)
+    ECLabel1.pack(side=LEFT)
+    EC1.pack(side=LEFT)
+    ECLabel2.pack(side=LEFT)
+    EC2.pack(side=LEFT)
+    ECLabel3.pack(side=LEFT)
+    EC3.pack(side=LEFT)
+    ECLabel4.pack(side=LEFT)
+    EC4.pack(side=LEFT)
+    # bind function to the release of a key: we want to activate 2nd box iff there is valid text in first box
+    # lambda lets there be an additional argument to the checkEC function
+    EC1.bind('<KeyRelease>', lambda event: checkEC(event, 6, [EC2, EC3, EC4]))
+    EC2.bind('<KeyRelease>', lambda event: checkEC(event, 99, [EC3, EC4]))
+    EC3.bind('<KeyRelease>', lambda event: checkEC(event, 99, [EC4]))
     
     frame = Frame(glb.GUI.motifs['root'], width=200, height=250, bd=1)
     frame.pack()
@@ -611,6 +684,8 @@ def count(motif,pdb):
     bannedchain = []
     stored.motif = []
     editdist = []
+    
+    
     cmd.iterate(motif, 'stored.motif.append((chain,resn,resi))')
     residues = glb.MOTIFS[motif]['resi']
     residuesl = len(residues)*2
@@ -656,7 +731,7 @@ def count(motif,pdb):
     # Removed storage of precision factor as it is the same for the entire search
     return glb.GUI.motifs['csvprep'][pdb][motif]['levdistrange']
 
-def motifchecker(setChoice, rmsdchoice):
+def motifchecker(setChoice, rmsdchoice, ecchoices):
     global CSVMergeInfo
     glb.GUI.motifs['cancel'] = False
     #glb.GUI.motifs['motifbox'].delete(0,tk.END)
@@ -748,16 +823,29 @@ def motifchecker(setChoice, rmsdchoice):
                 glb.GUI.motifs['overall']['text'] = 'Search cancelled at %s%%'%(int(baro))
                 break
                 
-            # List of motif loading errors is no longer stored inside motif dictionary
-
-            # Determine whether or not we have a match
-            if MotifCaller(motif,False):
-                ldr = count(motif,pdb)
-                if ldr != None:
-                    #motifStr = '    {0}: {1}'.format(ldr, motif)
-                    motifStr = '    %s: %s'%(ldr, motif)
-                    found.append(motifStr)
-            cmd.delete(motif)
+                
+            # Search by EC numbers, if provided.
+            ECnums = motif.split('_')
+            motifEC1 = ECnums[2]
+            motifEC2 = ECnums[3]
+            motifEC3 = ECnums[4]
+            motifEC4 = ECnums[5]
+            if (ecchoices[0] == '' or int(motifEC1) == int(ecchoices[0])) and \
+                (ecchoices[1] == '' or int(motifEC2) == int(ecchoices[1])) and \
+                (ecchoices[2] == '' or int(motifEC3) == int(ecchoices[2])) and \
+                (ecchoices[3] == '' or int(motifEC4) == int(ecchoices[3])):
+                
+                
+                # List of motif loading errors is no longer stored inside motif dictionary
+    
+                # Determine whether or not we have a match
+                if MotifCaller(motif,False):
+                    ldr = count(motif,pdb)
+                    if ldr != None:
+                        #motifStr = '    {0}: {1}'.format(ldr, motif)
+                        motifStr = '    %s: %s'%(ldr, motif)
+                        found.append(motifStr)
+                cmd.delete(motif)
             
             # Update progress bars
             # Calling update() on GUI widgets from here may not be thread safe
@@ -835,48 +923,43 @@ def motifchecker(setChoice, rmsdchoice):
     struct['children']=[]
     i = -1
         
-    if rmsdchoice is 1: 
-        for query, motif in glb.matchpairs:
+    for query, motif in glb.matchpairs:
+        if query != oldpdb:
+            j = -1
+            struct['children'].append({'type':'Section','name':query,'children':[]}) 
+            i=i+1
+            struct['children'][i]['children'].append({'type':'Subsection','name':'EC #1','children':[]})
+            struct['children'][i]['children'].append({'type':'Subsection','name':'EC #2','children':[]})
+            struct['children'][i]['children'].append({'type':'Subsection','name':'EC #3','children':[]})
+            struct['children'][i]['children'].append({'type':'Subsection','name':'EC #4','children':[]})
+            struct['children'][i]['children'].append({'type':'Subsection','name':'EC #5','children':[]})
+            struct['children'][i]['children'].append({'type':'Subsection','name':'EC #6','children':[]})
             
-            if query != oldpdb:
-                j = -1
-                struct['children'].append({'type':'Section','name':query,'children':[]}) 
-                i=i+1
-            oldpdb = query
-            tag = motif.split(': ')
-             
-            if len(tag) > 1:
-                motifName = tag[1]
-                struct['children'][i]['children'].append({'type':'Subsection','name':motif,'children':[]})
-                j=j+1
+        oldpdb = query
+        tag = motif.split(': ')
+         
+        if len(tag) > 1:
+            tokens = tag[1].split('_')
+            subsection = int(tokens[2])
+            motifName = tag[1]
+            struct['children'][i]['children'][subsection-1]['children'].append({'type':'Subsection','name':motif,'children':[]})
+            j=j+1
+            
+            if rmsdchoice is 1: 
                 if len(glb.GUI.motifs['csvprep'][query][motifName]['rmsd']) > 0:
-                    struct['children'][i]['children'][j]['children'].append({'type':'Subsection','name':'RMSD All:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][0], 4))})
-                    struct['children'][i]['children'][j]['children'].append({'type':'Subsection','name':'RMSD alpha:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][1], 4))})
-                    struct['children'][i]['children'][j]['children'].append({'type':'Subsection','name':'RMSD alpha & beta:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][2], 4))})
-                 
-            if query == motif:
-                numberOfResults -= 1
-    else:
-        for query, motif in glb.matchpairs:
-            if query != oldpdb:
-                j = -1
-                struct['children'].append({'type':'Section','name':query,'children':[]}) 
-               
-                i=i+1
-            oldpdb = query
-            tag = motif.split(': ')
+                    struct['children'][i]['children'][subsection-1]['children'][j]['children'].append({'type':'Subsection','name':'RMSD All:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][0], 4))})
+                    struct['children'][i]['children'][subsection-1]['children'][j]['children'].append({'type':'Subsection','name':'RMSD alpha:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][1], 4))})
+                    struct['children'][i]['children'][subsection-1]['children'][j]['children'].append({'type':'Subsection','name':'RMSD alpha & beta:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][2], 4))})
              
-            if len(tag) > 1:
-                motifName = tag[1]
-                struct['children'][i]['children'].append({'type':'Subsection','name':motif,'children':[]})
-                j=j+1
+        if query == motif:
+            numberOfResults -= 1
+            
+    
         # The new matchpairs collection of ordered pairs
         # contains, in each element, the query PDB code and
         # the matching motif, in that order.  Header lines are
         # indicated by an entry with both parts containing
         # the query PDB code.
-            if query == motif:
-                numberOfResults -= 1
     ###
     
     
