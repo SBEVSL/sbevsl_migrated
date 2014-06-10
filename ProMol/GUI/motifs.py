@@ -108,6 +108,12 @@ def initialise():
     rmsdbox = tk.Checkbutton(group, text="Calculate RMSD", variable=glb.GUI.motifs['rmsd'])
     rmsdbox.grid(row=2, column=0, columnspan=2)
     
+    
+    glb.GUI.motifs['ec1'] = StringVar()
+    glb.GUI.motifs['ec2'] = StringVar()
+    glb.GUI.motifs['ec3'] = StringVar()
+    glb.GUI.motifs['ec4'] = StringVar()
+    
     glb.GUI.motifs['motifColorLabel'] = tk.Label(group, text="Motif Color")
     glb.GUI.motifs['motifColorLabel'].grid(row=3, column=0, sticky=tk.E)
     glb.GUI.motifs['motifcolor'] = tk.Label(group, bg='#ffffff', bd=3, relief=tk.SUNKEN)
