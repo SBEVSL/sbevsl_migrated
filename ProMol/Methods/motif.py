@@ -943,13 +943,19 @@ def motifchecker(setChoice, rmsdchoice, ecchoices):
             subsection = int(tokens[2])
             motifName = tag[1]
             struct['children'][i]['children'][subsection-1]['children'].append({'type':'Subsection','name':motif,'children':[]})
-            j=j+1
+            j=len(struct['children'][i]['children'][subsection-1]['children'])-1
             
-            if rmsdchoice is 1: 
-                if len(glb.GUI.motifs['csvprep'][query][motifName]['rmsd']) > 0:
-                    struct['children'][i]['children'][subsection-1]['children'][j]['children'].append({'type':'Subsection','name':'RMSD All:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][0], 4))})
-                    struct['children'][i]['children'][subsection-1]['children'][j]['children'].append({'type':'Subsection','name':'RMSD alpha:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][1], 4))})
-                    struct['children'][i]['children'][subsection-1]['children'][j]['children'].append({'type':'Subsection','name':'RMSD alpha & beta:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][2], 4))})
+            
+            if rmsdchoice is 1:
+                try:
+                    if len(glb.GUI.motifs['csvprep'][query][motifName]['rmsd']) > 0:
+                        struct['children'][i]['children'][subsection-1]['children'][j]['children'].append({'type':'Subsection','name':'RMSD All:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][0], 4))})
+                    if len(glb.GUI.motifs['csvprep'][query][motifName]['rmsd']) > 1:
+                        struct['children'][i]['children'][subsection-1]['children'][j]['children'].append({'type':'Subsection','name':'RMSD alpha:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][1], 4))})
+                    if len(glb.GUI.motifs['csvprep'][query][motifName]['rmsd']) > 2:
+                        struct['children'][i]['children'][subsection-1]['children'][j]['children'].append({'type':'Subsection','name':'RMSD alpha & beta:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][2], 4))})
+                except:
+                    print "indexing error at i = ", i, ", j = ", j, ", subsection = ", subsection
              
         if query == motif:
             numberOfResults -= 1
