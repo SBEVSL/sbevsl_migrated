@@ -111,13 +111,19 @@ AminoMenuList = ('', 'ala', 'arg', 'asn', 'asp', 'cys', 'gln', 'glu', 'gly',
 AminoLongList = ('alanine', 'arginine', 'asparagine', 'aspartate', 'cysteine',
     'glutamine', 'glutamate', 'glycine', 'histidine', 'isoleucine', 'leucine',
     'lysine', 'methionine', 'phenylalanine', 'proline', 'serine', 'threonine',
-    'tryptophan', 'tyrosine', 'valine', 'magnesium', 'zinc', 'manganese', 'sodium', 'hemes',
-    'cobalt', 'nickle', 'iron', 'copper')
+    'tryptophan', 'tyrosine', 'valine', 'calcium', 'molybdenum',
+    'molybdenum4', 'magnesium', 'zinc', 'manganese', 'sodium',
+    'hemes','b12','cub','fes','hea','mos','cua','fco','sf4','f3s','fe2','cfm',
+    'clf','hec','cob','c2o','pcd','4mo', 'f43', '3co', 'cobalt', 'nickle', 'iron', 'copper')
 AminoList = ('ala', 'arg', 'asn', 'asp', 'cys', 'gln', 'glu', 'gly', 'his',
-    'ile', 'leu', 'lys', 'met', 'phe', 'pro', 'ser', 'thr', 'trp', 'tyr', 'val', 
-    'mg', 'zn', 'mn', 'na', 'hem', 'co', 'ni', 'fe', 'cu')
+    'ile', 'leu', 'lys', 'met', 'phe', 'pro', 'ser', 'thr', 'trp', 'tyr', 'val',
+    'ca', 'mo', '4mo', 'mg', 'zn', 'mn', 'na', 'hem','b12','cub','fes','mos',
+    'hea','cua','fco','sf4','f3s','fe2','cfm','clf','hec','cob','c2o','pcd','4mo','f43','3co',
+    'co', 'ni', 'fe', 'cu')
 AminoShortList = ('a', 'r', 'n', 'd', 'c', 'q', 'e', 'g', 'h', 'i', 'l', 'k',
-    'm', 'f', 'p', 's', 't', 'w', 'y', 'v', 'mg', 'zn', 'mn', 'na', 'hem', 'co', 'ni', 'fe', 'cu')
+    'm', 'f', 'p', 's', 't', 'w', 'y', 'v', 'ca', 'mo', '4mo', 
+    'mg', 'zn', 'mn', 'na', 'hem','b12','cub','fes','mos','hea','cua','fco',
+    'sf4','f3s','fe2','cfm','clf','hec','cob','c2o','pcd','4mo','f43','3co', 'co', 'ni', 'fe', 'cu')
 AminoSubsList = {
         3:'glu',
         6:'asp',
@@ -127,10 +133,11 @@ AminoSubsList = {
         16:'ser'
     }
 AminoNumberList = (5, 11, 8, 8, 6, 9, 9, 4, 10, 8, 8, 9, 8, 11, 7, 6, 7, 14, 12,
-    7, 19, 20, 21, 22, 23, 24, 25, 26, 27)
+    7, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 
+    39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49)
 
 AminoHashTable = {}
-for i in range(0, 29):
+for i in range(0, 51):
     AminoHashTable[AminoLongList[i]] = {}
     AminoHashTable[AminoList[i]] = {}
     AminoHashTable[AminoShortList[i]] = {}
@@ -664,23 +671,65 @@ def populate():
     cmd.select('basic', 'resn ARG+HIS+LYS')
     cmd.select('ligands', 'het')
     cmd.select('heme', 'resn hem')
+    cmd.select('b12', 'resn b12')
+    cmd.select('cub', 'resn cub')
+    cmd.select('fes', 'resn fes')
+    cmd.select('mos', 'resn mos')
+    cmd.select('hea', 'resn hea')
+    cmd.select('cua', 'resn cua')
+    cmd.select('fco', 'resn fco')
+    cmd.select('sf4', 'resn sf4')
+    cmd.select('f3s', 'resn f3s')
+    cmd.select('fe2', 'symbol fe')
+    cmd.select('cfm', 'resn cfm')
+    cmd.select('clf', 'resn clf')
+    cmd.select('hec', 'resn hec')
+    cmd.select('cob', 'resn cob')
+    cmd.select('c2o', 'resn c2o')
+    cmd.select('pcd', 'resn pcd')
+    cmd.select('f43', 'resn f43')
     cmd.select('sodium', 'symbol na')
     cmd.select('zinc', 'symbol zn')
+    cmd.select('3co', 'symbol co')
     cmd.select('Cobalt', 'symbol co')
     cmd.select('Nickle', 'symbol ni')
     cmd.select('Iron', 'symbol fe')
     cmd.select('Copper', 'symbol cu')
     cmd.select('Manganese', 'symbol mn')
     cmd.select('Magnesium', 'symbol mg')
+    cmd.select('4mo', 'symbol mo')
+    cmd.select('Molybdenum', 'symbol mo')
+    cmd.select('calcium', 'symbol ca')
     # Then turn them off
+    cmd.disable('ca')
+    cmd.disable('mo')
+    cmd.disable('4mo')
     cmd.disable('mg')
     cmd.disable('mn')
     cmd.disable('cu')
     cmd.disable('fe')
     cmd.disable('ni')
     cmd.disable('co')
+    cmd.disable('3co')
     cmd.disable('zn')
     cmd.disable('na')
+    cmd.disable('f43')
+    cmd.disable('pcd')
+    cmd.disable('c2o')
+    cmd.disable('cob')
+    cmd.disable('hec')
+    cmd.disable('clf')
+    cmd.disable('cfm')
+    cmd.disable('fe2')
+    cmd.disable('f3s')
+    cmd.disable('sf4')
+    cmd.disable('fco')
+    cmd.disable('cua')
+    cmd.disable('hea')
+    cmd.disable('mos')
+    cmd.disable('fes')
+    cmd.disable('cub')
+    cmd.disable('b12')
     cmd.disable('heme')
     cmd.disable('ligands')
     cmd.disable('basic')
