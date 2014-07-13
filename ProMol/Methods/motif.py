@@ -106,6 +106,8 @@ def showsubstrate():
                 cmd.delete('substrate')
             if 'substrate' in objects:
                 cmd.show('sticks', 'substrate')
+                cmd.set('sphere_scale','0.15','substrate')
+                cmd.show('spheres', 'substrate')
                 cmd.deselect()
                 cpksubstrate()
         except:
@@ -117,6 +119,8 @@ def showsubstrate():
                 cmd.delete('substrate')
             if 'substrate' in objects:
                 cmd.show('sticks', 'substrate')
+                cmd.set('sphere_scale','0.15','substrate')
+                cmd.show('spheres', 'substrate')
                 cmd.deselect()
                 cpksubstrate()
     except:
@@ -125,6 +129,7 @@ def showsubstrate():
 def hidesubstrate():
     try:
         cmd.hide('sticks', 'substrate')
+        cmd.hide('spheres', 'substrate')
     except:
         showinfo('Alert', "No substrate selected")
 
@@ -285,7 +290,11 @@ def showContent(node):
             # Do final display
             cmd.hide('everything', 'all')
             cmd.show('sticks', motifSubsetName)
+            cmd.show('spheres',motifSubsetName)
+            cmd.set('sphere_scale','0.15',motifSubsetName)
             cmd.show('sticks', querySubsetName)
+            cmd.show('spheres',querySubsetName)
+            cmd.set('sphere_scale','0.15',querySubsetName)
             # Removed ineffective cmd.color of matching subset
 
             #aligns and gets the rmsd of the alignment by all atoms
@@ -435,6 +444,8 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
     rb4 = Radiobutton(glb.GUI.motifs['root'], text="All Motifs", variable = glb.GUI.motifs['var'], value = 4, height = 2)
     rb5 = Radiobutton(glb.GUI.motifs['root'], text="User Motifs", variable = glb.GUI.motifs['var'], value = 5, height = 2)
     rbA = Radiobutton(glb.GUI.motifs['root'], text="A set", variable = glb.GUI.motifs['var'], value = 6, height = 2)
+    rbB = Radiobutton(glb.GUI.motifs['root'], text="Metal Amino", variable = glb.GUI.motifs['var'], value = 7, height = 2)
+    rbC = Radiobutton(glb.GUI.motifs['root'], text="Metal Other", variable = glb.GUI.motifs['var'], value = 8, height = 2)
 
     #added 2/19
     rb6 = Radiobutton(glb.GUI.motifs['root'], text="Yes (will take longer)", variable = glb.GUI.motifs['varrmsd'], value = 1,  height = 2)
@@ -452,6 +463,8 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
     rb5.pack(anchor = W)
     rb1.pack(anchor = W)
     rbA.pack(anchor = W)
+    rbB.pack(anchor = W)
+    rbC.pack(anchor = W)
     if glb.USE_JESS:
         rb2.pack(anchor = W)
     #rb3.pack(anchor = W)
@@ -726,6 +739,8 @@ def count(motif,pdb):
         editdist.append(proutils.levenshteinDistance(sub,ordered))
     mini = min(editdist)
     maxi = max(editdist)
+    if maxi > 1 and (motif[0]=='M' or motif[0]=='R') :
+        return None
     #glb.GUI.motifs['csvprep'][pdb][motif]['levdistrange'] = '{0}-{1}'.format(mini,maxi) if mini<maxi else mini
     glb.GUI.motifs['csvprep'][pdb][motif]['levdistrange'] = '%s-%s'%(mini,maxi) if mini<maxi else mini
     # Removed storage of precision factor as it is the same for the entire search
@@ -780,7 +795,9 @@ def motifchecker(setChoice, rmsdchoice, ecchoices):
     3: ('N_Set', lambda key: key[0] == 'N'),
     4: ('All', lambda key: glb.USE_JESS or key[0] != 'J'),
     5: ('U_Set', lambda key: key[0] == 'U'),
-    6: ('A_Set', lambda key: key[0] == 'A')}
+    6: ('A_Set', lambda key: key[0] == 'A'),
+    7: ('M_Set', lambda key: key[0] == 'M'),
+    8: ('R_Set', lambda key: key[0] == 'R')}
     setName = sets[setChoice][0]
 
     # This is a Python list comprehension
@@ -1363,7 +1380,7 @@ class MotifMaker:
                            'glu':('CB','CG','CD','OE1','OE2'),
                            'gly':(),
                            'his':('CB','CG','ND1','CD2','CE1','NE2'),
-                           'ile':('CB','CG1','CG2','CD'),
+                           'ile':('CB','CG1','CG2','CD1'),
                            'leu':('CB','CG','CD1','CD2'),
                            'lys':('CB','CG','CD','CE','NZ'),
                            'met':('CB','CG','SD','CE'),
@@ -1374,11 +1391,32 @@ class MotifMaker:
                            'trp':('CB','CG','CD1','CD2','NE1','CE2','CE3','CZ2','CZ3','CH2'),
                            'tyr':('CB','CG','CD1','CD2','CE1','CE2','CZ','OH'),
                            'val':('CB','CG1','CG2'),
+                           'ca':('CA',),
+                           'mo':('MO',),
+                           '4mo':('MO',),
                            'mg':('MG',),
                            'zn':('ZN',),
                            'mn':('MN',),
                            'na':('NA',),
                            'hem':('FE','CHA','CHB','CHC','CHD','NA','C1A','C2A','C3A','C4A','CMA','CAA','CBA','CGA','O1A','O2A','NB','C1B','C2B','C3B','C4B','CMB','CAB','CBB','NC','C1C','C2C','C3C','C4C','CMC','CAC','CBC','ND','C1D','C2D','C3D','C4D','CMD','CAD','CBD','CGD','O1D','O2D'),
+                           'b12':('CO','N21','N22','N23','N24','C1','C20','C2','C25','C26','C27','O28','N29','C3','C30','C31','C32','O34','N33','C4','C5','C35','C6','C7','C36','C37','C38','O39','N40','C8','C41','C42','C43','O44','N45','C9','C10','C11','C12','C46','C47','C13','C48','C49','C50','O51','N52','C14','C15','C53','C16','C17','C54','C55','C56','C57','O58','N59','C18','C60','C61','O63','N62','C19','C1P','C2P','C3P','O3','O4','O5','P','O2','C3R','C2R','O7R','C1R','O6R','C4R','C5R','O8R','N1B','C8B','C2B','N3B','C9B','C4B','C5B','C5M','C6B','C6M','C7B'),
+                           'cub':('C3Z','C2Z','C1Z','NZ','CU','MO','S','CZ','OM2','C4Z','OM1'),
+                           'fes':('FE1','FE2','S1','S2'),
+                           'mos':('MO','S','O1','O2'),
+                           'hea':('FE','CHA','CHB','CHC','CHD','NA','C1A','C2A','C3A','C4A','CMA','OMA','CAA','CBA','CGA','O1A','O2A','NB','C1B','C2B','C3B','C4B','CMB','NC','C1C','C2C','C3C','C4C','CMC','CAC','CBC','ND','C1D','C2D','C3D','C4D','CMD','CAD','CBD','CGD','O1D','O2D','C11','O11','C12','C13','C14','C15','C16','C17','C18','C19','C20','C21','C22','C23','C24','C25','C26','C27','FE','CHA','CHB','CHC','CHD','NA','C1A','C2A','C3A','C4A','CMA','OMA','CAA','CBA','CGA','O1A','O2A','NB','C1B','C2B','CMB','NC','C1C','C2C','C3C','C4C','CMC','CAC','CBC','ND','C1D','C2D','C3D','C4D','CMD','CAD','CBD','CGD','O1D','O2D','C11','C12','C13','C14','C15','C16','C17','C18','C19','C20','C21','C22','C23','C24','C25','C26','C27'),
+                           'cua':('CU1','CU2'),
+                           'fco':('FE','C1','N1','C2','N2','C3','O3'),
+                           'sf4':('FE1','FE2','FE3','FE4','S1','S2','S3','S4'),
+                           'f3s':('FE1','FE3','FE4','S1','S2','S3','S4'),
+                           'f43':('NI','NA','CHA','C1A','C2A','C3A','C4A','C5A','C6A','O7A','N8A','C9A','CAA','CBA','CCA','ODA','OEA','NB','CHB','C1B','C2B','C3B','C4B','N5B','C6B','O7B','C8B','C9B','CAB','CBB','CCB','ODB','OEB','NC','CHC','C1C','C2C','C3C','C4C','C5C','C6C','O7C','O8C','C8C','C9C','CAC','OBC','OCC','ND','CHD','C1D','C2D','C3D','C4D','C5D','C6D','C7D','O8D','C9D','CAD','OBD','OCD'),
+                           'fe2':('FE',),
+                           'cfm':('FE1','FE2','FE3','FE4','FE5','FE6','FE7','MO1','S1A','S4A','S3A','S2A','S1B','S2B','S3B','S4B','S5'),
+                           'clf':('FE1','FE2','FE3','FE4','S1','S2A','S4A','S3A','FE5','FE6','FE7','FE8','S2B','S3B','S4B'),
+                           'hec':('FE','CHA','CHB','CHC','CHD','NA','C1A','C2A','C3A','C4A','CMA','CAA','CBA','CGA','O1A','O2A','NB','C1B','C2B','C3B','C4B','CMB','CAB','CBB','NC','C1C','C2C','C3C','C4C','CMC','CAC','CBC','ND','C1D','C2D','C3D','C4D','CMD','CAD','CBD','CGD','O1D','O2D'),
+                           'cob':('CO','N21','N22','N23','N24','C1','C20','C2','C25','C26','C27','O28','N29','C3','C30','C31','C32','O34','N33','C4','C5','C35','C6','C7','C36','C37','C38','O39','N40','C8','C41','C42','C43','O44','N45','C9','C10','C11','C12','C46','C47','C13','C48','C49','C50','O51','N52','C14','C15','C53','C16','C17','C54','C55','C56','C57','O58','N59','C18','C60','C61','O63','N62','C19','C1P','C2P','C3P','O3','O4','O5','P','O2','C3R','C2R','O7R','C1R','O6R','C4R','C5R','O8R','N1B','C8B','C2B','N3B','C9B','C4B','C5B','C5M','C6B','C6M','C7B','C1A'),
+                           'c2o':('CU2','CU3','O1'),
+                           'pcd':('N1','C2','N3','C4','C5','C6','O2','N4','C1','C2D','O2','C3','C4D','O4D','O3','C5','O5','PA','O1A','O2A','O3A','PB','O1B','O2B','O3B','C10','C9','C8','S8','C7','S7','C6','C7','O9','N5','C4A','N8','C4B','N1','C2','N2','N3','C4','O4','MO','OR1','OM2','OM1'),
+                           '3co':('CO',),
                            'co':('CO',),
                            'ni':('NI',),
                            'fe':('FE',),
@@ -1453,10 +1491,14 @@ class MotifMaker:
                     ### This loop increments through all the carbons
                     ### in the amino acid we want to find.
                     for eachB in bList:
+                        if cmd.count_atoms(chainlist[e]+'/'+resilist[e]+'/'+eachB) != 1:
+                            continue
                         ### This loop increments through all the carbons
                         ### in the other amino acids that we are want to
                         ### compare with.
                         for eachC in cList:
+                            if cmd.count_atoms(chainlist[d]+'/'+resilist[d]+'/'+eachC) != 1:
+                                continue
                             ### Gets the distance between our atoms in our selected amino acids.
                             r = cmd.get_distance(chainlist[e]+'/'+resilist[e]+'/'+eachB,chainlist[d]+'/'+resilist[d]+'/'+eachC)
                             ### The precision factor
