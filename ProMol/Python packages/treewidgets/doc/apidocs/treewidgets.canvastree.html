@@ -1,0 +1,461 @@
+
+<!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module treewidgets.canvastree</title>
+<style type="text/css"><!--
+TT { font-family: lucidatypewriter, lucida console, courier }
+--></style></head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#7799ee">
+<td valign=bottom><small>&nbsp;<br></small
+><font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="treewidgets.html"><font color="#ffffff">treewidgets</font></a>.canvastree</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/usr/local/lib/python2.1/site-packages/treewidgets/canvastree.py">/usr/local/lib/python2.1/site-packages/treewidgets/canvastree.py</a></font></td></tr></table>
+    <p><small><tt><br>
+canvastree.py<br>
+-------------<br>
+&nbsp;<br>
+A&nbsp;<a href="treewidgets.widget.html#TreeWidget">TreeWidget</a>&nbsp;based&nbsp;on&nbsp;the&nbsp;Tkinter&nbsp;<a href="Tkinter.html#Canvas">Canvas</a>&nbsp;class.<br>
+&nbsp;<br>
+Copyright&nbsp;(c)&nbsp;2002&nbsp;&nbsp;Matthew&nbsp;C.&nbsp;Gushee&nbsp;&lt;mgushee@havenrock.com&gt;<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;free&nbsp;software,&nbsp;released&nbsp;under&nbsp;the&nbsp;terms&nbsp;of&nbsp;the&nbsp;BSD&nbsp;License.&nbsp;See<br>
+the&nbsp;file&nbsp;LICENSE&nbsp;for&nbsp;details.</tt></small></p>
+
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#fffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;&nbsp;</td>
+<td width="100%"><table width="100%"><tr><td width="25%" valign=top><a href="sys.html">sys</a><br>
+</td><td width="25%" valign=top><a href="_tkinter.html">_tkinter</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table>
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><small><a href="Tkinter.html#Canvas">Tkinter.Canvas</a>(<a href="Tkinter.html#Widget">Tkinter.Widget</a>)
+</small></font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><small><a href="treewidgets.canvastree.html#CanvasTree">CanvasTree</a>(<a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a>, <a href="Tkinter.html#Canvas">Tkinter.Canvas</a>)
+</small></font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><small><a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a>
+</small></font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><small><a href="treewidgets.canvastree.html#CanvasTree">CanvasTree</a>(<a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a>, <a href="Tkinter.html#Canvas">Tkinter.Canvas</a>)
+</small></font></dt></dl>
+</dd>
+</dl>
+ 
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#000000" face="helvetica, arial"><a name="CanvasTree">class <strong>CanvasTree</strong></a>(<a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a>, <a href="Tkinter.html#Canvas">Tkinter.Canvas</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><small><small>&nbsp;</small></small></td></tr>
+<tr><td>&nbsp;&nbsp;</td>
+<td width="100%"><dl><dt><a name="CanvasTree-_Misc__winfo_getint"><strong>_Misc__winfo_getint</strong></a> = __winfo_getint(self, x)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_Misc__winfo_parseitem"><strong>_Misc__winfo_parseitem</strong></a> = __winfo_parseitem(self, t)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-__getitem__"><strong>__getitem__</strong></a> = cget(self, key)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-__init__"><strong>__init__</strong></a>(self, master, app<small><font color="#909090">=None</font></small>)</dl>
+<dl><dt><a name="CanvasTree-__setitem__"><strong>__setitem__</strong></a>(self, key, value)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-__str__"><strong>__str__</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_bind"><strong>_bind</strong></a>(self, what, sequence, func, add, needcleanup<small><font color="#909090">=1</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_create"><strong>_create</strong></a>(self, itemType, args, kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_displayof"><strong>_displayof</strong></a>(self, displayof)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_do"><strong>_do</strong></a>(self, name, args<small><font color="#909090">=()</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#BaseWidget">Tkinter.BaseWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_getboolean"><strong>_getboolean</strong></a>(self, string)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_getdoubles"><strong>_getdoubles</strong></a>(self, string)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_getints"><strong>_getints</strong></a>(self, string)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_grid"><strong>_grid</strong></a> = grid_configure(self, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Grid">Tkinter.Grid</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_grid_configure"><strong>_grid_configure</strong></a>(self, command, index, cnf, kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_grid_forget"><strong>_grid_forget</strong></a> = grid_forget(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Grid">Tkinter.Grid</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_gui_setup"><strong>_gui_setup</strong></a>(self, iconmap, fontmap, **tkconfig)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_mkfonts"><strong>_mkfonts</strong></a>(self, fontmap<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_mkicons"><strong>_mkicons</strong></a>(self, iconmap<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_nametowidget"><strong>_nametowidget</strong></a> = nametowidget(self, name)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_onDown"><strong>_onDown</strong></a>(self, event<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_onSpace"><strong>_onSpace</strong></a>(self, event<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_onUp"><strong>_onUp</strong></a>(self, event<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_options"><strong>_options</strong></a>(self, cnf, kw<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_pack"><strong>_pack</strong></a> = pack_configure(self, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Pack">Tkinter.Pack</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_pack_forget"><strong>_pack_forget</strong></a> = pack_forget(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Pack">Tkinter.Pack</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_place"><strong>_place</strong></a> = place_configure(self, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Place">Tkinter.Place</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_place_forget"><strong>_place_forget</strong></a> = place_forget(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Place">Tkinter.Place</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_register"><strong>_register</strong></a>(self, func, subst<small><font color="#909090">=None</font></small>, needcleanup<small><font color="#909090">=1</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_report_exception"><strong>_report_exception</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_root"><strong>_root</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_setup"><strong>_setup</strong></a>(self, master, cnf)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#BaseWidget">Tkinter.BaseWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-_substitute"><strong>_substitute</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-addNode"><strong>addNode</strong></a>(self, node)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-addtag"><strong>addtag</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-addtag_above"><strong>addtag_above</strong></a>(self, newtag, tagOrId)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-addtag_all"><strong>addtag_all</strong></a>(self, newtag)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-addtag_below"><strong>addtag_below</strong></a>(self, newtag, tagOrId)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-addtag_closest"><strong>addtag_closest</strong></a>(self, newtag, x, y, halo<small><font color="#909090">=None</font></small>, start<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-addtag_enclosed"><strong>addtag_enclosed</strong></a>(self, newtag, x1, y1, x2, y2)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-addtag_overlapping"><strong>addtag_overlapping</strong></a>(self, newtag, x1, y1, x2, y2)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-addtag_withtag"><strong>addtag_withtag</strong></a>(self, newtag, tagOrId)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-after"><strong>after</strong></a>(self, ms, func<small><font color="#909090">=None</font></small>, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-after_cancel"><strong>after_cancel</strong></a>(self, id)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-after_idle"><strong>after_idle</strong></a>(self, func, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-bbox"><strong>bbox</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-bell"><strong>bell</strong></a>(self, displayof<small><font color="#909090">=0</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-bind"><strong>bind</strong></a>(self, sequence<small><font color="#909090">=None</font></small>, func<small><font color="#909090">=None</font></small>, add<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-bind_all"><strong>bind_all</strong></a>(self, sequence<small><font color="#909090">=None</font></small>, func<small><font color="#909090">=None</font></small>, add<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-bind_class"><strong>bind_class</strong></a>(self, className, sequence<small><font color="#909090">=None</font></small>, func<small><font color="#909090">=None</font></small>, add<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-bindtags"><strong>bindtags</strong></a>(self, tagList<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-canvasx"><strong>canvasx</strong></a>(self, screenx, gridspacing<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-canvasy"><strong>canvasy</strong></a>(self, screeny, gridspacing<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-cget"><strong>cget</strong></a>(self, key)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-clipboard_append"><strong>clipboard_append</strong></a>(self, string, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-clipboard_clear"><strong>clipboard_clear</strong></a>(self, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-colormodel"><strong>colormodel</strong></a>(self, value<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-columnconfigure"><strong>columnconfigure</strong></a> = grid_columnconfigure(self, index, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-config"><strong>config</strong></a> = configure(self, cnf<small><font color="#909090">=None</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-configure"><strong>configure</strong></a>(self, cnf<small><font color="#909090">=None</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-coords"><strong>coords</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-create_arc"><strong>create_arc</strong></a>(self, *args, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-create_bitmap"><strong>create_bitmap</strong></a>(self, *args, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-create_image"><strong>create_image</strong></a>(self, *args, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-create_line"><strong>create_line</strong></a>(self, *args, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-create_oval"><strong>create_oval</strong></a>(self, *args, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-create_polygon"><strong>create_polygon</strong></a>(self, *args, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-create_rectangle"><strong>create_rectangle</strong></a>(self, *args, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-create_text"><strong>create_text</strong></a>(self, *args, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-create_window"><strong>create_window</strong></a>(self, *args, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-dchars"><strong>dchars</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-delete"><strong>delete</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-deletecommand"><strong>deletecommand</strong></a>(self, name)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-destroy"><strong>destroy</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#BaseWidget">Tkinter.BaseWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-dtag"><strong>dtag</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-event_add"><strong>event_add</strong></a>(self, virtual, *sequences)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-event_delete"><strong>event_delete</strong></a>(self, virtual, *sequences)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-event_generate"><strong>event_generate</strong></a>(self, sequence, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-event_info"><strong>event_info</strong></a>(self, virtual<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-find"><strong>find</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-find_above"><strong>find_above</strong></a>(self, tagOrId)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-find_all"><strong>find_all</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-find_below"><strong>find_below</strong></a>(self, tagOrId)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-find_closest"><strong>find_closest</strong></a>(self, x, y, halo<small><font color="#909090">=None</font></small>, start<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-find_enclosed"><strong>find_enclosed</strong></a>(self, x1, y1, x2, y2)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-find_overlapping"><strong>find_overlapping</strong></a>(self, x1, y1, x2, y2)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-find_withtag"><strong>find_withtag</strong></a>(self, tagOrId)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-focus"><strong>focus</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-focus_displayof"><strong>focus_displayof</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-focus_force"><strong>focus_force</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-focus_get"><strong>focus_get</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-focus_lastfor"><strong>focus_lastfor</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-focus_set"><strong>focus_set</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-forget"><strong>forget</strong></a> = pack_forget(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Pack">Tkinter.Pack</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-generateNodeID"><strong>generateNodeID</strong></a>(self, datanode)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-getNodeByID"><strong>getNodeByID</strong></a>(self, node_id)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-getboolean"><strong>getboolean</strong></a>(self, s)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-gettags"><strong>gettags</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-getvar"><strong>getvar</strong></a>(self, name<small><font color="#909090">='PY_VAR'</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-goNext"><strong>goNext</strong></a>(self, node)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-goPrevious"><strong>goPrevious</strong></a>(self, node)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-grab_current"><strong>grab_current</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-grab_release"><strong>grab_release</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-grab_set"><strong>grab_set</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-grab_set_global"><strong>grab_set_global</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-grab_status"><strong>grab_status</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-grid"><strong>grid</strong></a>(self, *args, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-grid_bbox"><strong>grid_bbox</strong></a>(self, column<small><font color="#909090">=None</font></small>, row<small><font color="#909090">=None</font></small>, col2<small><font color="#909090">=None</font></small>, row2<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-grid_columnconfigure"><strong>grid_columnconfigure</strong></a>(self, index, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-grid_configure"><strong>grid_configure</strong></a>(self, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Grid">Tkinter.Grid</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-grid_forget"><strong>grid_forget</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-grid_info"><strong>grid_info</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Grid">Tkinter.Grid</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-grid_location"><strong>grid_location</strong></a>(self, x, y)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Grid">Tkinter.Grid</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-grid_propagate"><strong>grid_propagate</strong></a>(self, flag<small><font color="#909090">=['_noarg_']</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-grid_remove"><strong>grid_remove</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Grid">Tkinter.Grid</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-grid_rowconfigure"><strong>grid_rowconfigure</strong></a>(self, index, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-grid_size"><strong>grid_size</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-grid_slaves"><strong>grid_slaves</strong></a>(self, row<small><font color="#909090">=None</font></small>, column<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-hideNode"><strong>hideNode</strong></a>(self, node)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-hideNodes"><strong>hideNodes</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-hideNodes4Shift"><strong>hideNodes4Shift</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-icursor"><strong>icursor</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-image_names"><strong>image_names</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-image_types"><strong>image_types</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-index"><strong>index</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-info"><strong>info</strong></a> = pack_info(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Pack">Tkinter.Pack</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-insert"><strong>insert</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-insertAfter"><strong>insertAfter</strong></a>(self, refnode, newnode)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-insertBefore"><strong>insertBefore</strong></a>(self, refnode, newnode)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-itemcget"><strong>itemcget</strong></a>(self, tagOrId, option)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-itemconfig"><strong>itemconfig</strong></a> = itemconfigure(self, tagOrId, cnf<small><font color="#909090">=None</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-itemconfigure"><strong>itemconfigure</strong></a>(self, tagOrId, cnf<small><font color="#909090">=None</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-keys"><strong>keys</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-lift"><strong>lift</strong></a> = tag_raise(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-location"><strong>location</strong></a> = grid_location(self, x, y)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Grid">Tkinter.Grid</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-logNodeStates"><strong>logNodeStates</strong></a>(self, tag)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-lower"><strong>lower</strong></a> = tag_lower(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-mainloop"><strong>mainloop</strong></a>(self, n<small><font color="#909090">=0</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-move"><strong>move</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-nametowidget"><strong>nametowidget</strong></a>(self, name)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-nodesFollowing"><strong>nodesFollowing</strong></a>(self, node)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-nodesPreceding"><strong>nodesPreceding</strong></a>(self, node)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-option_add"><strong>option_add</strong></a>(self, pattern, value, priority<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-option_clear"><strong>option_clear</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-option_get"><strong>option_get</strong></a>(self, name, className)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-option_readfile"><strong>option_readfile</strong></a>(self, fileName, priority<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-pack"><strong>pack</strong></a>(self, *args, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-pack_configure"><strong>pack_configure</strong></a>(self, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Pack">Tkinter.Pack</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-pack_forget"><strong>pack_forget</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-pack_info"><strong>pack_info</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Pack">Tkinter.Pack</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-pack_propagate"><strong>pack_propagate</strong></a>(self, flag<small><font color="#909090">=['_noarg_']</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-pack_slaves"><strong>pack_slaves</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-place"><strong>place</strong></a>(self, *args, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-place_configure"><strong>place_configure</strong></a>(self, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Place">Tkinter.Place</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-place_forget"><strong>place_forget</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-place_info"><strong>place_info</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Place">Tkinter.Place</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-place_slaves"><strong>place_slaves</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-postscript"><strong>postscript</strong></a>(self, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-propagate"><strong>propagate</strong></a> = pack_propagate(self, flag<small><font color="#909090">=['_noarg_']</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-quit"><strong>quit</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-redisplay"><strong>redisplay</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-register"><strong>register</strong></a> = _register(self, func, subst<small><font color="#909090">=None</font></small>, needcleanup<small><font color="#909090">=1</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-removeNode"><strong>removeNode</strong></a>(self, node)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-rowconfigure"><strong>rowconfigure</strong></a> = grid_rowconfigure(self, index, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-scale"><strong>scale</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-scan_dragto"><strong>scan_dragto</strong></a>(self, x, y)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-scan_mark"><strong>scan_mark</strong></a>(self, x, y)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-scheduleShiftFollowing"><strong>scheduleShiftFollowing</strong></a>(self, node)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-select_adjust"><strong>select_adjust</strong></a>(self, tagOrId, index)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-select_clear"><strong>select_clear</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-select_from"><strong>select_from</strong></a>(self, tagOrId, index)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-select_item"><strong>select_item</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-select_to"><strong>select_to</strong></a>(self, tagOrId, index)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-selection_clear"><strong>selection_clear</strong></a>(self, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-selection_get"><strong>selection_get</strong></a>(self, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-selection_handle"><strong>selection_handle</strong></a>(self, command, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-selection_own"><strong>selection_own</strong></a>(self, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-selection_own_get"><strong>selection_own_get</strong></a>(self, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-send"><strong>send</strong></a>(self, interp, cmd, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-setvar"><strong>setvar</strong></a>(self, name<small><font color="#909090">='PY_VAR'</font></small>, value<small><font color="#909090">='1'</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-showNode"><strong>showNode</strong></a>(self, node, row)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-showNodes"><strong>showNodes</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-showTree"><strong>showTree</strong></a>(self, data, datatype, expand_limit<small><font color="#909090">=None</font></small>, node_funcs<small><font color="#909090">={}</font></small>, props<small><font color="#909090">=0</font></small>, state<small><font color="#909090">=0</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-size"><strong>size</strong></a> = grid_size(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-slaves"><strong>slaves</strong></a> = pack_slaves(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-tag_bind"><strong>tag_bind</strong></a>(self, tagOrId, sequence<small><font color="#909090">=None</font></small>, func<small><font color="#909090">=None</font></small>, add<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-tag_lower"><strong>tag_lower</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-tag_raise"><strong>tag_raise</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-tag_unbind"><strong>tag_unbind</strong></a>(self, tagOrId, sequence, funcid<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-tk_bisque"><strong>tk_bisque</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-tk_focusFollowsMouse"><strong>tk_focusFollowsMouse</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-tk_focusNext"><strong>tk_focusNext</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-tk_focusPrev"><strong>tk_focusPrev</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-tk_menuBar"><strong>tk_menuBar</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-tk_setPalette"><strong>tk_setPalette</strong></a>(self, *args, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-tk_strictMotif"><strong>tk_strictMotif</strong></a>(self, boolean<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-tkraise"><strong>tkraise</strong></a> = tag_raise(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-toggleNode"><strong>toggleNode</strong></a>(self, node)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-type"><strong>type</strong></a>(self, tagOrId)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-unbind"><strong>unbind</strong></a>(self, sequence, funcid<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-unbind_all"><strong>unbind_all</strong></a>(self, sequence)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-unbind_class"><strong>unbind_class</strong></a>(self, className, sequence)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-update"><strong>update</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-update_idletasks"><strong>update_idletasks</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-wait_variable"><strong>wait_variable</strong></a>(self, name<small><font color="#909090">='PY_VAR'</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-wait_visibility"><strong>wait_visibility</strong></a>(self, window<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-wait_window"><strong>wait_window</strong></a>(self, window<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-waitvar"><strong>waitvar</strong></a> = wait_variable(self, name<small><font color="#909090">='PY_VAR'</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_atom"><strong>winfo_atom</strong></a>(self, name, displayof<small><font color="#909090">=0</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_atomname"><strong>winfo_atomname</strong></a>(self, id, displayof<small><font color="#909090">=0</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_cells"><strong>winfo_cells</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_children"><strong>winfo_children</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_class"><strong>winfo_class</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_colormapfull"><strong>winfo_colormapfull</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_containing"><strong>winfo_containing</strong></a>(self, rootX, rootY, displayof<small><font color="#909090">=0</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_depth"><strong>winfo_depth</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_exists"><strong>winfo_exists</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_fpixels"><strong>winfo_fpixels</strong></a>(self, number)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_geometry"><strong>winfo_geometry</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_height"><strong>winfo_height</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_id"><strong>winfo_id</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_interps"><strong>winfo_interps</strong></a>(self, displayof<small><font color="#909090">=0</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_ismapped"><strong>winfo_ismapped</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_manager"><strong>winfo_manager</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_name"><strong>winfo_name</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_parent"><strong>winfo_parent</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_pathname"><strong>winfo_pathname</strong></a>(self, id, displayof<small><font color="#909090">=0</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_pixels"><strong>winfo_pixels</strong></a>(self, number)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_pointerx"><strong>winfo_pointerx</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_pointerxy"><strong>winfo_pointerxy</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_pointery"><strong>winfo_pointery</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_reqheight"><strong>winfo_reqheight</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_reqwidth"><strong>winfo_reqwidth</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_rgb"><strong>winfo_rgb</strong></a>(self, color)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_rootx"><strong>winfo_rootx</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_rooty"><strong>winfo_rooty</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_screen"><strong>winfo_screen</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_screencells"><strong>winfo_screencells</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_screendepth"><strong>winfo_screendepth</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_screenheight"><strong>winfo_screenheight</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_screenmmheight"><strong>winfo_screenmmheight</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_screenmmwidth"><strong>winfo_screenmmwidth</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_screenvisual"><strong>winfo_screenvisual</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_screenwidth"><strong>winfo_screenwidth</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_server"><strong>winfo_server</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_toplevel"><strong>winfo_toplevel</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_viewable"><strong>winfo_viewable</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_visual"><strong>winfo_visual</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_visualid"><strong>winfo_visualid</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_visualsavailable"><strong>winfo_visualsavailable</strong></a>(self, includeids<small><font color="#909090">=0</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_vrootheight"><strong>winfo_vrootheight</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_vrootwidth"><strong>winfo_vrootwidth</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_vrootx"><strong>winfo_vrootx</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_vrooty"><strong>winfo_vrooty</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_width"><strong>winfo_width</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_x"><strong>winfo_x</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-winfo_y"><strong>winfo_y</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-xview"><strong>xview</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-xview_moveto"><strong>xview_moveto</strong></a>(self, fraction)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-xview_scroll"><strong>xview_scroll</strong></a>(self, number, what)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-yview"><strong>yview</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-yview_moveto"><strong>yview_moveto</strong></a>(self, fraction)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+<dl><dt><a name="CanvasTree-yview_scroll"><strong>yview_scroll</strong></a>(self, number, what)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Canvas">Tkinter.Canvas</a></font></font></small></dl>
+</td></tr></table></td></tr></table>
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;&nbsp;</td>
+<td width="100%"><dl><dt><a name="-getdouble"><strong>getdouble</strong></a> = float(...)<dd><small><tt>float(x)&nbsp;-&gt;&nbsp;floating&nbsp;point&nbsp;number<br>
+&nbsp;<br>
+Convert&nbsp;a&nbsp;string&nbsp;or&nbsp;number&nbsp;to&nbsp;a&nbsp;floating&nbsp;point&nbsp;number,&nbsp;if&nbsp;possible.</tt></small></dl>
+ <dl><dt><a name="-getint"><strong>getint</strong></a> = int(...)<dd><small><tt>int(x[,&nbsp;base])&nbsp;-&gt;&nbsp;integer<br>
+&nbsp;<br>
+Convert&nbsp;a&nbsp;string&nbsp;or&nbsp;number&nbsp;to&nbsp;an&nbsp;integer,&nbsp;if&nbsp;possible.&nbsp;&nbsp;A&nbsp;floating&nbsp;point<br>
+argument&nbsp;will&nbsp;be&nbsp;truncated&nbsp;towards&nbsp;zero&nbsp;(this&nbsp;does&nbsp;not&nbsp;include&nbsp;a&nbsp;string<br>
+representation&nbsp;of&nbsp;a&nbsp;floating&nbsp;point&nbsp;number!)&nbsp;&nbsp;When&nbsp;converting&nbsp;a&nbsp;string,&nbsp;use<br>
+the&nbsp;optional&nbsp;base.&nbsp;&nbsp;It&nbsp;is&nbsp;an&nbsp;error&nbsp;to&nbsp;supply&nbsp;a&nbsp;base&nbsp;when&nbsp;converting&nbsp;a<br>
+non-string.</tt></small></dl>
+</td></tr></table>
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;&nbsp;</td>
+<td width="100%"><strong>ACTIVE</strong> = 'active'<br>
+<strong>ALL</strong> = 'all'<br>
+<strong>ANCHOR</strong> = 'anchor'<br>
+<strong>ARC</strong> = 'arc'<br>
+<strong>BASELINE</strong> = 'baseline'<br>
+<strong>BEVEL</strong> = 'bevel'<br>
+<strong>BOTH</strong> = 'both'<br>
+<strong>BOTTOM</strong> = 'bottom'<br>
+<strong>BROWSE</strong> = 'browse'<br>
+<strong>BUTT</strong> = 'butt'<br>
+<strong>BufferType</strong> = &lt;type 'buffer'&gt;<br>
+<strong>BuiltinFunctionType</strong> = &lt;type 'builtin_function_or_method'&gt;<br>
+<strong>BuiltinMethodType</strong> = &lt;type 'builtin_function_or_method'&gt;<br>
+<strong>CASCADE</strong> = 'cascade'<br>
+<strong>CENTER</strong> = 'center'<br>
+<strong>CHAR</strong> = 'char'<br>
+<strong>CHECKBUTTON</strong> = 'checkbutton'<br>
+<strong>CHORD</strong> = 'chord'<br>
+<strong>COMMAND</strong> = 'command'<br>
+<strong>CURRENT</strong> = 'current'<br>
+<strong>ClassType</strong> = &lt;type 'class'&gt;<br>
+<strong>CodeType</strong> = &lt;type 'code'&gt;<br>
+<strong>ComplexType</strong> = &lt;type 'complex'&gt;<br>
+<strong>DISABLED</strong> = 'disabled'<br>
+<strong>DictType</strong> = &lt;type 'dictionary'&gt;<br>
+<strong>DictionaryType</strong> = &lt;type 'dictionary'&gt;<br>
+<strong>E</strong> = 'e'<br>
+<strong>END</strong> = 'end'<br>
+<strong>EW</strong> = 'ew'<br>
+<strong>EXCEPTION</strong> = 8<br>
+<strong>EXTENDED</strong> = 'extended'<br>
+<strong>EllipsisType</strong> = &lt;type 'ellipsis'&gt;<br>
+<strong>FALSE</strong> = 0<br>
+<strong>FIRST</strong> = 'first'<br>
+<strong>FLAT</strong> = 'flat'<br>
+<strong>FileType</strong> = &lt;type 'file'&gt;<br>
+<strong>FloatType</strong> = &lt;type 'float'&gt;<br>
+<strong>FrameType</strong> = &lt;type 'frame'&gt;<br>
+<strong>FunctionType</strong> = &lt;type 'function'&gt;<br>
+<strong>GROOVE</strong> = 'groove'<br>
+<strong>HORIZONTAL</strong> = 'horizontal'<br>
+<strong>INSERT</strong> = 'insert'<br>
+<strong>INSIDE</strong> = 'inside'<br>
+<strong>InstanceType</strong> = &lt;type 'instance'&gt;<br>
+<strong>IntType</strong> = &lt;type 'int'&gt;<br>
+<strong>LAST</strong> = 'last'<br>
+<strong>LEFT</strong> = 'left'<br>
+<strong>LambdaType</strong> = &lt;type 'function'&gt;<br>
+<strong>ListType</strong> = &lt;type 'list'&gt;<br>
+<strong>LongType</strong> = &lt;type 'long int'&gt;<br>
+<strong>MITER</strong> = 'miter'<br>
+<strong>MOVETO</strong> = 'moveto'<br>
+<strong>MULTIPLE</strong> = 'multiple'<br>
+<strong>MethodType</strong> = &lt;type 'instance method'&gt;<br>
+<strong>ModuleType</strong> = &lt;type 'module'&gt;<br>
+<strong>N</strong> = 'n'<br>
+<strong>NE</strong> = 'ne'<br>
+<strong>NO</strong> = 0<br>
+<strong>NONE</strong> = 'none'<br>
+<strong>NORMAL</strong> = 'normal'<br>
+<strong>NS</strong> = 'ns'<br>
+<strong>NSEW</strong> = 'nsew'<br>
+<strong>NUMERIC</strong> = 'numeric'<br>
+<strong>NW</strong> = 'nw'<br>
+<strong>NoneType</strong> = &lt;type 'None'&gt;<br>
+<strong>OFF</strong> = 0<br>
+<strong>ON</strong> = 1<br>
+<strong>OUTSIDE</strong> = 'outside'<br>
+<strong>PAGES</strong> = 'pages'<br>
+<strong>PIESLICE</strong> = 'pieslice'<br>
+<strong>PROJECTING</strong> = 'projecting'<br>
+<strong>RADIOBUTTON</strong> = 'radiobutton'<br>
+<strong>RAISED</strong> = 'raised'<br>
+<strong>READABLE</strong> = 2<br>
+<strong>RIDGE</strong> = 'ridge'<br>
+<strong>RIGHT</strong> = 'right'<br>
+<strong>ROUND</strong> = 'round'<br>
+<strong>S</strong> = 's'<br>
+<strong>SCROLL</strong> = 'scroll'<br>
+<strong>SE</strong> = 'se'<br>
+<strong>SEL</strong> = 'sel'<br>
+<strong>SEL_FIRST</strong> = 'sel.first'<br>
+<strong>SEL_LAST</strong> = 'sel.last'<br>
+<strong>SEPARATOR</strong> = 'separator'<br>
+<strong>SINGLE</strong> = 'single'<br>
+<strong>SOLID</strong> = 'solid'<br>
+<strong>SUNKEN</strong> = 'sunken'<br>
+<strong>SW</strong> = 'sw'<br>
+<strong>SliceType</strong> = &lt;type 'slice'&gt;<br>
+<strong>StringType</strong> = &lt;type 'string'&gt;<br>
+<strong>TOP</strong> = 'top'<br>
+<strong>TRUE</strong> = 1<br>
+<strong>TclError</strong> = 'TclError'<br>
+<strong>TclVersion</strong> = 8.3000000000000007<br>
+<strong>TkVersion</strong> = 8.3000000000000007<br>
+<strong>TracebackType</strong> = &lt;type 'traceback'&gt;<br>
+<strong>TupleType</strong> = &lt;type 'tuple'&gt;<br>
+<strong>TypeType</strong> = &lt;type 'type'&gt;<br>
+<strong>UNITS</strong> = 'units'<br>
+<strong>UnboundMethodType</strong> = &lt;type 'instance method'&gt;<br>
+<strong>UnicodeType</strong> = &lt;type 'unicode'&gt;<br>
+<strong>VERTICAL</strong> = 'vertical'<br>
+<strong>W</strong> = 'w'<br>
+<strong>WORD</strong> = 'word'<br>
+<strong>WRITABLE</strong> = 4<br>
+<strong>X</strong> = 'x'<br>
+<strong>XRangeType</strong> = &lt;type 'xrange'&gt;<br>
+<strong>Y</strong> = 'y'<br>
+<strong>YES</strong> = 1<br>
+<strong>__file__</strong> = '/usr/local/lib/python2.1/site-packages/treewidgets/canvastree.pyc'<br>
+<strong>__name__</strong> = 'treewidgets.canvastree'</td></tr></table>
+</body></html>
