@@ -809,7 +809,7 @@ def count(motif,pdb):
         editdist.append(proutils.levenshteinDistance(sub,ordered))
     mini = min(editdist)
     maxi = max(editdist)
-    print "motif ",motif," mini ",mini," maxi ",maxi
+    #print "motif ",motif," mini ",mini," maxi ",maxi
     if (residuesl < 6 and mini > 0) or (residuesl < 12 and mini > 1) or (residuesl < 18 and mini > 2) or mini > 3:
         return None
     #glb.GUI.motifs['csvprep'][pdb][motif]['levdistrange'] = '{0}-{1}'.format(mini,maxi) if mini<maxi else mini
@@ -936,11 +936,7 @@ def motifchecker(setChoice, rmsdchoice, ecchoices):
                 motifaccept = False;  
             if motifEC4 != '-' and motifEC4 != '' and ecchoices[3] != '' and int(motifEC4) != int(ecchoices[3]):
                 motifaccept = False;
-            if motifaccept != True :
-                #print "rejected EC class of "+motif  
-            else:
-                
-                
+            if motifaccept != False:
                 # List of motif loading errors is no longer stored inside motif dictionary
     
                 # Determine whether or not we have a match
