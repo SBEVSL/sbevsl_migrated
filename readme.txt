@@ -1,5 +1,5 @@
 README
-ProMOL (C) Copyright 2004-2013
+ProMOL (C) Copyright 2004-2014
 Charlie Westin, Brett Hanson & Paul Craig
 GPL, No Warranty
 
@@ -8,8 +8,8 @@ Monday, July 25, 2011
 
 Based on Maddy's and Mario Rosa's versions
 
-5.0 RC 2 by the SBEVSL team, see the User's Guide
-Friday, 19 April 2013 -- HJB
+5.3-r362 by the SBEVSL team, see the User's Guide
+Thursday, 24 July 2014 -- HJB
 
 Special Thanks to the following for their contributions to ProMOL:
 Laura Grell, Chris Parkin, T.J. Esposito, C. Wischmeyer
@@ -81,7 +81,7 @@ file depends on your operating system.
 On Unix or Linux systems, or using MINGW under Windows you may unpack the
 tarball with
 
-gunzip < ProMOL-5.1-r247.tar.gz | tar xvf -
+gunzip < ProMOL-5.3-r362.tar.gz | tar xvf -
 
 Windows and Macintosh systems may have a native application that will expand
 your .tar.gz or .zip files; if not you may wish to consider using Stuffit
@@ -95,7 +95,7 @@ not be installed by default.
 
 To install ProMOL, copy ProMol.py and the folder ProMol into the correct
 place in the directory tree used by PyMOL for plugins.  For example, for
-PyMOL 1.4.1 under Microsoft Windows:
+PyMOL 1.7.1 under Microsoft Windows:
 
 C:\Program Files\PyMol\modules\pmg_tk\startup\
 
@@ -197,7 +197,11 @@ categories will be presented and compared, along with suggestions for
 implementing more effective alignment strategies with the motif tool in ProMOL.
 
 =========================================================================
-[Update by current developers: there are 440 motifs as of July 20, 2011.]
+[Update by current developers: there are now several sets of motifs that
+may be individually selected as of 24 July 2014:  The P-set of hand
+generated motifs, the A-set of automatically generated motifs,
+the M-set of motifs with metal ions and amino acids, and the R-set
+of other metal ion motifs.] 
 =========================================================================
 
 The previous developers of ProMOL had incorporated a modified version of the
@@ -241,6 +245,350 @@ We believe it no longer applies to anything in ProMOL.
 =========================================================================
 
 Change log:
+
+
+Revision 362
+Modified Thursday, July 24, 2014 by Herbert J. Bernstein.
+
+Update to algorithm 1.2, changing Levenshtein distance
+filter to be based on the minimum distance relative to
+the length os the motif rather than the maximum.
+Change the background for alignment images to white.
+Update the Users Guide as editied by T. McKay.
+
+Revision 347
+Modified Sunday, July 13, 2014 by Herbert J. Bernstein
+
+Remove pre-installed U set motifs
+Add latest metal ion motifs
+Add buttons to select Metal Amino and
+Metal Other to select M set and R set.
+Add a draft 5.3 windows installer
+  HJB merging KVAS r346 branch into trunk
+
+Revision 305
+Modified Tuesday, June 24, 2014 by Herbert J. Bernstein
+
+Correct index error in RMSD reporting in EC coce changes
+in motif.py
+
+Revision 241
+Modified Wednesday, Novembe 20, 2013
+
+Cameron Baker's updated proutils
+
+Revision 228
+Modified Monday, October 28, 2013 by Herbert J. Bernstein
+
+Temporary patches
+  1.  Display non-bonded atoms as small balls -- HJB
+  2.  Cut off Lev. dist. at 1 -- KB
+
+Revision 224
+Modified Friday, June 21, 2013 by Herbert J. Bernstein
+
+Release 224 fix -- require at least 2 residues in a match
+Fix by MK and HJB
+
+Revision 219
+Modified Sunday, April 21, 2013 by Herbert J. Bernstein
+
+Update installer for A_ motifs, version and readme to r219
+
+Revision 218
+Modified Sunday, April 21, 2013 by Herbert J. Bernstein
+
+Update installer and readme for r218
+
+Revision 217
+Modified Sunday, April 21, 2013 by Herbert J. Bernstein
+
+Add A_ set and related commands -- MO
+
+Revision 214
+Modified Friday, April 19, 2013 by Herbert J. Bernstein
+
+Make tagged ProMOL-5.0 release 
+
+Revision 213
+Modified Friday, April 19, 2013 by Herbert J. Bernstein
+
+Post release fixes to allow NSIS installer to build and
+to make the revisio visible. -- HJB
+
+Revision 212
+Modified Friday, April 19, 2013 by Herbert J. Bernstein
+
+Update to r212 for release -- HJB
+
+Revision 211
+Modified Friday, April 19, 2013 by Herbert J. Bernstein
+
+Update User Guide pdf -- HJB
+
+Revision 210
+Modified Friday, April 19, 2013 by Herbert J. Bernstein
+
+Update NSIS installer to r210
+Update users guide as per MK changes
+Remove materials that may be a GPL issue.
+  -- HJB
+
+Revision 209
+Modified Thursday, April 11, 2013 by Herbert J. Bernstein
+
+Updated version of MK fix for Jess motifs being used in all
+Put 5.0-r209 version information everywhere
+Update some comments -- HJB
+
+Revision 208
+Modified Friday. February 22, 2013 by Herbert J. Bernstein
+
+Fix bug in blank chain handling for fetch PDB
+Update version to 5.0-r208 -- HJB
+
+Revision 207
+Modified Friday. February 15, 2013 by Herbert J. Bernstein
+
+Remove old nsi -- HJB
+
+Revision 206
+Modified Friday. February 15, 2013 by Herbert J. Bernstein
+
+Update trunk to rev 203 from MO branch -- HJB
+
+Revision 205
+Modified Friday. February 15, 2013 by Herbert J. Bernstein
+
+Bring trunk up to rev 202 from HJB branch -- HJB
+
+Revision 202
+Modified Thursday, November 15, 2012
+
+Suppress use of Jess motifs unless environment variable PROMOL_JESS is 
+defined -- HJB
+
+Revision 201
+Modified Sunday, July 22, 2012 by Herbert J. Bernstein
+
+Changes to increase readability of results -- HJB
+
+Revision 194
+Modified Saturday June 09, 2012 by Herbert J. Bernstein
+
+Update installer script to check directory and set version at 194 -- HJB
+
+Revision 193
+Modified Thursday June 07, 2012 by Herbert J. Bernstein
+
+Update JESS motifs -- extended shell to compensate for
+imprecision in selection logic.  No shells. -- HJB
+
+Revision 191
+Modified Monday May 28, 2012 by Herbert J. Bernstein
+
+Change Jess Motifs to sphere, not shell -- HJB
+
+Revision 190
+Modified Monday May 28, 2012 by Herbert J. Bernstein
+
+Restore Help directory -- HJB
+
+Revision 189
+Modified Monday May 28, 2012 by Herbert J. Bernstein
+
+Restore AminoPics -- HJB
+
+Revision 188
+Modified Monday May 28, 2012 by Herbert J. Bernstein
+
+Update to Jess motifs and prepare as r188 release -- HJB
+
+Revision 187
+Modified Saturday May 26, 2012 by Herbert J. Bernstein
+
+Fix missing line to populate CSV file. -- HJB
+
+Revision 186
+Modified Friday May 25, 2012 by Herbert J. Bernstein
+
+Update version and nsi installer for r186 -- HJB
+
+Revision 185
+Modified Friday May 25, 2012 by Herbert J. Bernstein
+
+Fix handling of selector errors in bad motifs -- HJB
+
+Revision 184
+Modified Thursday May 24, 2012 by Herbert J. Bernstein
+
+Allow general code in Jab_ Jfa_ motifs -- HJB
+
+Revision 183
+Modified Thursday May 24, 2012 by Herbert J. Bernstein
+
+Change .format to % for python 2.5 use -- HJB
+
+Revision 182
+Modified Thursday, May 24, 2012 by Herbert J. Bernstein
+
+Pick of MM RMSD code and bring up to same level on all other code, then
+back convert to Python 2.5 (changing with ... as xxx
+  xxx = ...
+  try:
+     xxx.__enter__()
+  finally:
+     xxx.__exit__()
+-- HJB
+
+Revision 178
+Modified Monday, April 30, 2012 by Herbert J. Bernstein
+
+Add NSIS installer script for windows -- HJB
+
+Revision 177
+Modified Tuesday, April 24, 2012 by Herbert J. Bernstein
+
+Revised JESS motifs, thin shell, default 0.1 Angstrom -- HJB
+
+Revision 176
+Modified Tuesday, April 03, 2012 by Herbert J. Bernstein 
+
+Update motifs with 2.8A shell -- HJB
+
+Revision 175
+Modified Wednesday, March 28, 2012 by Herbert J. Bernstein
+
+Updated motif for thin shells using around instead of within
+
+Revision 174
+Modified Tuesday, March 27, 2012 by Herbert J. Bernstein
+
+Fix bad selections -- HJB
+
+Revision 173
+Modified Tuesday, March 27, 2012  by Herbert J. Bernstein
+
+correct typo in promolglobals
+change to Jess motifs using shells instead of spheres -- HJB
+
+Revision 172
+Modified Monday, March 26, 2012 by Madolyn MacDonald
+
+RMSD implemented, a few bugs still need to be fixed
+
+Revision 171
+Modified Thursday, March 22, 2012 by Herbert J. Bernstein
+
+Backconvert promolglobals to allow it to run with python 2.5 by replacing
+with and .format with older code -- HJB
+
+Revision 170
+Modified Thursday, March 22, 2012 by Herbert J. Bernstein
+
+Backconvert 4.2 motif.py to work with python 2.5 by replacing
+with clauses by try...finally clauses, and replacing .format
+with % -- HJB
+
+Revision 167
+Modified Monday, February 20, 2012 by Cyprian Corwin
+
+Changed Random PDB selection to only download the master list once per 
+program start, like it did before 4.2.  In 4.2, due to the removal of the 
+persistent database class, the download began occcuring each time the 
+button is clicked (my fault).  This revision introduces a trivial 
+change that eliminates many of these unneccessary data downloads; 
+more importantly, the code present in 4.2 appears to max out the number 
+of connections to the server as well, which should be fixed here too.
+
+Revision 164
+Modified Thursday, February 16, 2012 by Herbert J. Bernstein
+
+Set up framework for installer development, starting with work
+by Barry LaPierre at Dowling in Fall 2011 -- HJB
+
+Revision 160
+Modified Tuesday, December 13, 2011 by Cyprian Corwin
+
+r160: Restored Alex's algorithm version constant and include it in 
+CSV headers; automatically hide the PyMOL Viewer window when starting 
+a search and restore it when finished; changed format of version 
+string to a simple SVN revision number for now.
+
+Revision 159
+Modified Friday, December 9, 2011 by Cyprian Corwin
+
+4.2.12.  Thoroughly commented promolglobals.py; removed 2 unused 
+dictionaries; fixed 2 spots where in a previous revision I changed 
+the name of something but missed changing it in 2 other spots; improved 
+motif maker file closing code.
+
+Revision 158
+Modified Thursday, December 8, 2011 by Cyprian Corwin
+
+ProMOL 4.2.11.  Updated funding info, restored on demand full CSV 
+export, changed mode of all file operations from binary to text, 
+removed help button, and replaced tabs with spaces in splitRespectingQuotes().
+
+Revision 157
+Modified Friday, December 2, 2011 by Cyprian Corwin
+
+ProMOL 4.2.10.  The list of changes is extensive, and will be described 
+in detail in a document soon to be sent out to the SBEVSL mailing list.
+
+Revision 156
+Modified Saturday, August 27, 2011 by Cyprian Corwin
+
+Version 4.2.9.  Commented out Optimize button on Motif Maker, since 
+the algorithm it uses has a problem and Greg Dodge said it was not needed.
+
+Revision 155
+Modified Saturday, August 27, 2011 by Cyprian Corwin
+
+Version 4.2.8.  Created subfolder in OFFSITE user data folder just 
+for automatically created CSVs.  Reworked CSV export user interface.  
+Implemented opening of new CSV folder on demand.  Also replaced a 
+tab with spaces.
+
+
+Revision 154 
+Modified Wednesday, August 10, 2011 by Cyprian Corwin
+
+4.2.7: Restored order recommendation button in motif maker (now 
+labeled Optimize), however it currently deletes multiple rows 
+containing the same amino acid even at different locations/chains.  
+Removed duplicate copy of GPL.  Moved version string into its own 
+file.
+
+Revision 153
+Modified Tuesday, Aug 09 2011 by Cyprian Corwin
+
+ProMOL 4.2.6 - added basic support for row reordering in Motif Maker.
+
+Revision 152
+Modified Friday, Aug 05, 2011 by Cyprian Corwin
+
+These are the changes for 4.2.5, which is a development version.  
+Most of the files that make up ProMOL were modified, and the 
+change list is rather extensive, so PLEASE read the updated 
+change log near the bottom of the readme file.  (The file promol-
+changes has not been updated since 4.2.0.)  This version should be 
+considered an experimental work in progress, and at least one feature 
+has been temporarily disabled.  It still needs to be thoroughly tested.  
+Also, please note that in at least one file, the standard diff utility, 
+and tools that depend on it, does not properly match up the changes, 
+so it appears to be more different than it is.
+
+Revusuib 164
+Modified Thursday, February 16, 2012 by Herbert J. Bernstein
+Set up framework for installer development, starting with work
+by Barry LaPierre at Dowling in Fall 2011 -- HJB
+
+Revision 151
+Modified Tuesday, July 26, 2011 by Herbert J. Bernstein
+
+Update to Release 4.2
+
 Revision 149
 Modified Monday, July 25, 2011 by Cyprian Corwin and Greg Dodge
 Version 4.2.  Many bug fixes, a few enhancements, and code cleanup
