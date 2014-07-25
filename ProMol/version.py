@@ -1,7 +1,7 @@
 # PLEASE try to keep this constant up to date with each commit!
-VERSION = '5.3-r360'
+VERSION = '5.3-r364'
 
-ALG_VERSION = '1.1' 
+ALG_VERSION = '1.2' 
 
 # The following variable controls whether this version includes
 # use of the JESS motifs

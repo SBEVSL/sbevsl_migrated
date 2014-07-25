@@ -289,6 +289,7 @@ def showContent(node):
                 glb.MOTIFS[motifName]['loci']))
             # Do final display
             cmd.hide('everything', 'all')
+            cmd.bg_color('white')
             cmd.show('sticks', motifSubsetName)
             cmd.show('spheres',motifSubsetName)
             cmd.set('sphere_scale','0.15',motifSubsetName)
