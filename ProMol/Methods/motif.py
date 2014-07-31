@@ -370,9 +370,36 @@ def storeSetChoice(): #stores button value, action of the select button
     selectedSet = glb.GUI.motifs['var'].get()
     rmsdchoice = glb.GUI.motifs['varrmsd'].get()
     ecchoice1 = glb.GUI.motifs['ec1'].get()
+    if ecchoice1 == '' or int(ecchoice1) == 0:
+        ecchoice1 = ''
+        glb.GUI.motifs['ec1'].set('')
+        glb.GUI.motifs['ec2'].set('')
+        glb.GUI.motifs['ec2button'].config(state = DISABLED)
+        glb.GUI.motifs['ec3'].set('')
+        glb.GUI.motifs['ec3button'].config(state = DISABLED)
+        glb.GUI.motifs['ec4'].set('')
+        glb.GUI.motifs['ec4button'].config(state = DISABLED)
     ecchoice2 = glb.GUI.motifs['ec2'].get()
+    if ecchoice2 == '' or int(ecchoice2) == 0:
+        ecchoice2 = ''
+        glb.GUI.motifs['ec2'].set('')
+        glb.GUI.motifs['ec2button'].config(state = DISABLED)
+        glb.GUI.motifs['ec3'].set('')
+        glb.GUI.motifs['ec3button'].config(state = DISABLED)
+        glb.GUI.motifs['ec4'].set('')
+        glb.GUI.motifs['ec4button'].config(state = DISABLED)
     ecchoice3 = glb.GUI.motifs['ec3'].get()
+    if ecchoice3 == '' or int(ecchoice3) == 0:
+        ecchoice3 = ''
+        glb.GUI.motifs['ec3'].set('')
+        glb.GUI.motifs['ec3button'].config(state = DISABLED)
+        glb.GUI.motifs['ec4'].set('')
+        glb.GUI.motifs['ec4button'].config(state = DISABLED)
     ecchoice4 = glb.GUI.motifs['ec4'].get()
+    if ecchoice4 == '' or int(ecchoice4) == 0:
+        ecchoice4 = ''
+        glb.GUI.motifs['ec4'].set('')
+        glb.GUI.motifs['ec4button'].config(state = DISABLED)
     ecchoices = [ecchoice1, ecchoice2, ecchoice3, ecchoice4]
     motifchecker(selectedSet, rmsdchoice, ecchoices)
 
@@ -561,7 +588,19 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
     EC3 = Entry(glb.GUI.motifs['root'], state=DISABLED, textvariable = glb.GUI.motifs['ec3'], width=2)
     ECLabel4 = Label(glb.GUI.motifs['root'], text=".")
     EC4 = Entry(glb.GUI.motifs['root'], state=DISABLED, textvariable = glb.GUI.motifs['ec4'], width=2)
-    
+
+    glb.GUI.motifs['ec1button'] = EC1
+    glb.GUI.motifs['ec2button'] = EC2
+    glb.GUI.motifs['ec3button'] = EC3
+    glb.GUI.motifs['ec4button'] = EC4
+
+    if glb.GUI.motifs['ec2'].get != '':
+        EC2.config(state = NORMAL)
+    if glb.GUI.motifs['ec3'].get != '':
+        EC3.config(state = NORMAL)
+    if glb.GUI.motifs['ec4'].get != '':
+        EC4.config(state = NORMAL)
+
     EClabel.pack(anchor = W)
     ECLabel1.pack(side=LEFT)
     EC1.pack(side=LEFT)
