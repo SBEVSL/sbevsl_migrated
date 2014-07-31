@@ -8,8 +8,8 @@ Monday, July 25, 2011
 
 Based on Maddy's and Mario Rosa's versions
 
-5.3-r364 by the SBEVSL team, see the User's Guide
-Thursday, 24 July 2014 -- HJB
+5.3-r367 by the SBEVSL team, see the User's Guide
+Thursday, 31 July 2014 -- HJB
 
 Special Thanks to the following for their contributions to ProMOL:
 Laura Grell, Chris Parkin, T.J. Esposito, C. Wischmeyer
@@ -81,7 +81,7 @@ file depends on your operating system.
 On Unix or Linux systems, or using MINGW under Windows you may unpack the
 tarball with
 
-gunzip < ProMOL-5.3-r364.tar.gz | tar xvf -
+gunzip < ProMOL-5.3-r367.tar.gz | tar xvf -
 
 Windows and Macintosh systems may have a native application that will expand
 your .tar.gz or .zip files; if not you may wish to consider using Stuffit
@@ -246,6 +246,23 @@ We believe it no longer applies to anything in ProMOL.
 
 Change log:
 
+Revision 367
+Modified Thursday, July 31, 2014 by Herbert J. Bernstein
+
+Make state of EC number entry boxes consistent with their content.
+If there is a number is it enabled.  If there is a bank or zero
+and we are below the top level it is disabled.  This fixes a bug
+report by Talia McKay.
+
+Revision 364
+Modified Thursday, July 24, 2014 by Herbert J. Bernstein
+
+Change background color to white on alignment
+
+Revision 363
+Modified Thursday, July 24, 2014 by Herbert J. Bernstein
+
+Update readme.txt, version.py, and installer to r363
 
 Revision 362
 Modified Thursday, July 24, 2014 by Herbert J. Bernstein.
