@@ -444,7 +444,8 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
     rb4 = Radiobutton(glb.GUI.motifs['root'], text="All Motifs", variable = glb.GUI.motifs['var'], value = 4, height = 2)
     rb5 = Radiobutton(glb.GUI.motifs['root'], text="User Motifs", variable = glb.GUI.motifs['var'], value = 5, height = 2)
     rbA = Radiobutton(glb.GUI.motifs['root'], text="A set", variable = glb.GUI.motifs['var'], value = 6, height = 2)
-    rbB = Radiobutton(glb.GUI.motifs['root'], text="M set", variable = glb.GUI.motifs['var'], value = 7, height = 2)
+    rbB = Radiobutton(glb.GUI.motifs['root'], text="Metal Amino", variable = glb.GUI.motifs['var'], value = 7, height = 2)
+    rbC = Radiobutton(glb.GUI.motifs['root'], text="Metal Other", variable = glb.GUI.motifs['var'], value = 8, height = 2)
 
     #added 2/19
     rb6 = Radiobutton(glb.GUI.motifs['root'], text="Yes (will take longer)", variable = glb.GUI.motifs['varrmsd'], value = 1,  height = 2)
@@ -463,6 +464,7 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
     rb1.pack(anchor = W)
     rbA.pack(anchor = W)
     rbB.pack(anchor = W)
+    rbC.pack(anchor = W)
     if glb.USE_JESS:
         rb2.pack(anchor = W)
     #rb3.pack(anchor = W)
@@ -737,6 +739,8 @@ def count(motif,pdb):
         editdist.append(proutils.levenshteinDistance(sub,ordered))
     mini = min(editdist)
     maxi = max(editdist)
+    if maxi > 1 and (motif[0]=='M' or motif[0]=='R') :
+        return None
     #glb.GUI.motifs['csvprep'][pdb][motif]['levdistrange'] = '{0}-{1}'.format(mini,maxi) if mini<maxi else mini
     glb.GUI.motifs['csvprep'][pdb][motif]['levdistrange'] = '%s-%s'%(mini,maxi) if mini<maxi else mini
     # Removed storage of precision factor as it is the same for the entire search
@@ -792,7 +796,8 @@ def motifchecker(setChoice, rmsdchoice, ecchoices):
     4: ('All', lambda key: glb.USE_JESS or key[0] != 'J'),
     5: ('U_Set', lambda key: key[0] == 'U'),
     6: ('A_Set', lambda key: key[0] == 'A'),
-    7: ('M_Set', lambda key: key[0] == 'M')}
+    7: ('M_Set', lambda key: key[0] == 'M'),
+    8: ('R_Set', lambda key: key[0] == 'R')}
     setName = sets[setChoice][0]
 
     # This is a Python list comprehension
@@ -903,9 +908,14 @@ def motifchecker(setChoice, rmsdchoice, ecchoices):
                     MotifCaller(tag[1])
                     try:
                         rmsds = proutils.getRMSD(motifName, queryCode, motifPDBCode)#
+                        #data1 = cmd.align('match_in_%s'%(motifPDBCode), 'match_in_%s'%(queryCode))
+                        #score = proutils.score(data1[0],proutils.levenshteinDistance(motifPDBCode,queryCode),data1[6])
                     except:
                         rmsds=[-1,-1,-1]
+                        #data1 = cmd.align('match_in_%s'%(motifPDBCode), 'match_in_%s'%(queryCode))
+                        #score = proutils.score(data1[0],proutils.levenshteinDistance(motifPDBCode,queryCode),data1[6])
                     glb.GUI.motifs['csvprep'][pdb][motifName]['rmsd'] = rmsds
+                    #glb.GUI.motifs['csvprep'][pdb][motifName]['score'] = score
                    
                 #count1 = count1+1
                 #rmsdBar=(float(count1)/(len(pdbs)+len(found)-1))*100
@@ -946,17 +956,21 @@ def motifchecker(setChoice, rmsdchoice, ecchoices):
             struct['children'][i]['children'].append({'type':'Subsection','name':'EC #4','children':[]})
             struct['children'][i]['children'].append({'type':'Subsection','name':'EC #5','children':[]})
             struct['children'][i]['children'].append({'type':'Subsection','name':'EC #6','children':[]})
+            struct['children'][i]['children'].append({'type':'Subsection','name':'Pfam','children':[]})
             
         oldpdb = query
         tag = motif.split(': ')
          
         if len(tag) > 1:
             tokens = tag[1].split('_')
-            subsection = int(tokens[2])
+            try:
+                subsection = int(tokens[2])
+            except:
+                #Pfam designation
+                subsection = 7
             motifName = tag[1]
             struct['children'][i]['children'][subsection-1]['children'].append({'type':'Subsection','name':motif,'children':[]})
             j=len(struct['children'][i]['children'][subsection-1]['children'])-1
-            #struct['children'][i]['children'][subsection-1]['children'].append({'type':'Children','name':'Hits','children':[]})
             
             
             if rmsdchoice is 1:
@@ -967,6 +981,8 @@ def motifchecker(setChoice, rmsdchoice, ecchoices):
                         struct['children'][i]['children'][subsection-1]['children'][j]['children'].append({'type':'Subsection','name':'RMSD alpha:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][1], 4))})
                     if len(glb.GUI.motifs['csvprep'][query][motifName]['rmsd']) > 2:
                         struct['children'][i]['children'][subsection-1]['children'][j]['children'].append({'type':'Subsection','name':'RMSD alpha & beta:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['rmsd'][2], 4))})
+##                    if len(glb.GUI.motifs['csvprep'][query][motifName]['score']) > 0:
+##                        struct['children'][i]['children'][subsection-1]['children'][j]['children'].append({'type':'Subsection','name':'Score:  '+ repr(round(glb.GUI.motifs['csvprep'][query][motifName]['score'], 4))})
                 except:
                     print "indexing error at i = ", i, ", j = ", j, ", subsection = ", subsection
              
@@ -1067,7 +1083,7 @@ class MotifMaker:
     def openMotifForSaving(self):
         if os.path.exists(glb.pathmaker((self.name,'.py'),root=glb.USRMOTIFSFOLDER)) or os.path.exists(glb.pathmaker((self.name,'.py'),root=glb.MOTIFSFOLDER)):
             answer = askyesno('Motif Exists', 
-            'A motif has already been made for EC:%s on PDB:%s.\n'%(self.ec,self.pdb)+
+            'A motif has already been made for EC/Pfam:%s on PDB:%s.\n'%(self.ec,self.pdb)+
             'Are you sure you want to replace it?')
             if answer == False:
                  return False
@@ -1217,7 +1233,10 @@ class MotifMaker:
                 eclist = preec.split('.')
                 ec1,ec2,ec3,ec4 = eclist
             except ValueError:
-                self.exceptions += 'Please enter a correct EC code with periods.\n'
+                if len(eclist) != 1:
+                    self.exceptions += 'Please enter a correct EC code with 4 numbers with periods.\n'
+                #else, assume they entered a pfam name
+                continue
             else:
                 if len(ec1) != 1 or int(ec1) < 1 or int(ec1) > 7:
                     self.exceptions += 'The first number in an EC code has to be >= 1 and <= 7.\n'
@@ -1376,7 +1395,7 @@ class MotifMaker:
                            'glu':('CB','CG','CD','OE1','OE2'),
                            'gly':(),
                            'his':('CB','CG','ND1','CD2','CE1','NE2'),
-                           'ile':('CB','CG1','CG2','CD'),
+                           'ile':('CB','CG1','CG2','CD1'),
                            'leu':('CB','CG','CD1','CD2'),
                            'lys':('CB','CG','CD','CE','NZ'),
                            'met':('CB','CG','SD','CE'),
@@ -1487,10 +1506,14 @@ class MotifMaker:
                     ### This loop increments through all the carbons
                     ### in the amino acid we want to find.
                     for eachB in bList:
+                        if cmd.count_atoms(chainlist[e]+'/'+resilist[e]+'/'+eachB) != 1:
+                            continue
                         ### This loop increments through all the carbons
                         ### in the other amino acids that we are want to
                         ### compare with.
                         for eachC in cList:
+                            if cmd.count_atoms(chainlist[d]+'/'+resilist[d]+'/'+eachC) != 1:
+                                continue
                             ### Gets the distance between our atoms in our selected amino acids.
                             r = cmd.get_distance(chainlist[e]+'/'+resilist[e]+'/'+eachB,chainlist[d]+'/'+resilist[d]+'/'+eachC)
                             ### The precision factor
