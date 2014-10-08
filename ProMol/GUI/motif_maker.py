@@ -18,7 +18,7 @@ def initialise():
     glb.GUI.motif_maker['pdb'] = tk.Entry(headerFrame, width=10)
     glb.GUI.motif_maker['pdb'].pack(side=tk.LEFT)
     
-    lec = tk.Label(headerFrame, text='     EC #:')
+    lec = tk.Label(headerFrame, text='     EC # or Pfam name:')
     lec.pack(side=tk.LEFT)
     
     glb.GUI.motif_maker['ec'] = tk.Entry(headerFrame, width=10)
