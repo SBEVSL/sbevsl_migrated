@@ -1,0 +1,38 @@
+ Detected OpenGL version 2.0 or greater. Shaders available.
+ Detected GLSL version 4.30.
+ Adjusting settings to improve performance for ATI cards.
+ OpenGL quad-buffer stereo 3D detected and enabled.
+PyMOL>run C:\Python27\Lib\site-packages\pmg_tk\startup\ProMol\ParallelProMol\TaskExecutor.py,main
+No module named resource
+TaskExecutor.py has been started in PyMOL.exe.
+signal only works in main thread
+ MatchAlign: aligning residues (2 vs 4)...
+ ExecutiveAlign: 9 atoms aligned.
+ Executive: RMS =    1.007 (9 to 9 atoms)
+ MatchAlign: aligning residues (2 vs 4)...
+ ExecutiveAlign: 9 atoms aligned.
+ Executive: RMS =    0.994 (9 to 9 atoms)
+ MatchAlign: aligning residues (2 vs 4)...
+ ExecutiveAlign: 9 atoms aligned.
+ Executive: RMS =    0.990 (9 to 9 atoms)
+ MatchAlign: aligning residues (2 vs 8)...
+ ExecutiveAlign: 5 atoms aligned.
+ Executive: RMS =    0.640 (5 to 5 atoms)
+ MatchAlign: aligning residues (2 vs 4)...
+ ExecutiveAlign: 9 atoms aligned.
+ Executive: RMS =    0.994 (9 to 9 atoms)
+ MatchAlign: aligning residues (2 vs 4)...
+ ExecutiveAlign: 9 atoms aligned.
+ Executive: RMS =    0.994 (9 to 9 atoms)
+ MatchAlign: aligning residues (2 vs 4)...
+ ExecutiveAlign: 9 atoms aligned.
+ Executive: RMS =    1.006 (9 to 9 atoms)
+ MatchAlign: aligning residues (2 vs 4)...
+ ExecutiveAlign: 9 atoms aligned.
+ Executive: RMS =    0.985 (9 to 9 atoms)
+ MatchAlign: aligning residues (2 vs 4)...
+ ExecutiveAlign: 9 atoms aligned.
+ Executive: RMS =    1.011 (9 to 9 atoms)
+ MatchAlign: aligning residues (2 vs 4)...
+ ExecutiveAlign: 9 atoms aligned.
+ Executive: RMS =    0.998 (9 to 9 atoms)
