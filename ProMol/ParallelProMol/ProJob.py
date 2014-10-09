@@ -17,6 +17,8 @@ import types
 from threading import Thread, Event, Lock, Semaphore, enumerate as enumThreads
 from ProSocket import sockListenerThread, sockSendRecv
 
+PROMOL_DIR_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 class BaseComputationStep():
     """.. class:: BaseComputationStep
 
@@ -79,6 +81,7 @@ class BaseWorkflow():
 
         """
         for computation in self.computationSteps:
+            print computation.computationName
             if computation(task, **kwargs): continue
             else: return 0
         else: return 1
@@ -92,6 +95,7 @@ class BaseTask(dict):
         cPickle module.
 
     """
+    KEY_ERROR_RETURN_VALUE = 'N/A'
     
     def __init__(self, name='identity', workflow='BaseWorkflow'):
         """.. method:: __init__(self, name='identity', workflow='BaseWorkflow')
@@ -102,6 +106,22 @@ class BaseTask(dict):
         dict.__init__(self)
         self.update({'name' : name,
                      'Workflow' : workflow})
+
+    def __getitem__(self, key):
+        """.. method:: __getitem__(self, key)
+
+            __getitem__ determines how BaseTask accomodates value retrieval of the form:
+
+            'value = BaseTask[key]'
+
+            Overridding __getitem__ allows control over the KeyError behavior of the underlying
+            dictionary when a key is not already present. In this case, instead of raising KeyError,
+            BaseTask will return the value of class variable 'KEY_ERROR_RETURN_VALUE', currently
+            assigned 'N/A'.
+
+        """
+        try: return dict.__getitem__(self, key)
+        except KeyError: return BaseTask.KEY_ERROR_RETURN_VALUE
 
     def serialize(self, protocol=0):
         """.. method:: serialize(self, protocol=0)
@@ -237,12 +257,10 @@ class DefaultProMolTask(BaseTask):
 
         """
         delimiter = ';'
-        keyErrorValue = 'N/A'
         string = ''
         for field in self.resultFields:
-            try: value = `self[field]`
-            except KeyError: value = keyErrorValue
-            string += '%s%s' % (value, delimiter)
+            value = `self[field]`
+            string += '%s%s'%(value, delimiter)
         return string[:-1]
 
 class BaseJobExecutor():
@@ -503,11 +521,13 @@ class DefaultProMolJobExecutor(BaseJobExecutor):
         for serializedTask in loads(resultsStr):
             task = BaseTask.deserialize(serializedTask)
             try:
-                print task['Query PDB ID'], task['Total runtime [sec]']
+                print task['Query PDB ID'], task['Motif'], task['Total runtime [sec]']
+                try: print task['Fetch time [sec]']
+                except: pass
                 print task['IDSpec by residue [# of residues]']
-##                superDiff = task['Super match difference [# of residues]']
-##                ceDiff = task['CEAlign match difference [# of atoms]']
-##                print superDiff, ceDiff
+                superDiff = task['Super match difference [# of residues]']
+                ceDiff = task['CEAlign match difference [# of atoms]']
+                print superDiff, ceDiff
                 pass
                 #if superDiff == 0 or ceDiff > -5: validMotif[task.pdb] = True
             except BaseException as err: print err
@@ -528,7 +548,7 @@ class DefaultProMolJobExecutor(BaseJobExecutor):
             This method should be modified to merge with motif.py.
 
         """
-        outputFile = os.path.join('TestResults','{0}_test.txt'.format(batchName))
+        outputFile = os.path.join(PROMOL_DIR_PATH, 'S_compare' ,'{0}_compare.txt'.format(batchName))
         with open(outputFile ,'w') as fout:
             fout.write(';'.join(DefaultProMolTask.resultFields)+'\n')
             for task in self.result[batchName]:
@@ -570,18 +590,23 @@ class MotifCallerStep(BaseComputationStep):
         returncode = 0
         try:
             if self.currPDB != task['Query PDB ID']:
+                task['Fetch time [sec]'] = clock()
                 self.cmd.reinitialize()
                 self.cmd.fetch(task['Query PDB ID'], async=0, path=self.fetchPath)
+                task['Fetch time [sec]'] = clock() - task['Fetch time [sec]']
                 self.currPDB = task['Query PDB ID']
             self.cmd.hide('everything', 'all')
             self.cmd.remove("all and hydro")
             motif = task['Motif']
+            print motif
             subs = task['Substitutions']
             d = task['Precision factor']
             cmd = self.cmd
             resSelectionSubs = self.resSelectionSubs
             IDSpec = task['IDSpec: Motif Interatomic Distance Spectra'] = {}
-            execfile(task['motifData']['path'])
+            try:
+                execfile(task['motifData']['path'])
+            except BaseException as err: print err
             if (motif not in self.cmd.get_names('all')):
                 print 'motifCaller({0}): motif not in namespace.'.format(motif)
                 raise Warning
@@ -589,20 +614,27 @@ class MotifCallerStep(BaseComputationStep):
                 print 'motifCaller({0}): count is 0.'.format(motif)
                 raise Warning
             else:
-                task['IDSpec by residue [# of residues]'] = {id.split('_',1)[1] : count
+                num_of_residues = 0
+                if motif[0] is 'S':
+                    task['IDSpec by residue [# of residues]'] = {id.split('_',1)[1] : count
                                                              for id, count in task['IDSpec: Motif Interatomic Distance Spectra'].items()
                                                              if isinstance(id, types.StringTypes) and id.startswith('r_')
                                                              }
-                try: task['Chain count [# in structure]'] = len(self.cmd.get_chains(motif))
-                except BaseException as err: print err
-                if reduce(lambda x,y: x+(1 if y else 0), task['IDSpec by residue [# of residues]'].values(), 0) < 2:
+                    num_of_residues = reduce(lambda x,y: x+(1 if y else 0), task['IDSpec by residue [# of residues]'].values(), 0)
+                else:
+                    for resn in set(task['motifData']['resi']):
+                        num_of_residues += cmd.count_atoms('n. %s&%s'%(self.aminoHashTable[resn]['m'][0], motif))
+                if  num_of_residues < 2:
                     print 'motifCaller({0}): fewer than 2 residues'.format(motif)
                     raise Warning
+                try: task['Chain count [# in structure]'] = len(self.cmd.get_chains(motif))
+                except BaseException as err: print err
                 returncode = 1
         except Warning: returncode = 0
         else: pass
         finally:
-            task['MotifCaller() runtime [sec]'] = clock() - task['MotifCaller() runtime [sec]'] 
+            task['MotifCaller() runtime [sec]'] = clock() - task['MotifCaller() runtime [sec]']
+            print returncode
             return returncode
 
     def resSelectionSubs(self, resn, atom=False, subs=False, selection=False):
@@ -624,7 +656,9 @@ class MotifCallerStep(BaseComputationStep):
             subSele = '(%s)'%('|'.join(['(n. %s&r. %s)'%(self.aminoHashTable[r]['m'][atomIndex],r) for r in resnList]))
             if selection: return '(%s&%s)'%(subSele,resn)
             else: return subSele
-        else: return 'n. %s&%s'%(atom,resn) if selection else 'n. %s&r. %s'%(atom,resn)
+        else:
+            #p#print 'n. %s&%s'%(atom,resn) if selection else 'n. %s&r. %s'%(atom,resn) #p#
+            return 'n. %s&%s'%(atom,resn) if selection else 'n. %s&r. %s'%(atom,resn)
 
 class CountLevDistStep(BaseComputationStep):
     """.. class:: CountLevDistStep(BaseComputationStep)
@@ -664,12 +698,13 @@ class CountLevDistStep(BaseComputationStep):
               
         """
         task['count() & levenshteinDistance() runtime [sec]'] = clock()
-        try: task.update(self.count(task['Motif'], task['Query PDB ID'], task['motifData']))
+        try: self.count(task)
+        except BaseException as err: print err
         finally:
             task['count() & levenshteinDistance() runtime [sec]'] = clock() - task['count() & levenshteinDistance() runtime [sec]']
             return 1
 
-    def count(self, motif, pdb, motifData):
+    def count(self, task):
         """.. method:: count(self, motif, pdb, motifData)
 
             Copied/modified to avoid the import statments of motif.py, allowing for execution within
@@ -680,16 +715,17 @@ class CountLevDistStep(BaseComputationStep):
         ordered = []
         orderedchain = {}
         bannedchain = []
-        stored.motif = []
+        self.stored.motif = []
         editdist = []
         self.cmd.iterate(motif, 'stored.motif.append((chain,resn,resi))')
-        residues = motifData['resi'] # glb.MOTIFS[motif]['resi']
+        residues = task['motifData']['resi'] # glb.MOTIFS[motif]['resi']
         residuesl = len(residues)*2
-        results = {'MotifCaller() residues' : [], 'Levenshtein dist. [# of edits]' : ''} # glb.GUI.motifs['csvprep'][pdb][motif]['res'] = []
-        for iteration in stored.motif:
+        task['MotifCaller() residues'] = []
+        task['Levenshtein dist. [# of edits]'] = '' # glb.GUI.motifs['csvprep'][pdb][motif]['res'] = []
+        for iteration in self.stored.motif:
             if last != iteration:
                 last = iteration
-                results['MotifCaller() residues'].append(iteration) # glb.GUI.motifs['csvprep'][pdb][motif]['res'].append(iteration)
+                task['MotifCaller() residues'].append(iteration) # glb.GUI.motifs['csvprep'][pdb][motif]['res'].append(iteration)
                 ordered.append(iteration[1].lower())
                 if iteration[0] not in orderedchain:
                     if iteration[0] not in bannedchain:
@@ -703,9 +739,9 @@ class CountLevDistStep(BaseComputationStep):
         if len(orderedchain) == 0 and residuesl <= len(ordered):
             ##log('count() return None:: len(orderedchain): {0}; residuesl: {1} <= len(ordered): {2}; resList: {3}.'.format(len(orderedchain),
             ##                                                                          residuesl, len(ordered), resList))
-            results['Levenshtein dist. [# of edits]'] += 'N1_' #return None
+            task['Levenshtein dist. [# of edits]'] += 'N1_' #return None
         substitutions = [None]
-        if motif[0] == 'J':
+        if task['Motif'][0] == 'J':
             for c in ('asp','glu','asn','gln','thr','ser'):
                 if c in residues:
                     substitutions = self.createsubs(residues)
@@ -726,13 +762,13 @@ class CountLevDistStep(BaseComputationStep):
         if (residuesl < 6 and mini > 0) or (residuesl < 12 and mini > 1) or \
                (residuesl < 18 and mini > 2) or mini > 3:
             ##log('Count() return None:: residuesl: {0}; mini: {1}; maxi: {2}; resList: {3}.'.format(residuesl, mini, maxi, `resList`))
-            results['Levenshtein dist. [# of edits]']  += 'N2_' #return None
+            task['Levenshtein dist. [# of edits]']  += 'N2_' #return None
         #glb.GUI.motifs['csvprep'][pdb][motif]['levdistrange'] = '{0}-{1}'.format(mini,maxi) if mini<maxi else mini
-        results['Levenshtein dist. [# of edits]']  += '%s-%s'%(mini,maxi) if mini<maxi else `mini`
+        task['Levenshtein dist. [# of edits]']  += '%s-%s'%(mini,maxi) if mini<maxi else `mini`
         # Removed storage of precision factor as it is the same for the entire search
         #print 'ldr:{0}, rl:{1}'.format(mini, resList)
         ##log('count() return ldr:: residuesl: {0}; mini: {1}; maxi: {2}; resList: {3}.'.format(residuesl, mini, maxi, `resList`))
-        return results
+        return 1
 
     # Returns the edit distance between its arguments
     def levenshteinDistance(self,x,y):
@@ -777,7 +813,7 @@ class CountLevDistStep(BaseComputationStep):
                 newMatrix.append(identical)
                 if 's' in self.aminoHashTable[acid]:
                     substituted = subList[:]
-                    substituted.append(AminoHashTable[acid]['s'])
+                    substituted.append(self.aminoHashTable[acid]['s'])
                     newMatrix.append(substituted)
             matrix = newMatrix
         return matrix
@@ -912,5 +948,54 @@ class DefaultProMolWorkflow(BaseWorkflow):
                                                 CountLevDistStep(aminoHashTable, cmd, stored),
                                                 SuperCEAlignStep(aminoHashTable, cmd, stored, fetchPath)
                                                 ])
+
+class SsetCompareJobExecutor(DefaultProMolJobExecutor):
+    
+    def __init__(self, serverPort,
+             shutdownFunc,
+             serverHost='127.0.0.1',
+             host='127.0.0.1',
+             distributed=0):
+        """.. method:: __init__(self, serverPort, shutdownFunc, serverHost='127.0.0.1', host='127.0.0.1', distributed=0)
+
+
+
+        """
+        DefaultProMolJobExecutor.__init__(self, serverPort,
+                 serverHost=serverHost,
+                 host=host,
+                 shutdownFunc=shutdownFunc,
+                 distributed=distributed)
+        
+    def createTaskBatches(self, motifPairs):
+        """.. method:: createTaskBatches(self, motifPairs)
+
+
+
+        """
+        batchDict = {}
+        for pair in motifPairs:
+            batch = []
+            pdb = None
+            for motif in pair:
+                set, pdb, class_ = motif.split('_',2)
+                d = 0.0 if set is 'S' else 1.0
+                batch.append(DefaultProMolTask(pdb, motif, self.resultAddr,
+                                         d=d, queryClass=class_).serialize())
+            batchDict[pdb] = batch
+        return batchDict
+
+    def processBatchResult(self, batchName):
+        """.. method:: processBatchResult(self, batchName)
+
+
+
+        """
+        outputFile = os.path.join(PROMOL_DIR_PATH, 'S_compare' ,'{0}_compare.txt'.format(batchName))
+        with open(outputFile ,'w') as fout:
+            fout.write(';'.join(DefaultProMolTask.resultFields)+'\n')
+            for task in self.result[batchName]:
+                fout.write('{!s}\n'.format(task))
+        print 'S_set comparison results saved to', outputFile
 
 

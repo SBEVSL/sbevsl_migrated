@@ -172,3 +172,11 @@ def prefixToDataLength(prefix):
 
     """
     return reduce(lambda s,(i,c): s+ord(c)*255**i,enumerate(prefix),0)
+
+def createSSLCertificate():
+    """.. method:: 
+
+        T
+
+    """
+    pass

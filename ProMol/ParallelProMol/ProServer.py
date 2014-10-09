@@ -52,6 +52,7 @@ else:
     # if no-GUI, these globals must be created
     PLATFORM = platform.system()
     PROMOL_DIR_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    print PROMOL_DIR_PATH #p#
     try:
         HOME = os.environ['HOME']
         print HOME
@@ -129,21 +130,34 @@ else:
                             'trp':('CE2', 'CZ2', 'NE1'),
                             'tyr':('CE1', 'CZ', 'OH'),
                             'val':('CA', 'CB', 'CG1'),
-                            'mg':('MG',),
-                            'zn':('ZN',),
-                            'mn':('MN',),
-                            'mo':('MO',),
-                            'na':('NA',),
-                            'hem':('NA','NB','NC'),
-                            'co':('CO',),
+                            '4mo':('MO',),
+                            'b12':('CO', 'N1B', 'P'),
                             'ca':('CA',),
-                            'ni':('NI',),
+                            'cfm':('FE3', 'MO1', 'S1A'),
+                            'cu':('CU',),
+                            'cu1':('CU1',),
+                            'cu2':('CU2',),
+                            'cua':('CU1','CU2'),
+                            'cub':('CU','MO','S'),
+                            'co':('CO',),
+                            'cob':('CO', 'N1B', 'P'),
+                            'f3s':('FE4', 'S1', 'S3'),
+                            'f43':('C7D', 'CCB', 'NI'),
+                            'fco':('FE', 'N1', 'O3'),
                             'fe':('FE',),
                             'fe1':('FE1',),
                             'fe2':('FE2',),
-                            'cu':('CU',),
-                            'cu1':('CU1',),
-                            'cu2':('CU2',)
+                            'fes':('FE1', 'S1', 'S2'),
+                            'hea':('C19', 'FE', 'O1A'),
+                            'hec':('CAB', 'FE', 'O1A'),
+                            'hem':('NA', 'NB', 'NC'),
+                            'mg':('MG',),
+                            'mn':('MN',),
+                            'mo':('MO',),
+                            'na':('NA',),
+                            'ni':('NI',),
+                            'sf4':('FE1', 'S1', 'S2'),
+                            'zn':('ZN',)
                             }
     AminoHashTable = {}
     for i in range(0, 29):
@@ -237,7 +251,7 @@ else:
                             serializedMOTIF['loci'] = selection
                             break # readlines loop
                 serial_glb.MOTIFS[motif] = dumps(serializedMOTIF)
-print 'motifs imported'
+print 'motifs imported:',len(serial_glb.MOTIFS)
 _shutdownEvent = Event()
 _hibernationEvent = Event()
 ACTIVE_STATE = True
@@ -263,9 +277,9 @@ if pymol == None:
     sys.exit(1)
     
 taskExecutorPath = os.path.join(os.path.dirname(__file__), 'TaskExecutor.py')
-pymol_args = [pymol, '-qxir', taskExecutorPath] # -c has had issues on some windows builds
+pymol_args = [pymol, '-qcxir', taskExecutorPath] # -c has had issues on some windows builds
 print pymol_args
-MAX_TASKEXECUTORS = 1 #cpu_count()
+MAX_TASKEXECUTORS = cpu_count()
        
 class BaseProServer(Thread):
     """.. class:: BaseProServer(Thread)
@@ -303,8 +317,8 @@ class BaseProServer(Thread):
             
         """
         self.initBackgroundThreads()
-        logFiles = [open('te{0}_error.log'.format(exID), 'w') for exID in range(1,1+MAX_TASKEXECUTORS)] 
-        taskExec = []
+        logFiles = {exID : open('te{0}_error.log'.format(exID), 'w') for exID in range(1,1+MAX_TASKEXECUTORS)} 
+        taskExec = {}
         envDict = os.environ.copy()
         envDict['AminoHashTable'] = serial_glb.AminoHashTable
         envDict['FETCH_PATH'] = serial_glb.FETCH_PATH
@@ -326,34 +340,31 @@ class BaseProServer(Thread):
                     break # while loop
                 ##envDict['logFile'] = exLog
                 exID = None
-                for id, ex in enumerate(taskExec):
+                for exID, ex in taskExec.iteritems():
                     if ex.isAlive() in [False, None]:
-                        exID = id+1
                         self.taskRestartEvent[chr(exID)].set() # if a pymol instance crashes ensure its task was completed.
                         kwargs['env']['exID'] = str(exID)
-                        kwargs['stdout'] = logFiles[exID-1]
-                        taskExec[exID-1] = Thread(target=self.initTaskExecutor, args=(taskExecSema,
+                        kwargs['stdout'] = logFiles[exID]
+                        taskExec[exID] = Thread(target=self.initTaskExecutor, args=(taskExecSema,
                                                                        pymol_args, kwargs))
                         break # for loop
                 else: # for loop unbroken
-                    if len(taskExec) >= cpu_count():
-                        print 'len(taskExec) = {}'.format(len(taskExec))
-                        break # while loop
-                    else:
-                        exID = len(taskExec)+1
-                        kwargs['env']['exID'] = str(exID)
-                        kwargs['stdout'] = logFiles[exID-1]
-                        taskExec.append(Thread(target=self.initTaskExecutor, args=(taskExecSema,
-                                                                       pymol_args, kwargs)))
-                taskExec[exID-1].setDaemon(True)
-                taskExec[exID-1].start()
+                    exID = len(taskExec)+1
+                    kwargs['env']['exID'] = str(exID)
+                    kwargs['stdout'] = logFiles[exID]
+                    taskExec[exID] = Thread(target=self.initTaskExecutor, args=(taskExecSema,
+                                                                   pymol_args, kwargs))
+                taskExec[exID].setDaemon(True)
+                taskExec[exID].start()
                 print 'taskExec {0}: started.'.format(exID)
         except OSError as err:
             print 'InitPyMOLError: {0}'.format(err)
             sys.exit(1)
+        except BaseException as err:
+            print err
         else: pass
         finally:
-            for exLog in logFiles:
+            for exLog in logFiles.values():
                 exLog.close()
 
     def initBackgroundThreads(self):
@@ -381,7 +392,7 @@ class BaseProServer(Thread):
             try: ex.terminate()
             except BaseException as err:
                 print err
-            print 'shutdown task executors'
+            print 'shutdown task executor'
             ex.wait()
             sema.release()           
 
@@ -398,9 +409,7 @@ class BaseProServer(Thread):
         """.. method:: addTask(self, task)
 
              Allows intra-process tasks to be added to the queue. This is the principle means of
-             submitting tasks to a local ProServer instance. The Mofit data are coupled to the task before
-             it is enqueued. If and when memory consumption becomes a concern, this coupling
-             can be performed after a task is dequeued.
+             submitting tasks to a local ProServer instance.
              
         """
         try: self.queue.put(BaseTask.augment(task, serial_glb.MOTIFS[BaseTask.serializedName(task).split('/',2)[1]]))
@@ -436,7 +445,7 @@ class BaseProServer(Thread):
         if self.taskRestartEvent[data[1]].isSet():
             #self._tasksInProgressMutex[data[1]].acquire()
             try: replyData = self._tasksInProgress[data[1]].values()[0]
-            except BaseException as err: print err
+            except IndexError: pass
             finally: pass #self._tasksInProgressMutex[data[1]].release()
             self.taskRestartEvent[data[1]].clear()
             if replyData != None:

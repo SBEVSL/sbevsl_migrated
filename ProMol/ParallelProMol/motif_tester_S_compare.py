@@ -11,7 +11,7 @@ from Logger import Logger
 from signal import SIGTERM, SIGINT, signal
 from cPickle import dumps, loads
 from ProSocket import sockListenerThread, sockSendRecv
-from ProJob import DefaultProMolJobExecutor
+from ProJob import SsetCompareJobExecutor
 
 # additional motif globals
 DISTRIBUTED = 1
@@ -22,22 +22,26 @@ import os, time
 import sys
 
 SAMPLE_SIZE = 1
-NUM_OF_MOTIFS = 10
+NUM_OF_MOTIFS = None
 PROMOL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #validMotifs = [f.rsplit('_',1)[0] for f in os.listdir(os.path.join(PROMOL_DIR, 'Motifs'))]
-allMotifs = [f.split('.')[0] for f in os.listdir(os.path.join(PROMOL_DIR, 'Motifs'))
+allMotifs = [f.split('.')[0] for f in os.listdir(os.path.join(PROMOL_DIR, 'Motifs_S_metals'))
              if not f.startswith('M_1hto') and f.startswith('S')]
 #motifs = [m for m in allMotifs if m.startswith('S') and 'A'+m[1:] in allMotifs]
 motifs = allMotifs[:NUM_OF_MOTIFS]
-pdbs = {} #{m[1] : '.'.join(m[2].split('_')) for m in map(lambda x: x.split('_',2), motifs)}
-d = 0.0
-with open('randomEC.csv','r') as fin:
-    fin.readline() # skip header
-    num = 0
-    while num < SAMPLE_SIZE:
-        line = fin.readline().split(',')
-        pdbs[line[0]] = line[5]
-        num += 1
+m_motifs = [f.split('.')[0] for f in os.listdir(os.path.join(PROMOL_DIR, 'Motifs'))
+            if f.startswith('M') and not f.startswith('M_1hto')]
+motifPairs = [(s_motif, 'M'+s_motif[1:]) for s_motif in motifs if 'M'+s_motif[1:] in m_motifs]
+
+##pdbs = {} #{m[1] : '.'.join(m[2].split('_')) for m in map(lambda x: x.split('_',2), motifs)}
+##d = 0.0
+##with open('randomEC.csv','r') as fin:
+##    fin.readline() # skip header
+##    num = 0
+##    while num < SAMPLE_SIZE:
+##        line = fin.readline().split(',')
+##        pdbs[line[0]] = line[5]
+##        num += 1
 
 shutdownEvent = Event()
 
@@ -75,8 +79,8 @@ def main():
     signal(SIGTERM, interruptHandler)
     signal(SIGINT, interruptHandler)
  
-    jobExecutor = DefaultProMolJobExecutor(smPort, shutdown, distributed=DISTRIBUTED)
-    jobExecutor(pdbs=pdbs, motifs=motifs, d=d)
+    jobExecutor = SsetCompareJobExecutor(smPort, shutdown, distributed=DISTRIBUTED)
+    jobExecutor(motifPairs=motifPairs)
     shutdown(True)
     jobExecutor.join()
 
