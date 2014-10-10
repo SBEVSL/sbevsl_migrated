@@ -11,32 +11,30 @@ from Logger import Logger
 from signal import SIGTERM, SIGINT, signal
 from cPickle import dumps, loads
 from ProSocket import sockListenerThread, sockSendRecv
-from ProJob import DefaultProMolJobExecutor
+from ProJob import MotifTestJobExecutor
 
-# additional motif globals
-DISTRIBUTED = 1
-print DISTRIBUTED
-if not DISTRIBUTED:
-    pass #from ProServer import BaseProServer
 import os, time
 import sys
 
-SAMPLE_SIZE = 1
-NUM_OF_MOTIFS = 10
+SAMPLE_SIZE = 0
+NUM_OF_MOTIFS = None
 PROMOL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+OUTPUT_DIR = 'TestResults'
 #validMotifs = [f.rsplit('_',1)[0] for f in os.listdir(os.path.join(PROMOL_DIR, 'Motifs'))]
-allMotifs = [f.split('.')[0] for f in os.listdir(os.path.join(PROMOL_DIR, 'Motifs'))
-             if not f.startswith('M_1hto') and f.startswith('S')]
+motifs = [f.split('.')[0] for f in os.listdir(os.path.join(PROMOL_DIR, 'Motifs'))
+             if f.startswith('S_1cam') and not f.startswith('M_1hto') ][:NUM_OF_MOTIFS]
+#sys.exit()
 #motifs = [m for m in allMotifs if m.startswith('S') and 'A'+m[1:] in allMotifs]
-motifs = allMotifs[:NUM_OF_MOTIFS]
+#motifs = allMotifs[:NUM_OF_MOTIFS]
 pdbs = {} #{m[1] : '.'.join(m[2].split('_')) for m in map(lambda x: x.split('_',2), motifs)}
 d = 0.0
+randomTestSet = []
 with open('randomEC.csv','r') as fin:
     fin.readline() # skip header
     num = 0
     while num < SAMPLE_SIZE:
         line = fin.readline().split(',')
-        pdbs[line[0]] = line[5]
+        randomTestSet.append([line[0], line[5]])
         num += 1
 
 shutdownEvent = Event()
@@ -75,8 +73,10 @@ def main():
     signal(SIGTERM, interruptHandler)
     signal(SIGINT, interruptHandler)
  
-    jobExecutor = DefaultProMolJobExecutor(smPort, shutdown, distributed=DISTRIBUTED)
-    jobExecutor(pdbs=pdbs, motifs=motifs, d=d)
+    jobExecutor = MotifTestJobExecutor(smPort,
+                                       shutdown,
+                                       outputDir=OUTPUT_DIR)
+    jobExecutor(motifs=motifs, randomTestSet=randomTestSet, d=d)
     shutdown(True)
     jobExecutor.join()
 

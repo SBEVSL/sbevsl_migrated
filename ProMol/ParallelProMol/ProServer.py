@@ -277,9 +277,9 @@ if pymol == None:
     sys.exit(1)
     
 taskExecutorPath = os.path.join(os.path.dirname(__file__), 'TaskExecutor.py')
-pymol_args = [pymol, '-qcxir', taskExecutorPath] # -c has had issues on some windows builds
+pymol_args = [pymol, '-qxir', taskExecutorPath] # -c has had issues on some windows builds
 print pymol_args
-MAX_TASKEXECUTORS = cpu_count()
+MAX_TASKEXECUTORS = 1 #cpu_count()
        
 class BaseProServer(Thread):
     """.. class:: BaseProServer(Thread)

@@ -97,7 +97,7 @@ class BaseTask(dict):
     """
     KEY_ERROR_RETURN_VALUE = 'N/A'
     
-    def __init__(self, name='identity', workflow='BaseWorkflow'):
+    def __init__(self, name='identity', batchName='batch', workflow='BaseWorkflow'):
         """.. method:: __init__(self, name='identity', workflow='BaseWorkflow')
 
             A BaseTask is intialized with a task name and the workflow name it is intended for. 
@@ -105,6 +105,7 @@ class BaseTask(dict):
         """
         dict.__init__(self)
         self.update({'name' : name,
+                     'batchName' : batchName,
                      'Workflow' : workflow})
 
     def __getitem__(self, key):
@@ -208,12 +209,12 @@ class DefaultProMolTask(BaseTask):
             'IDSpec by residue [# of residues]', 'Chain count [# in structure]', 'Super RMSD [A]', 'Super match [# of residues]',
             'Motif size [# of residues]', 'Super match difference [# of residues]', 'CEAlign RMSD [A]',
             'CEAlign match [# of atoms]', 'Motif size [# of atoms]', 'CEAlign match difference [# of atoms]',
-            'MotifCaller() runtime [sec]', 'count() & levenshteinDistance() runtime [sec]',
+            'Fetch time [sec]', 'MotifCaller() runtime [sec]', 'count() & levenshteinDistance() runtime [sec]',
             'SuperAlign runtime [sec]', 'CEAlign runtime [sec]', 'Total runtime [sec]', 'MotifCaller() runtime [%]',
             'IDSpec: Motif Interatomic Distance Spectra', 'MotifCaller() residues'
             ]
 
-    def __init__(self, pdb, motif, returnAddr, name=None, d=1.0,
+    def __init__(self, pdb, motif, returnAddr, batchName=None, name=None, d=1.0,
             queryClass=None, subs=False, workflow='DefaultProMolWorkflow'):
         """.. method:: __init__(self, pdb, motif, returnAddr,
                                                        name=None,
@@ -236,7 +237,10 @@ class DefaultProMolTask(BaseTask):
                 'workflow' := The intended workflow for this task defaults to 'DefaultProMolWorkflow'.
 
         """
-        BaseTask.__init__(self, name='{0}/{1}/{2}:{3[0]}/{3[1]}'.format(pdb,motif,d,returnAddr), workflow=workflow)
+        BaseTask.__init__(self,
+                          name='{0}/{1}/{2}:{3[0]}/{3[1]}'.format(pdb,motif,d,returnAddr),
+                          batchName=batchName,
+                          workflow=workflow)
         self.update({'Return Address' : returnAddr,
                         'Query Class [EC,pfam,etc.]' : queryClass,
                         'Motif' : motif,
@@ -272,18 +276,17 @@ class BaseJobExecutor():
 
     """
     
-    def __init__(self, serverPort,
+    def __init__(self,
+                 serverPort,
                  serverHost='127.0.0.1',
                  host='127.0.0.1',
                  maxSimultaneousBatches=50,
-                 shutdownFunc=(lambda x: False),
-                 distributed=0):
+                 shutdownFunc=(lambda x: False)):
         """.. method:: __init__(self, serverPort,
                                                      serverHost='127.0.0.1',
                                                      host='127.0.0.1',
                                                      maxSimultaneousBatches=50,
-                                                     shutdownFunc=(lambda x: False),
-                                                     distributed=0)
+                                                     shutdownFunc=(lambda x: False))
 
             When initialized, the BaseJobExecutor launches a result listener thread, partitions the
             job into batches of tasks, submits batches sequentially, and processes the results. If
@@ -297,6 +300,22 @@ class BaseJobExecutor():
             hardware/software parameters.
 
         """
+        try:
+            # this code will query the ServerManager for availability and load of the
+            # distributed framework. If the Server Manager is unavailable or the serverPort
+            # is specified less than or equal to 0, a local server instance is launched.
+            raise Exception()
+            if serverPort <= 0: raise
+        except Exception as err:
+            print 'BaseJobExecutor:', err
+            from ProServer import BaseProServer # buried imports are not a best practice
+            self.localServer = BaseProServer(shutdownFunc)
+            #self.localServer.setDaemon(True)
+            self.localServer.start()
+            self.submitBatch = self.submitBatchLocal
+        else:
+            self.submitBatch = self.submitBatchDistributed
+            
         self.jobResultCallables = {'r' : (lambda data,sock,addr:
                                           Thread(target=self.processTaskResult,
                                           args=(data[1:],sock)).start() and 0 or '0')}
@@ -314,16 +333,6 @@ class BaseJobExecutor():
         self.resultListenerThread.start()
         self.submissionMutex = Lock()
         self.maxSimultaneousSemaphore = Semaphore(maxSimultaneousBatches)
-        if distributed:
-            self.submitBatch = self.submitBatchDistributed
-        else:
-            try: from ProServer import BaseProServer
-            except BaseException as err:
-                print 'BJE',err
-            self.localServer = BaseProServer(shutdownFunc)
-            #self.localServer.setDaemon(True)
-            self.localServer.start()
-            self.submitBatch = self.submitBatchLocal
 
     def __call__(self, **kwargs):
         """.. method:: __call__(self, **kwargs)
@@ -370,9 +379,9 @@ class BaseJobExecutor():
             while not self.shutdown(timeout=15.0):
                 count = self.resultCount[batchName]
                 # update progress bar code
-                if count: print '{0}: {1}/{2}'.format(batchName, count, batchSize)
+                #if count: print '{0}: {1}/{2}'.format(batchName, count, batchSize)
                 if count >= batchSize:
-                    print '{0} Done.'.format(batchName)
+                    #print '{0} Done.'.format(batchName)
                     break
         finally:
             if len(self.result[batchName]):
@@ -444,7 +453,7 @@ class BaseJobExecutor():
             task = BaseTask.deserialize(serializedTask)
             print task['name'] 
 
-    def processBatchResult(self, batchName):
+    def processBatchResult(self, batchName, **kwargs):
         """.. method:: processBatchResult(self, batchName)
 
             This method will receive the name of a completed batch, and is called just prior to
@@ -472,11 +481,12 @@ class DefaultProMolJobExecutor(BaseJobExecutor):
         directly.
 
     """
-    def __init__(self, serverPort,
-             shutdownFunc,
-             serverHost='127.0.0.1',
-             host='127.0.0.1',
-             distributed=0):
+    def __init__(self,
+                 serverPort,
+                 shutdownFunc,
+                 serverHost='127.0.0.1',
+                 host='127.0.0.1',
+                 outputDir=None):
         """.. method:: __init__(self, serverPort, shutdownFunc, serverHost='127.0.0.1', host='127.0.0.1', distributed=0)
 
             The __init__ method for DefaultProMolJobExecutor calls the __init__ method of
@@ -486,11 +496,12 @@ class DefaultProMolJobExecutor(BaseJobExecutor):
             submit the job to a remote ServerManager.
 
         """
-        BaseJobExecutor.__init__(self, serverPort,
-                 serverHost='127.0.0.1',
-                 host='127.0.0.1',
-                 shutdownFunc=shutdownFunc,
-                 distributed=distributed)
+        BaseJobExecutor.__init__(self,
+                                 serverPort,
+                                 serverHost='127.0.0.1',
+                                 host='127.0.0.1',
+                                 shutdownFunc=shutdownFunc)
+        self.outputDir = outputDir
 
     def createTaskBatches(self, pdbs, motifs, d):
         """.. method:: createTaskBatches(self, pdbs, motifs, d)
@@ -501,8 +512,12 @@ class DefaultProMolJobExecutor(BaseJobExecutor):
             protein.
 
         """
-        return {pdb : [DefaultProMolTask(pdb, motif, self.resultAddr,
-                                         d=d, queryClass=pdbs[pdb]).serialize()
+        return {pdb : [DefaultProMolTask(pdb,
+                                         motif,
+                                         self.resultAddr,
+                                         batchName=pdb,
+                                         d=d,
+                                         queryClass=pdbs[pdb]).serialize()
                        for motif in motifs
                        ]
                 for pdb in pdbs
@@ -528,13 +543,11 @@ class DefaultProMolJobExecutor(BaseJobExecutor):
                 superDiff = task['Super match difference [# of residues]']
                 ceDiff = task['CEAlign match difference [# of atoms]']
                 print superDiff, ceDiff
-                pass
-                #if superDiff == 0 or ceDiff > -5: validMotif[task.pdb] = True
             except BaseException as err: print err
             self.resultMutex.acquire()
             try: # critical region
-                self.result[task['Query PDB ID']].append(task)
-                self.resultCount[task['Query PDB ID']] += 1
+                self.result[task['batchName']].append(task)
+                self.resultCount[task['batchName']] += 1
             finally: # always release the lock
                 self.resultMutex.release()
 
@@ -548,11 +561,12 @@ class DefaultProMolJobExecutor(BaseJobExecutor):
             This method should be modified to merge with motif.py.
 
         """
-        outputFile = os.path.join(PROMOL_DIR_PATH, 'S_compare' ,'{0}_compare.txt'.format(batchName))
+        outputFile = os.path.join(self.outputDir, '{0}_results.txt'.format(batchName))
         with open(outputFile ,'w') as fout:
             fout.write(';'.join(DefaultProMolTask.resultFields)+'\n')
             for task in self.result[batchName]:
                 fout.write('{!s}\n'.format(task))
+        #print 'Results saved to', outputFile
 
 class MotifCallerStep(BaseComputationStep):
     """.. class:: MotifCallerStep(BaseComputationStep)
@@ -586,15 +600,16 @@ class MotifCallerStep(BaseComputationStep):
             for execution within a no-GUI PyMOL instance.
            
         """
-        task['MotifCaller() runtime [sec]'] = clock()
         returncode = 0
+        if self.currPDB != task['Query PDB ID']:
+            task['Fetch time [sec]'] = clock()
+            self.cmd.reinitialize()
+            #self.cmd.load(os.path.join(self.fetchPath, task['Query PDB ID']+'.pdb'))
+            self.cmd.fetch(task['Query PDB ID'], async=0, path=self.fetchPath)
+            task['Fetch time [sec]'] = clock() - task['Fetch time [sec]']
+            self.currPDB = task['Query PDB ID']
         try:
-            if self.currPDB != task['Query PDB ID']:
-                task['Fetch time [sec]'] = clock()
-                self.cmd.reinitialize()
-                self.cmd.fetch(task['Query PDB ID'], async=0, path=self.fetchPath)
-                task['Fetch time [sec]'] = clock() - task['Fetch time [sec]']
-                self.currPDB = task['Query PDB ID']
+            task['MotifCaller() runtime [sec]'] = clock()
             self.cmd.hide('everything', 'all')
             self.cmd.remove("all and hydro")
             motif = task['Motif']
@@ -711,64 +726,68 @@ class CountLevDistStep(BaseComputationStep):
             a no-GUI PyMOL instance.
             
         """
-        last = None
-        ordered = []
-        orderedchain = {}
-        bannedchain = []
-        self.stored.motif = []
-        editdist = []
-        self.cmd.iterate(motif, 'stored.motif.append((chain,resn,resi))')
-        residues = task['motifData']['resi'] # glb.MOTIFS[motif]['resi']
-        residuesl = len(residues)*2
-        task['MotifCaller() residues'] = []
-        task['Levenshtein dist. [# of edits]'] = '' # glb.GUI.motifs['csvprep'][pdb][motif]['res'] = []
-        for iteration in self.stored.motif:
-            if last != iteration:
-                last = iteration
-                task['MotifCaller() residues'].append(iteration) # glb.GUI.motifs['csvprep'][pdb][motif]['res'].append(iteration)
-                ordered.append(iteration[1].lower())
-                if iteration[0] not in orderedchain:
-                    if iteration[0] not in bannedchain:
-                        orderedchain[iteration[0]] = []
-                    else:
-                        continue
-                orderedchain[iteration[0]].append(iteration[1].lower())
-                if residuesl <= len(orderedchain[iteration[0]]):
-                    bannedchain.append(iteration[0])
-                    del orderedchain[iteration[0]]
-        if len(orderedchain) == 0 and residuesl <= len(ordered):
-            ##log('count() return None:: len(orderedchain): {0}; residuesl: {1} <= len(ordered): {2}; resList: {3}.'.format(len(orderedchain),
-            ##                                                                          residuesl, len(ordered), resList))
-            task['Levenshtein dist. [# of edits]'] += 'N1_' #return None
-        substitutions = [None]
-        if task['Motif'][0] == 'J':
-            for c in ('asp','glu','asn','gln','thr','ser'):
-                if c in residues:
-                    substitutions = self.createsubs(residues)
-                    break
-        for chain in orderedchain:
-            editdist.append(self.levenshteinDistance(residues,orderedchain[chain]))
+        try: 
+            last = None
+            ordered = []
+            orderedchain = {}
+            bannedchain = []
+            self.stored.motif = []
+            editdist = []
+            try:
+                self.cmd.iterate(task['Motif'], 'stored.motif.append((chain,resn,resi))')
+            except BaseException as err: print err
+            residues = task['motifData']['resi'] # glb.MOTIFS[motif]['resi']
+            residuesl = len(residues)*2
+            task['MotifCaller() residues'] = []
+            task['Levenshtein dist. [# of edits]'] = '' # glb.GUI.motifs['csvprep'][pdb][motif]['res'] = []
+            for iteration in self.stored.motif:
+                if last != iteration:
+                    last = iteration
+                    task['MotifCaller() residues'].append(iteration) # glb.GUI.motifs['csvprep'][pdb][motif]['res'].append(iteration)
+                    ordered.append(iteration[1].lower())
+                    if iteration[0] not in orderedchain:
+                        if iteration[0] not in bannedchain:
+                            orderedchain[iteration[0]] = []
+                        else:
+                            continue
+                    orderedchain[iteration[0]].append(iteration[1].lower())
+                    if residuesl <= len(orderedchain[iteration[0]]):
+                        bannedchain.append(iteration[0])
+                        del orderedchain[iteration[0]]
+            if len(orderedchain) == 0 and residuesl <= len(ordered):
+                ##log('count() return None:: len(orderedchain): {0}; residuesl: {1} <= len(ordered): {2}; resList: {3}.'.format(len(orderedchain),
+                ##                                                                          residuesl, len(ordered), resList))
+                task['Levenshtein dist. [# of edits]'] += 'N1_' #return None
+            substitutions = [None]
+            if task['Motif'][0] == 'J':
+                for c in ('asp','glu','asn','gln','thr','ser'):
+                    if c in residues:
+                        substitutions = self.createsubs(residues)
+                        break
+            for chain in orderedchain:
+                editdist.append(self.levenshteinDistance(residues,orderedchain[chain]))
+                for sub in substitutions:
+                    if sub == None:
+                        break
+                    editdist.append(self.levenshteinDistance(sub,orderedchain[chain]))
+            editdist.append(self.levenshteinDistance(residues,ordered))
             for sub in substitutions:
                 if sub == None:
                     break
-                editdist.append(self.levenshteinDistance(sub,orderedchain[chain]))
-        editdist.append(self.levenshteinDistance(residues,ordered))
-        for sub in substitutions:
-            if sub == None:
-                break
-            editdist.append(self.levenshteinDistance(sub,ordered))
-        mini = min(editdist)
-        maxi = max(editdist)
-        if (residuesl < 6 and mini > 0) or (residuesl < 12 and mini > 1) or \
-               (residuesl < 18 and mini > 2) or mini > 3:
-            ##log('Count() return None:: residuesl: {0}; mini: {1}; maxi: {2}; resList: {3}.'.format(residuesl, mini, maxi, `resList`))
-            task['Levenshtein dist. [# of edits]']  += 'N2_' #return None
-        #glb.GUI.motifs['csvprep'][pdb][motif]['levdistrange'] = '{0}-{1}'.format(mini,maxi) if mini<maxi else mini
-        task['Levenshtein dist. [# of edits]']  += '%s-%s'%(mini,maxi) if mini<maxi else `mini`
-        # Removed storage of precision factor as it is the same for the entire search
-        #print 'ldr:{0}, rl:{1}'.format(mini, resList)
-        ##log('count() return ldr:: residuesl: {0}; mini: {1}; maxi: {2}; resList: {3}.'.format(residuesl, mini, maxi, `resList`))
-        return 1
+                editdist.append(self.levenshteinDistance(sub,ordered))
+            mini = min(editdist)
+            maxi = max(editdist)
+            if (residuesl < 6 and mini > 0) or (residuesl < 12 and mini > 1) or \
+                   (residuesl < 18 and mini > 2) or mini > 3:
+                ##log('Count() return None:: residuesl: {0}; mini: {1}; maxi: {2}; resList: {3}.'.format(residuesl, mini, maxi, `resList`))
+                task['Levenshtein dist. [# of edits]']  += 'N2_' #return None
+            #glb.GUI.motifs['csvprep'][pdb][motif]['levdistrange'] = '{0}-{1}'.format(mini,maxi) if mini<maxi else mini
+            task['Levenshtein dist. [# of edits]']  += '%s-%s'%(mini,maxi) if mini<maxi else `mini`
+            # Removed storage of precision factor as it is the same for the entire search
+            #print 'ldr:{0}, rl:{1}'.format(mini, resList)
+            ##log('count() return ldr:: residuesl: {0}; mini: {1}; maxi: {2}; resList: {3}.'.format(residuesl, mini, maxi, `resList`))
+            return 1
+        except BaseException as err: print err
 
     # Returns the edit distance between its arguments
     def levenshteinDistance(self,x,y):
@@ -910,8 +929,9 @@ class DefaultProMolWorkflow(BaseWorkflow):
 
         Future work: Additional workflows are easily created by extending the existing
         *Workflow, *ComputationStep, and *Task classes, then adding the workflow
-        to TaskExecutor's workflow dictionary attribute, 'workflowDict'. The client-side
-        behavior can be tweeked by overriding the process* functions of *JobExecutor.
+        to TaskExecutor's workflow dictionary attribute, 'workflowDict'. The desired client-side
+        behavior can be implemented by extending a *JobExecutor and overriding the
+        process* functions.
 
         Ex. 1: Automated motif generator workflow:
             1. Extend BaseTask to store motif specification data.
@@ -949,23 +969,127 @@ class DefaultProMolWorkflow(BaseWorkflow):
                                                 SuperCEAlignStep(aminoHashTable, cmd, stored, fetchPath)
                                                 ])
 
-class SsetCompareJobExecutor(DefaultProMolJobExecutor):
+class MotifTestJobExecutor(DefaultProMolJobExecutor):
+    """.. class:: MotifTestJobExecutor(DefaultProMolJobExecutor)
+
+        T
+
+    """
     
-    def __init__(self, serverPort,
-             shutdownFunc,
-             serverHost='127.0.0.1',
-             host='127.0.0.1',
-             distributed=0):
+    def __init__(self,
+                 serverPort,
+                 shutdownFunc,           
+                 serverHost='127.0.0.1',
+                 host='127.0.0.1',
+                 outputDir=None):
         """.. method:: __init__(self, serverPort, shutdownFunc, serverHost='127.0.0.1', host='127.0.0.1', distributed=0)
 
 
 
         """
-        DefaultProMolJobExecutor.__init__(self, serverPort,
-                 serverHost=serverHost,
-                 host=host,
-                 shutdownFunc=shutdownFunc,
-                 distributed=distributed)
+        DefaultProMolJobExecutor.__init__(self,
+                                          serverPort,
+                                          serverHost=serverHost,
+                                          host=host,
+                                          shutdownFunc=shutdownFunc,
+                                          outputDir=outputDir)
+        self.invalidMotifs = []
+
+    def __call__(self, **kwargs):
+        DefaultProMolJobExecutor.__call__(self, **kwargs)
+        num_of_invalids = len(self.invalidMotifs)
+        print 'Invalid motifs:', num_of_invalids
+        if num_of_invalids > 0:
+            open('invalidMotifs.txt', 'w').write('\n'.join(self.invalidMotifs))
+        
+    def createTaskBatches(self, motifs, motifTestSets=None, randomTestSet=None, d=0.0):
+        """.. method:: createTaskBatches(self, motifs)
+
+
+
+        """
+        batchDict = {}
+        for motif in motifs:
+            pdb, class_ = motif.split('_',2)[1:]
+            batch = [DefaultProMolTask(pdb, motif, self.resultAddr,
+                                         d=d, queryClass=class_, batchName=motif).serialize()
+                     ]
+            if motifTestSets is not None:
+                try:
+                    for pdb, class_ in motifTestSets[motif]:
+                        batch.append(DefaultProMolTask(pdb, motif, self.resultAddr,
+                                                 d=d, queryClass=class_, batchName=motif).serialize())
+                except KeyError as err:
+                    print 'createTaskBatches:', err
+            if randomTestSet is not None:
+                for pdb, class_ in randomTestSet:
+                    batch.append(DefaultProMolTask(pdb, motif, self.resultAddr,
+                                                 d=d, queryClass=class_, batchName=motif).serialize())
+            batchDict[motif] = batch
+        return batchDict
+
+    def processTaskResult(self, resultsStr, sock):
+        """.. method:: processTaskResult(self, resultsStr, sock)
+
+            In DefaultProMolJobExecutor, the processTaskResult method overrides the BaseJobExecutor
+            method of the same name. For each task returned, some data are
+            reported to STDOUT and the task is stored in the results dictionary by Query PDB ID.
+
+            This method should by modified to merge with motif.py
+
+        """
+        for serializedTask in loads(resultsStr):
+            task = BaseTask.deserialize(serializedTask)
+            invalid = True
+            try:
+                #print task['Query PDB ID'], task['Motif'], task['Total runtime [sec]']
+                #try: print task['Fetch time [sec]']
+                #except: pass
+                #print task['IDSpec by residue [# of residues]']
+                super = False
+                try: super = task['Super match difference [# of residues]'] == 0 and task['Super RMSD [A]'] < 0.1
+                except Exception: pass
+                ce = False
+                try: ce = task['CEAlign match difference [# of atoms]'] > -6 and task['CEAlign RMSD [A]'] < 0.1
+                except Exception: pass
+                if super or ce:
+                    invalid = False
+                else:
+                    print 'Invalid:', task['Motif']
+            except BaseException as err: print err
+            self.resultMutex.acquire()
+            try: # critical region
+                if invalid is True:
+                    self.invalidMotifs.append(task['Motif'])
+                self.result[task['batchName']].append(task)
+                self.resultCount[task['batchName']] += 1
+            finally: # always release the lock
+                self.resultMutex.release()
+
+class SsetCompareJobExecutor(DefaultProMolJobExecutor):
+    """.. class:: SsetCompareJobExecutor(DefaultProMolJobExecutor)
+
+        T
+
+    """
+    
+    def __init__(self,
+                 serverPort,
+                 shutdownFunc,
+                 outputDir=None,
+                 serverHost='127.0.0.1',
+                 host='127.0.0.1'):
+        """.. method:: __init__(self, serverPort, shutdownFunc, serverHost='127.0.0.1', host='127.0.0.1', distributed=0)
+
+
+
+        """
+        DefaultProMolJobExecutor.__init__(self,
+                                          serverPort,
+                                          serverHost=serverHost,
+                                          host=host,
+                                          outputDir=outputDir,
+                                          shutdownFunc=shutdownFunc)
         
     def createTaskBatches(self, motifPairs):
         """.. method:: createTaskBatches(self, motifPairs)
@@ -981,21 +1105,9 @@ class SsetCompareJobExecutor(DefaultProMolJobExecutor):
                 set, pdb, class_ = motif.split('_',2)
                 d = 0.0 if set is 'S' else 1.0
                 batch.append(DefaultProMolTask(pdb, motif, self.resultAddr,
-                                         d=d, queryClass=class_).serialize())
+                                         d=d, queryClass=class_, batchName=pdb).serialize())
             batchDict[pdb] = batch
         return batchDict
 
-    def processBatchResult(self, batchName):
-        """.. method:: processBatchResult(self, batchName)
-
-
-
-        """
-        outputFile = os.path.join(PROMOL_DIR_PATH, 'S_compare' ,'{0}_compare.txt'.format(batchName))
-        with open(outputFile ,'w') as fout:
-            fout.write(';'.join(DefaultProMolTask.resultFields)+'\n')
-            for task in self.result[batchName]:
-                fout.write('{!s}\n'.format(task))
-        print 'S_set comparison results saved to', outputFile
-
+    
 
