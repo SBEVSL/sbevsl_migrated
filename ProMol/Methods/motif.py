@@ -839,19 +839,19 @@ def motifchecker(setChoice, rmsdchoice, ecchoices):
                 #glb.GUI.motifs['overall']['text'] = 'Search cancelled at {0}%'.format(int(baro))
                 glb.GUI.motifs['overall']['text'] = 'Search cancelled at %s%%'%(int(baro))
                 break
-                
-                
+                  
             # Search by EC numbers, if provided.
             ECnums = motif.split('_')
             motifEC1 = ECnums[2]
-            motifEC2 = ECnums[3]
-            motifEC3 = ECnums[4]
-            motifEC4 = ECnums[5]
-            if (ecchoices[0] == '' or int(motifEC1) == int(ecchoices[0])) and \
-                (ecchoices[1] == '' or int(motifEC2) == int(ecchoices[1])) and \
-                (ecchoices[2] == '' or int(motifEC3) == int(ecchoices[2])) and \
-                (ecchoices[3] == '' or int(motifEC4) == int(ecchoices[3])):
-                
+            if len(ECnums)>3: # If not classified by EC class
+                motifEC2 = ECnums[3]
+                motifEC3 = ECnums[4]
+                motifEC4 = ECnums[5]
+            if ((not str.isdigit(motifEC1)) or                                  \
+                ((ecchoices[0] == '' or int(motifEC1) == int(ecchoices[0])) and \
+                (ecchoices[1] == '' or int(motifEC2) == int(ecchoices[1])) and  \
+                (ecchoices[2] == '' or int(motifEC3) == int(ecchoices[2])) and  \
+                (ecchoices[3] == '' or int(motifEC4) == int(ecchoices[3])))):
                 
                 # List of motif loading errors is no longer stored inside motif dictionary
     
@@ -963,10 +963,14 @@ def motifchecker(setChoice, rmsdchoice, ecchoices):
          
         if len(tag) > 1:
             tokens = tag[1].split('_')
-            try:
+##            try:
+##                subsection = int(tokens[2])
+##            except:
+##                #Pfam designation
+##                subsection = 7
+            if str.isdigit(tokens[2]):
                 subsection = int(tokens[2])
-            except:
-                #Pfam designation
+            else:
                 subsection = 7
             motifName = tag[1]
             struct['children'][i]['children'][subsection-1]['children'].append({'type':'Subsection','name':motif,'children':[]})
