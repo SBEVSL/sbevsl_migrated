@@ -116,7 +116,7 @@ AminoLongList = ('alanine', 'arginine', 'asparagine', 'aspartate', 'cysteine',
     'hemes','b12','cub','fes','hea','mos','cua','fco','sf4','f3s','fe2','cfm',
     'clf','hec','cob','c2o','pcd','4mo', 'f43', '3co', 'cobalt', 'nickle', 'iron', 'copper')
 AminoList = ('ala', 'arg', 'asn', 'asp', 'cys', 'gln', 'glu', 'gly', 'his',
-    'ile', 'leu', 'lys', 'met', 'phe', 'pro', 'ser', 'thr', 'trp', 'tyr', 'val',
+    'ile', 'leu', 'lys', 'met', 'phe', 'pro', 'ser', 'thr', 'trp', 'tyr', 'val', 
     'ca', 'mo', '4mo', 'mg', 'zn', 'mn', 'na', 'hem','b12','cub','fes','mos',
     'hea','cua','fco','sf4','f3s','fe2','cfm','clf','hec','cob','c2o','pcd','4mo','f43','3co',
     'co', 'ni', 'fe', 'cu')
@@ -322,14 +322,17 @@ def loadMotifs(*folders):
                             found.append('EC')
                             # This checks the format of the EC number as specified in the FILENAME (not the header)...
                             preec = func.split('_')
-                            if len(preec) < 6:
+                            if not str.isdigit(preec[2]): # To allow for Pfam designations
+                                ec = '.'.join(preec[2:])
+                            elif len(preec) < 6:
                                 #motifErrors.append('Error: Motif {0} did not have enough components in its EC number.'.format(MOTIFS[func]['path']))
                                 motifErrors.append('Error: Motif %s did not have enough components in its EC number.'%(MOTIFS[func]['path']))
                                 del MOTIFS[func]
                                 # No need to close
                                 break
+                            else:
+                                ec = '.'.join((preec[2], preec[3], preec[4], preec[5]))
                             # ...and this checks that the EC number in the filename matches what's in the header.
-                            ec = '.'.join((preec[2], preec[3], preec[4], preec[5]))
                             eccheck = line.split(':')[1][0:-1]
                             if ec != eccheck:
                                 motifErrors.append('Error: Motif `%s` could not be loaded due to an incorrect `EC` attribute.'%(MOTIFS[func]['path']))
