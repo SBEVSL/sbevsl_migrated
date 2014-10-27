@@ -7,6 +7,8 @@
 
 .. moduleauthor:: Michael R. Bryan <Michael DOT Bryan AT mail DOT rit DOT edu>
 
+gliomas
+
 '''
 DEBUG = True # this bypasses the GUI imports and should be removed before release.
 __version__ = '1.1'
@@ -26,8 +28,8 @@ try: # Windows machines require CREATE_NEW_PROCESS_GROUP for effective IPC
 except ImportError: 
     from subprocess import Popen, STDOUT, call, check_output
 #from pmg_tk.startup.ProMol.promolglobals import MOTIFS, AminoHashTable, FETCH_PATH
-from time import sleep
-from cPickle import dumps, loads
+from time import sleep, clock
+from cPickle import dumps, loads, dump, load
 from copy import deepcopy
 from signal import SIGTERM, signal, SIGINT
 try:
@@ -35,11 +37,15 @@ try:
 except: pass
 from ProSocket import sockListenerThread, sockRecvCall, sockSendRecv
 from ProJob import BaseTask
+from fetchPDB import PDBRetriever
+from Logger import Logger
 serial_glb = type('glb', (object,), {'MOTIFS' : {},
                                   'FETCH_PATH' : None,
                                   'CSV_PATH' : None,
                                   'AminoHashTable' : None
                                   })
+motifLoadTime = clock()
+SERIALIZED_MOTIFS_FILE = 'serialized_motifs'
 if __name__ is not '__main__' and not DEBUG:
     import pmg_tk.startup.ProMol.promolglobals as glb
     serial_glb.FETCH_PATH = glb.FETCH_PATH
@@ -114,20 +120,35 @@ else:
                             'arg':('CZ', 'NE', 'NH1'),
                             'asn':('CG', 'ND2', 'OD1'),
                             'asp':('CG', 'OD1', 'OD2'),
+                            'csd':('SG', 'OD1', 'OD2'),
+                            'cse':('CA', 'CB', 'SE'),
+                            'cso':('CA', 'CB', 'SG'),
+                            'css':('CA', 'CB', 'SG'),
                             'cys':('CA', 'CB', 'SG'),
                             'gln':('CD', 'NE2', 'OE1'),
                             'glu':('CD', 'OE1', 'OE2'),
                             'gly':('CA', 'N', 'O'),
                             'his':('CE1', 'ND1', 'NE2'),
+                            'hip':('P', 'ND1', 'NE2'),
                             'ile':('CD1', 'CG1', 'CG2'),
+                            'kcx':('CX', 'OQ1', 'OQ2'),
                             'leu':('CD1', 'CD2', 'CG'),
+                            'llp':('P', 'N1', 'NZ'),
                             'lys':('CD', 'CE', 'NZ'),
                             'met':('CE', 'CG', 'SD'),
                             'phe':('CD1', 'CE1', 'CZ'),
                             'pro':('CA', 'CB', 'CD'),
+                            'ocs':('SG', 'OD1', 'OD2'),
+                            'phd':('P', 'CG', 'OD2'),
+                            'phe':('CD1', 'CE1', 'CZ'),
+                            'pro':('CA', 'CB', 'CD'),
+                            'scy':('CD', 'OCD', 'SG'),
+                            'sdp':('P', 'C31', 'C41'),
+                            'sec':('CA', 'CB', 'SE'),
                             'ser':('CA', 'CB', 'OG'),
                             'thr':('CA', 'CB', 'OG1'),
                             'trp':('CE2', 'CZ2', 'NE1'),
+                            'trq':('CE2', 'CZ2', 'NE1'),
                             'tyr':('CE1', 'CZ', 'OH'),
                             'val':('CA', 'CB', 'CG1'),
                             '4mo':('MO',),
@@ -157,6 +178,7 @@ else:
                             'na':('NA',),
                             'ni':('NI',),
                             'sf4':('FE1', 'S1', 'S2'),
+                            'xxx':('N1', 'N2', 'O7'),
                             'zn':('ZN',)
                             }
     AminoHashTable = {}
@@ -193,65 +215,74 @@ else:
             AminoHashTable[AminoShortList[i]]['s'] = AminoSubsList[i]
     del i
     serial_glb.AminoHashTable = dumps(AminoHashTable)
-
     # this abridged version of loading the motifs should be replaced with the full version.
-    MOTIFS = {}
-    for MOTIF_DIR in MOTIF_DIRS:
-        motif, motifFile = '', ''
-        for file in os.listdir(MOTIF_DIR):
-            if file.endswith('.py'):
-                motifFile = os.path.join(MOTIF_DIR,file)
-                motif = file.rsplit('.',1)[0]
-                serializedMOTIF = {}
-                serializedMOTIF['path'] = motifFile
-                # resi
-                with open(motifFile, 'r') as fin:
-                    for line in fin.readlines(): # readlines loop
-                        if line[0:4] == 'RESI':
-                            resi = line.split(':')[1][0:-1].strip().lower()
-                            serializedMOTIF['resi'] = resi.split(',')
-                            continue
-                        elif line[0:4] == 'LOCI':
-                            loci = line.split(':')[1][0:-1].strip().split(';')
-                            selection = ''
-                            # Added to prevent crash on bad loci (it happened to us)
-                            badLoci = False # Needed to break out twice
-                            for loc in loci:
-                                if loc == '':
+    if os.path.isfile(SERIALIZED_MOTIFS_FILE):
+        with open(SERIALIZED_MOTIFS_FILE, 'rb') as fin:
+            serial_glb.MOTIFS = load(fin)
+    else:
+        MOTIFS = {}
+        for MOTIF_DIR in MOTIF_DIRS:
+            motif, motifFile = '', ''
+            for (dirpath, dirnames, filenames) in os.walk(MOTIF_DIR):
+                for file in filenames:
+                    if file.endswith('.py'):
+                        motifFile = os.path.join(MOTIF_DIR, dirpath , file)
+                        motif = file.rsplit('.',1)[0]
+                        serializedMOTIF = {}
+                        serializedMOTIF['path'] = motifFile
+                        serializedMOTIF['fetchname'] = ' '.join((lambda pdb,*chains: map(lambda chain: pdb+chain, chains))(*motif.split('_',2)[1].split('.')))
+                        # resi
+                        with open(motifFile, 'r') as fin:
+                            for line in fin.readlines(): # readlines loop
+                                if line[0:4] == 'RESI':
+                                    resi = line.split(':')[1][0:-1].strip().lower()
+                                    serializedMOTIF['resi'] = resi.split(',')
                                     continue
-                                # Take each block separated by semicolons and further break it up at hyphens
-                                splitlist = loc.split('-')
-                                # If there is one and only one hyphen, what's before is the chain and
-                                # what's after is the residue numbers; otherwise, it's bad
-                                if len(splitlist) == 2:
-                                    # This uses automatic list unpacking
-                                    chain, numbers = splitlist
-                                else:
-                                    badLoci = True
-                                    break
-                                # Starts with the string numbers which is a comma separated list of numbers
-                                # from after the hyphen in this section of the loci attribute (sections being separated by semicolons).
-                                # (In other words, X,Y,Z where the motif header line is roughly LOCI:...;A-X,Y,Z;...)
-                                # Then creates a string called nums which contains each number prefaced by 'resi'
-                                # and separated by 'or's, all with spaces in between.  There will be extra spaces
-                                # if the initial numbers string contains extra spaces after the commas or elsewhere.
-                                # I think the resulting string is a PyMOL selection algebra snippet which, individually,
-                                # would select any and all residues in the entire structure matching any of the residue numbers.
-                                nums = 'resi %s' % ' or resi '.join(numbers.split(','))
-                                # This wraps the resulting string in more algebra that will restrict those matches to only residues on
-                                # the chain specified before the hyphen in this section.  It then builds a string called
-                                # selection which, after the last iteration, should select the union of all sections of the LOCI attribute
-                                # (which would match any and all residues with the proper numbers on the proper chains as specified there).
-                                if selection == '':
-                                    selection = '(chain %s and (%s))' % (chain, nums)
-                                else:
-                                    selection = '%s or (chain %s and (%s))' % (selection, chain, nums)
-                            if badLoci:
-                                break
-                            serializedMOTIF['loci'] = selection
-                            break # readlines loop
-                serial_glb.MOTIFS[motif] = dumps(serializedMOTIF)
-print 'motifs imported:',len(serial_glb.MOTIFS)
+                                elif line[0:4] == 'LOCI':
+                                    loci = line.split(':')[1][0:-1].strip().split(';')
+                                    selection = ''
+                                    # Added to prevent crash on bad loci (it happened to us)
+                                    badLoci = False # Needed to break out twice
+                                    for loc in loci:
+                                        if loc == '':
+                                            continue
+                                        # Take each block separated by semicolons and further break it up at hyphens
+                                        splitlist = loc.split('-')
+                                        # If there is one and only one hyphen, what's before is the chain and
+                                        # what's after is the residue numbers; otherwise, it's bad
+                                        if len(splitlist) == 2:
+                                            # This uses automatic list unpacking
+                                            chain, numbers = splitlist
+                                        else:
+                                            badLoci = True
+                                            break
+                                        # Starts with the string numbers which is a comma separated list of numbers
+                                        # from after the hyphen in this section of the loci attribute (sections being separated by semicolons).
+                                        # (In other words, X,Y,Z where the motif header line is roughly LOCI:...;A-X,Y,Z;...)
+                                        # Then creates a string called nums which contains each number prefaced by 'resi'
+                                        # and separated by 'or's, all with spaces in between.  There will be extra spaces
+                                        # if the initial numbers string contains extra spaces after the commas or elsewhere.
+                                        # I think the resulting string is a PyMOL selection algebra snippet which, individually,
+                                        # would select any and all residues in the entire structure matching any of the residue numbers.
+                                        nums = 'resi %s' % ' or resi '.join(numbers.split(','))
+                                        # This wraps the resulting string in more algebra that will restrict those matches to only residues on
+                                        # the chain specified before the hyphen in this section.  It then builds a string called
+                                        # selection which, after the last iteration, should select the union of all sections of the LOCI attribute
+                                        # (which would match any and all residues with the proper numbers on the proper chains as specified there).
+                                        if selection == '':
+                                            selection = '(chain %s and (%s))' % (chain, nums)
+                                        else:
+                                            selection = '%s or (chain %s and (%s))' % (selection, chain, nums)
+                                    if badLoci:
+                                        break
+                                    serializedMOTIF['loci'] = selection
+                                    break # readlines loop
+                        serial_glb.MOTIFS[motif] = dumps(serializedMOTIF)
+print 'motifs imported:',len(serial_glb.MOTIFS), 'load time [sec]:', clock() - motifLoadTime
+if not os.path.isfile(SERIALIZED_MOTIFS_FILE):
+    with open(SERIALIZED_MOTIFS_FILE, 'wb') as fout:
+        dump(serial_glb.MOTIFS, fout, -1)
+
 _shutdownEvent = Event()
 _hibernationEvent = Event()
 ACTIVE_STATE = True
@@ -262,9 +293,9 @@ TARE_USERS = 1
 validPyMOLExe = ['C:\Python27\PyMOL\PyMOL.exe',
                         '/sw/lib/pymol-py27/bin/pymol',
                         '/opt/pymol-svn/pymol',
+                        'MacPyMOLX11Hybrid.app/Contents/MacOS/MacPyMOL',
                         '/Applications/MacPyMOLX11Hybrid.app/Contents/MacOS/MacPyMOL',
                         '/Users/Shared/MacPyMOLX11Hybrid.app/Contents/MacOS/MacPyMOL',
-                        'MacPyMOLX11Hybrid.app/Contents/MacOS/MacPyMOL',
                         'MacPyMOL.app/Contents/MacOS/MacPyMOL'
                         ]
 pymol = None
@@ -272,6 +303,8 @@ for exe in validPyMOLExe:
     if os.path.isfile(exe):
         pymol = exe
         break
+    else:
+        print exe, 'is not a path.'
 if pymol == None:
     print 'Could not locate PyMOL executable'
     sys.exit(1)
@@ -279,7 +312,12 @@ if pymol == None:
 taskExecutorPath = os.path.join(os.path.dirname(__file__), 'TaskExecutor.py')
 pymol_args = [pymol, '-qxir', taskExecutorPath] # -c has had issues on some windows builds
 print pymol_args
-MAX_TASKEXECUTORS = 1 #cpu_count()
+MAX_TASKEXECUTORS = 2*cpu_count()
+
+logThread = Logger('serv.log')
+logThread.start()
+log = logThread.write
+log('server started')
        
 class BaseProServer(Thread):
     """.. class:: BaseProServer(Thread)
@@ -307,6 +345,7 @@ class BaseProServer(Thread):
                 'r' : self.taskCompletedRequest
                 }
         if shutdownFunc is not None: self.shutdown = shutdownFunc
+        self.pdbRetriever = PDBRetriever(pdb_dir=serial_glb.FETCH_PATH)
         self.DISTRIBUTED = distributed
         print 'init: ',self.DISTRIBUTED
 
@@ -358,10 +397,10 @@ class BaseProServer(Thread):
                 taskExec[exID].start()
                 print 'taskExec {0}: started.'.format(exID)
         except OSError as err:
-            print 'InitPyMOLError: {0}'.format(err)
+            log('InitPyMOLError: {0}'.format(err))
             sys.exit(1)
-        except BaseException as err:
-            print err
+        except Exception as err:
+            log('InitPyMOLError: {0}'.format(err))
         else: pass
         finally:
             for exLog in logFiles.values():
@@ -392,7 +431,7 @@ class BaseProServer(Thread):
             try: ex.terminate()
             except BaseException as err:
                 print err
-            print 'shutdown task executor'
+            log('shutdown task executor')
             ex.wait()
             sema.release()           
 
@@ -412,10 +451,16 @@ class BaseProServer(Thread):
              submitting tasks to a local ProServer instance.
              
         """
-        try: self.queue.put(BaseTask.augment(task, serial_glb.MOTIFS[BaseTask.serializedName(task).split('/',2)[1]]))
-        except BaseException as err:
-            print err
+        pdb, motif, nameTail = BaseTask.serializedName(task).split('/',2)
+        if self.queue.qsize() > 0:
+            try: self.pdbRetriever.getPDB(motif.split('_',2)[1].split('.',1)[0])
+            except Exception as err:
+                log('addTask: %s' % err)
+        try: self.queue.put(BaseTask.augment(task, serial_glb.MOTIFS[motif]))
+        except Exception as err:
+            log('addTask: %s' % err)
             self.queue.put(task)
+        #print 'enqueue:', pdb, motif #p#
         return '0'
 
     def taskDequeueRequest(self, data, sock, addr):
@@ -433,7 +478,7 @@ class BaseProServer(Thread):
             give up on the task after a finite number of attempts.
             
         """
-        #p#print 'dequeue',ord(data[1]) #p#
+        #print 'dequeue%s, queue length:%s' % (ord(data[1]), self.queue.qsize()) #p#
         sock.settimeout(None)
         if self.hibernationEvent():
             self.shutdown(timeout=None)
@@ -441,7 +486,7 @@ class BaseProServer(Thread):
         replyData = None
         reset = False
         try: reset = self.taskRestartEvent[data[1]].isSet()
-        except BaseException: print err
+        except Exception: print err
         if self.taskRestartEvent[data[1]].isSet():
             #self._tasksInProgressMutex[data[1]].acquire()
             try: replyData = self._tasksInProgress[data[1]].values()[0]
@@ -471,7 +516,7 @@ class BaseProServer(Thread):
             
         """
         #taskName, returnAddr = BaseTask.serializedNameAddr(data[2:])
-        print taskName,'completed by',ord(data[1]) #p#
+        #print taskName,'completed by',ord(data[1]) #p#
         self._tasksInProgressMutex[data[1]].acquire()
         try: del self._tasksInProgress[data[1]][data[2:]]
         finally: self._tasksInProgressMutex[data[1]].release()
@@ -533,3 +578,83 @@ class BaseProServer(Thread):
             for task in taskList:
                 if BaseTask.serializedAddr(task) is not cancelReturnAddr:
                     self.queue.put(task)
+
+
+def interruptHandler(signum, frame):
+    global _shutdownEvent
+    """.. method:: interruptHandler(signum, frame)
+
+         This handler will gracefully shutdown the server and TaskExecutors in response
+         to an interrupt signal SIGINT. The signal handler must be set in the main thread.
+    """
+    print 'interruptHandler'
+    _shutdownEvent.set()
+
+def hibernationHandler(signum, frame):
+    global _hibernationEvent
+    """.. method:: interruptHandler(signum, frame)
+
+         This handler will gracefully shutdown the server and TaskExecutors in response
+         to an interrupt signal SIGINT. The signal handler must be set in the main thread.
+    """
+    print 'hibernation handler'
+    _hibernationEvent.set()
+
+def hibernationCheck(CHECK_INTERVAL):
+    global TARE_USERS, _hibernationEvent, _shutdownEvent
+    _shutdownEvent.wait(CHECK_INTERVAL)
+    try:
+        users = len(Counter(check_output(['who', '-q']).split('\n',1)[0].split()))
+    except:
+        return False
+    else:
+        return (users > TARE_USERS)
+        
+def main():
+    """.. method:: main()
+
+
+    """
+    with open('config','r') as config:
+        smHost, smPort = config.readline().split('#',1)[0].rsplit('/',1)
+        activeCheckInterval, inactiveCheckInterval = [float(f) for f in config.readline().split('#',1)[0].split()]
+
+    if len(sys.argv) > 1 and sys.argv[1] == '-d':
+        pass # do not daemonize
+    else:
+        returnCode = daemonize()
+
+    signal(SIGTERM, interruptHandler)
+
+    try:
+        while not _shutdownEvent.isSet():
+            dpThread = DistributedProServer(tuple([smHost.strip(),int(smPort.strip())]))
+            dpThread.start()
+            signal(SIGINT, hibernationHandler)
+            print 'server active'
+            while not hibernationCheck(activeCheckInterval):
+                if _hibernationEvent.isSet():
+                    print 'hibernationEvent'
+                    break
+                if _shutdownEvent.isSet():
+                    print 'SHUTDOWN! actively'
+                    raise
+            dpThread.hibernate()
+            signal(SIGINT, interruptHandler)
+            dpThread.join()
+            _hibernationEvent.clear()
+            _shutdownEvent.clear()
+            print 'server inactive'
+            while hibernationCheck(inactiveCheckInterval):
+                if _shutdownEvent.isSet():
+                    print 'SHUTDOWN! inactively'
+                    raise
+    except BaseException as err:
+        print err
+    print 'server shutdown'
+    print enumThreads()
+    sys.exit(0)
+ 
+if __name__ == '__main__':
+    main()
+
