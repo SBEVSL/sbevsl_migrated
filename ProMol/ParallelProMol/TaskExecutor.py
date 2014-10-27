@@ -33,17 +33,21 @@ logThread = Logger()
 logThread.start()
 log = logThread.write
 
-log('TaskExecutor.py has been started in PyMOL.exe.')
+log('TaskExecutor.py has been started in PyMOL.exe!')
 
 AminoHashTable = loads(os.environ['AminoHashTable'])
 del os.environ['AminoHashTable']
+print 'AHT'
 FETCH_PATH = os.environ['FETCH_PATH']
 del os.environ['FETCH_PATH']
+print 'FP'
 exID = chr(int(os.environ['exID']))
+print int(os.environ['exID'])
 DISTRIBUTED = int(os.environ['DISTRIBUTED'])
 del os.environ['DISTRIBUTED']
+print DISTRIBUTED
 
-MAX_MEM = 2*(10**8)
+MAX_MEM = 3*(10**8)
 
 class TaskExecutor:
     """.. class:: TaskExecutor
@@ -62,17 +66,23 @@ class TaskExecutor:
         try:
             self.workflowDict = {'DefaultProMolWorkflow' : DefaultProMolWorkflow(AminoHashTable,
                                                                                  FETCH_PATH)}
+            print 'wf'
             self.taskPort = taskPort
+            print self.taskPort
             self._shutdownEvent = Event()
+            print 'se'
             self.returnTask = self.returnTaskToReducer if DISTRIBUTED else self.returnTaskToClient
+            print 'rt'
             try: # will not work if this is not the main thread of PyMOL
                 signal(SIGTERM, self.interruptHandler)
                 signal(SIGINT, self.interruptHandler)
-            except BaseException as err:
-                print err
+            except Exception as err:
+                print 'init TE:', err
+            print 'sig'
             while 1: # execute loop
                 try: self.executeTask()
-                except BaseException as err: print err
+                except Exception as err:
+                    print 'et:', err
                 if resource_available and resource.getrusage(resource.RUSAGE_SELF).ru_maxrss > MAX_MEM:
                     log('memory exceeded')
                     self.shutdown(True)
@@ -120,6 +130,7 @@ class TaskExecutor:
            ProServer instance.
            
         """
+        print 'return to reducer: ',task['Name']
         sockSendRecv('r'+exID+'%s'%task.serialize(), self.taskPort)                   
 
     def returnTaskToClient(self, task):
@@ -131,7 +142,7 @@ class TaskExecutor:
            
         """
         sockSendRecv('r%s'%dumps([task.serialize()]), task['Return Address'][1])
-        sockSendRecv('r'+exID+'%s'%task['name'], self.taskPort) 
+        sockSendRecv('r'+exID+'%s'%task['name'], self.taskPort)
 
     def executeTask(self):
         """.. method:: executeTask(self)
@@ -140,9 +151,15 @@ class TaskExecutor:
             return the result.
                   
         """
-        taskStr = sockSendRecv('d%s'%exID,port=self.taskPort)
-        if not taskStr: return
-        #p#print taskStr #p#
+        print 'd%s' % exID
+        try:
+            taskStr = sockSendRecv('d%s'%exID,port=self.taskPort)
+        except Exception as err:
+            print 'etd:', err
+        if not taskStr:
+            print 'no_et'
+            return
+        print 'et:', taskStr[:10] #p#
         task, motifData = BaseTask.deserializeAugmented(taskStr)
         #p#log('task: %s \nmotifData: %s'%(task['name'],motifData)) #p#
         task['motifData'] = motifData

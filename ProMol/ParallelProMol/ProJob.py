@@ -95,7 +95,7 @@ class BaseTask(dict):
         cPickle module.
 
     """
-    KEY_ERROR_RETURN_VALUE = 'N/A'
+    KEY_ERROR_RETURN_VALUE = '~'
     
     def __init__(self, name='identity', batchName='batch', workflow='BaseWorkflow'):
         """.. method:: __init__(self, name='identity', workflow='BaseWorkflow')
@@ -304,8 +304,7 @@ class BaseJobExecutor():
             # this code will query the ServerManager for availability and load of the
             # distributed framework. If the Server Manager is unavailable or the serverPort
             # is specified less than or equal to 0, a local server instance is launched.
-            raise Exception()
-            if serverPort <= 0: raise
+            if serverPort <= 0: raise Exception()
         except Exception as err:
             print 'BaseJobExecutor:', err
             from ProServer import BaseProServer # buried imports are not a best practice
@@ -344,7 +343,7 @@ class BaseJobExecutor():
         self.resultPortSetEvent.wait()
         self.resultAddr = (self.host, self.resultPort)
         print 'resultAddr:',self.resultAddr #p#
-        for num, (batchName, batch) in enumerate(self.createTaskBatches(**kwargs).iteritems()):
+        for num, (batchName, batch) in enumerate(self.yieldTaskBatches(**kwargs)):
             self.maxSimultaneousSemaphore.acquire()
             self.submissionMutex.acquire()
             try:
@@ -381,10 +380,10 @@ class BaseJobExecutor():
                 # update progress bar code
                 #if count: print '{0}: {1}/{2}'.format(batchName, count, batchSize)
                 if count >= batchSize:
-                    #print '{0} Done.'.format(batchName)
+                    print '{0} Done.'.format(batchName)
                     break
         finally:
-            if len(self.result[batchName]):
+            if self.resultCount[batchName]:
                 self.processBatchResult(batchName)
                 self.resultMutex.acquire()
                 try:
@@ -422,13 +421,13 @@ class BaseJobExecutor():
         self.resultPort = port
         self.resultPortSetEvent.set()
 
-    def createTaskBatches(self, **kwargs):
-        """.. method:: createTaskBatches(self, **kwargs)
+    def yieldTaskBatches(self, **kwargs):
+        """.. method:: yieldTaskBatches(self, **kwargs)
 
             This method takes the keyword arguments passed while calling BaseJobExecutor.
             Currently, this method must be overridden by extending classes. A batch is defined as a
             list of objects which instantiate an extension of the class BaseTask. This method must
-            return a list of batches.
+            yield batch tuples of the form: (batchID, [tasks]).
 
         """
         print 'BaseJobExecutor.createTaskBatches(**kwargs) must be overridden by extending classes.'
@@ -486,6 +485,7 @@ class DefaultProMolJobExecutor(BaseJobExecutor):
                  shutdownFunc,
                  serverHost='127.0.0.1',
                  host='127.0.0.1',
+                 maxSimultaneousBatches=3,
                  outputDir=None):
         """.. method:: __init__(self, serverPort, shutdownFunc, serverHost='127.0.0.1', host='127.0.0.1', distributed=0)
 
@@ -499,11 +499,12 @@ class DefaultProMolJobExecutor(BaseJobExecutor):
         BaseJobExecutor.__init__(self,
                                  serverPort,
                                  serverHost='127.0.0.1',
-                                 host='127.0.0.1',
+                                 host=host,
+                                 maxSimultaneousBatches=maxSimultaneousBatches,
                                  shutdownFunc=shutdownFunc)
         self.outputDir = outputDir
 
-    def createTaskBatches(self, pdbs, motifs, d):
+    def yieldTaskBatches(self, pdbs, motifs, d):
         """.. method:: createTaskBatches(self, pdbs, motifs, d)
 
             In DefaultProMolJobExecutor, the createTaskBatches method overrides the
@@ -512,16 +513,15 @@ class DefaultProMolJobExecutor(BaseJobExecutor):
             protein.
 
         """
-        return {pdb : [DefaultProMolTask(pdb,
-                                         motif,
-                                         self.resultAddr,
-                                         batchName=pdb,
-                                         d=d,
-                                         queryClass=pdbs[pdb]).serialize()
-                       for motif in motifs
-                       ]
-                for pdb in pdbs
-                }
+        for pdb in pdbs:
+            yield (pdb[0], [DefaultProMolTask(pdb[0],
+                                     motif,
+                                     self.resultAddr,
+                                     batchName=pdb[0],
+                                     d=d,
+                                     queryClass=pdb[1]).serialize()
+                         for motif in motifs
+                         ])
 
     def processTaskResult(self, resultsStr, sock):
         """.. method:: processTaskResult(self, resultsStr, sock)
@@ -535,15 +535,15 @@ class DefaultProMolJobExecutor(BaseJobExecutor):
         """
         for serializedTask in loads(resultsStr):
             task = BaseTask.deserialize(serializedTask)
-            try:
-                print task['Query PDB ID'], task['Motif'], task['Total runtime [sec]']
-                try: print task['Fetch time [sec]']
-                except: pass
-                print task['IDSpec by residue [# of residues]']
-                superDiff = task['Super match difference [# of residues]']
-                ceDiff = task['CEAlign match difference [# of atoms]']
-                print superDiff, ceDiff
-            except BaseException as err: print err
+            #try:
+                #print task['Query PDB ID'], task['Motif'], task['Total runtime [sec]']
+                #try: print task['Fetch time [sec]']
+                #except: pass
+                #print task['IDSpec by residue [# of residues]']
+                #superDiff = task['Super match difference [# of residues]']
+                #ceDiff = task['CEAlign match difference [# of atoms]']
+                #print superDiff, ceDiff
+            #except BaseException as err: print err
             self.resultMutex.acquire()
             try: # critical region
                 self.result[task['batchName']].append(task)
@@ -604,7 +604,6 @@ class MotifCallerStep(BaseComputationStep):
         if self.currPDB != task['Query PDB ID']:
             task['Fetch time [sec]'] = clock()
             self.cmd.reinitialize()
-            #self.cmd.load(os.path.join(self.fetchPath, task['Query PDB ID']+'.pdb'))
             self.cmd.fetch(task['Query PDB ID'], async=0, path=self.fetchPath)
             task['Fetch time [sec]'] = clock() - task['Fetch time [sec]']
             self.currPDB = task['Query PDB ID']
@@ -630,7 +629,7 @@ class MotifCallerStep(BaseComputationStep):
                 raise Warning
             else:
                 num_of_residues = 0
-                if motif[0] is 'S':
+                if motif[0] is 'S' or 1:
                     task['IDSpec by residue [# of residues]'] = {id.split('_',1)[1] : count
                                                              for id, count in task['IDSpec: Motif Interatomic Distance Spectra'].items()
                                                              if isinstance(id, types.StringTypes) and id.startswith('r_')
@@ -869,20 +868,24 @@ class SuperCEAlignStep(BaseComputationStep):
             
         """
         motif = task['Motif']
-        motifPDBCode = motif.split('_',2)[1]
-        queryPDBCode = task['Query PDB ID']
+        motifPDBCodes = task['motifData']['fetchname'].replace(' ','_') #motif.split('_',2)[1]
+        queryPDBCodes = task['Query PDB ID'].replace(' ','_')
         task['Motif size [# of residues]'] = len(task['motifData']['resi'])
         try:
-            querySubsetName = 'match_in_%s'%(queryPDBCode)
+            querySubsetName = 'match_in_%s'%(queryPDBCodes)
             self.cmd.select(querySubsetName, motif)
             self.cmd.hide('everything', 'all')
-            if queryPDBCode == motifPDBCode:
-                motifPDBCode = '%s%s' %(motifPDBCode, 1)
-                self.cmd.copy(motifPDBCode, queryPDBCode)
+            if queryPDBCodes == motifPDBCodes:
+                pdbCopies = []
+                for queryPDB in queryPDBCodes.split('_'):
+                    pdbCopy = '%s%s' %(queryPDB, 1)
+                    self.cmd.copy(pdbCopy, queryPDB)
+                    pdbCopies.append(pdbCopy)
+                motifPDBCodes = '_'.join(pdbCopies)
             else:
-                self.cmd.fetch(motifPDBCode, async=0, path=self.fetchPath)
-            motifSubsetName = 'match_in_%s'%(motifPDBCode)
-            task['Motif size [# of atoms]'] = self.cmd.select(motifSubsetName, '%s and (%s)' % (motifPDBCode,
+                self.cmd.fetch(task['motifData']['fetchname'], async=0, path=self.fetchPath)
+            motifSubsetName = 'match_in_%s'%(motifPDBCodes)
+            task['Motif size [# of atoms]'] = self.cmd.select(motifSubsetName, '(%s) and (%s)' % (motifPDBCodes.replace('_','|'),
                                                          task['motifData']['loci']))
             self.cmd.hide('everything', 'all')
             #aligns and gets the rmsd of the alignment. # of atoms in each selection must be greater than 5
@@ -897,10 +900,13 @@ class SuperCEAlignStep(BaseComputationStep):
                 task['SuperAlign runtime [sec]']  = clock() - task['SuperAlign runtime [sec]']
             task['CEAlign runtime [sec]']  = clock()
             try:
+                queryAtoms = self.cmd.count_atoms(querySubsetName)
+                print 'queryAtoms:', queryAtoms
+                print 'motifAtoms:', self.cmd.count_atoms(motifSubsetName)
                 ceAlign = self.cmd.cealign(querySubsetName,
                                        motifSubsetName,
                                        guide=0,
-                                       window=3,
+                                       window=8 if queryAtoms > 80 else 3,
                                        transform=0)
                 if ceAlign['alignment_length'] > 1:
                     task['CEAlign match [# of atoms]'] = ceAlign['alignment_length']
@@ -913,7 +919,7 @@ class SuperCEAlignStep(BaseComputationStep):
         finally:
             self.cmd.delete(motifSubsetName)
             self.cmd.delete(querySubsetName)
-            self.cmd.delete(motifPDBCode)
+            self.cmd.delete(motifPDBCodes)
             return 1       
                         
 class DefaultProMolWorkflow(BaseWorkflow):
@@ -981,6 +987,7 @@ class MotifTestJobExecutor(DefaultProMolJobExecutor):
                  shutdownFunc,           
                  serverHost='127.0.0.1',
                  host='127.0.0.1',
+                 maxSimultaneousBatches=50,
                  outputDir=None):
         """.. method:: __init__(self, serverPort, shutdownFunc, serverHost='127.0.0.1', host='127.0.0.1', distributed=0)
 
@@ -991,27 +998,20 @@ class MotifTestJobExecutor(DefaultProMolJobExecutor):
                                           serverPort,
                                           serverHost=serverHost,
                                           host=host,
+                                          maxSimultaneousBatches=maxSimultaneousBatches,
                                           shutdownFunc=shutdownFunc,
                                           outputDir=outputDir)
-        self.invalidMotifs = []
-
-    def __call__(self, **kwargs):
-        DefaultProMolJobExecutor.__call__(self, **kwargs)
-        num_of_invalids = len(self.invalidMotifs)
-        print 'Invalid motifs:', num_of_invalids
-        if num_of_invalids > 0:
-            open('invalidMotifs.txt', 'w').write('\n'.join(self.invalidMotifs))
+        self.invalidMotifs = {}
         
-    def createTaskBatches(self, motifs, motifTestSets=None, randomTestSet=None, d=0.0):
-        """.. method:: createTaskBatches(self, motifs)
+    def yieldTaskBatches(self, motifs, motifTestSets=None, randomTestSet=None, d=0.0):
+        """.. method:: yieldTaskBatches(self, motifs)
 
 
 
         """
-        batchDict = {}
         for motif in motifs:
             pdb, class_ = motif.split('_',2)[1:]
-            batch = [DefaultProMolTask(pdb, motif, self.resultAddr,
+            batch = [DefaultProMolTask(pdb.split('.',1)[0], motif, self.resultAddr,
                                          d=d, queryClass=class_, batchName=motif).serialize()
                      ]
             if motifTestSets is not None:
@@ -1025,8 +1025,9 @@ class MotifTestJobExecutor(DefaultProMolJobExecutor):
                 for pdb, class_ in randomTestSet:
                     batch.append(DefaultProMolTask(pdb, motif, self.resultAddr,
                                                  d=d, queryClass=class_, batchName=motif).serialize())
-            batchDict[motif] = batch
-        return batchDict
+            yield (motif,batch)
+#            self.invalidMotifs[motif] = []
+
 
     def processTaskResult(self, resultsStr, sock):
         """.. method:: processTaskResult(self, resultsStr, sock)
@@ -1040,31 +1041,48 @@ class MotifTestJobExecutor(DefaultProMolJobExecutor):
         """
         for serializedTask in loads(resultsStr):
             task = BaseTask.deserialize(serializedTask)
-            invalid = True
-            try:
-                #print task['Query PDB ID'], task['Motif'], task['Total runtime [sec]']
-                #try: print task['Fetch time [sec]']
-                #except: pass
-                #print task['IDSpec by residue [# of residues]']
-                super = False
-                try: super = task['Super match difference [# of residues]'] == 0 and task['Super RMSD [A]'] < 0.1
-                except Exception: pass
-                ce = False
-                try: ce = task['CEAlign match difference [# of atoms]'] > -6 and task['CEAlign RMSD [A]'] < 0.1
-                except Exception: pass
-                if super or ce:
-                    invalid = False
-                else:
-                    print 'Invalid:', task['Motif']
-            except BaseException as err: print err
+##            invalid = True
+##            try:
+##                #print task['Query PDB ID'], task['Motif'], task['Total runtime [sec]']
+##                #try: print task['Fetch time [sec]']
+##                #except: pass
+##                #print task['IDSpec by residue [# of residues]']
+##                super = False
+##                try: super = task['Super match difference [# of residues]'] == 0 and task['Super RMSD [A]'] < 0.1
+##                except Exception: pass
+##                ce = False
+##                try: ce = task['CEAlign match difference [# of atoms]'] >= -task['Motif size [# of residues]'] and task['CEAlign RMSD [A]'] < 0.1
+##                except Exception: pass
+##                if super or ce:
+##                    invalid = False
+##            except BaseException as err: print err
+            batchName = task['batchName']
             self.resultMutex.acquire()
             try: # critical region
-                if invalid is True:
-                    self.invalidMotifs.append(task['Motif'])
-                self.result[task['batchName']].append(task)
-                self.resultCount[task['batchName']] += 1
+##                if invalid is True:
+##                    self.invalidMotifs[batchName].append(task['Motif'])
+                self.result[batchName].append(task)
+                self.resultCount[batchName] += 1
             finally: # always release the lock
                 self.resultMutex.release()
+
+    def processBatchResult(self, batchName):
+        """.. method:: processBatchResult(self, batchName)
+
+            In DefaultProMolJobExecutor, the processBatchResult method overrides the BaseJobExecutor
+            method of the same name. When a batch is completed, all of the results are written to
+            a designated output file.
+
+            This method should be modified to merge with motif.py.
+
+        """
+        DefaultProMolJobExecutor.processBatchResult(self, batchName)
+##        totalTasks = len(self.result[batchName])
+##        num_of_invalids = len(self.invalidMotifs[batchName])
+##        if num_of_invalids > 0:
+##            print 'Invalid motifs:', batchName, num_of_invalids, '/', totalTasks
+##            open(os.path.join('InvalidMotifs','%s_invalid.txt' % batchName), 'w').write('\n'.join(self.invalidMotifs[batchName]))
+##        del self.invalidMotifs[batchName]
 
 class SsetCompareJobExecutor(DefaultProMolJobExecutor):
     """.. class:: SsetCompareJobExecutor(DefaultProMolJobExecutor)
@@ -1091,23 +1109,171 @@ class SsetCompareJobExecutor(DefaultProMolJobExecutor):
                                           outputDir=outputDir,
                                           shutdownFunc=shutdownFunc)
         
-    def createTaskBatches(self, motifPairs):
+    def yieldTaskBatches(self, motifPairs):
         """.. method:: createTaskBatches(self, motifPairs)
 
 
 
         """
-        batchDict = {}
         for pair in motifPairs:
             batch = []
             pdb = None
             for motif in pair:
                 set, pdb, class_ = motif.split('_',2)
-                d = 0.0 if set is 'S' else 1.0
+                d = 0.0 if set.startswith('S') or set.startswith('J') else 1.0
                 batch.append(DefaultProMolTask(pdb, motif, self.resultAddr,
                                          d=d, queryClass=class_, batchName=pdb).serialize())
-            batchDict[pdb] = batch
-        return batchDict
+            yield (pdb, batch)
 
+class MotifTestECBatchJobExecutor(MotifTestJobExecutor):
+    """.. class:: MotifTestJobExecutor(DefaultProMolJobExecutor)
+
+        T
+
+    """
     
+    def __init__(self,
+                 serverPort,
+                 shutdownFunc,           
+                 serverHost='127.0.0.1',
+                 host='127.0.0.1',
+                 outputDir=None):
+        """.. method:: __init__(self, serverPort, shutdownFunc, serverHost='127.0.0.1', host='127.0.0.1', distributed=0)
 
+
+
+        """
+        MotifTestJobExecutor.__init__(self,
+                                          serverPort,
+                                          serverHost=serverHost,
+                                          host=host,
+                                          shutdownFunc=shutdownFunc,
+                                          outputDir=outputDir)
+        
+    def yieldTaskBatches(self, motifBatches, motifTestSets=None, randomTestSet=None, d=0.0):
+        """.. method:: createTaskBatches(self, motifs)
+
+
+
+        """
+        for batchID, motifs in motifBatches.items():
+            batch = []
+            for motif in motifs:
+                pdb = ' '.join((lambda pdb,*chains: map(lambda chain: pdb+chain, chains))(*motif.split('_',2)[1].split('.')))
+                batch.append(DefaultProMolTask(pdb, motif, self.resultAddr,
+                                             d=d, queryClass=batchID, batchName=batchID).serialize())
+            if motifTestSets is not None:
+                try:
+                    for pdb, class_ in motifTestSets[motif]:
+                        batch.append(DefaultProMolTask(pdb, motif, self.resultAddr,
+                                                 d=d, queryClass=class_, batchName=batchID).serialize())
+                except KeyError as err:
+                    print 'createTaskBatches:', err
+            if randomTestSet is not None:
+                for pdb, class_ in randomTestSet:
+                    batch.append(DefaultProMolTask(pdb, motif, self.resultAddr,
+                                                 d=d, queryClass=class_, batchName=batchID).serialize())
+            self.invalidMotifs[batchID] = []
+            yield (batchID, batch)
+
+class BigProMolJobExecutor(DefaultProMolJobExecutor):
+    """Hello
+
+        T
+
+    """
+    
+    def __init__(self,
+                 serverPort,
+                 shutdownFunc,           
+                 serverHost='127.0.0.1',
+                 host='127.0.0.1',
+                 maxSimultaneousBatches=1,
+                 outputDir=None):
+        """.. method:: __init__(self, serverPort, shutdownFunc, serverHost='127.0.0.1', host='127.0.0.1', distributed=0)
+
+
+
+        """
+        DefaultProMolJobExecutor.__init__(self,
+                                          serverPort,
+                                          serverHost=serverHost,
+                                          host=host,
+                                          shutdownFunc=shutdownFunc,
+                                          maxSimultaneousBatches=maxSimultaneousBatches,
+                                          outputDir=outputDir)
+        self.outputFile = {}
+
+    def yieldTaskBatches(self, pdbs, motifs, d):
+        """.. method:: createTaskBatches(self, pdbs, motifs, d)
+
+            In DefaultProMolJobExecutor, the createTaskBatches method overrides the
+            BaseJobExecutor method of the same name. Each ProMol Batch corresponds to a
+            single Query PDB ID. A batch contains one task for each Motif run against the Query
+            protein.
+
+        """
+        for pdb in pdbs:
+            batchName = pdb[0]
+            self.outputFile[batchName] = open(os.path.join(self.outputDir, '{0}_results.txt'.format(batchName)), 'w')
+            self.outputFile[batchName].write(';'.join(DefaultProMolTask.resultFields)+'\n')
+            yield (batchName, [DefaultProMolTask(batchName,
+                                     motif,
+                                     self.resultAddr,
+                                     batchName=batchName,
+                                     d=d,
+                                     queryClass=pdb[1]).serialize()
+                         for motif in motifs
+                         ])
+        
+    def processTaskResult(self, resultsStr, sock):
+        """.. method:: processTaskResult(self, resultsStr, sock)
+
+            In DefaultProMolJobExecutor, the processTaskResult method overrides the BaseJobExecutor
+            method of the same name. For each task returned, some data are
+            reported to STDOUT and the task is stored in the results dictionary by Query PDB ID.
+
+            This method should by modified to merge with motif.py
+
+        """
+        for serializedTask in loads(resultsStr):
+            task = BaseTask.deserialize(serializedTask)
+            #try:
+                #print task['Query PDB ID'], task['Motif'], task['Total runtime [sec]']
+                #try: print task['Fetch time [sec]']
+                #except: pass
+                #print task['IDSpec by residue [# of residues]']
+                #superDiff = task['Super match difference [# of residues]']
+                #ceDiff = task['CEAlign match difference [# of atoms]']
+                #print superDiff, ceDiff
+            #except BaseException as err: print err
+            batchName = task['batchName']
+            self.resultMutex.acquire()
+            try: # critical region
+                self.resultCount[batchName] += 1
+                self.outputFile[batchName].write('{!s}\n'.format(task))
+            finally: # always release the lock
+                self.resultMutex.release()
+            if self.resultCount[batchName] % 100 == 0:
+                print self.resultCount[batchName]
+
+    def processBatchResult(self, batchName):
+        """.. method:: processBatchResult(self, batchName)
+
+            In DefaultProMolJobExecutor, the processBatchResult method overrides the BaseJobExecutor
+            method of the same name. When a batch is completed, all of the results are written to
+            a designated output file.
+
+            This method should be modified to merge with motif.py.
+
+        """
+        self.outputFile[batchName].close()                                 
+        del self.outputFile[batchName]
+##        outputFile = os.path.join(self.outputDir, '{0}_results.txt'.format(batchName))
+##        with open(outputFile ,'w') as fout:
+##            fout.write(';'.join(DefaultProMolTask.resultFields)+'\n')
+##            for task in self.result[batchName]:
+##                fout.write('{!s}\n'.format(task))
+        #print 'Results saved to', outputFile
+
+ 

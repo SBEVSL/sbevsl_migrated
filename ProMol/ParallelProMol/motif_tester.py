@@ -16,18 +16,41 @@ from ProJob import MotifTestJobExecutor
 import os, time
 import sys
 
-SAMPLE_SIZE = 0
-NUM_OF_MOTIFS = None
+SAMPLE_SIZE = 100
+NUM_OF_MOTIFS = 100000
 PROMOL_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUTPUT_DIR = 'TestResults'
+INVALIDS_DIR = 'InvalidMotifs'
+OUTPUT_DIR = 'UnitTests'
+invalids = []
+motifs = []
+
+with open('invalid_motifs_A.txt', 'Ur') as fin:
+    invalids = [motif.strip().strip("'") for motif in fin.readlines()]
+    
+##for file in os.listdir(INVALIDS_DIR):
+##    with open(os.path.join(INVALIDS_DIR, file),'Ur') as fin:
+##        for line in fin.readlines():
+##            invalids.append(line.strip())
+
+#invalidMotifs = [motif.strip() for motif in open('invalid_motifs_10-10-14.txt', 'rU').readlines()]
 #validMotifs = [f.rsplit('_',1)[0] for f in os.listdir(os.path.join(PROMOL_DIR, 'Motifs'))]
-motifs = [f.split('.')[0] for f in os.listdir(os.path.join(PROMOL_DIR, 'Motifs'))
-             if f.startswith('S_1cam') and not f.startswith('M_1hto') ][:NUM_OF_MOTIFS]
-#sys.exit()
+motifCount = 0
+try:
+    for (dirpath, dirnames, filenames) in os.walk(os.path.join(PROMOL_DIR, 'Motifs')):
+        for file in filenames:
+            if file.endswith('.py'):
+                motif = file.rsplit('.',1)[0]
+                if motif not in invalids:
+                    motifs.append(motif)
+                    motifCount += 1
+                    if motifCount >= NUM_OF_MOTIFS:
+                        raise Exception()
+except Exception:
+    pass
 #motifs = [m for m in allMotifs if m.startswith('S') and 'A'+m[1:] in allMotifs]
 #motifs = allMotifs[:NUM_OF_MOTIFS]
 pdbs = {} #{m[1] : '.'.join(m[2].split('_')) for m in map(lambda x: x.split('_',2), motifs)}
-d = 0.0
+d = 1.1
 randomTestSet = []
 with open('randomEC.csv','r') as fin:
     fin.readline() # skip header
@@ -36,7 +59,6 @@ with open('randomEC.csv','r') as fin:
         line = fin.readline().split(',')
         randomTestSet.append([line[0], line[5]])
         num += 1
-
 shutdownEvent = Event()
 
 smHost, smPort = (lambda x: (x[0],int(x[1])))(open('config','r').readline().split('#',1)[0].rsplit('/',1))
@@ -75,6 +97,7 @@ def main():
  
     jobExecutor = MotifTestJobExecutor(smPort,
                                        shutdown,
+                                       maxSimultaneousBatches=3,
                                        outputDir=OUTPUT_DIR)
     jobExecutor(motifs=motifs, randomTestSet=randomTestSet, d=d)
     shutdown(True)
@@ -85,6 +108,8 @@ if __name__ == '__main__':
     print 'Go!'
     try:
         main()
+    except Exception as err:
+        print 'motif_tester:', err
     finally:
         FINISH_TIME = time.time()
         sec = FINISH_TIME - START_TIME

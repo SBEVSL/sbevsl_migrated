@@ -14,7 +14,8 @@ from threading import Thread
 from time import sleep
 
 USE_SSL = False
-USE_HMAC = False
+USE_HMAC = False # currently md5 default
+HMAC_ALGORITHM = hashlib.md5()
 MAX_SEND_ATTEMPTS = 10
 PREFIX_LENGTH = 3
 MAX_MESSAGE_LENGTH = reduce(lambda s,i: s+255*255**i,range(PREFIX_LENGTH),0)
@@ -31,6 +32,10 @@ def sockRecvCall(sock, addr, callablesDict=None, timeout=10.0, use_hmac=USE_HMAC
     sock.settimeout(timeout)
     data, prefix, replyData = '', '', '0' 
     try:
+        try:
+            hash = getMsg(sock, HMAC_ALGORITHM.digest_size) if USE_HMAC else None
+        except Exception as err:
+            print 'hash:', err
         while len(prefix) < PREFIX_LENGTH:
             try: chunk = sock.recv(PREFIX_LENGTH-len(prefix))
             except socket.error as err:
@@ -49,13 +54,19 @@ def sockRecvCall(sock, addr, callablesDict=None, timeout=10.0, use_hmac=USE_HMAC
             else:
                 if not chunk: break
                 data += chunk
+        if USE_HMAC and (hash != hmac.new('key', data).digest()):
+            print 'Secure hash does not match.'
+            return '1'
         #p#print 'recv', dataLength, data[:10] #p#
         if callablesDict:
             #p#print data[0] #p#
             try: replyData = callablesDict[data[0]](data,sock,addr)
             except KeyError: replyData = '1'
             #p#print data[0],`dataLengthToPrefix(replyData)`, replyData[:10] #p#
-            sock.sendall(dataLengthToPrefix(replyData)+replyData)
+            if USE_HMAC: sock.sendall(hmac.new('key', replyData).digest()+dataLengthToPrefix(replyData)+replyData)
+            else: sock.sendall(dataLengthToPrefix(replyData)+replyData)
+    except Exception as err:
+        print 'src:', err
     finally:
         sock.close()
         return data
@@ -108,6 +119,8 @@ def sockListenerThread(shutdownTarget,
             else:
                 #p#print 'connection w/ ',client_addr #p#
                 Thread(target=workerTarget, args=(new_sock, client_addr, workerCallables), name='wt').start()
+    except Exception as err:
+        print 'slt:', err
     finally: sock.close()
 
 def sockSendRecv(data,
@@ -147,15 +160,16 @@ def sockSendRecv(data,
                 else: raise
             else:
                 #p#print 'send:',`dataLengthToPrefix(data)`, data[:min([len(data),10])] #p#
-                sock.sendall(dataLengthToPrefix(data)+data)
+                if USE_HMAC: sock.sendall(hmac.new('key', data).digest()+dataLengthToPrefix(data)+data)
+                else: sock.sendall(dataLengthToPrefix(data)+data)
                 return sockRecvCall(sock, addr=(host,port), callablesDict=callablesDict, timeout=timeout)
         else: return '1'
+    except Exception as err:
+        print 'ssr:', err
     finally: sock.close()
 
 def dataLengthToPrefix(data):
-    """.. method:: dataLengthToPrefix(data)
-
-        This method encodes length of the data as characters. The number of characters in the
+    """This method encodes length of the data as characters. The number of characters in the
         prefix is specified by the global variable, 'PREFIX_LENGTH'. Currently, the default is
         three characters. If the data length exceeds the MAX_MESSAGE_LENGTH, a warning
         message is printed to STDOUT.
@@ -172,6 +186,18 @@ def prefixToDataLength(prefix):
 
     """
     return reduce(lambda s,(i,c): s+ord(c)*255**i,enumerate(prefix),0)
+
+def getMsg(sock, msgLength):
+    msg = ''
+    while len(msg) < msgLength:
+        try: chunk = sock.recv(msgLength-len(msg))
+        except socket.error as err:
+            if err.errno == errno.EAGAIN: sleep(0.01)
+            else: raise
+        else:
+            if not chunk: break
+            msg += chunk
+    return msg
 
 def createSSLCertificate():
     """.. method:: 
