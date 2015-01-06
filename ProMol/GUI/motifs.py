@@ -113,6 +113,8 @@ def initialise():
     glb.GUI.motifs['ec2'] = StringVar()
     glb.GUI.motifs['ec3'] = StringVar()
     glb.GUI.motifs['ec4'] = StringVar()
+
+    glb.GUI.motifs['pfam'] = StringVar()
     
     glb.GUI.motifs['motifColorLabel'] = tk.Label(group, text="Motif Color")
     glb.GUI.motifs['motifColorLabel'].grid(row=3, column=0, sticky=tk.E)
