@@ -40,7 +40,7 @@ from Tkinter import *
 import tkMessageBox, tkFileDialog
 import Pmw
 from threading import Thread
-from commands import getstatusoutput
+#from commands import getstatusoutput
 from pymol import cmd,selector
 from pymol.cmd import _feedback,fb_module,fb_mask,is_list,_cmd
 from pymol.cgo import *
@@ -49,6 +49,18 @@ from numpy import *
 import tkColorChooser
 from pymol.vfont import plain
 from glob import glob
+
+def getstatusoutput(cmd):
+    """Return (status, output) of executing cmd in a shell."""
+    """This new implementation should work on all platforms."""
+    import subprocess
+    sts = True
+    output = ""
+    try:
+        output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
+    except:
+        sts = False
+    return sts, output
 
 __version__ = "2.1.1"
 #=============================================================================
@@ -72,25 +84,9 @@ def __init__(self):
 #
 
 intro_text = """
-Welcome to the updated version of the PyMOL Autodock Plugin.The current version has been
-entirely rewritten and extended. Now you can set up a complete docking run from the very
-beginning, perform the docking runs from within PyMOL and directly load the results into
-the viewer. The plugin now supports the novel Autodock spawn \"VINA\" which is orders of
-magnitudes faster than Autodock4. To get this plugin to work properly you should have the
-mgltools (http://mgltools.scripps.edu/) installed and tell the plugin on this page where
-to find the scripts (usually somewhere in /python/site-packages/AutoDockTools/Utilities24/ )
-and make sure that they work. Additionally you should tell the plugin where to find the autogrid4,
-autodock4, and vina executables. If you do this once and press the \"Save Configuration File\"
-button this information is present the next time you use the plugin.
+Welcome to the updated version of the PyMOL Autodock Plugin.The current version has been entirely rewritten and extended. Now you can set up a complete docking run from the very beginning, perform the docking runs from within PyMOL and directly load the results into the viewer. The plugin now supports the novel Autodock spawn \"VINA\" which is orders of magnitudes faster than Autodock4. To get this plugin to work properly you should have the mgltools (http://mgltools.scripps.edu/) installed and tell the plugin on this page where to find the scripts (usually somewhere in /python/site-packages/AutoDockTools/Utilities24/ ) and make sure that they work. Additionally you should tell the plugin where to find the autogrid4, autodock4, and vina executables. If you do this once and press the \"Save Configuration File\" button this information is present the next time you use the plugin. A complete setup and execution of a docking run or a virtual screening is basically a walk from the left to the right along the notebook structure if this plugin. Each page is more or less intuitive or contains a description of what to do. The basic workflow is: Load Structure -> Define binding site -> Receptor preparation -> Ligand preparation -> Docking -> Analysis.
 
-A complete setup and execution of a docking run or a virtual screening is basically a walk
-from the left to the right along the notebook structure if this plugin. Each page is more
-or less intuitive or contains a description of what to do. The basic workflow is:
-Load Structure -> Define binding site -> Receptor preparation -> Ligand preparation ->
-Docking -> Analysis.
-
-Have fun and contact me (dseelig@gwdg.de) if you find bugs or have any suggestions for future
-versions.
+Have fun and contact me (dseelig@gwdg.de) if you find bugs or have any suggestions for future versions.
 Daniel
 Reference: J. Comput.-Aided Mol. Des. 24:417-422 (2010)
 """
@@ -474,12 +470,13 @@ class Autodock:
         self.grid_center[1].set(default_settings['grid_center_Y'])
         self.grid_center[2].set(default_settings['grid_center_Z'])
 
-        # paths to executables
+        # paths to executables, working files, etc.
         self.config_settings = {}
         self.autodock_tools_path = StringVar()
         self.autogrid_exe = StringVar()
         self.autodock_exe = StringVar()
         self.vina_exe = StringVar()
+        self.work_path_location = StringVar()
 
         # ligand display settings
 
@@ -503,7 +500,7 @@ class Autodock:
         Pmw.setbusycursorattributes(self.dialog.component('hull'))
         self.status_line = Label(self.dialog.interior(), 
                                  relief='sunken',
-                                 font='helvetica 12', anchor='w',fg='yellow',bg='black')
+                                 font='Arial 8', anchor='w',fg='yellow',bg='black')
         self.status_line.pack(side=BOTTOM,fill='x', expand=1, padx=0, pady=0)
 
 
@@ -513,7 +510,7 @@ class Autodock:
         # the title
 
         self.title_label = Tkinter.Label(self.dialog.interior(),
-                                         text = 'PyMOL Autodock/Vina Plugin\nDaniel Seeliger\n<http://wwwuser.gwdg.de/~dseelig>',
+                                         text = 'PyMOL Autodock/Vina Plugin -- Daniel Seeliger (rev 6 Mar 15) -- <http://wwwuser.gwdg.de/~dseelig>',
                                          background = 'navy',
                                          foreground = 'white',
                                          )
@@ -759,12 +756,12 @@ class Autodock:
                                                 validate = {'validator':quickFileValidation,},
                                                 value = default_settings['gpf_file_name'],
                                                 label_text = 'Autodock GPF File:')
-        self.gpf_file_location.pack(side=LEFT,fill = 'x', expand = 1, padx = 1, pady = 5)
+        self.gpf_file_location.pack(side=LEFT,fill = 'x', expand = 1, padx = 1, pady = 2)
 
         self.gpf_button_box = Pmw.ButtonBox(self.gpf_file_io.interior(),orient='horizontal', padx=0,pady=0)
         self.gpf_button_box.add('Load',command = self.load_gpf_file)
         self.gpf_button_box.add('Save',command = self.save_gpf_file)
-        self.gpf_button_box.pack(side=BOTTOM,expand = 1, padx = 10, pady = 5)
+        self.gpf_button_box.pack(side=BOTTOM,expand = 1, padx = 10, pady = 2)
 
         # load/write vina config file
         self.config_file_io = Pmw.Group(self.grid_definition_page, tag_text='Config File')
@@ -776,10 +773,10 @@ class Autodock:
                                                 validate = {'validator':quickFileValidation,},
                                                 value = default_settings['config_file_name'],
                                                 label_text = 'VINA config File:')
-        self.config_file_location.pack(side=LEFT,fill = 'x', expand = 1, padx = 1, pady = 5)
+        self.config_file_location.pack(side=LEFT,fill = 'x', expand = 1, padx = 1, pady = 2)
 
         self.config_button_box = Pmw.ButtonBox(self.config_file_io.interior(), padx=0, pady=0,orient='horizontal')
-        self.config_button_box.pack(side=BOTTOM,expand = 1, padx = 10, pady = 5)
+        self.config_button_box.pack(side=BOTTOM,expand = 1, padx = 10, pady = 2)
         self.config_button_box.add('Load',command = self.load_config_file)
         self.config_button_box.add('Save',command = self.save_config_file)
 
@@ -793,6 +790,8 @@ class Autodock:
 
         self.text_field = Tkinter.Label(self.configuration_top_group.interior(),
                                          text = intro_text,
+                                         font = ("Arial", 7),
+                                         wraplength = 580,
                                          background = 'black',
                                          foreground = 'yellow',
                                         justify = LEFT,
@@ -833,7 +832,7 @@ class Autodock:
         self.work_path_location = Pmw.EntryField(self.configuration_group.interior(),
                                                  labelpos='w',
                                                  label_pyclass = DirDialogButtonClassFactory.get(self.set_work_path_location),
-                                                 value = os.path.abspath(os.curdir),
+                                                 value = self.config_settings['work_path_location'],
                                                  label_text = 'Working Directory:')
 
         for x in  [self.autodock_tools_location,
@@ -1814,6 +1813,7 @@ class Autodock:
         self.config_settings['autogrid_exe'] = ''
         self.config_settings['autodock_exe'] = ''
         self.config_settings['vina_exe'] = ''
+        self.config_settings['work_path_location'] = tmp_dir
         if os.path.isfile(config_file_name):
             self.status_line.configure(text = 'Reading configuration file: %s' % config_file_name)
             lst = self.fileopen(config_file_name,'r').readlines()
@@ -1825,6 +1825,7 @@ class Autodock:
             self.autodock_exe.set(self.config_settings['autodock_exe'])
             self.vina_exe.set(self.config_settings['vina_exe'])
             self.autodock_tools_path.set(self.config_settings['autodock_tools_path'])
+            self.work_path_location.set(self.config_settings['work_path_location'])
         else:
             self.status_line.configure(text = 'Configuration file not found')
         return self.config_settings
@@ -1838,6 +1839,7 @@ class Autodock:
         self.config_settings['autodock_exe'] = self.autodock_location.getvalue()
         self.config_settings['vina_exe'] = self.vina_location.getvalue()
         self.config_settings['autodock_tools_path'] = self.autodock_tools_location.getvalue()
+        self.config_settings['work_path_location'] = self.work_path_location.getvalue()
         print 'ADDD', self.autodock_location.getvalue()
         for key, val in self.config_settings.items():
             print >>fp, key, '=', val
@@ -2958,14 +2960,16 @@ class Autodock:
 
 
     def fileopen(self, filename, mode):
+        import datetime
+        dt = datetime.datetime.now()
         if mode=='w' and os.path.isfile(filename):
             p = os.path.abspath(filename)
             b = os.path.basename(p)
             pa,n= p.split(b)
-            tmp = '#'+b+'#'
+            tmp = b+'_'+(dt.strftime("%Y-%m-%d-%S"))
             fn = os.path.join(pa,tmp)
+            self.status_line.configure(text='Backing up %s to %s' % (b,fn))
             os.rename(filename,fn)
-            self.status_line.configure(text='Backing up %s to %s' % (filename,fn))
         try:
             fp = open(filename,mode)
             return fp
@@ -3530,7 +3534,7 @@ class PmwDirDialog(PmwFileDialog):
 
 class Tail(object):
     """The Tail monitor object."""
-    
+
     def __init__(self, path, only_new = False,
                  min_sleep = 1,
                  sleep_interval = 1,
@@ -3559,7 +3563,11 @@ class Tail(object):
 
         # remember path to file in case I need to reopen
         self.path = abspath(path)
-        self.f = open(self.path,"r")
+        try:
+            self.f = open(self.path,"r")
+        except:
+            sleep(3)
+            self.f = open(self.path,"r")
         self.min_sleep = min_sleep * 1.0
         self.sleep_interval = sleep_interval * 1.0
         self.max_sleep = max_sleep * 1.0
