@@ -1,0 +1,47 @@
+This is a revised version of autodock.py, the Autodock/Vina plugin for PyMol
+by Daniel Seeliger.  See "http://wwwuser.gwdg.de/~dseelig/adplugin.html
+for the original release.
+
+The revisions made here are in an attempt to adapt this plugin, which works
+well with Python 2.7.9 and PrMOL 1.7.x on Linux or Mac for use on Windows.
+
+This copyright notice for the original code is:
+
+# Autodock/Vina plugin  Copyright Notice
+# ============================
+#
+# The Autodock/Vina plugin source code is copyrighted, but you can freely use and
+# copy it as long as you don't change or remove any of the copyright
+# notices.
+#
+# ----------------------------------------------------------------------
+# Autodock/Vina plugin is Copyright (C) 2009 by Daniel Seeliger
+#
+#                        All Rights Reserved
+#
+# Permission to use, copy, modify, distribute, and distribute modified
+# versions of this software and its documentation for any purpose and
+# without fee is hereby granted, provided that the above copyright
+# notice appear in all copies and that both the copyright notice and
+# this permission notice appear in supporting documentation, and that
+# the name of Daniel Seeliger not be used in advertising or publicity
+# pertaining to distribution of the software without specific, written
+# prior permission.
+#
+# DANIEL SEELIGER DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS
+# SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+# FITNESS.  IN NO EVENT SHALL DANIEL SEELIGER BE LIABLE FOR ANY
+# SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER
+# RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF
+# CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
+# CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+# ----------------------------------------------------------------------
+
+The revisions here are by Herbert J. Bernstein, 6 March 2015, with the
+intention of incorporating the plugin within the larger ProMOL package releases
+under the GPL.  autodoc.py as a whole remains under the original autodoc.py
+notice.  All warranties are also disclaimed by Herbert J. Bernstein
+
+See the svn change history for the revisions made.
+
+  -- H. J. Bernstein, yayahjb@gmail.com
