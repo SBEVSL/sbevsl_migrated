@@ -63,7 +63,7 @@ def getstatusoutput(cmd):
         print "getstatusoutput failed"
     return sts, output
 
-__version__ = "2.1.1"
+__version__ = "2.1.1_rev_21Mar2015"
 #=============================================================================
 #
 #     INITIALISE PLUGIN
@@ -90,6 +90,11 @@ def __init__(self):
 
 global_status = StringVar()
 global_status.set("")
+transfer_status = {}
+transfer_status['log'] = ""
+transfer_status['line_count'] = 0
+transfer_status['old_line_count'] = 0
+
 
 intro_text = """
 Welcome to the updated version of the PyMOL Autodock Plugin.The current version has been entirely rewritten and extended. Now you can set up a complete docking run from the very beginning, perform the docking runs from within PyMOL and directly load the results into the viewer. The plugin now supports the novel Autodock spawn \"VINA\" which is orders of magnitudes faster than Autodock4. To get this plugin to work properly you should have the mgltools (http://mgltools.scripps.edu/) installed and tell the plugin on this page where to find the scripts (usually somewhere in /python/site-packages/AutoDockTools/Utilities24/ ) and make sure that they work. Additionally you should tell the plugin where to find the autogrid4, autodock4, and vina executables. If you do this once and press the \"Save Configuration File\" button this information is present the next time you use the plugin. A complete setup and execution of a docking run or a virtual screening is basically a walk from the left to the right along the notebook structure if this plugin. Each page is more or less intuitive or contains a description of what to do. The basic workflow is: Load Structure -> Define binding site -> Receptor preparation -> Ligand preparation -> Docking -> Analysis.
@@ -124,8 +129,16 @@ in .pdb or .mol2 format. Use the "Import" button to read all
 compounds in the directory and use the "Generate All" button to 
 prepare each compound for the docking run.\n"""
 
+transfer_docking_text = {}
 docking_text = """
 This is the docking page. You have to select a recetor and whether you want to use flexible sidechains. You may either dock a single ligand from the list above or all ligands you have prepared. If you use Autodock4 you have to calculate a grid before you can start the actual docking run. Just press "Run AutoGrid" and wait until its finished and then press the "Run AutoDock" button. The genrated grid maps can be loaded into PyMOL on the "Grid Maps" page. If you use vina you don't have to calculate a grid. Just press "Run VINA" and wait until it is finished.You can load the generated docking poses into PyMOL on the "View Poses" page\n"""
+transfer_docking_text['log'] = docking_text
+transfer_docking_text['line_count'] = 0
+transfer_docking_text['old_line_count'] = 0
+
+root = Tk()
+
+
 
 pdb_format="%6s%5d %-4s%1s%3s%2s%4d %11.3f %7.3f %7.3f %5.2f %5.2f"
 
@@ -196,23 +209,55 @@ class Thread_run(Thread):
             self.outlog[log] = output
 
 class Thread_log(Thread):
-    def __init__(self, logfile, page):
+    def __init__(self, logfile, mythread, timeout):
         Thread.__init__(self)
-        self.page = page
         self.logfile = logfile
+        self.mythread = mythread
+        self.timeout = timeout
     def run(self):
+        global transfer_status
+        global transfer_docking_text
         if not os.environ.has_key('ADPLUGIN_NO_OUTPUT_REDIRECT'):
-            t = Tail(self.logfile)
-            line = t.nextline()
-            self.page.insert('end',"%s" % line)
-            while line:
-                line = t.nextline()
-                self.page.insert('end',"%s" % line)
-                self.page.yview('moveto', 1.0)#, 'page')
+            seconds = 0
+            readcount = 0
+            while self.mythread.is_alive() and seconds < self.timeout:
+                if os.path.getsize(self.logfile) > readcount+20:
+                    f = open(self.logfile,'r')
+                    f.seek(readcount,0)
+                    while readcount < os.path.getsize(self.logfile):
+                        logline = f.readline()
+                        if not logline: break
+                        print logline,
+                        transfer_status['log'] = logline
+                        transfer_status['line_count'] = transfer_status['line_count']+1;
+                        page_text = transfer_docking_text['log'];
+                        transfer_docking_text['log'] =  page_text+logline
+                        transfer_docking_text['line_count'] = transfer_docking_text['line_count']+1
+                        readcount = f.tell()
+                    f.close()
+                    seconds = seconds+10
+                    sleep(10)
+            sleep(5)
+            if os.path.getsize(self.logfile) > 0:
+                f = open(self.logfile,'r')
+                f.seek(readcount,0)
+                while readcount < os.path.getsize(self.logfile):
+                    logline = f.readline()
+                    if not logline: break
+                    print logline,
+                    page_text = transfer_docking_text['log'];
+                    transfer_docking_text['log'] =  page_text+logline
+                    transfer_docking_text['line_count'] = transfer_docking_text['line_count']+1
+                    readcount = f.tell()
+                f.close()
+            if not self.mythread.is_alive():
+                transfer_status['log']="Done!!!"
+                transfer_status['line_count'] = transfer_status['line_count']+1;
         else:
             line = 'LOG FILE OUTPUT NOT REDIRECTED'
-            self.page.insert('end',"%s" % line)
-            self.page.yview('moveto', 1.0)#, 'page')
+            page_text = transfer_docking_text['log'];
+            transfer_docking_text['log'] =  page_text+line
+            transfer_docking_text['line_count'] = transfer_docking_text['line_count']+1
             
 #==========================================================================
 #
@@ -477,6 +522,8 @@ class Autodock:
     """ THE MAJOR PLUGIN CLASS """
     
     def __init__(self,app):
+        global transfer_docking_text
+        global global_status
         parent = app.root
         self.parent = parent
         # receptors and ligands
@@ -1182,7 +1229,7 @@ class Autodock:
                                                         text_foreground='green'
                                                         )
         self.docking_page_log_text.pack(side=LEFT, anchor='n',pady=0)
-        self.docking_page_log_text.insert('end',docking_text)
+        self.docking_page_log_text.insert('end',transfer_docking_text['log'])
         
 
         #------------------------------------------------------------------
@@ -1354,6 +1401,8 @@ class Autodock:
         self.load_map_buttonbox.pack(side=BOTTOM,expand = 1, padx = 10, pady = 5)
         self.load_map_buttonbox.add('Load',command=self.load_grid_map)
 
+        root.after(3000,self.proc_transfers)
+
 
 
 
@@ -1366,6 +1415,18 @@ class Autodock:
         #------------------------------------------------------------------
         ##################################################################
 
+
+    def proc_transfers(self):
+        global transfer_status
+        global transfer_docking_text
+        global global_status
+        if transfer_status['line_count'] != transfer_status['old_line_count']:
+            global_status.set(transfer_status['log'])
+            transfer_status['old_line_count'] = transfer_status['line_count']
+        if transfer_docking_text['line_count'] != transfer_docking_text['old_line_count']:
+            self.docking_page_log_text.settext(transfer_docking_text['log'])
+            transfer_docking_text['old_line_count'] = transfer_docking_text['line_count']
+        root.after(3000,self.proc_transfers)
 
 
 
@@ -1449,6 +1510,7 @@ class Autodock:
 
     
     def select_atoms_within_binding_site(self):
+        global global_status
         m = cmd.get_model("polymer")
         xmin, xmax = self.box_coords[0]
         ymin, ymax = self.box_coords[1]
@@ -1526,6 +1588,7 @@ class Autodock:
         self.rank_pose_file_location.setvalue(filename)
 
     def load_gpf_file(self):
+        global global_status
         filename = self.gpf_file_location.get()
         fp = self.fileopen(filename,'r')
         if not fp:
@@ -1561,6 +1624,7 @@ class Autodock:
         self.calculate_box()
             
     def save_gpf_file(self):
+        global global_status
         filename = self.gpf_file_location.get()
         fp = self.fileopen(filename,'w')
         if not fp:
@@ -1581,6 +1645,7 @@ class Autodock:
 
             
     def load_config_file(self):
+        global global_status
         filename = self.config_file_location.get()
         fp = self.fileopen(filename,'r')
         spacing = self.grid_spacing.get()
@@ -1624,6 +1689,7 @@ class Autodock:
 
                             
     def save_config_file(self):
+        global global_status
         filename = self.config_file_location.get()
         fp = self.fileopen(filename,'w')
         if not fp:
@@ -1853,6 +1919,7 @@ class Autodock:
         return self.work_path_location.getvalue()
     
     def read_plugin_config_file(self):
+        global global_status
         config_file_name = os.path.join(tmp_dir,"pymol_autodock_plugin.conf")
         self.config_settings = {}
         self.config_settings['autodock_tools_path'] = ''
@@ -1877,6 +1944,7 @@ class Autodock:
         return self.config_settings
     
     def save_plugin_config_file(self):
+        global global_status
         config_file_name = os.path.join(tmp_dir,"pymol_autodock_plugin.conf")
         fp = self.fileopen(config_file_name,'w')
         print >>fp, '#========================================'
@@ -1893,6 +1961,7 @@ class Autodock:
         global_status.set('Wrote configuration file %s' % config_file_name)
 
     def ligand_display_mode_changed(self, button_name, pressed):
+        global global_status
         if pressed:
             self.ligand_display_mode[button_name] = True
             action = 'Enabled'
@@ -1941,6 +2010,7 @@ class Autodock:
         
 
     def generate_receptor(self):
+        global global_status
         print self.work_dir()
         sel = self.selection_list.getcurselection()
         tmp_rec_pdb = os.path.join(self.work_dir(),"receptor.%s.pdb" % sel[0])
@@ -1977,6 +2047,7 @@ class Autodock:
             self.receptor_page_log_text.insert('end',output)
             
     def select_flexible_residues(self):
+        global global_status
         sel = self.selection_list.get()
         rec = self.receptor_list.get()
         stored.list = []
@@ -2024,6 +2095,7 @@ class Autodock:
         self.receptor_pdbqt_location.setvalue(filename)
 
     def load_receptor_pdbqt(self):
+        global global_status
         fn = self.receptor_pdbqt_location.getvalue()
         outfile = os.path.join(self.work_dir(), os.path.basename(fn).split('.')[0]+'_pdb.pdb')
         util_program = os.path.join(self.autodock_tools_path.get(),"pdbqt_to_pdb.py")
@@ -2059,6 +2131,7 @@ class Autodock:
 
         
     def remove_receptor(self):
+        global global_status
         rec = self.receptor_list.get()
         del self.receptor_dic[rec]
         global_status.set("Removed receptor %s" % rec)
@@ -2073,6 +2146,7 @@ class Autodock:
             self.docking_receptor_list.clear()
             
     def remove_flexible_residues(self):
+        global global_status
         rec = self.receptor_list.get()
         rec_object = self.receptor_dic[rec]
         rec_object.flexible_residues = []
@@ -2082,6 +2156,7 @@ class Autodock:
         self.selected_receptor(rec)
         
     def remove_all_receptors(self):
+        global global_status
         self.receptor_dic = {}
         global_status.set("Deleted all receptor objects")
         self.receptor_list.clear()
@@ -2091,6 +2166,7 @@ class Autodock:
     # ligands
     
     def save_as_ligand_pdb(self, name):
+        global global_status
         pdb_name = os.path.join(self.work_dir(), name+'.ligand.pdb')
         cmd.save(pdb_name, name)
         global_status.set("Saving ligand pdb file %s from selection %s" % (pdb_name, name))
@@ -2103,6 +2179,7 @@ class Autodock:
         self.ligand_list.selectitem(-1)
 
     def generate_ligand(self):
+        global global_status
         sel = self.ligand_list.get()
         filename = self.ligand_dic[sel].input_file
         outfile = os.path.join(self.work_dir(), os.path.basename(filename).split('.')[0]+'.pdbqt')
@@ -2136,6 +2213,7 @@ class Autodock:
         
 
     def remove_ligand(self):
+        global global_status
         lig = self.ligand_pdbqt_list.get()
         try:
             del self.ligand_dic[lig]
@@ -2174,6 +2252,7 @@ class Autodock:
             
         
     def remove_all_ligands(self):
+        global global_status
         self.ligand_dic = {}
         global_status.set("Deleted all ligand objects")
         self.ligand_list.clear()
@@ -2185,6 +2264,7 @@ class Autodock:
         self.ligand_dir.set(dirname)
         
     def import_ligands(self):
+        global global_status
         pth = self.ligand_dir.get()
         lst = glob(os.path.join(pth,"*.pdb"))\
               +glob(os.path.join(pth,"*.mol2"))\
@@ -2227,6 +2307,7 @@ class Autodock:
     # docking
 
     def run_autogrid(self):
+        global global_status
         rec = self.docking_receptor_rigid_list.get()
         use_flex =  self.docking_receptor_flexible_list.get()
         receptor_object = self.receptor_dic[rec]
@@ -2303,10 +2384,10 @@ class Autodock:
             r = Thread_run(command)
             r.start()
             sleep(1)
-            #ll = Thread_log(outfile_log, self.docking_page_log_text)
-            #ll.start()
-            outlog = {}
-            Report_log(r,outfile_log,self.status_line, self.docking_page_log_text,outlog,300)
+            ll = Thread_log(outfile_log, r, 1000)
+            ll.start()
+            #outlog = {}
+            #Report_log(r,outfile_log,self.status_line, self.docking_page_log_text,outlog,1000)
         else:
             global_status.set("An error occured while trying to run Autogrid....")
             self.docking_page_log_text.insert('end',output)
@@ -2315,6 +2396,7 @@ class Autodock:
 
 
     def run_autodock(self, write_only = False):
+        global global_status
         rec = self.docking_receptor_rigid_list.get()
         use_flex =  self.docking_receptor_flexible_list.get()
         receptor_object = self.receptor_dic[rec]
@@ -2382,10 +2464,10 @@ class Autodock:
                 global_status.set("Now docking ligand: %s...." % ligands)
                 r.start()
                 self.current_thread = r
-                #ll = Thread_log(outfile_poses, self.docking_page_log_text)
-                #ll.start()
-                outlog = {}
-                Report_log(r,outfile_poses, self.status_line, self.docking_page_log_text,outlog,300)
+                ll = Thread_log(outfile_poses, r, 1000)
+                ll.start()
+                #outlog = {}
+                #Report_log(r,outfile_poses, self.status_line, self.docking_page_log_text,outlog,300)
             else:
                 global_status.set("Error while generating run input file for ligand: %s" % ligands)
                 self.docking_page_log_text.insert('end',output)
@@ -2402,7 +2484,7 @@ class Autodock:
             
 
     def run_vina(self, write_only = False):
-
+        global global_status
         rec = self.docking_receptor_rigid_list.get()
         use_flex =  self.docking_receptor_flexible_list.get()
         receptor_object = self.receptor_dic[rec]
@@ -2495,10 +2577,10 @@ class Autodock:
             global_status.set("Now docking ligand: %s...." % ligands)
             r.start()
             self.current_thread = r
-            #ll = Thread_log(outfile_log, self.docking_page_log_text)
-            #ll.start()
-            outlog={}
-            Report_log(r,outfile_log, self.status_line, self.docking_page_log_text,outlog,300)
+            ll = Thread_log(outfile_log, r, 1000)
+            ll.start()
+            #outlog={}
+            #Report_log(r,outfile_log, self.status_line, self.docking_page_log_text,outlog,300)
 
         else:
             ligand_list = []
@@ -2614,6 +2696,7 @@ class Autodock:
 
 
     def update_combo(self,name):
+        global global_status
         try:
             self.pose_viewer_notebook.delete(name)
         except:
@@ -2658,6 +2741,7 @@ class Autodock:
 
 
     def ligand_combo_box_selected(self, value):
+        global global_status
         name = value.split('::')[0]
         if self.pose_viewer_radiobuttons.getvalue()=='Show Selected':
             view = cmd.get_view()
@@ -2684,18 +2768,21 @@ class Autodock:
             global_status.set('')
 
     def show_all_poses(self):
+        global global_status
         name = self.pose_viewer_notebook.getcurselection()
         for pose in self.pose_viewer_ligand_pages[name]['poses']:
             self.ligand_combo_box_selected(pose)
         global_status.set('Showing all poses %s' % name)
 
     def show_best_poses(self):
+        global global_status
         name = self.pose_viewer_notebook.getcurselection()
         for pose in self.pose_viewer_ligand_pages[name]['poses'][:10]:
             self.ligand_combo_box_selected(pose)
         global_status.set('Showing best 10 poses %s' % name)
 
     def hide_all_poses(self):
+        global global_status
         name = self.pose_viewer_notebook.getcurselection()
 #           pmlname = name.replace(' ','_')
 #           cmd.delete(pmlname+'.*')
@@ -2703,6 +2790,7 @@ class Autodock:
         global_status.set('Deleted all poses %s' % name)
            
     def delete_ligand(self):
+        global global_status
         name = self.pose_viewer_notebook.getcurselection()
         cmd.delete(name+'_*')
         self.pose_viewer_notebook.delete(name)
@@ -2741,6 +2829,7 @@ class Autodock:
             self.score_table.updateView(self.best_ligand_list)
             
     def export_score_dat_file(self):
+        global global_status
         what = self.score_table_radiobuttons.getvalue()
         filename = self.rank_dat_file_location.getvalue()
         fp = self.fileopen(filename,'w')
@@ -2756,6 +2845,7 @@ class Autodock:
             
         
     def export_score_csv_file(self):
+        global global_status
         what = self.score_table_radiobuttons.getvalue()
         filename = self.rank_csv_file_location.getvalue()
         fp = self.fileopen(filename,'w')
@@ -2770,6 +2860,7 @@ class Autodock:
         global_status.set("Exported docking results to %s" % filename)
 
     def export_score_pose_file(self):
+        global global_status
         what = self.score_table_radiobuttons.getvalue()
         filename = self.rank_pose_file_location.getvalue()
         fp = self.fileopen(filename,'w')
@@ -2797,6 +2888,7 @@ class Autodock:
 
 
     def load_grid_map(self):
+        global global_status
         view = cmd.get_view()
         fn = self.map_file_location.get()
         fp = self.fileopen(fn,'r')
@@ -2893,6 +2985,7 @@ class Autodock:
         self.status_mapbox(surfname)
             
     def delete_surface(self):
+        global global_status
         name = self.map_viewer_notebook.getcurselection()
         s = self.map_pages[name]['combo'].getcurselection()
         for mp in s:
@@ -3014,6 +3107,7 @@ class Autodock:
 
 
     def fileopen(self, filename, mode):
+        global global_status
         import datetime
         dt = datetime.datetime.now()
         if mode=='w' and os.path.isfile(filename):
