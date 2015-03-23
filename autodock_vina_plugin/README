@@ -4,6 +4,10 @@ for the original release.
 
 The revisions made here are in an attempt to adapt this plugin, which works
 well with Python 2.7.9 and PrMOL 1.7.x on Linux or Mac for use on Windows.
+As of 22 March 2015, this version now appears to work reasonably well under
+both OS X and Windows XP.  Further work and a proper installer will be needed.
+
+  -- H. J. Bernstein, yayahjb@gmail.com
 
 This copyright notice for the original code is:
 

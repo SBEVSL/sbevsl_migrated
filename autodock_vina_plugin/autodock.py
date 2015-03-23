@@ -49,21 +49,10 @@ from numpy import *
 import tkColorChooser
 from pymol.vfont import plain
 from glob import glob
+import platform
 
-def getstatusoutput(cmd):
-    """Return (status, output) of executing cmd in a shell."""
-    """This new implementation should work on all platforms."""
-    import subprocess
-    sts = 0
-    output = ""
-    try:
-        output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
-    except:
-        sts = 256
-        print "getstatusoutput failed"
-    return sts, output
 
-__version__ = "2.1.1_rev_21Mar2015"
+__version__ = "2.1.1_rev_22Mar2015"
 #=============================================================================
 #
 #     INITIALISE PLUGIN
@@ -73,6 +62,43 @@ if os.environ.has_key('ADPLUGIN_PYTHONHOME'):
     os.environ['PYTHONHOME'] = os.environ['ADPLUGIN_PYTHONHOME']
 if os.environ.has_key('ADPLUGIN_PYTHONPATH'):
     os.environ['PYTHONPATH'] = os.environ['ADPLUGIN_PYTHONPATH']
+if os.environ.has_key('ADPLUGIN_FONT'):
+    adplugin_font_list = os.environ['ADPLUGIN_FONT'].split()
+    adplugin_font = (adplugin_font_list[0], adplugin_font_list[1])
+else:
+    adplugin_font = ("Helvetica", 10)
+adplugin_font_name = adplugin_font[0]
+adplugin_font_size = int(adplugin_font[1])
+if not (adplugin_font_name in Pmw.logicalfontnames()):
+    print "'"+adplugin_font_name+"' not in ", Pmw.logicalfontnames()
+    print "changing to Helvetica"
+    adplugin_font_name = "Helvetica"
+if adplugin_font_size < 4 or adplugin_font_size > 36:
+    print "'"+str(adplugin_font_size)+ "' not an acceptable font size, changing to 12"
+    adplugin_font_size = 12
+adplugin_font = (adplugin_font_name,adplugin_font_size)
+
+
+def getstatusoutput(cmd):
+    """Return (status, output) of executing cmd in a shell."""
+    """This new implementation should work on all platforms."""
+    import subprocess
+    cur_env = dict(os.environ.copy())
+    if os.environ.has_key('ADPLUGIN_PYTHONHOME'):
+        cur_env['PYTHONHOME'] = os.environ['ADPLUGIN_PYTHONHOME']
+    if os.environ.has_key('ADPLUGIN_PYTHONPATH'):
+        cur_env['PYTHONPATH'] = os.environ['ADPLUGIN_PYTHONPATH']
+    sts = 0
+    output = ""
+    try:
+        output = subprocess.check_output(cmd, shell=True, env=cur_env, \
+        stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
+    except subprocess.CalledProcessError as e:
+        sts = 256
+        print "getstatusoutput failed"
+        print output, e.output
+    return sts, output
+
 
 def __init__(self):
     self.menuBar.addmenuitem('Plugin', 'command',
@@ -135,10 +161,6 @@ This is the docking page. You have to select a recetor and whether you want to u
 transfer_docking_text['log'] = docking_text
 transfer_docking_text['line_count'] = 0
 transfer_docking_text['old_line_count'] = 0
-
-root = Tk()
-
-
 
 pdb_format="%6s%5d %-4s%1s%3s%2s%4d %11.3f %7.3f %7.3f %5.2f %5.2f"
 
@@ -211,7 +233,9 @@ class Thread_run(Thread):
 class Thread_log(Thread):
     def __init__(self, logfile, mythread, timeout):
         Thread.__init__(self)
-        self.logfile = logfile
+        self.logfile = logfile.replace("\\","/")
+        print "logfile",logfile
+        print "self.logfile",self.logfile
         self.mythread = mythread
         self.timeout = timeout
     def run(self):
@@ -220,6 +244,13 @@ class Thread_log(Thread):
         if not os.environ.has_key('ADPLUGIN_NO_OUTPUT_REDIRECT'):
             seconds = 0
             readcount = 0
+            if platform.system().lower() == "windows":
+            while self.mythread.is_alive() and seconds < self.timeout:
+                    sleep(2)
+                    seconds = seconds+2
+                    transfer_status['log'] = 'Running for %d seconds'%seconds
+                    transfer_status['line_count'] = transfer_status['line_count'] +1
+                seconds = self.timeout
             while self.mythread.is_alive() and seconds < self.timeout:
                 if os.path.getsize(self.logfile) > readcount+20:
                     f = open(self.logfile,'r')
@@ -237,6 +268,8 @@ class Thread_log(Thread):
                     f.close()
                     seconds = seconds+10
                     sleep(10)
+                    transfer_status['log'] = 'Running for %d seconds'%seconds
+                    transfer_status['line_count'] = transfer_status['line_count'] +1
             sleep(5)
             if os.path.getsize(self.logfile) > 0:
                 f = open(self.logfile,'r')
@@ -259,51 +292,6 @@ class Thread_log(Thread):
             transfer_docking_text['log'] =  page_text+line
             transfer_docking_text['line_count'] = transfer_docking_text['line_count']+1
             
-#==========================================================================
-#
-#    Report the thread logfile in the main thread
-
-def Report_log(mythread,logfile, status_line, page, outlog, timeout):
-    seconds = 0
-    linecount = 0
-    readcount = 0
-    while mythread.is_alive() and seconds < timeout:
-        if os.path.getsize(logfile) > readcount+20:
-            f = open(logfile,'r')
-            f.seek(readcount,0)
-            while readcount < os.path.getsize(logfile):
-                logline = f.readline()
-                if not logline: break
-                print logline,
-                readcount = readcount+len(logline)
-                linecount = linecount+1
-                page.insert('end',"%s" % logline)
-                page.yview('moveto', 1.0)
-            readcount = f.tell()
-            f.close()
-        seconds = seconds+10
-        sleep(10)
-    if os.path.getsize(logfile) > 0:
-        f = open(logfile,'r')
-        f.seek(readcount,0)
-        while readcount < os.path.getsize(logfile):
-            logline = f.readline()
-            if not logline: break
-            print logline,
-            linecount = linecount+1
-            readcount = readcount + len(logline)
-            page.insert('end',"%s" % logline)
-            page.yview('moveto', 1.0)
-        f.close()
-    if outlog:
-        for line in outlog[log].splitlines():
-            page.insert('end',"%s" % line)
-            page.yview('moveto', 1.0)
-    if not mythread.is_alive():
-        global_status.set("Done!!!")
-
-
-
 
 #==========================================================================
 #
@@ -524,6 +512,7 @@ class Autodock:
     def __init__(self,app):
         global transfer_docking_text
         global global_status
+        global adplugin_font
         parent = app.root
         self.parent = parent
         # receptors and ligands
@@ -592,7 +581,7 @@ class Autodock:
         Pmw.setbusycursorattributes(self.dialog.component('hull'))
         self.status_line = Label(self.dialog.interior(), 
                                  relief='sunken',
-                                 font='Helvetica 12', anchor='w',fg='yellow',bg='black')
+                                 font=adplugin_font, anchor='w',fg='yellow',bg='black')
         self.status_line.pack(side=BOTTOM,fill='x', expand=1, padx=0, pady=0)
         self.status_line.configure(textvariable=global_status)
 
@@ -883,7 +872,7 @@ class Autodock:
 
         self.text_field = Tkinter.Label(self.configuration_top_group.interior(),
                                          text = intro_text,
-                                         font = ("Helvetica", 12),
+                                         font = adplugin_font,
                                          wraplength = 580,
                                          background = 'black',
                                          foreground = 'yellow',
@@ -1025,6 +1014,7 @@ class Autodock:
         self.receptor_preparation_bottom_group = Pmw.Group(self.receptor_preparation_page, tag_text='Log')
         self.receptor_preparation_bottom_group.pack(fill = 'both', expand = 0, padx=10, pady=5)
 
+        myfont = Pmw.logicalfont(name=adplugin_font[0],size=int(adplugin_font[1]))
         self.receptor_page_log_text = Pmw.ScrolledText(self.receptor_preparation_bottom_group.interior(),
                                                         borderframe=5, 
                                                         vscrollmode='dynamic',
@@ -1033,7 +1023,8 @@ class Autodock:
                                                         text_width=150, text_height=15,
                                                         text_wrap='none',
                                                         text_background='#000000',
-                                                        text_foreground='green'
+                                                        text_foreground='green',
+                                                        text_font = myfont
                                                         )
         self.receptor_page_log_text.pack(side=LEFT, anchor='n',pady=0)
 
@@ -1123,6 +1114,7 @@ class Autodock:
         self.ligand_preparation_bottom_group = Pmw.Group(self.ligand_preparation_page, tag_text='Log')
         self.ligand_preparation_bottom_group.pack(fill = 'both', expand = 0, padx=10, pady=5)
 
+        myfont = Pmw.logicalfont(name=adplugin_font[0],size=int(adplugin_font[1]))
         self.ligand_page_log_text = Pmw.ScrolledText(self.ligand_preparation_bottom_group.interior(),
                                                         borderframe=5, 
                                                         vscrollmode='dynamic',
@@ -1132,7 +1124,8 @@ class Autodock:
                                                         text_width=150, text_height=15,
                                                         text_wrap='none',
                                                         text_background='#000000',
-                                                        text_foreground='green'
+                                                        text_foreground='green',
+                                                        text_font = myfont
                                                         )
         self.ligand_page_log_text.pack(side=LEFT, anchor='n',pady=0)
         self.ligand_page_log_text.insert('end',ligand_prep_text)
@@ -1218,6 +1211,7 @@ class Autodock:
         self.docking_bottom_group = Pmw.Group(self.docking_page, tag_text='Log')
         self.docking_bottom_group.pack(fill = 'both', expand = 0, padx=10, pady=5)
 
+        myfont = Pmw.logicalfont(name=adplugin_font[0],size=int(adplugin_font[1]))
         self.docking_page_log_text = Pmw.ScrolledText(self.docking_bottom_group.interior(),
                                                         borderframe=5, 
                                                         vscrollmode='dynamic',
@@ -1226,7 +1220,8 @@ class Autodock:
                                                         text_width=150, text_height=20,
                                                         text_wrap='word',
                                                         text_background='#000000',
-                                                        text_foreground='green'
+                                                        text_foreground='green',
+                                                        text_font = myfont
                                                         )
         self.docking_page_log_text.pack(side=LEFT, anchor='n',pady=0)
         self.docking_page_log_text.insert('end',transfer_docking_text['log'])
@@ -1401,7 +1396,7 @@ class Autodock:
         self.load_map_buttonbox.pack(side=BOTTOM,expand = 1, padx = 10, pady = 5)
         self.load_map_buttonbox.add('Load',command=self.load_grid_map)
 
-        root.after(3000,self.proc_transfers)
+        self.parent.after(1000,self.proc_transfers)
 
 
 
@@ -1426,7 +1421,7 @@ class Autodock:
         if transfer_docking_text['line_count'] != transfer_docking_text['old_line_count']:
             self.docking_page_log_text.settext(transfer_docking_text['log'])
             transfer_docking_text['old_line_count'] = transfer_docking_text['line_count']
-        root.after(3000,self.proc_transfers)
+        self.parent.after(1000,self.proc_transfers)
 
 
 
@@ -2307,7 +2302,8 @@ class Autodock:
     # docking
 
     def run_autogrid(self):
-        global global_status
+        global transfer_status
+        global transfer_docking_text
         rec = self.docking_receptor_rigid_list.get()
         use_flex =  self.docking_receptor_flexible_list.get()
         receptor_object = self.receptor_dic[rec]
@@ -2321,20 +2317,20 @@ class Autodock:
             else:
                 global_status.set("No flexible receptor defined! Cannot do flexible docking!")
                 return
-        self.docking_page_log_text.insert('end','#---------------------------------------\n')
-        self.docking_page_log_text.insert('end','# SETTING UP GRID CALCULATION\n')
-        self.docking_page_log_text.insert('end',' > RECEPTOR RIGID    : %s\n' % rigid_receptor_file)
-        self.docking_page_log_text.insert('end',' > RECEPTOR FLEXIBLE : %s\n' % flex_receptor_file)
-
+        page = transfer_docking_text['log']
+        page = page+ \
+               '#---------------------------------------\n'\
+               +'# SETTING UP GRID CALCULATION\n'\
+               +(' > RECEPTOR RIGID    : %s\n' % rigid_receptor_file)\
+               +(' > RECEPTOR FLEXIBLE : %s\n' % flex_receptor_file)
         ligands = self.docking_ligand_list.get()
         if ligands == 'All':
             pth = self.ligand_dic['VS_DIR']
         else:
             lig_pdbqt = self.ligand_dic[ligands].ligand_pdbqt
-        self.docking_page_log_text.insert('end',' > LIGAND(s)         : %s\n' % ligands)
+        page = page + (' > LIGAND(s)         : %s\n' % ligands)
         if ligands == 'All':
-            self.docking_page_log_text.insert('end',' > LIGAND VS-DIR      : %s\n' % pth)
-
+            page = page+(' > LIGAND VS-DIR      : %s\n' % pth)
         n_points_X = self.n_points_X.get()
         n_points_Y = self.n_points_Y.get()
         n_points_Z = self.n_points_Z.get()
@@ -2343,9 +2339,11 @@ class Autodock:
         center_Y = self.grid_center[1].get()
         center_Z = self.grid_center[2].get()
 
-        self.docking_page_log_text.insert('end',' > GRID POINTS      : %d %d %d\n' % (n_points_X, n_points_Y, n_points_Z))
-        self.docking_page_log_text.insert('end',' > GRID CENTER      : %8.3f %8.3f %8.3f\n' % (center_X, center_Y, center_Z))
-        self.docking_page_log_text.insert('end',' > GRID SPACING     : %8.3f \n' % spacing)
+        page = page + (' > GRID POINTS      : %d %d %d\n' % (n_points_X, n_points_Y, n_points_Z)) \
+            + (' > GRID CENTER      : %8.3f %8.3f %8.3f\n' % (center_X, center_Y, center_Z)) \
+            + (' > GRID SPACING     : %8.3f \n' % spacing)
+        transfer_docking_text['log'] = page
+        transfer_docking_text['line_count'] = transfer_docking_text['line_count']+1
 
         
         template_gpf = os.path.join(self.work_dir(),'template.gpf')
@@ -2364,19 +2362,20 @@ class Autodock:
         else:
             command+=' -l %s' % lig_pdbqt
             
-        self.docking_page_log_text.insert('end',"Batch: %s\n" % command)
+        transfer_docking_text['log'] = transfer_docking_text['log'] + ("Batch: %s\n" % command)
+        transfer_docking_text['line_count'] = transfer_docking_text['line_count']+1
         self.docking_page_log_text.yview('moveto',1.0)
         result, output = getstatusoutput(command)
         if result == 0:
-            global_status.set("Successfully generated AutoGrid input file")
-            self.docking_page_log_text.insert('end',output)
-            self.docking_page_log_text.insert('end',"Running AutoGrid.....\n")
+            transfer_status['log'] = "Successfully generated AutoGrid input file"
+            transfer_status['line_count'] = transfer_status['line_count']+1
+            transfer_docking_text['log'] = transfer_docking_text['log'] + output
+            transfer_docking_text['line_count'] = transfer_docking_text['line_count']+1
             autogrid = self.autogrid_exe.get()
             outfile_log = outfile_gpf.split('.')[0]+'.glg'
             receptor_object.autogrid_gpf = outfile_gpf
             receptor_object.autogrid_log = outfile_log
             command = '%s -p %s -l %s' % (autogrid, outfile_gpf, outfile_log)
-            global_status.set("Running AutoGrid....")
             # dirty
             if os.path.isfile(outfile_log):
                 shutil.move(outfile_log,outfile_log+'~')
@@ -2384,19 +2383,20 @@ class Autodock:
             r = Thread_run(command)
             r.start()
             sleep(1)
-            ll = Thread_log(outfile_log, r, 1000)
+            ll = Thread_log(outfile_log, r, 3600)
             ll.start()
-            #outlog = {}
-            #Report_log(r,outfile_log,self.status_line, self.docking_page_log_text,outlog,1000)
         else:
-            global_status.set("An error occured while trying to run Autogrid....")
-            self.docking_page_log_text.insert('end',output)
+            transfer_status['log'] = "An error occured while trying to run Autogrid...."
+            transfer_status['line_count'] = transfer_status['line_count']+1
+            transfer_docking_text['log'] = transfer_docking_text['log'] + output
+            transfer_status['line_count'] = transfer_status['line_count']+1
         self.docking_page_log_text.yview('moveto',1.0)            
 
 
 
     def run_autodock(self, write_only = False):
-        global global_status
+        global transfer_status
+        global transfer_docking_text
         rec = self.docking_receptor_rigid_list.get()
         use_flex =  self.docking_receptor_flexible_list.get()
         receptor_object = self.receptor_dic[rec]
@@ -2408,25 +2408,29 @@ class Autodock:
                 rigid_receptor_file = receptor_object.receptor_rigid
                 flex_receptor_file = receptor_object.receptor_flexible
             else:
-                global_status.set("No flexible receptor defined! Cannot do flexible docking!")
+                transfer_status['log'] = ("No flexible receptor defined! Cannot do flexible docking!")
+                transfer_status['line_count'] = transfer_status['line_count']+1
                 return
-        self.docking_page_log_text.insert('end','#---------------------------------------\n')
-        self.docking_page_log_text.insert('end','# SETTING UP DOCKING RUN\n')
-        self.docking_page_log_text.insert('end',' > RECEPTOR RIGID    : %s\n' % rigid_receptor_file)
-        self.docking_page_log_text.insert('end',' > RECEPTOR FLEXIBLE : %s\n' % flex_receptor_file)
+        page = transfer_docking_text['log'] \
+            + ('#---------------------------------------\n') \
+            + ('# SETTING UP DOCKING RUN\n') \
+            + (' > RECEPTOR RIGID    : %s\n' % rigid_receptor_file) \
+            + (' > RECEPTOR FLEXIBLE : %s\n' % flex_receptor_file)
 
         ligands = self.docking_ligand_list.get()
         if ligands == 'All':
             pth = self.ligand_dic['VS_DIR']
         else:
             lig_pdbqt = self.ligand_dic[ligands].ligand_pdbqt
-        self.docking_page_log_text.insert('end',' > LIGAND(s)         : %s\n' % ligands)
+        page = page + (' > LIGAND(s)         : %s\n' % ligands)
         if ligands == 'All':
-            self.docking_page_log_text.insert('end',' > LIGAND VS-DIR      : %s\n' % pth)
+            page = page + (' > LIGAND VS-DIR      : %s\n' % pth)
 
         nposes = int(self.docking_nposes_list.get())
 
-        self.docking_page_log_text.insert('end',' > # POSES      : %d \n' % nposes)
+        page = page + (' > # POSES      : %d \n' % nposes)
+        transfer_docking_text['log'] = page
+        transfer_docking_text['line_count'] = transfer_docking_text['line_count']+15
         
         template_dpf = os.path.join(self.work_dir(),'template.dpf')
 
@@ -2442,13 +2446,15 @@ class Autodock:
                 command+=' -x %s' % flex_receptor_file
             else:
                 command+=' -l %s' % lig_pdbqt
-            self.docking_page_log_text.insert('end',"Batch: %s\n" % command)
+            transfer_docking_text['log'] = transfer_docking_text['log']+("Batch: %s\n" % command)
+            transfer_docking_text['line_count'] = transfer_docking_text['line_count']
             self.docking_page_log_text.yview('moveto', 1.0)
             result, output = getstatusoutput(command)
             if result == 0:
-                global_status.set("Wrote AutoDock input file for ligand: %s" % ligands)
-#                self.docking_page_log_text.insert('end',"Running AutoDock.....\n")
-                self.docking_page_log_text.insert('end',output)
+                transfer_status['log'] = ("Wrote AutoDock input file for ligand: %s" % ligands)
+                transfer_status['line_count'] = transfer_status['line_count']+1
+                transfer_docking_text['log'] = transfer_docking_text['log'] + output
+                transfer_docking_text['line_count'] = transfer_docking_text['line_count']+1
                 self.docking_page_log_text.yview('moveto', 1.0)
                 if write_only:
                     return 
@@ -2456,21 +2462,24 @@ class Autodock:
                 outfile_poses = outfile_dpf.split('.')[0]+'.dlg'
                 self.ligand_dic[ligands].outfile_poses = outfile_poses 
                 command = '%s -p %s -l %s' % (autodock, outfile_dpf, outfile_poses)
-#                global_status.set("Now docking ligand: %s...." % ligands)
+                try:
                 if os.path.isfile(outfile_poses):
                     shutil.move(outfile_poses,outfile_poses+'~')
+                except:
+                    sleep(1)
                 os.system('touch %s' % outfile_poses)
                 r = Thread_run(command, self.current_thread, self.status_line, "Now docking ligand: %s...." % ligands)
-                global_status.set("Now docking ligand: %s...." % ligands)
+                transfer_status['log'] = ("Now docking ligand: %s...." % ligands)
+                transfer_status['line_count'] = transfer_status['line_count']+1
                 r.start()
                 self.current_thread = r
-                ll = Thread_log(outfile_poses, r, 1000)
+                ll = Thread_log(outfile_poses, r, 3600)
                 ll.start()
-                #outlog = {}
-                #Report_log(r,outfile_poses, self.status_line, self.docking_page_log_text,outlog,300)
             else:
-                global_status.set("Error while generating run input file for ligand: %s" % ligands)
-                self.docking_page_log_text.insert('end',output)
+                transfer_status['log'] = ("Error while generating run input file for ligand: %s" % ligands)
+                transfer_status['line_count'] = transfer_status['line_count']+1
+                transfer_docking_text['log'] = transfer_docking_text['log']+output
+                transfer_docking_text['line_count'] = transfer_docking_text['line_count']+1
                 self.docking_page_log_text.yview('moveto', 1.0)
                 
         else:
@@ -2484,7 +2493,8 @@ class Autodock:
             
 
     def run_vina(self, write_only = False):
-        global global_status
+        global transfer_status
+        global transfer_docking_text
         rec = self.docking_receptor_rigid_list.get()
         use_flex =  self.docking_receptor_flexible_list.get()
         receptor_object = self.receptor_dic[rec]
@@ -2498,10 +2508,11 @@ class Autodock:
             else:
                 global_status.set("No flexible receptor defined! Cannot do flexible docking!")
                 return
-        self.docking_page_log_text.insert('end','#---------------------------------------\n')
-        self.docking_page_log_text.insert('end','# SETTING UP VINA RUN\n')
-        self.docking_page_log_text.insert('end',' > RECEPTOR RIGID    : %s\n' % rigid_receptor_file)
-        self.docking_page_log_text.insert('end',' > RECEPTOR FLEXIBLE : %s\n' % flex_receptor_file)
+        page = transfer_docking_text['log']
+        page = page + '#---------------------------------------\n' \
+            + '# SETTING UP VINA RUN\n' \
+            + (' > RECEPTOR RIGID    : %s\n' % rigid_receptor_file) \
+            + (' > RECEPTOR FLEXIBLE : %s\n' % flex_receptor_file)
 
 
         n_points_X = self.n_points_X.get()
@@ -2516,12 +2527,12 @@ class Autodock:
         size_Y = n_points_Y*spacing
         size_Z = n_points_Z*spacing
 
-        self.docking_page_log_text.insert('end',' > CENTER X : %s\n' % center_X)
-        self.docking_page_log_text.insert('end',' > CENTER Y : %s\n' % center_Y)
-        self.docking_page_log_text.insert('end',' > CENTER Z : %s\n' % center_Z)
-        self.docking_page_log_text.insert('end',' > SIZE X   : %s\n' % str(size_X))
-        self.docking_page_log_text.insert('end',' > SIZE Y   : %s\n' % str(size_Y))
-        self.docking_page_log_text.insert('end',' > SIZE Z   : %s\n' % str(size_Z))
+        page = page + (' > CENTER X : %s\n' % center_X) \
+            + (' > CENTER Y : %s\n' % center_Y) \
+            + (' > CENTER Z : %s\n' % center_Z) \
+            + (' > SIZE X   : %s\n' % str(size_X)) \
+            + (' > SIZE Y   : %s\n' % str(size_Y)) \
+            + (' > SIZE Z   : %s\n' % str(size_Z))
 
 
         ligands = self.docking_ligand_list.get()
@@ -2529,14 +2540,16 @@ class Autodock:
             pth = self.ligand_dic['VS_DIR']
         else:
             lig_pdbqt = self.ligand_dic[ligands].ligand_pdbqt
-        self.docking_page_log_text.insert('end',' > LIGAND(s)         : %s\n' % ligands)
+        page = page + (' > LIGAND(s)         : %s\n' % ligands)
         if ligands == 'All':
-            self.docking_page_log_text.insert('end',' > LIGAND VS-DIR      : %s\n' % pth)
+            spage = page + (' > LIGAND VS-DIR      : %s\n' % pth)
 
         nposes = int(self.docking_nposes_list.get())
 
-        self.docking_page_log_text.insert('end',' > # POSES      : %d \n' % nposes)
+        page = page + (' > # POSES      : %d \n' % nposes)
         self.docking_page_log_text.yview('moveto', 1.0)
+        transfer_docking_text['log'] = page
+        transfer_docking_text['line_count'] = transfer_docking_text['line_count']+15
 
 
 
@@ -2562,25 +2575,26 @@ class Autodock:
             print >>fp, "log = %s" % outfile_log
             print >>fp, "num_modes = %d" % nposes
             fp.close()
-            global_status.set("Wrote VINA input file for ligand: %s" % ligands)
-#            self.docking_page_log_text.insert('end',"Running VINA.....\n")
+            transfer_status['log'] = "Wrote VINA input file for ligand: %s" % ligands
+            transfer_status['line_count'] = transfer_status['line_count']+1
             self.docking_page_log_text.yview('moveto', 1.0)
             if write_only:
                 return 
             vina = self.vina_exe.get()
             command = '%s --config %s' % (vina, outfile_conf)
-#            global_status.set("Now docking ligand: %s...." % ligands)
+            try:
             if os.path.isfile(outfile_log):
                 shutil.move(outfile_log,outfile_log+'~')
+            except:
+                sleep(10)
             os.system('touch %s' % outfile_log)
             r = Thread_run(command, self.current_thread, self.status_line, "Now docking ligand: %s...." % ligands)
-            global_status.set("Now docking ligand: %s...." % ligands)
+            transfer_status['log'] = ("Now docking ligand: %s...." % ligands)
+            transfer_status['line_count'] = transfer_status['line_count']+1
             r.start()
             self.current_thread = r
-            ll = Thread_log(outfile_log, r, 1000)
+            ll = Thread_log(outfile_log, r, 3600)
             ll.start()
-            #outlog={}
-            #Report_log(r,outfile_log, self.status_line, self.docking_page_log_text,outlog,300)
 
         else:
             ligand_list = []
@@ -2588,7 +2602,7 @@ class Autodock:
                 if hasattr(lig,"ligand_pdbqt") and  lig.ligand_pdbqt!='':
                     ligand_list.append(lig)
             for idx in range(len(ligand_list)):
-                self.docking_ligand_list.selectitem(idx+1)
+                self.ligand_list.selectitem(idx+1)
                 self.run_vina(write_only = write_only)
                         
                                 
@@ -2696,7 +2710,7 @@ class Autodock:
 
 
     def update_combo(self,name):
-        global global_status
+        global transfer_status
         try:
             self.pose_viewer_notebook.delete(name)
         except:
@@ -2737,7 +2751,8 @@ class Autodock:
                                                     )
         self.pose_viewer_ligand_pages[name]['text'].pack()
         self.pose_viewer_notebook.selectpage(name)
-        global_status.set('Loading %s' % name)
+        transfer_status['log'] = ('Loading %s' % name)
+        transfer_status['line_count'] = transfer_status['line_count']+1
 
 
     def ligand_combo_box_selected(self, value):
@@ -3851,9 +3866,10 @@ class Tail(object):
 
 class TableCell( Label ):
 
+    global adplugin_font
 
     params = {"relief":RIDGE, "bd":2, "bg":"#ffffff",
-              "anchor":W,"font":("Helvetica",12),
+              "anchor":W,"font":adplugin_font,
               "width":1}
 
     def __init__(self, *args, **kwargs):
@@ -3933,10 +3949,12 @@ class ScoreTable(Frame):
 
     def createTable(self, rows, cols):
 
+        global adplugin_font
+
         for col in xrange(0, len(self.fields)):
             Label(self.table, relief=SUNKEN, bd=2,
                   width=self.width[col],
-                  font=("Helvetica",12), text=self.fields[col]).grid(row=0, column=col, sticky=W+E)
+                  font=adplugin_font, text=self.fields[col]).grid(row=0, column=col, sticky=W+E)
 
         for row in xrange(0, rows):
             self.entry[row] = {}
