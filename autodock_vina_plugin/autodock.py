@@ -245,7 +245,7 @@ class Thread_log(Thread):
             seconds = 0
             readcount = 0
             if platform.system().lower() == "windows":
-            while self.mythread.is_alive() and seconds < self.timeout:
+                while self.mythread.is_alive() and seconds < self.timeout:
                     sleep(2)
                     seconds = seconds+2
                     transfer_status['log'] = 'Running for %d seconds'%seconds
@@ -291,7 +291,7 @@ class Thread_log(Thread):
             page_text = transfer_docking_text['log'];
             transfer_docking_text['log'] =  page_text+line
             transfer_docking_text['line_count'] = transfer_docking_text['line_count']+1
-            
+
 
 #==========================================================================
 #
@@ -876,7 +876,7 @@ class Autodock:
                                          wraplength = 580,
                                          background = 'black',
                                          foreground = 'yellow',
-                                        justify = LEFT,
+                                         justify = LEFT,
                                          )
         self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
 
@@ -1395,7 +1395,7 @@ class Autodock:
         self.load_map_buttonbox = Pmw.ButtonBox(self.map_viewer_page_top_group.interior(), padx=0)
         self.load_map_buttonbox.pack(side=BOTTOM,expand = 1, padx = 10, pady = 5)
         self.load_map_buttonbox.add('Load',command=self.load_grid_map)
-
+        
         self.parent.after(1000,self.proc_transfers)
 
 
@@ -1422,7 +1422,7 @@ class Autodock:
             self.docking_page_log_text.settext(transfer_docking_text['log'])
             transfer_docking_text['old_line_count'] = transfer_docking_text['line_count']
         self.parent.after(1000,self.proc_transfers)
-
+    
 
 
     def button_pressed(self, result):
@@ -2345,7 +2345,7 @@ class Autodock:
         transfer_docking_text['log'] = page
         transfer_docking_text['line_count'] = transfer_docking_text['line_count']+1
 
-        
+
         template_gpf = os.path.join(self.work_dir(),'template.gpf')
         outfile_gpf = rec+'.gpf'
         fp = self.fileopen(template_gpf,'w')
@@ -2463,8 +2463,8 @@ class Autodock:
                 self.ligand_dic[ligands].outfile_poses = outfile_poses 
                 command = '%s -p %s -l %s' % (autodock, outfile_dpf, outfile_poses)
                 try:
-                if os.path.isfile(outfile_poses):
-                    shutil.move(outfile_poses,outfile_poses+'~')
+                    if os.path.isfile(outfile_poses):
+                        shutil.move(outfile_poses,outfile_poses+'~')
                 except:
                     sleep(1)
                 os.system('touch %s' % outfile_poses)
@@ -2583,8 +2583,8 @@ class Autodock:
             vina = self.vina_exe.get()
             command = '%s --config %s' % (vina, outfile_conf)
             try:
-            if os.path.isfile(outfile_log):
-                shutil.move(outfile_log,outfile_log+'~')
+                if os.path.isfile(outfile_log):
+                    shutil.move(outfile_log,outfile_log+'~')
             except:
                 sleep(10)
             os.system('touch %s' % outfile_log)
@@ -3254,23 +3254,23 @@ def _errorpop(master,text):
 class PmwFileDialog(Pmw.Dialog):
     """File Dialog using Pmw"""
     def __init__(self, parent = None, **kw):
-	# Define the megawidget options.
-	optiondefs = (
-	    ('filter',    '*',              self.newfilter),
-	    ('directory', os.getcwd(),      self.newdir),
-	    ('filename',  '',               self.newfilename),
-	    ('historylen',10,               None),
-	    ('command',   None,             None),
+        # Define the megawidget options.
+        optiondefs = (
+            ('filter',    '*',              self.newfilter),
+            ('directory', os.getcwd(),      self.newdir),
+            ('filename',  '',               self.newfilename),
+            ('historylen',10,               None),
+            ('command',   None,             None),
             ('info',      None,             None),
-	    )
-	self.defineoptions(kw, optiondefs)
+            )
+        self.defineoptions(kw, optiondefs)
         # Initialise base class (after defining options).
-	Pmw.Dialog.__init__(self, parent)
+        Pmw.Dialog.__init__(self, parent)
 
-	self.withdraw()
+        self.withdraw()
 
         # Create the components.
-	interior = self.interior()
+        interior = self.interior()
 
         if self['info'] is not None:
             rowoffset=1
@@ -3279,40 +3279,40 @@ class PmwFileDialog(Pmw.Dialog):
         else:
             rowoffset=0
 
-	dn = self.mkdn()
-	dn.grid(row=0+rowoffset,column=0,columnspan=2,padx=3,pady=3)
-	del dn
+        dn = self.mkdn()
+        dn.grid(row=0+rowoffset,column=0,columnspan=2,padx=3,pady=3)
+        del dn
 
-	# Create the directory list component.
-	dnb = self.mkdnb()
-	dnb.grid(row=1+rowoffset,column=0,sticky='news',padx=3,pady=3)
-	del dnb
+        # Create the directory list component.
+        dnb = self.mkdnb()
+        dnb.grid(row=1+rowoffset,column=0,sticky='news',padx=3,pady=3)
+        del dnb
 
-	# Create the filename list component.
-	fnb = self.mkfnb()
-	fnb.grid(row=1+rowoffset,column=1,sticky='news',padx=3,pady=3)
-	del fnb
+        # Create the filename list component.
+        fnb = self.mkfnb()
+        fnb.grid(row=1+rowoffset,column=1,sticky='news',padx=3,pady=3)
+        del fnb
 
-	# Create the filter entry
-	ft = self.mkft()
-	ft.grid(row=2+rowoffset,column=0,columnspan=2,padx=3,pady=3)
-	del ft
+        # Create the filter entry
+        ft = self.mkft()
+        ft.grid(row=2+rowoffset,column=0,columnspan=2,padx=3,pady=3)
+        del ft
 
-	# Create the filename entry
-	fn = self.mkfn()
-	fn.grid(row=3+rowoffset,column=0,columnspan=2,padx=3,pady=3)
-	fn.bind('<Return>',self.okbutton)
-	del fn
+        # Create the filename entry
+        fn = self.mkfn()
+        fn.grid(row=3+rowoffset,column=0,columnspan=2,padx=3,pady=3)
+        fn.bind('<Return>',self.okbutton)
+        del fn
 
-	# Buttonbox already exists
-	bb=self.component('buttonbox')
-	bb.add('OK',command=self.okbutton)
-	bb.add('Cancel',command=self.cancelbutton)
-	del bb
+        # Buttonbox already exists
+        bb=self.component('buttonbox')
+        bb.add('OK',command=self.okbutton)
+        bb.add('Cancel',command=self.cancelbutton)
+        del bb
 
-	Pmw.alignlabels([self.component('filename'),
-			 self.component('filter'),
-			 self.component('dirname')])
+        Pmw.alignlabels([self.component('filename'),
+                         self.component('filter'),
+                         self.component('dirname')])
 
     def infotxt(self):
         """ Make information block component at the top """
@@ -3330,63 +3330,63 @@ class PmwFileDialog(Pmw.Dialog):
     def mkdn(self):
         """Make directory name component"""
         return self.createcomponent(
-	    'dirname',
-	    (), None,
-	    Pmw.ComboBox, (self.interior(),),
-	    entryfield_value=self['directory'],
-	    entryfield_entry_width=40,
+            'dirname',
+            (), None,
+            Pmw.ComboBox, (self.interior(),),
+            entryfield_value=self['directory'],
+            entryfield_entry_width=40,
             entryfield_validate=self.dirvalidate,
-	    selectioncommand=self.setdir,
-	    labelpos='w',
-	    label_text='Directory:')
+            selectioncommand=self.setdir,
+            labelpos='w',
+            label_text='Directory:')
 
     def mkdnb(self):
         """Make directory name box"""
         return self.createcomponent(
-	    'dirnamebox',
-	    (), None,
-	    Pmw.ScrolledListBox, (self.interior(),),
-	    label_text='directories',
-	    labelpos='n',
-	    hscrollmode='none',
-	    dblclickcommand=self.selectdir)
+            'dirnamebox',
+            (), None,
+            Pmw.ScrolledListBox, (self.interior(),),
+            label_text='directories',
+            labelpos='n',
+            hscrollmode='none',
+            dblclickcommand=self.selectdir)
 
     def mkft(self):
         """Make filter"""
         return self.createcomponent(
-	    'filter',
-	    (), None,
-	    Pmw.ComboBox, (self.interior(),),
-	    entryfield_value=self['filter'],
-	    entryfield_entry_width=40,
-	    selectioncommand=self.setfilter,
-	    labelpos='w',
-	    label_text='Filter:')
+            'filter',
+            (), None,
+            Pmw.ComboBox, (self.interior(),),
+            entryfield_value=self['filter'],
+            entryfield_entry_width=40,
+            selectioncommand=self.setfilter,
+            labelpos='w',
+            label_text='Filter:')
 
     def mkfnb(self):
         """Make filename list box"""
         return self.createcomponent(
-	    'filenamebox',
-	    (), None,
-	    Pmw.ScrolledListBox, (self.interior(),),
-	    label_text='files',
-	    labelpos='n',
-	    hscrollmode='none',
-	    selectioncommand=self.singleselectfile,
-	    dblclickcommand=self.selectfile)
+            'filenamebox',
+            (), None,
+            Pmw.ScrolledListBox, (self.interior(),),
+            label_text='files',
+            labelpos='n',
+            hscrollmode='none',
+            selectioncommand=self.singleselectfile,
+            dblclickcommand=self.selectfile)
 
     def mkfn(self):
         """Make file name entry"""
         return self.createcomponent(
-	    'filename',
-	    (), None,
-	    Pmw.ComboBox, (self.interior(),),
-	    entryfield_value=self['filename'],
-	    entryfield_entry_width=40,
+            'filename',
+            (), None,
+            Pmw.ComboBox, (self.interior(),),
+            entryfield_value=self['filename'],
+            entryfield_entry_width=40,
             entryfield_validate=self.filevalidate,
-	    selectioncommand=self.setfilename,
-	    labelpos='w',
-	    label_text='Filename:')
+            selectioncommand=self.setfilename,
+            labelpos='w',
+            label_text='Filename:')
     
     def dirvalidate(self,string):
         if os.path.isdir(string):
@@ -3405,133 +3405,133 @@ class PmwFileDialog(Pmw.Dialog):
             return Pmw.OK
         
     def okbutton(self):
-	"""OK action: user thinks he has input valid data and wants to
+        """OK action: user thinks he has input valid data and wants to
            proceed. This is also called by <Return> in the filename entry"""
-	fn=self.component('filename').get()
-	self.setfilename(fn)
-	if self.validate(fn):
-	    self.canceled=0
-	    self.deactivate()
+        fn=self.component('filename').get()
+        self.setfilename(fn)
+        if self.validate(fn):
+            self.canceled=0
+            self.deactivate()
 
     def cancelbutton(self):
-	"""Cancel the operation"""
-	self.canceled=1
-	self.deactivate()
+        """Cancel the operation"""
+        self.canceled=1
+        self.deactivate()
 
     def tidy(self,w,v):
-	"""Insert text v into the entry and at the top of the list of 
+        """Insert text v into the entry and at the top of the list of 
            the combobox w, remove duplicates"""
-	if not v:
-	    return
-	entry=w.component('entry')
-	entry.delete(0,'end')
-	entry.insert(0,v)
-	list=w.component('scrolledlist')
-	list.insert(0,v)
-	index=1
-	while index<list.index('end'):
-	    k=list.get(index)
-	    if k==v or index>self['historylen']:
-		list.delete(index)
-	    else:
-		index=index+1
+        if not v:
+            return
+        entry=w.component('entry')
+        entry.delete(0,'end')
+        entry.insert(0,v)
+        list=w.component('scrolledlist')
+        list.insert(0,v)
+        index=1
+        while index<list.index('end'):
+            k=list.get(index)
+            if k==v or index>self['historylen']:
+                list.delete(index)
+            else:
+                index=index+1
         w.checkentry()
 
     def setfilename(self,value):
-	if not value:
-	    return
-	value=os.path.join(self['directory'],value)
-	dir,fil=os.path.split(value)
-	self.configure(directory=dir,filename=value)
+        if not value:
+            return
+        value=os.path.join(self['directory'],value)
+        dir,fil=os.path.split(value)
+        self.configure(directory=dir,filename=value)
         
-	c=self['command']
-	if callable(c):
-	    c()
+        c=self['command']
+        if callable(c):
+            c()
 
     def newfilename(self):
-	"""Make sure a newly set filename makes it into the combobox list"""
-	self.tidy(self.component('filename'),self['filename'])
-	
+        """Make sure a newly set filename makes it into the combobox list"""
+        self.tidy(self.component('filename'),self['filename'])
+        
     def setfilter(self,value):
-	self.configure(filter=value)
+        self.configure(filter=value)
 
     def newfilter(self):
-	"""Make sure a newly set filter makes it into the combobox list"""
-	self.tidy(self.component('filter'),self['filter'])
-	self.fillit()
+        """Make sure a newly set filter makes it into the combobox list"""
+        self.tidy(self.component('filter'),self['filter'])
+        self.fillit()
 
     def setdir(self,value):
-	self.configure(directory=value)
+        self.configure(directory=value)
 
     def newdir(self):
-	"""Make sure a newly set dirname makes it into the combobox list"""
-	self.tidy(self.component('dirname'),self['directory'])
-	self.fillit()
+        """Make sure a newly set dirname makes it into the combobox list"""
+        self.tidy(self.component('dirname'),self['directory'])
+        self.fillit()
 
     def singleselectfile(self):
-	"""Single click in file listbox. Move file to "filename" combobox"""
-	cs=self.component('filenamebox').curselection()
-	if cs!=():
-	    value=self.component('filenamebox').get(cs)
+        """Single click in file listbox. Move file to "filename" combobox"""
+        cs=self.component('filenamebox').curselection()
+        if cs!=():
+            value=self.component('filenamebox').get(cs)
             self.setfilename(value)
 
     def selectfile(self):
-	"""Take the selected file from the filename, normalize it, and OK"""
+        """Take the selected file from the filename, normalize it, and OK"""
         self.singleselectfile()
-	value=self.component('filename').get()
+        value=self.component('filename').get()
         self.setfilename(value)
         if value:
-	    self.okbutton()
+            self.okbutton()
 
     def selectdir(self):
-	"""Take selected directory from the dirnamebox into the dirname"""
-	cs=self.component('dirnamebox').curselection()
-	if cs!=():
-	    value=self.component('dirnamebox').get(cs)
-	    dir=self['directory']
-	    if not dir:
-		dir=os.getcwd()
-	    if value:
-		if value=='..':
-		    dir=os.path.split(dir)[0]
-		else:
-		    dir=os.path.join(dir,value)
-	    self.configure(directory=dir)
-	    self.fillit()
+        """Take selected directory from the dirnamebox into the dirname"""
+        cs=self.component('dirnamebox').curselection()
+        if cs!=():
+            value=self.component('dirnamebox').get(cs)
+            dir=self['directory']
+            if not dir:
+                dir=os.getcwd()
+            if value:
+                if value=='..':
+                    dir=os.path.split(dir)[0]
+                else:
+                    dir=os.path.join(dir,value)
+            self.configure(directory=dir)
+            self.fillit()
 
     def askfilename(self,directory=None,filter=None):
-	"""The actual client function. Activates the dialog, and
-	   returns only after a valid filename has been entered 
+        """The actual client function. Activates the dialog, and
+           returns only after a valid filename has been entered 
            (return value is that filename) or when canceled (return 
            value is None)"""
-	if directory!=None:
-	    self.configure(directory=directory)
-	if filter!=None:
-	    self.configure(filter=filter)
-	self.fillit()
+        if directory!=None:
+            self.configure(directory=directory)
+        if filter!=None:
+            self.configure(filter=filter)
+        self.fillit()
         self.canceled=1 # Needed for when user kills dialog window
-	self.activate()
-	if self.canceled:
-	    return None
-	else:
-	    return self.component('filename').get()
+        self.activate()
+        if self.canceled:
+            return None
+        else:
+            return self.component('filename').get()
 
     lastdir=""
     lastfilter=None
     lasttime=0
     def fillit(self):
-	"""Get the directory list and show it in the two listboxes"""
+        """Get the directory list and show it in the two listboxes"""
         # Do not run unnecesarily
         if self.lastdir==self['directory'] and self.lastfilter==self['filter'] and self.lasttime>os.stat(self.lastdir)[8]:
             return
         self.lastdir=self['directory']
         self.lastfilter=self['filter']
         self.lasttime=time()
-	dir=self['directory']
-	if not dir:
-	    dir=os.getcwd()
-	dirs=['..']
-	files=[]
+        dir=self['directory']
+        if not dir:
+            dir=os.getcwd()
+        dirs=['..']
+        files=[]
         try:
             fl=os.listdir(dir)
             fl.sort()
@@ -3539,24 +3539,24 @@ class PmwFileDialog(Pmw.Dialog):
             if arg[0] in (2,20):
                 return
             raise
-	for f in fl:
-	    if os.path.isdir(os.path.join(dir,f)):
-		dirs.append(f)
-	    else:
-		filter=self['filter']
-		if not filter:
-		    filter='*'
-		if fnmatch.fnmatch(f,filter):
-		    files.append(f)
-	self.component('filenamebox').setlist(files)
-	self.component('dirnamebox').setlist(dirs)
+        for f in fl:
+            if os.path.isdir(os.path.join(dir,f)):
+                dirs.append(f)
+            else:
+                filter=self['filter']
+                if not filter:
+                    filter='*'
+                if fnmatch.fnmatch(f,filter):
+                    files.append(f)
+        self.component('filenamebox').setlist(files)
+        self.component('dirnamebox').setlist(dirs)
     
     def validate(self,filename):
-	"""Validation function. Should return 1 if the filename is valid, 
+        """Validation function. Should return 1 if the filename is valid, 
            0 if invalid. May pop up dialogs to tell user why. Especially 
            suited to subclasses: i.e. only return 1 if the file does/doesn't 
            exist"""
-	return 1
+        return 1
 
 class PmwExistingFileDialog(PmwFileDialog):
     def filevalidate(self,string):
@@ -3582,21 +3582,21 @@ class PmwExistingFileDialog(PmwFileDialog):
 class PmwDirDialog(PmwFileDialog):
     """Directory Dialog using Pmw"""
     def __init__(self, parent = None, **kw):
-	# Define the megawidget options.
-	optiondefs = (
-	    ('directory', os.getcwd(),      self.newdir),
-	    ('historylen',10,               None),
-	    ('command',   None,             None),
-	    ('info',      None,             None),
-	    )
-	self.defineoptions(kw, optiondefs)
+        # Define the megawidget options.
+        optiondefs = (
+            ('directory', os.getcwd(),      self.newdir),
+            ('historylen',10,               None),
+            ('command',   None,             None),
+            ('info',      None,             None),
+            )
+        self.defineoptions(kw, optiondefs)
         # Initialise base class (after defining options).
-	Pmw.Dialog.__init__(self, parent)
+        Pmw.Dialog.__init__(self, parent)
 
-	self.withdraw()
+        self.withdraw()
 
         # Create the components.
-	interior = self.interior()
+        interior = self.interior()
 
         if self['info'] is not None:
             rowoffset=1
@@ -3605,35 +3605,35 @@ class PmwDirDialog(PmwFileDialog):
         else:
             rowoffset=0
 
-	dn = self.mkdn()
-	dn.grid(row=1+rowoffset,column=0,columnspan=2,padx=3,pady=3)
-	dn.bind('<Return>',self.okbutton)
-	del dn
+        dn = self.mkdn()
+        dn.grid(row=1+rowoffset,column=0,columnspan=2,padx=3,pady=3)
+        dn.bind('<Return>',self.okbutton)
+        del dn
 
-	# Create the directory list component.
-	dnb = self.mkdnb()
-	dnb.grid(row=0+rowoffset,column=0,columnspan=2,sticky='news',padx=3,pady=3)
-	del dnb
+        # Create the directory list component.
+        dnb = self.mkdnb()
+        dnb.grid(row=0+rowoffset,column=0,columnspan=2,sticky='news',padx=3,pady=3)
+        del dnb
 
-	# Buttonbox already exists
-	bb=self.component('buttonbox')
-	bb.add('OK',command=self.okbutton)
-	bb.add('Cancel',command=self.cancelbutton)
-	del bb
+        # Buttonbox already exists
+        bb=self.component('buttonbox')
+        bb.add('OK',command=self.okbutton)
+        bb.add('Cancel',command=self.cancelbutton)
+        del bb
 
 
 
     lastdir=""
     def fillit(self):
-	"""Get the directory list and show it in the two listboxes"""
+        """Get the directory list and show it in the two listboxes"""
         # Do not run unnecesarily
         if self.lastdir==self['directory']:
             return
         self.lastdir=self['directory']
-	dir=self['directory']
-	if not dir:
-	    dir=os.getcwd()
-	dirs=['..']
+        dir=self['directory']
+        if not dir:
+            dir=os.getcwd()
+        dirs=['..']
         try:
             fl=os.listdir(dir)
             fl.sort()
@@ -3641,33 +3641,33 @@ class PmwDirDialog(PmwFileDialog):
             if arg[0] in (2,20):
                 return
             raise
-	for f in fl:
-	    if os.path.isdir(os.path.join(dir,f)):
-		dirs.append(f)
-	self.component('dirnamebox').setlist(dirs)
+        for f in fl:
+            if os.path.isdir(os.path.join(dir,f)):
+                dirs.append(f)
+        self.component('dirnamebox').setlist(dirs)
 
     def okbutton(self):
-	"""OK action: user thinks he has input valid data and wants to
+        """OK action: user thinks he has input valid data and wants to
            proceed. This is also called by <Return> in the dirname entry"""
-	fn=self.component('dirname').get()
-	self.configure(directory=fn)
-	if self.validate(fn):
-	    self.canceled=0
-	    self.deactivate()
+        fn=self.component('dirname').get()
+        self.configure(directory=fn)
+        if self.validate(fn):
+            self.canceled=0
+            self.deactivate()
     
     def askfilename(self,directory=None):
-	"""The actual client function. Activates the dialog, and
-	   returns only after a valid filename has been entered 
+        """The actual client function. Activates the dialog, and
+           returns only after a valid filename has been entered 
            (return value is that filename) or when canceled (return 
            value is None)"""
-	if directory!=None:
-	    self.configure(directory=directory)
-	self.fillit()
-	self.activate()
-	if self.canceled:
-	    return None
-	else:
-	    return self.component('dirname').get()
+        if directory!=None:
+            self.configure(directory=directory)
+        self.fillit()
+        self.activate()
+        if self.canceled:
+            return None
+        else:
+            return self.component('dirname').get()
 
     def dirvalidate(self,string):
         if os.path.isdir(string):
@@ -3678,7 +3678,7 @@ class PmwDirDialog(PmwFileDialog):
             return Pmw.OK
 
     def validate(self,filename):
-	"""Validation function. Should return 1 if the filename is valid, 
+        """Validation function. Should return 1 if the filename is valid, 
            0 if invalid. May pop up dialogs to tell user why. Especially 
            suited to subclasses: i.e. only return 1 if the file does/doesn't 
            exist"""
@@ -3726,7 +3726,7 @@ class Tail(object):
 
         # remember path to file in case I need to reopen
         self.path = abspath(path)
-            self.f = open(self.path,"r")
+        self.f = open(self.path,"r")
         self.min_sleep = min_sleep * 1.0
         self.sleep_interval = sleep_interval * 1.0
         self.max_sleep = max_sleep * 1.0
@@ -3948,7 +3948,7 @@ class ScoreTable(Frame):
         self.yscrollbar.set(top, bottom)
 
     def createTable(self, rows, cols):
-
+        
         global adplugin_font
 
         for col in xrange(0, len(self.fields)):
