@@ -58,6 +58,8 @@ __version__ = "2.1.1_rev_22Mar2015"
 #     INITIALISE PLUGIN
 #
 
+if os.environ.has_key('ADPLUGIN_PATH'):
+    os.environ['PATH'] = os.environ['ADPLUGIN_PATH']
 if os.environ.has_key('ADPLUGIN_PYTHONHOME'):
     os.environ['PYTHONHOME'] = os.environ['ADPLUGIN_PYTHONHOME']
 if os.environ.has_key('ADPLUGIN_PYTHONPATH'):
@@ -81,9 +83,11 @@ adplugin_font = (adplugin_font_name,adplugin_font_size)
 
 def getstatusoutput(cmd):
     """Return (status, output) of executing cmd in a shell."""
-    """This new implementation should work on all platforms."""
+    """This implementation should work on all platforms."""
     import subprocess
     cur_env = dict(os.environ.copy())
+    if os.environ.has_key('ADPLUGIN_PATH'):
+        cur_env['PATH'] = os.environ['ADPLUGIN_PATH']
     if os.environ.has_key('ADPLUGIN_PYTHONHOME'):
         cur_env['PYTHONHOME'] = os.environ['ADPLUGIN_PYTHONHOME']
     if os.environ.has_key('ADPLUGIN_PYTHONPATH'):
@@ -249,7 +253,6 @@ class Thread_log(Thread):
                     sleep(2)
                     seconds = seconds+2
                     transfer_status['log'] = 'Running for %d seconds'%seconds
-                    transfer_status['line_count'] = transfer_status['line_count'] +1
                 seconds = self.timeout
             while self.mythread.is_alive() and seconds < self.timeout:
                 if os.path.getsize(self.logfile) > readcount+20:
@@ -269,7 +272,6 @@ class Thread_log(Thread):
                     seconds = seconds+10
                     sleep(10)
                     transfer_status['log'] = 'Running for %d seconds'%seconds
-                    transfer_status['line_count'] = transfer_status['line_count'] +1
             sleep(5)
             if os.path.getsize(self.logfile) > 0:
                 f = open(self.logfile,'r')
@@ -2331,6 +2333,7 @@ class Autodock:
         page = page + (' > LIGAND(s)         : %s\n' % ligands)
         if ligands == 'All':
             page = page+(' > LIGAND VS-DIR      : %s\n' % pth)
+        
         n_points_X = self.n_points_X.get()
         n_points_Y = self.n_points_Y.get()
         n_points_Z = self.n_points_Z.get()
@@ -2339,9 +2342,10 @@ class Autodock:
         center_Y = self.grid_center[1].get()
         center_Z = self.grid_center[2].get()
 
-        page = page + (' > GRID POINTS      : %d %d %d\n' % (n_points_X, n_points_Y, n_points_Z)) \
-            + (' > GRID CENTER      : %8.3f %8.3f %8.3f\n' % (center_X, center_Y, center_Z)) \
-            + (' > GRID SPACING     : %8.3f \n' % spacing)
+        page = page \
+               + (' > GRID POINTS      : %d %d %d\n' % (n_points_X, n_points_Y, n_points_Z)) \
+               + (' > GRID CENTER      : %8.3f %8.3f %8.3f\n' % (center_X, center_Y, center_Z)) \
+               + (' > GRID SPACING     : %8.3f \n' % spacing)
         transfer_docking_text['log'] = page
         transfer_docking_text['line_count'] = transfer_docking_text['line_count']+1
 
@@ -2361,35 +2365,41 @@ class Autodock:
             command+=' -d %s' % self.ligand_dic['VS_DIR']
         else:
             command+=' -l %s' % lig_pdbqt
-            
+
         transfer_docking_text['log'] = transfer_docking_text['log'] + ("Batch: %s\n" % command)
-        transfer_docking_text['line_count'] = transfer_docking_text['line_count']+1
+        transfer_docking_text['line_count'] = transfer_docking_text['line_count'] + 1
         self.docking_page_log_text.yview('moveto',1.0)
         result, output = getstatusoutput(command)
         if result == 0:
-            transfer_status['log'] = "Successfully generated AutoGrid input file"
-            transfer_status['line_count'] = transfer_status['line_count']+1
-            transfer_docking_text['log'] = transfer_docking_text['log'] + output
-            transfer_docking_text['line_count'] = transfer_docking_text['line_count']+1
+            transfer_status['log'] = ("Successfully generated AutoGrid input file")
+            transfer_status['line_count'] = transfer_status['line_count'] + 1
+            transfer_docking_text['log'] = transfer_docking_text['log']+ output
+            transfer_docking_text['line_count'] = transfer_docking_text['line_count'] + 1
+            self.docking_page_log_text.insert('end',"Running AutoGrid.....\n")
             autogrid = self.autogrid_exe.get()
             outfile_log = outfile_gpf.split('.')[0]+'.glg'
             receptor_object.autogrid_gpf = outfile_gpf
             receptor_object.autogrid_log = outfile_log
             command = '%s -p %s -l %s' % (autogrid, outfile_gpf, outfile_log)
-            # dirty
-            if os.path.isfile(outfile_log):
-                shutil.move(outfile_log,outfile_log+'~')
-            os.system('touch %s' % outfile_log)
+            global_status.set("Running AutoGrid....")
+            try:
+                if os.path.isfile(outfile_log):
+                    shutil.move(outfile_log,outfile_log+'~')
+            except:
+                sleep(1)
+            ff = fopen(outfile_log,"a")
+            ff.close()
+            # os.system('touch %s' % outfile_log)
             r = Thread_run(command)
             r.start()
             sleep(1)
             ll = Thread_log(outfile_log, r, 3600)
             ll.start()
         else:
-            transfer_status['log'] = "An error occured while trying to run Autogrid...."
-            transfer_status['line_count'] = transfer_status['line_count']+1
-            transfer_docking_text['log'] = transfer_docking_text['log'] + output
-            transfer_status['line_count'] = transfer_status['line_count']+1
+            transfer_status['log'] = ("An error occured while trying to run Autogrid....")
+            transfer_status['line_count'] = transfer_status['line_count'] + 1
+            transfer_docking_text['log'] = transfer_docking_text['log']+ output
+            transfer_docking_text['line_count'] = transfer_docking_text['line_count'] + 1
         self.docking_page_log_text.yview('moveto',1.0)            
 
 
@@ -2467,10 +2477,11 @@ class Autodock:
                         shutil.move(outfile_poses,outfile_poses+'~')
                 except:
                     sleep(1)
-                os.system('touch %s' % outfile_poses)
+                ff = fopen(outfile_poses,"a")
+                ff.close()
+                #os.system('touch %s' % outfile_poses)
                 r = Thread_run(command, self.current_thread, self.status_line, "Now docking ligand: %s...." % ligands)
-                transfer_status['log'] = ("Now docking ligand: %s...." % ligands)
-                transfer_status['line_count'] = transfer_status['line_count']+1
+                global_status.set("Now docking ligand: %s...." % ligands)
                 r.start()
                 self.current_thread = r
                 ll = Thread_log(outfile_poses, r, 3600)
@@ -2542,7 +2553,7 @@ class Autodock:
             lig_pdbqt = self.ligand_dic[ligands].ligand_pdbqt
         page = page + (' > LIGAND(s)         : %s\n' % ligands)
         if ligands == 'All':
-            spage = page + (' > LIGAND VS-DIR      : %s\n' % pth)
+            page = page + (' > LIGAND VS-DIR      : %s\n' % pth)
 
         nposes = int(self.docking_nposes_list.get())
 
@@ -2586,8 +2597,10 @@ class Autodock:
                 if os.path.isfile(outfile_log):
                     shutil.move(outfile_log,outfile_log+'~')
             except:
-                sleep(10)
-            os.system('touch %s' % outfile_log)
+                sleep(1)
+            ff = fopen(outfile_log,"a")
+            ff.close()
+            #os.system('touch %s' % outfile_log)
             r = Thread_run(command, self.current_thread, self.status_line, "Now docking ligand: %s...." % ligands)
             transfer_status['log'] = ("Now docking ligand: %s...." % ligands)
             transfer_status['line_count'] = transfer_status['line_count']+1
