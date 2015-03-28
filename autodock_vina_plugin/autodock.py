@@ -68,13 +68,13 @@ if os.environ.has_key('ADPLUGIN_FONT'):
     adplugin_font_list = os.environ['ADPLUGIN_FONT'].split()
     adplugin_font = (adplugin_font_list[0], adplugin_font_list[1])
 else:
-    adplugin_font = ("Helvetica", 10)
+    adplugin_font = ("Courier", 12)
 adplugin_font_name = adplugin_font[0]
 adplugin_font_size = int(adplugin_font[1])
 if not (adplugin_font_name in Pmw.logicalfontnames()):
     print "'"+adplugin_font_name+"' not in ", Pmw.logicalfontnames()
-    print "changing to Helvetica"
-    adplugin_font_name = "Helvetica"
+    print "changing to Courier"
+    adplugin_font_name = "Courier"
 if adplugin_font_size < 4 or adplugin_font_size > 36:
     print "'"+str(adplugin_font_size)+ "' not an acceptable font size, changing to 12"
     adplugin_font_size = 12
@@ -462,13 +462,16 @@ class Receptor:
         
     def flex_res_string(self):
         flex_res_str = ''
+        spacer = os.path.basename(self.receptor_pdbqt)[:-6]
         for key, val in self.flexible_residues.items():
-            s = os.path.basename(self.receptor_pdbqt)[:-6]
+            s = ''
             lst = []
             for idx, resname in val:
                 lst.append( resname + str(idx) )
             s+=':'+key+':'+'_'.join(lst)
-            flex_res_str+=s
+            print "adding '"+spacer+':'+key+':'+'_'.join(lst)+"' to flex_res_str"
+            flex_res_str+=(spacer + s)
+            spacer = ','+os.path.basename(self.receptor_pdbqt)[:-6]
         return flex_res_str
 ##         lst = []
 ##         for idx, resname in self.flexible_residues:
@@ -2060,7 +2063,7 @@ class Autodock:
                     chains[chain] = [ [int(resi), resn] ]
         receptor_object.flexible_residues = chains
 
-        #                receptor_object.flexible_residues.append( [int(resi), resn] )
+#                receptor_object.flexible_residues.append( [int(resi), resn] )
 #        global_status.set("Selected %d flexible residues for receptor %s" \
 #                                   % (len(receptor_object.flexible_residues), rec))
         util_program = os.path.join(self.autodock_tools_path.get(),"prepare_flexreceptor4.py")
@@ -2387,7 +2390,7 @@ class Autodock:
                     shutil.move(outfile_log,outfile_log+'~')
             except:
                 sleep(1)
-            ff = fopen(outfile_log,"a")
+            ff = open(outfile_log,"a")
             ff.close()
             # os.system('touch %s' % outfile_log)
             r = Thread_run(command)
@@ -2477,7 +2480,7 @@ class Autodock:
                         shutil.move(outfile_poses,outfile_poses+'~')
                 except:
                     sleep(1)
-                ff = fopen(outfile_poses,"a")
+                ff = open(outfile_poses,"a")
                 ff.close()
                 #os.system('touch %s' % outfile_poses)
                 r = Thread_run(command, self.current_thread, self.status_line, "Now docking ligand: %s...." % ligands)
@@ -2598,7 +2601,7 @@ class Autodock:
                     shutil.move(outfile_log,outfile_log+'~')
             except:
                 sleep(1)
-            ff = fopen(outfile_log,"a")
+            ff = open(outfile_log,"a")
             ff.close()
             #os.system('touch %s' % outfile_log)
             r = Thread_run(command, self.current_thread, self.status_line, "Now docking ligand: %s...." % ligands)
