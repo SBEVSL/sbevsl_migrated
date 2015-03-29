@@ -52,7 +52,7 @@ from glob import glob
 import platform
 
 
-__version__ = "2.1.1_rev_22Mar2015"
+__version__ = "2.2.0_rev_28Mar2015"
 #=============================================================================
 #
 #     INITIALISE PLUGIN
@@ -127,7 +127,18 @@ transfer_status['old_line_count'] = 0
 
 
 intro_text = """
-Welcome to the updated version of the PyMOL Autodock Plugin.The current version has been entirely rewritten and extended. Now you can set up a complete docking run from the very beginning, perform the docking runs from within PyMOL and directly load the results into the viewer. The plugin now supports the novel Autodock spawn \"VINA\" which is orders of magnitudes faster than Autodock4. To get this plugin to work properly you should have the mgltools (http://mgltools.scripps.edu/) installed and tell the plugin on this page where to find the scripts (usually somewhere in /python/site-packages/AutoDockTools/Utilities24/ ) and make sure that they work. Additionally you should tell the plugin where to find the autogrid4, autodock4, and vina executables. If you do this once and press the \"Save Configuration File\" button this information is present the next time you use the plugin. A complete setup and execution of a docking run or a virtual screening is basically a walk from the left to the right along the notebook structure if this plugin. Each page is more or less intuitive or contains a description of what to do. The basic workflow is: Load Structure -> Define binding site -> Receptor preparation -> Ligand preparation -> Docking -> Analysis.
+Autodock/Vina plugin is Copyright (C) 2009 -- 2015 by Daniel Seeliger, All Rights Reserved
+No warranty.  You may redistribute this plugin under the terms of the LGPL.
+
+Welcome to the updated version of the PyMOL Autodock Plugin.  The current version has been entirely rewritten and extended. Now you can set up a complete docking run from the very beginning, perform the docking runs from within PyMOL and directly load the results into the viewer. The plugin now supports the novel Autodock spawn \"VINA\" which is orders of magnitudes faster than Autodock4.
+
+To get this plugin to work properly you should have the mgltools (http://mgltools.scripps.edu/) installed and tell the plugin on this page where to find the scripts (usually somewhere in /python/site-packages/AutoDockTools/Utilities24/ ) and make sure that they work. Additionally you should tell the plugin where to find the autogrid4, autodock4, and vina executables. If you do this once and press the \"Save Configuration File\" button this information is present the next time you use the plugin.
+
+A complete setup and execution of a docking run or a virtual screening is basically a walk from the left to the right along the notebook structure if this plugin. Each page is more or less intuitive or contains a description of what to do. The basic workflow is: Load Structure -> Define binding site -> Receptor preparation -> Ligand preparation -> Docking -> Analysis.
+
+To simplify configuration, especially in Windows, you should define the environment variables ADPLUGIN_PATH, ADPLUGIN_PYTHONHOME, and ADPLUGIN_PYTHONPATH to provide the values of PATH, PYTHONHOME, and PYTHONPATH to be used in the plugin and its child threads and processes.
+
+LGPL NOTICES:  This plugin is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version.  This plugin is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.  You should have received a copy of the GNU Lesser General Public License along with this plugin; if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 Have fun and contact me (dseelig@gwdg.de) if you find bugs or have any suggestions for future versions.
 Daniel
@@ -135,33 +146,14 @@ Reference: J. Comput.-Aided Mol. Des. 24:417-422 (2010)
 """
 
 receptor_prep_text = """
-Here you can define receptors from PyMOL selections and setup 
-docking runs with flexible sidechains. Pick a selection from the 
-selection list and press the Generate Receptor ->" button to prepare 
-the protein for a docking run. If you want to use flexible sidechains 
-within the binding site just create a PyMOL selection containing the 
-residues you want to be flexible. Then use the "Import Selections" 
-button and andselect the group in the left list. Then press the 
-Select as Flexible->" button. The receptor definition has now changed. 
-You can see which residues are flexible in the right list. (Proline, 
-Glycine and Alanine residues are never defined as flexible)\n"""
+Here you can define receptors from PyMOL selections and setup docking runs with flexible sidechains. Pick a selection from the selection list and press the Generate Receptor ->" button to prepare the protein for a docking run. If you want to use flexible sidechains within the binding site just create a PyMOL selection containing the residues you want to be flexible. Then use the "Import Selections" button and andselect the group in the left list. Then press the Select as Flexible->" button. The receptor definition has now changed. You can see which residues are flexible in the right list. (Proline, Glycine and Alanine residues are never defined as flexible).  Be patient if you specify a large set of flexible residues.  Processing may take a while.\n"""
 
 ligand_prep_text = """
-On this page you can prepare ligands for docking.The first way 
-to do so is to load the ligand into PyMOL and select it in the left 
-list (use the "Import Selection" button to synchronize the list with 
-PyMOL). The plugin saves your ligand in as .pdb file and puts it 
-into the ligand list in the middle of the page. If you press the 
-"Generate Ligand" button your ligand will be prepared for docking 
-and appears in the right list. Alternatively to loading a ligand via 
-PyMOL you can choose an entire directory containing compounds 
-in .pdb or .mol2 format. Use the "Import" button to read all 
-compounds in the directory and use the "Generate All" button to 
-prepare each compound for the docking run.\n"""
+On this page you can prepare ligands for docking.The first way to do so is to load the ligand into PyMOL and select it in the left list (use the "Import Selection" button to synchronize the list with PyMOL). The plugin saves your ligand in as .pdb file and puts it into the ligand list in the middle of the page. If you press the "Generate Ligand" button your ligand will be prepared for docking and appears in the right list. Alternatively to loading a ligand via PyMOL you can choose an entire directory containing compounds in .pdb or .mol2 format. Use the "Import" button to read all compounds in the directory and use the "Generate All" button to prepare each compound for the docking run.\n"""
 
 transfer_docking_text = {}
 docking_text = """
-This is the docking page. You have to select a recetor and whether you want to use flexible sidechains. You may either dock a single ligand from the list above or all ligands you have prepared. If you use Autodock4 you have to calculate a grid before you can start the actual docking run. Just press "Run AutoGrid" and wait until its finished and then press the "Run AutoDock" button. The genrated grid maps can be loaded into PyMOL on the "Grid Maps" page. If you use vina you don't have to calculate a grid. Just press "Run VINA" and wait until it is finished.You can load the generated docking poses into PyMOL on the "View Poses" page\n"""
+This is the docking page. You have to select a receptor and whether you want to use flexible sidechains. You may either dock a single ligand from the list above or all ligands you have prepared. If you use Autodock4 you have to calculate a grid before you can start the actual docking run. Just press "Run AutoGrid" and wait until its finished and then press the "Run AutoDock" button. The generated grid maps can be loaded into PyMOL on the "Grid Maps" page. If you use vina you don't have to calculate a grid. Just press "Run VINA" and wait until it is finished.You can load the generated docking poses into PyMOL on the "View Poses" page\n"""
 transfer_docking_text['log'] = docking_text
 transfer_docking_text['line_count'] = 0
 transfer_docking_text['old_line_count'] = 0
@@ -597,7 +589,7 @@ class Autodock:
         # the title
 
         self.title_label = Tkinter.Label(self.dialog.interior(),
-                                         text = 'PyMOL Autodock/Vina Plugin -- Daniel Seeliger (rev 6 Mar 15) -- <http://wwwuser.gwdg.de/~dseelig>',
+                                         text = 'PyMOL Autodock/Vina Plugin -- Daniel Seeliger (rev 28 Mar 15) -- <http://wwwuser.gwdg.de/~dseelig>',
                                          background = 'navy',
                                          foreground = 'white',
                                          )
@@ -875,15 +867,20 @@ class Autodock:
         self.configuration_top_group = Pmw.Group(self.configuration_page,tag_text='General Notes')
         self.configuration_top_group.pack(fill = 'both', expand = 0, padx = 10, pady = 5)
 
-        self.text_field = Tkinter.Label(self.configuration_top_group.interior(),
-                                         text = intro_text,
-                                         font = adplugin_font,
-                                         wraplength = 580,
-                                         background = 'black',
-                                         foreground = 'yellow',
-                                         justify = LEFT,
-                                         )
+        myfont = Pmw.logicalfont(name=adplugin_font[0],size=int(adplugin_font[1]))
+        self.text_field = Pmw.ScrolledText(self.configuration_top_group.interior(),
+                             borderframe=5,
+                             vscrollmode='dynamic',
+                             hscrollmode='dynamic',
+                             labelpos='n',
+                             text_width=150, text_height=15,
+                             text_wrap='word',
+                             text_background='#000000',
+                             text_foreground='green',
+                             text_font = myfont
+                             )
         self.text_field.pack(expand = 0, fill = 'both', padx = 4, pady = 4)
+        self.text_field.insert('end',intro_text)
 
 
         self.configuration_group = Pmw.Group(self.configuration_page,tag_text='Scripts and Program Paths')
@@ -1026,7 +1023,7 @@ class Autodock:
                                                         hscrollmode='dynamic',
                                                         labelpos='n',
                                                         text_width=150, text_height=15,
-                                                        text_wrap='none',
+                                                        text_wrap='word',
                                                         text_background='#000000',
                                                         text_foreground='green',
                                                         text_font = myfont
@@ -1127,7 +1124,7 @@ class Autodock:
                                                         labelpos='n',
 #                                                        label_text='Log',
                                                         text_width=150, text_height=15,
-                                                        text_wrap='none',
+                                                        text_wrap='word',
                                                         text_background='#000000',
                                                         text_foreground='green',
                                                         text_font = myfont
@@ -2504,6 +2501,7 @@ class Autodock:
             for idx in range(len(ligand_list)):
                 self.docking_ligand_list.selectitem(idx+1)
                 self.run_autodock(write_only = write_only)
+        self.docking_page_log_text.yview('moveto',1.0)
             
 
     def run_vina(self, write_only = False):
@@ -2620,6 +2618,8 @@ class Autodock:
             for idx in range(len(ligand_list)):
                 self.ligand_list.selectitem(idx+1)
                 self.run_vina(write_only = write_only)
+
+        self.docking_page_log_text.yview('moveto',1.0)
                         
                                 
     def write_autodock_input_files(self):
@@ -2761,7 +2761,7 @@ class Autodock:
                                                                 labelpos='n',
                                                                 label_text=name,
                                                                 text_width=150, text_height=15,
-                                                                text_wrap='none',
+                                                                text_wrap='word',
                                                                 text_background='#000000',
                                                                 text_foreground='green'
                                                     )
@@ -3110,7 +3110,7 @@ class Autodock:
                                                         labelpos='n',
                                                         label_text=name,
                                                         text_width=60, text_height=15,
-                                                        text_wrap='none',
+                                                        text_wrap='word',
                                                         text_background='#000000',
                                                         text_foreground='green'
                                                     )
