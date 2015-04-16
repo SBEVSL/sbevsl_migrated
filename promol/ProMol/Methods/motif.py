@@ -14,6 +14,7 @@ from Tkinter import *
 from pmg_tk.startup.treewidgets import widget, node, texttree
 from pmg_tk.startup.treewidgets.constants import *
 import Tkinter as tk
+import tkFileDialog
 import pmg_tk.startup.ProMol.promolglobals as glb
 import pmg_tk.startup.ProMol.Methods.proutils as proutils
 import pmg_tk.startup.ProMol.Methods.motifset as motifset
@@ -203,7 +204,6 @@ def togglealign():
         glb.GUI.motifs['queryColorLabel'].configure(text='Query Color')
         glb.GUI.motifs['motifColorLabel'].grid()
         glb.GUI.motifs['motifcolor'].grid()
-
 
 def showContent(node):
   
