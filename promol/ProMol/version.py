@@ -1,5 +1,5 @@
 # PLEASE try to keep this constant up to date with each commit!
-VERSION = '5.3-r417'
+VERSION = '5.3-r418'
 
 ALG_VERSION = '1.2' 
 

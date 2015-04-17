@@ -11,37 +11,52 @@ Pmw.initialise()
 
 def initialise():
     group = tk.Frame(glb.GUI.motifs['tab'])
-    group.grid(row=0, column=1, rowspan=4, sticky=tk.N+tk.E+tk.S+tk.W)
+    Grid.columnconfigure(glb.GUI.motifs['tab'],0,weight=1)
+    Grid.rowconfigure(glb.GUI.motifs['tab'],0,weight=1)
+
+    group.grid(row=0,column=0,rowspan=9,columnspan=5,sticky=tk.N+tk.E+tk.S+tk.W)
+    Grid.columnconfigure(group,0,weight=1)
+    Grid.columnconfigure(group,1,weight=1)
+    Grid.columnconfigure(group,2,weight=1)
+    Grid.columnconfigure(group,3,weight=0)
+    Grid.columnconfigure(group,4,weight=3)
+    Grid.rowconfigure(group,0,weight=0)
+    Grid.rowconfigure(group,1,weight=0)
+    Grid.rowconfigure(group,2,weight=0)
+    Grid.rowconfigure(group,3,weight=0)
+    Grid.rowconfigure(group,4,weight=0)
+    Grid.rowconfigure(group,5,weight=0)
+    Grid.rowconfigure(group,6,weight=0)
+    Grid.rowconfigure(group,7,weight=1)
+    Grid.rowconfigure(group,8,weight=0)
+    Grid.rowconfigure(group,9,weight=0)
+    Grid.rowconfigure(group,10,weight=0)
 
     glb.GUI.motifs['motifbox'] = tk.Listbox(group, height=20, width=40)
-    glb.GUI.motifs['motifbox'].grid(row=1,column=0, sticky=tk.N+tk.E+tk.S+tk.W)
+    glb.GUI.motifs['motifbox'].grid(row=0,column=4,rowspan=10, sticky=tk.N+tk.E+tk.S+tk.W,padx=5)
+    
 
     #creates preliminary empty texttree with  glb.GUI.motifs['motifbox'] as its parent
     glb.GUI.motifs['tt'] = texttree.TextTree(glb.GUI.motifs['motifbox'],funcs={'showContent':showContent})
     glb.GUI.motifs['tt'].pack(expand = YES, fill=BOTH)
     
-    group.rowconfigure(0, weight=0)
-    group.columnconfigure(1, weight=1)   
-    
-    group = tk.Frame(glb.GUI.motifs['tab'])
-    group.grid(row=0, column=0, sticky=tk.N+tk.E+tk.S+tk.W, padx=5)
     glb.GUI.motifs['single'] = tk.Label(group, text='Press Start to begin search')
-    glb.GUI.motifs['single'].grid(row=0, column=0,columnspan=2)
+    glb.GUI.motifs['single'].grid(row=0, column=0,columnspan=4)
     glb.GUI.motifs['singlestatus'] = glb.ScalableProgressBar(group)
-    glb.GUI.motifs['singlestatus'].getWidget().grid(row=1, column=0, columnspan=2, sticky=tk.E+tk.W)
+    glb.GUI.motifs['singlestatus'].getWidget().grid(row=1, column=0, columnspan=4, sticky=tk.E+tk.W)
     glb.GUI.motifs['overall'] = tk.Label(group,text='Overall Progress')
-    glb.GUI.motifs['overall'].grid(row=2,column=0,columnspan=2)
+    glb.GUI.motifs['overall'].grid(row=2,column=0,columnspan=4)
     glb.GUI.motifs['overallstatus'] = glb.ScalableProgressBar(group)
-    glb.GUI.motifs['overallstatus'].getWidget().grid(row=3, column=0, columnspan=2, sticky=tk.E+tk.W)
+    glb.GUI.motifs['overallstatus'].getWidget().grid(row=3, column=0, columnspan=4, sticky=tk.E+tk.W)
     glb.GUI.motifs['findmotif'] = tk.Button(group, text ='Start', 
         command=setChoiceDialogBox)#start button now calls setChoiceDialogBox in motif.py
-    glb.GUI.motifs['findmotif'].grid(row=4, column=0, padx=5)#7
+    ballstartbut = Pmw.Balloon(group)
+    ballstartbut.bind(glb.GUI.motifs['findmotif'], \
+                       "Start the motif search\n(you will select motif sets and filters first)")
+    glb.GUI.motifs['findmotif'].grid(row=4, column=0, padx=5)
     glb.GUI.motifs['cancelbutton'] = tk.Button(group, text='Cancel', command=motifcancel)
-    glb.GUI.motifs['cancelbutton'].grid(row=4, column=1, padx=5)#7
+    glb.GUI.motifs['cancelbutton'].grid(row=4, column=2, padx=5)
     glb.GUI.motifs['cancelbutton']['state'] = tk.DISABLED
-    group.columnconfigure(0, weight=1)
-    group.columnconfigure(1, weight=1)
-    group.rowconfigure(0,weight=0)
 
     # Creates, then hides, the root for the dialog box that allows user to
     # choose a set of motifs to compare to  
@@ -52,46 +67,37 @@ def initialise():
     glb.GUI.motifs['var'] = 0
     glb.GUI.motifs['varrmsd'] = 0
     
-    group = tk.Frame(glb.GUI.motifs['tab'])
-    group.grid(row=1, column=0, sticky=tk.N+tk.E+tk.W+tk.S, padx=5)
     pdbentrylabel = tk.Label(group, text='PDB entries to search (comma separated):', justify=tk.LEFT)
-    pdbentrylabel.grid(row=0, column=0, columnspan=3, sticky=tk.N+tk.E+tk.W+tk.S)
+    pdbentrylabel.grid(row=5, column=0, columnspan=3, sticky=tk.N+tk.E+tk.W+tk.S)
     ballentrylabel = Pmw.Balloon(group)
     ballentrylabel.bind(pdbentrylabel, \
                         "Type PDB entry codens into the text box or use one of these two buttons")
     # button to load a PDB file from system
     glb.GUI.motifs['browseButton'] = tk.Button(group, text='PDB file name ...', command=loadlocal)
-    glb.GUI.motifs['browseButton'].grid(row=1, column=0, padx=1, sticky=tk.N+tk.W)
+    glb.GUI.motifs['browseButton'].grid(row=6, column=0, padx=1, sticky=tk.N+tk.W)
     ballbrowsebut = Pmw.Balloon(group)
     ballbrowsebut.bind(glb.GUI.motifs['browseButton'], \
                        "Browse for a PDB entry")
     # button to load a list of PDB files
     glb.GUI.motifs['uploadTxtButton'] = tk.Button(group, text='PDB entry list ...', command=askopenfilename)
-    glb.GUI.motifs['uploadTxtButton'].grid(row=1, column=2, columnspan=2, padx=1, sticky=tk.N+tk.E)
+    glb.GUI.motifs['uploadTxtButton'].grid(row=6, column=2, columnspan=2, padx=1, sticky=tk.N+tk.E)
     balluploadbut = Pmw.Balloon(group)
     balluploadbut.bind(glb.GUI.motifs['uploadTxtButton'], \
                        "Browse for a list of PDB entries\none per line, no commas")
     pdbscroll = tk.Scrollbar(group, orient=tk.VERTICAL)
-    pdbscroll.grid(row=2, column=3, sticky=tk.N+tk.S)
+    pdbscroll.grid(row=7, column=3, sticky=tk.N+tk.S)
     glb.GUI.motifs['multipdb'] = tk.Text(group, state=tk.NORMAL, wrap=tk.WORD, width=12, height=14, yscrollcommand=pdbscroll.set)
-    glb.GUI.motifs['multipdb'].grid(row=2, column=0, columnspan=3,sticky=tk.N+tk.E+tk.W)
+    glb.GUI.motifs['multipdb'].grid(row=7, column=0, columnspan=3,sticky=tk.N+tk.E+tk.S+tk.W)
     pdbscroll['command'] = glb.GUI.motifs['multipdb'].yview
     # button to clear the input textbox
     glb.GUI.motifs['clearButton'] = tk.Button(group, text='Clear input', command=clearpdbinput)
-    glb.GUI.motifs['clearButton'].grid(row=3, column=0, padx=1, sticky=tk.N+tk.W)
+    glb.GUI.motifs['clearButton'].grid(row=8, column=0, padx=1, sticky=tk.N+tk.W)
     # button to export results
     glb.GUI.motifs['exportButton'] = tk.Button(group, text='Export ...', command=exportAllResults, state=tk.DISABLED)
-    glb.GUI.motifs['exportButton'].grid(row=3, column=2, columnspan=2, padx=1, sticky=tk.N+tk.E)
-    group.columnconfigure(0, weight=1)
-    group.columnconfigure(1, weight=1)
-    group.columnconfigure(2, weight=1)
-    group.columnconfigure(3, weight=0)
-    group.rowconfigure(1, weight=0)
+    glb.GUI.motifs['exportButton'].grid(row=8, column=2, columnspan=2, padx=1, sticky=tk.N+tk.E)
 
-    #group = tk.LabelFrame(glb.GUI.motifs['tab'], text='Tools')
     toolgroup = tk.LabelFrame(group,text='Tools')
-    #group.grid(row=2, column=0, sticky=tk.N, padx=5)
-    toolgroup.grid(row=4, column=1, columnspan=3, sticky=tk.N+tk.E+tk.W, padx=5)
+    toolgroup.grid(row=9, column=1, columnspan=3, sticky=tk.N+tk.E+tk.W, padx=5)
     
     #labrange = tk.Label(group, text='Precision Factor:')
     labrange = tk.Label(toolgroup, text='Precision Factor:')
@@ -135,9 +141,6 @@ def initialise():
     
     glb.GUI.motifs['querycolor'].bind("<ButtonRelease-1>", changecolor)
     glb.GUI.motifs['motifcolor'].bind("<ButtonRelease-1>", changecolor)
-
-    group.rowconfigure(2,weight=0)
-
     
     # Configure motif finder GUI layout
     glb.GUI.motifs['tab'].columnconfigure(0, weight=3)
