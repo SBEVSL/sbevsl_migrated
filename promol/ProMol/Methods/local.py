@@ -71,9 +71,18 @@ def askopenfilename():
             linecount = 0
             for line in fo:
                 linecount += 1;
+                coden = "";
+                # Strip leading blanks
+                line = line.lstrip();
+                # Strip trailing blanks and newlines
                 line = line.strip().replace('\n','')
-                if len(line) is not 0:
-                        query+= line + ", "
+                for c in line:
+                    if c.isalnum():
+                        coden+=c
+                    if (len(coden) > 3):
+                         break
+                if len(coden) is not 0:
+                        query+= coden + ", "
 
             #account for empty files
             if linecount > 1:
