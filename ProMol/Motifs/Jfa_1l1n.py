@@ -1,0 +1,195 @@
+'''
+FUNC:Jfa_1l1n
+PDB:1l1n
+EC:2.7.7.48
+PFAM:PF00548
+RESI:his,glu,gly,cys
+LOCI:a-40,71,145,147;
+'''
+jesstemp0 ='n.  cg '
+jesstemp1 ='r. his'
+cmd.select('jessatom0', '(('+jesstemp0+')&('+jesstemp1+'))')
+jesstemp2 ='n.  nd1'
+jesstemp3 ='r. his'
+jesstemp4 ='jessatom0 x. %s'%(1.403900+(d*0.300000))
+jesstemp5 ='br. jessatom0'
+cmd.select('jessatom1', '(('+jesstemp2+')&('+jesstemp3+')&('+jesstemp4+')&('+jesstemp5+'))')
+cmd.select('jessatom0', 'jessatom0 & (jessatom1 x. %s)'%(1.403900+(d*0.300000)))
+jesstemp6 ='n.  ne2'
+jesstemp7 ='jessatom0 x. %s'%(2.222000+(d*0.300000))
+jesstemp8 ='br. jessatom0'
+jesstemp9 ='jessatom1 x. %s'%(2.161400+(d*0.300000))
+cmd.select('jessatom2', '(('+jesstemp6+')&('+jesstemp3+')&('+jesstemp7+')&('+jesstemp8+')&('+jesstemp9+'))')
+cmd.select('jessatom0', 'jessatom0 & (jessatom2 x. %s)'%(2.222000+(d*0.300000)))
+cmd.select('jessatom1', 'jessatom1 & (jessatom2 x. %s)'%(2.161400+(d*0.300000)))
+jesstemp10 ='n.  cd '
+jesstemp11 ='r. glu'
+jesstemp12 ='r. asp'
+jesstemp13 ='jessatom0 x. %s'%(4.595500+(d*0.300000))
+jesstemp14 ='jessatom1 x. %s'%(3.787500+(d*0.300000))
+jesstemp15 ='jessatom2 x. %s'%(5.928700+(d*0.300000))
+cmd.select('jessatom3', '(((('+jesstemp10+')&('+jesstemp11+'))|(('+jesstemp10+')&('+jesstemp12+')))&('+jesstemp13+')&('+jesstemp14+')&('+jesstemp15+'))')
+cmd.select('jessatom0', 'jessatom0 & (jessatom3 x. %s)'%(4.595500+(d*0.300000)))
+cmd.select('jessatom1', 'jessatom1 & (jessatom3 x. %s)'%(3.787500+(d*0.300000)))
+cmd.select('jessatom2', 'jessatom2 & (jessatom3 x. %s)'%(5.928700+(d*0.300000)))
+jesstemp16 ='n.  oe1'
+jesstemp17 ='n.  oe2'
+jesstemp18 ='n.  od1'
+jesstemp19 ='n.  od2'
+jesstemp20 ='jessatom0 x. %s'%(5.272200+(d*0.300000))
+jesstemp21 ='jessatom1 x. %s'%(4.696500+(d*0.300000))
+jesstemp22 ='jessatom2 x. %s'%(6.857900+(d*0.300000))
+jesstemp23 ='jessatom3 x. %s'%(1.262500+(d*0.300000))
+jesstemp24 ='br. jessatom3'
+cmd.select('jessatom4', '((((('+jesstemp16+')|('+jesstemp17+'))&('+jesstemp11+'))|((('+jesstemp18+')|('+jesstemp19+'))&('+jesstemp12+')))&('+jesstemp20+')&('+jesstemp21+')&('+jesstemp22+')&('+jesstemp23+')&('+jesstemp24+'))')
+cmd.select('jessatom0', 'jessatom0 & (jessatom4 x. %s)'%(5.272200+(d*0.300000)))
+cmd.select('jessatom1', 'jessatom1 & (jessatom4 x. %s)'%(4.696500+(d*0.300000)))
+cmd.select('jessatom2', 'jessatom2 & (jessatom4 x. %s)'%(6.857900+(d*0.300000)))
+cmd.select('jessatom3', 'jessatom3 & (jessatom4 x. %s)'%(1.262500+(d*0.300000)))
+jesstemp25 ='n.  oe2'
+jesstemp26 ='n.  oe1'
+jesstemp27 ='n.  od2'
+jesstemp28 ='n.  od1'
+jesstemp29 ='jessatom0 x. %s'%(3.363300+(d*0.300000))
+jesstemp30 ='jessatom1 x. %s'%(2.615900+(d*0.300000))
+jesstemp31 ='jessatom2 x. %s'%(4.767200+(d*0.300000))
+jesstemp32 ='jessatom3 x. %s'%(1.242300+(d*0.300000))
+jesstemp33 ='br. jessatom3'
+jesstemp34 ='jessatom4 x. %s'%(2.181600+(d*0.300000))
+cmd.select('jessatom5', '((((('+jesstemp25+')|('+jesstemp26+'))&('+jesstemp11+'))|((('+jesstemp27+')|('+jesstemp28+'))&('+jesstemp12+')))&('+jesstemp29+')&('+jesstemp30+')&('+jesstemp31+')&('+jesstemp32+')&('+jesstemp33+')&('+jesstemp34+'))')
+cmd.select('jessatom0', 'jessatom0 & (jessatom5 x. %s)'%(3.363300+(d*0.300000)))
+cmd.select('jessatom1', 'jessatom1 & (jessatom5 x. %s)'%(2.615900+(d*0.300000)))
+cmd.select('jessatom2', 'jessatom2 & (jessatom5 x. %s)'%(4.767200+(d*0.300000)))
+cmd.select('jessatom3', 'jessatom3 & (jessatom5 x. %s)'%(1.242300+(d*0.300000)))
+cmd.select('jessatom4', 'jessatom4 & (jessatom5 x. %s)'%(2.181600+(d*0.300000)))
+jesstemp35 ='n.  n  '
+jesstemp36 ='jessatom0 x. %s'%(11.524100+(d*0.300000))
+jesstemp37 ='jessatom1 x. %s'%(11.372600+(d*0.300000))
+jesstemp38 ='jessatom2 x. %s'%(9.352600+(d*0.300000))
+jesstemp39 ='jessatom3 x. %s'%(14.776300+(d*0.300000))
+jesstemp40 ='jessatom4 x. %s'%(15.887300+(d*0.300000))
+jesstemp41 ='jessatom5 x. %s'%(13.786500+(d*0.300000))
+cmd.select('jessatom6', '(('+jesstemp35+')&('+jesstemp36+')&('+jesstemp37+')&('+jesstemp38+')&('+jesstemp39+')&('+jesstemp40+')&('+jesstemp41+'))')
+cmd.select('jessatom0', 'jessatom0 & (jessatom6 x. %s)'%(11.524100+(d*0.300000)))
+cmd.select('jessatom1', 'jessatom1 & (jessatom6 x. %s)'%(11.372600+(d*0.300000)))
+cmd.select('jessatom2', 'jessatom2 & (jessatom6 x. %s)'%(9.352600+(d*0.300000)))
+cmd.select('jessatom3', 'jessatom3 & (jessatom6 x. %s)'%(14.776300+(d*0.300000)))
+cmd.select('jessatom4', 'jessatom4 & (jessatom6 x. %s)'%(15.887300+(d*0.300000)))
+cmd.select('jessatom5', 'jessatom5 & (jessatom6 x. %s)'%(13.786500+(d*0.300000)))
+jesstemp42 ='n.  ca '
+jesstemp43 ='jessatom0 x. %s'%(12.271500+(d*0.300000))
+jesstemp44 ='jessatom1 x. %s'%(12.089700+(d*0.300000))
+jesstemp45 ='jessatom2 x. %s'%(10.110100+(d*0.300000))
+jesstemp46 ='jessatom3 x. %s'%(15.392400+(d*0.300000))
+jesstemp47 ='jessatom4 x. %s'%(16.533700+(d*0.300000))
+jesstemp48 ='jessatom5 x. %s'%(14.422800+(d*0.300000))
+jesstemp49 ='jessatom6 x. %s'%(1.454400+(d*0.300000))
+jesstemp50 ='br. jessatom6'
+cmd.select('jessatom7', '(('+jesstemp42+')&('+jesstemp43+')&('+jesstemp44+')&('+jesstemp45+')&('+jesstemp46+')&('+jesstemp47+')&('+jesstemp48+')&('+jesstemp49+')&('+jesstemp50+'))')
+cmd.select('jessatom0', 'jessatom0 & (jessatom7 x. %s)'%(12.271500+(d*0.300000)))
+cmd.select('jessatom1', 'jessatom1 & (jessatom7 x. %s)'%(12.089700+(d*0.300000)))
+cmd.select('jessatom2', 'jessatom2 & (jessatom7 x. %s)'%(10.110100+(d*0.300000)))
+cmd.select('jessatom3', 'jessatom3 & (jessatom7 x. %s)'%(15.392400+(d*0.300000)))
+cmd.select('jessatom4', 'jessatom4 & (jessatom7 x. %s)'%(16.533700+(d*0.300000)))
+cmd.select('jessatom5', 'jessatom5 & (jessatom7 x. %s)'%(14.422800+(d*0.300000)))
+cmd.select('jessatom6', 'jessatom6 & (jessatom7 x. %s)'%(1.454400+(d*0.300000)))
+jesstemp51 ='n.  c  '
+jesstemp52 ='jessatom0 x. %s'%(12.099800+(d*0.300000))
+jesstemp53 ='jessatom1 x. %s'%(11.756400+(d*0.300000))
+jesstemp54 ='jessatom2 x. %s'%(9.928300+(d*0.300000))
+jesstemp55 ='jessatom3 x. %s'%(14.836900+(d*0.300000))
+jesstemp56 ='jessatom4 x. %s'%(16.028700+(d*0.300000))
+jesstemp57 ='jessatom5 x. %s'%(13.948100+(d*0.300000))
+jesstemp58 ='jessatom6 x. %s'%(2.484600+(d*0.300000))
+jesstemp59 ='br. jessatom6'
+jesstemp60 ='jessatom7 x. %s'%(1.525100+(d*0.300000))
+cmd.select('jessatom8', '(('+jesstemp51+')&('+jesstemp52+')&('+jesstemp53+')&('+jesstemp54+')&('+jesstemp55+')&('+jesstemp56+')&('+jesstemp57+')&('+jesstemp58+')&('+jesstemp59+')&('+jesstemp60+'))')
+cmd.select('jessatom0', 'jessatom0 & (jessatom8 x. %s)'%(12.099800+(d*0.300000)))
+cmd.select('jessatom1', 'jessatom1 & (jessatom8 x. %s)'%(11.756400+(d*0.300000)))
+cmd.select('jessatom2', 'jessatom2 & (jessatom8 x. %s)'%(9.928300+(d*0.300000)))
+cmd.select('jessatom3', 'jessatom3 & (jessatom8 x. %s)'%(14.836900+(d*0.300000)))
+cmd.select('jessatom4', 'jessatom4 & (jessatom8 x. %s)'%(16.028700+(d*0.300000)))
+cmd.select('jessatom5', 'jessatom5 & (jessatom8 x. %s)'%(13.948100+(d*0.300000)))
+cmd.select('jessatom6', 'jessatom6 & (jessatom8 x. %s)'%(2.484600+(d*0.300000)))
+cmd.select('jessatom7', 'jessatom7 & (jessatom8 x. %s)'%(1.525100+(d*0.300000)))
+jesstemp61 ='r. cys'
+jesstemp62 ='jessatom0 x. %s'%(7.857800+(d*0.300000))
+jesstemp63 ='jessatom1 x. %s'%(7.241700+(d*0.300000))
+jesstemp64 ='jessatom2 x. %s'%(5.827700+(d*0.300000))
+jesstemp65 ='jessatom3 x. %s'%(9.958600+(d*0.300000))
+jesstemp66 ='jessatom4 x. %s'%(11.180700+(d*0.300000))
+jesstemp67 ='jessatom5 x. %s'%(9.140500+(d*0.300000))
+jesstemp68 ='jessatom6 x. %s'%(5.777200+(d*0.300000))
+jesstemp69 ='jessatom7 x. %s'%(5.888300+(d*0.300000))
+jesstemp70 ='jessatom8 x. %s'%(5.019700+(d*0.300000))
+cmd.select('jessatom9', '(('+jesstemp42+')&('+jesstemp61+')&('+jesstemp62+')&('+jesstemp63+')&('+jesstemp64+')&('+jesstemp65+')&('+jesstemp66+')&('+jesstemp67+')&('+jesstemp68+')&('+jesstemp69+')&('+jesstemp70+'))')
+cmd.select('jessatom0', 'jessatom0 & (jessatom9 x. %s)'%(7.857800+(d*0.300000)))
+cmd.select('jessatom1', 'jessatom1 & (jessatom9 x. %s)'%(7.241700+(d*0.300000)))
+cmd.select('jessatom2', 'jessatom2 & (jessatom9 x. %s)'%(5.827700+(d*0.300000)))
+cmd.select('jessatom3', 'jessatom3 & (jessatom9 x. %s)'%(9.958600+(d*0.300000)))
+cmd.select('jessatom4', 'jessatom4 & (jessatom9 x. %s)'%(11.180700+(d*0.300000)))
+cmd.select('jessatom5', 'jessatom5 & (jessatom9 x. %s)'%(9.140500+(d*0.300000)))
+cmd.select('jessatom6', 'jessatom6 & (jessatom9 x. %s)'%(5.777200+(d*0.300000)))
+cmd.select('jessatom7', 'jessatom7 & (jessatom9 x. %s)'%(5.888300+(d*0.300000)))
+cmd.select('jessatom8', 'jessatom8 & (jessatom9 x. %s)'%(5.019700+(d*0.300000)))
+jesstemp71 ='n.  cb '
+jesstemp72 ='jessatom0 x. %s'%(6.544800+(d*0.300000))
+jesstemp73 ='jessatom1 x. %s'%(6.100400+(d*0.300000))
+jesstemp74 ='jessatom2 x. %s'%(4.444000+(d*0.300000))
+jesstemp75 ='jessatom3 x. %s'%(9.191000+(d*0.300000))
+jesstemp76 ='jessatom4 x. %s'%(10.362600+(d*0.300000))
+jesstemp77 ='jessatom5 x. %s'%(8.251700+(d*0.300000))
+jesstemp78 ='jessatom6 x. %s'%(5.858000+(d*0.300000))
+jesstemp79 ='jessatom7 x. %s'%(6.241800+(d*0.300000))
+jesstemp80 ='jessatom8 x. %s'%(5.716600+(d*0.300000))
+jesstemp81 ='jessatom9 x. %s'%(1.565500+(d*0.300000))
+jesstemp82 ='br. jessatom9'
+cmd.select('jessatom10', '(('+jesstemp71+')&('+jesstemp61+')&('+jesstemp72+')&('+jesstemp73+')&('+jesstemp74+')&('+jesstemp75+')&('+jesstemp76+')&('+jesstemp77+')&('+jesstemp78+')&('+jesstemp79+')&('+jesstemp80+')&('+jesstemp81+')&('+jesstemp82+'))')
+cmd.select('jessatom0', 'jessatom0 & (jessatom10 x. %s)'%(6.544800+(d*0.300000)))
+cmd.select('jessatom1', 'jessatom1 & (jessatom10 x. %s)'%(6.100400+(d*0.300000)))
+cmd.select('jessatom2', 'jessatom2 & (jessatom10 x. %s)'%(4.444000+(d*0.300000)))
+cmd.select('jessatom3', 'jessatom3 & (jessatom10 x. %s)'%(9.191000+(d*0.300000)))
+cmd.select('jessatom4', 'jessatom4 & (jessatom10 x. %s)'%(10.362600+(d*0.300000)))
+cmd.select('jessatom5', 'jessatom5 & (jessatom10 x. %s)'%(8.251700+(d*0.300000)))
+cmd.select('jessatom6', 'jessatom6 & (jessatom10 x. %s)'%(5.858000+(d*0.300000)))
+cmd.select('jessatom7', 'jessatom7 & (jessatom10 x. %s)'%(6.241800+(d*0.300000)))
+cmd.select('jessatom8', 'jessatom8 & (jessatom10 x. %s)'%(5.716600+(d*0.300000)))
+cmd.select('jessatom9', 'jessatom9 & (jessatom10 x. %s)'%(1.565500+(d*0.300000)))
+jesstemp83 ='n.  sg '
+jesstemp84 ='jessatom0 x. %s'%(5.484300+(d*0.300000))
+jesstemp85 ='jessatom1 x. %s'%(4.807600+(d*0.300000))
+jesstemp86 ='jessatom2 x. %s'%(3.383500+(d*0.300000))
+jesstemp87 ='jessatom3 x. %s'%(7.817400+(d*0.300000))
+jesstemp88 ='jessatom4 x. %s'%(8.968800+(d*0.300000))
+jesstemp89 ='jessatom5 x. %s'%(6.938700+(d*0.300000))
+jesstemp90 ='jessatom6 x. %s'%(7.019500+(d*0.300000))
+jesstemp91 ='jessatom7 x. %s'%(7.655800+(d*0.300000))
+jesstemp92 ='jessatom8 x. %s'%(7.150800+(d*0.300000))
+jesstemp93 ='jessatom9 x. %s'%(2.868400+(d*0.300000))
+jesstemp94 ='br. jessatom9'
+jesstemp95 ='jessatom10 x. %s'%(1.908900+(d*0.300000))
+cmd.select('jessatom11', '(('+jesstemp83+')&('+jesstemp61+')&('+jesstemp84+')&('+jesstemp85+')&('+jesstemp86+')&('+jesstemp87+')&('+jesstemp88+')&('+jesstemp89+')&('+jesstemp90+')&('+jesstemp91+')&('+jesstemp92+')&('+jesstemp93+')&('+jesstemp94+')&('+jesstemp95+'))')
+cmd.select('jessatom0', 'jessatom0 & (jessatom11 x. %s)'%(5.484300+(d*0.300000)))
+cmd.select('jessatom1', 'jessatom1 & (jessatom11 x. %s)'%(4.807600+(d*0.300000)))
+cmd.select('jessatom2', 'jessatom2 & (jessatom11 x. %s)'%(3.383500+(d*0.300000)))
+cmd.select('jessatom3', 'jessatom3 & (jessatom11 x. %s)'%(7.817400+(d*0.300000)))
+cmd.select('jessatom4', 'jessatom4 & (jessatom11 x. %s)'%(8.968800+(d*0.300000)))
+cmd.select('jessatom5', 'jessatom5 & (jessatom11 x. %s)'%(6.938700+(d*0.300000)))
+cmd.select('jessatom6', 'jessatom6 & (jessatom11 x. %s)'%(7.019500+(d*0.300000)))
+cmd.select('jessatom7', 'jessatom7 & (jessatom11 x. %s)'%(7.655800+(d*0.300000)))
+cmd.select('jessatom8', 'jessatom8 & (jessatom11 x. %s)'%(7.150800+(d*0.300000)))
+cmd.select('jessatom9', 'jessatom9 & (jessatom11 x. %s)'%(2.868400+(d*0.300000)))
+cmd.select('jessatom10', 'jessatom10 & (jessatom11 x. %s)'%(1.908900+(d*0.300000)))
+cmd.select('Jfa_1l1n', 'br. jessatom0|br. jessatom1|br. jessatom2|br. jessatom3|br. jessatom4|br. jessatom5|br. jessatom6|br. jessatom7|br. jessatom8|br. jessatom9|br. jessatom10|br. jessatom11')
+cmd.delete('jessatom0')
+cmd.delete('jessatom1')
+cmd.delete('jessatom2')
+cmd.delete('jessatom3')
+cmd.delete('jessatom4')
+cmd.delete('jessatom5')
+cmd.delete('jessatom6')
+cmd.delete('jessatom7')
+cmd.delete('jessatom8')
+cmd.delete('jessatom9')
+cmd.delete('jessatom10')
+cmd.delete('jessatom11')
