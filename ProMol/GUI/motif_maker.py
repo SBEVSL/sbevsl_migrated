@@ -18,11 +18,17 @@ def initialise():
     glb.GUI.motif_maker['pdb'] = tk.Entry(headerFrame, width=10)
     glb.GUI.motif_maker['pdb'].pack(side=tk.LEFT)
     
-    lec = tk.Label(headerFrame, text='     EC # or Pfam name:')
+    lec = tk.Label(headerFrame, text='     EC #:')
     lec.pack(side=tk.LEFT)
     
     glb.GUI.motif_maker['ec'] = tk.Entry(headerFrame, width=10)
     glb.GUI.motif_maker['ec'].pack(side=tk.LEFT)
+
+    lec = tk.Label(headerFrame, text='     Pfam Accession #:')
+    lec.pack(side=tk.LEFT)
+    
+    glb.GUI.motif_maker['pfam'] = tk.Entry(headerFrame, width=10)
+    glb.GUI.motif_maker['pfam'].pack(side=tk.LEFT)
     
     glb.GUI.motif_maker['pf'] = tk.Spinbox(headerFrame,increment="0.01",from_="0.01",
         to="4.00",bg="#ffffff", width=4)

@@ -48,7 +48,11 @@ def getRMSD(motifName, queryPDBCode, motifPDBCode):
         querySubsetName = 'match_in_%s'%(queryPDBCode)
         cmd.select(querySubsetName, motifName)
         cmd.hide('everything', 'all')
-        cmd.fetch(motifPDBCode, async=0, path=glb.FETCH_PATH)
+        if queryPDBCode==motifPDBCode:
+            motifPDBCode = queryPDBCode + "1"
+            cmd.copy(motifPDBCode,queryPDBCode)
+        else:
+            cmd.fetch(motifPDBCode, async=0, path=glb.FETCH_PATH)
         #motifSubsetName = 'match_in_{0}'.format(motifPDBCode)
         motifSubsetName = 'match_in_%s'%(motifPDBCode)
         cmd.select(motifSubsetName, '%s and (%s)' % (motifPDBCode,
@@ -71,6 +75,10 @@ def getRMSD(motifName, queryPDBCode, motifPDBCode):
         rmsds.append(dataAll[0])
         rmsds.append(dataAlpha[0])
         rmsds.append(dataAlphaBeta[0])
-        cmd.delete(motifName) 
+        rmsds.append(dataAll[6])
+        cmd.delete(motifPDBCode, querySubsetName, motifSubsetName)
         return rmsds
 
+def score(rmsd,levDist,numRes):
+    score = round(pow(2,numRes) / (pow(2,rmsd) * levDist + 1),6)
+    return score

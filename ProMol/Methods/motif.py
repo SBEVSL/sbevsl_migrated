@@ -289,6 +289,7 @@ def showContent(node):
                 glb.MOTIFS[motifName]['loci']))
             # Do final display
             cmd.hide('everything', 'all')
+            cmd.bg_color('white')
             cmd.show('sticks', motifSubsetName)
             cmd.show('spheres',motifSubsetName)
             cmd.set('sphere_scale','0.15',motifSubsetName)
@@ -369,11 +370,39 @@ def storeSetChoice(): #stores button value, action of the select button
     selectedSet = glb.GUI.motifs['var'].get()
     rmsdchoice = glb.GUI.motifs['varrmsd'].get()
     ecchoice1 = glb.GUI.motifs['ec1'].get()
+    if ecchoice1 == '' or int(ecchoice1) == 0:
+        ecchoice1 = ''
+        glb.GUI.motifs['ec1'].set('')
+        glb.GUI.motifs['ec2'].set('')
+        glb.GUI.motifs['ec2button'].config(state = DISABLED)
+        glb.GUI.motifs['ec3'].set('')
+        glb.GUI.motifs['ec3button'].config(state = DISABLED)
+        glb.GUI.motifs['ec4'].set('')
+        glb.GUI.motifs['ec4button'].config(state = DISABLED)
     ecchoice2 = glb.GUI.motifs['ec2'].get()
+    if ecchoice2 == '' or int(ecchoice2) == 0:
+        ecchoice2 = ''
+        glb.GUI.motifs['ec2'].set('')
+        glb.GUI.motifs['ec2button'].config(state = DISABLED)
+        glb.GUI.motifs['ec3'].set('')
+        glb.GUI.motifs['ec3button'].config(state = DISABLED)
+        glb.GUI.motifs['ec4'].set('')
+        glb.GUI.motifs['ec4button'].config(state = DISABLED)
     ecchoice3 = glb.GUI.motifs['ec3'].get()
+    if ecchoice3 == '' or int(ecchoice3) == 0:
+        ecchoice3 = ''
+        glb.GUI.motifs['ec3'].set('')
+        glb.GUI.motifs['ec3button'].config(state = DISABLED)
+        glb.GUI.motifs['ec4'].set('')
+        glb.GUI.motifs['ec4button'].config(state = DISABLED)
     ecchoice4 = glb.GUI.motifs['ec4'].get()
+    if ecchoice4 == '' or int(ecchoice4) == 0:
+        ecchoice4 = ''
+        glb.GUI.motifs['ec4'].set('')
+        glb.GUI.motifs['ec4button'].config(state = DISABLED)
     ecchoices = [ecchoice1, ecchoice2, ecchoice3, ecchoice4]
-    motifchecker(selectedSet, rmsdchoice, ecchoices)
+    pfamchoice = glb.GUI.motifs['pfam'].get().replace(' ','-').upper()
+    motifchecker(selectedSet, rmsdchoice, ecchoices,pfamchoice)
 
 def cancelSetChoice():#action of the cancel button
     glb.GUI.motifs['root'].withdraw()
@@ -413,6 +442,70 @@ def checkEC(event, maxNum, nextBoxes):
         if len(input) == 2: # if not first box, shift focus to next box when there are two digits
             nextBoxes[0].focus()
 
+def commandrb1():
+    if glb.GUI.motifs['varPset'].get() == 1:
+      glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()|0x1)
+    else:
+      glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()&~0x1)
+def commandrb2():
+    if glb.GUI.motifs['varJset'].get() == 1:
+        glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()|0x2)
+    else:
+        glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()&~0x2)
+def commandrb3():
+    if glb.GUI.motifs['varNset'].get() == 1:
+        glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()|0x4)
+    else:
+        glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()&~0x4)
+def commandrb4():
+    if glb.GUI.motifs['var'].get() != 0:
+        # all implies all the sets
+        glb.GUI.motifs['controls']['rb1'].select()
+        if glb.USE_JESS:
+            glb.GUI.motifs['controls']['rb2'].select()
+        #glb.GUI.motifs['controls']['rb3'].select()
+        glb.GUI.motifs['controls']['rb5'].select()
+        glb.GUI.motifs['controls']['rbA'].select()
+        glb.GUI.motifs['controls']['rbB'].select()
+        glb.GUI.motifs['controls']['rbC'].select()
+        glb.GUI.motifs['controls']['rbD'].select()
+    else:
+        # all implies all the sets
+        glb.GUI.motifs['controls']['rb1'].deselect()
+        if glb.USE_JESS:
+            glb.GUI.motifs['controls']['rb2'].deselect()
+        #glb.GUI.motifs['controls']['rb3'].deselect()
+        glb.GUI.motifs['controls']['rb5'].deselect()
+        glb.GUI.motifs['controls']['rbA'].deselect()
+        glb.GUI.motifs['controls']['rbB'].deselect()
+        glb.GUI.motifs['controls']['rbC'].deselect()
+        glb.GUI.motifs['controls']['rbD'].deselect()
+def commandrb5():
+    if glb.GUI.motifs['varUset'].get() == 1:
+        glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()|0x10)
+    else:
+        glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()&~0x10)
+def commandrbA():
+    if glb.GUI.motifs['varAset'].get() == 1:
+        glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()|0x20)
+    else:
+        glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()&~0x20)
+def commandrbB():
+    if glb.GUI.motifs['varMset'].get() == 1:
+        glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()|0x40)
+    else:
+        glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()&~0x40)
+def commandrbC():
+    if glb.GUI.motifs['varRset'].get() == 1:
+        glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()|0x80)
+    else:
+        glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()&~0x80)
+def commandrbD():
+    if glb.GUI.motifs['varFset'].get() == 1:
+        glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()|0x100)
+    else:
+        glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()&~0x100)
+
 
 def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when the user selects the start button in motif finder
     pdbs = glb.GUI.motifs['multipdb'].get(1.0,'1.end').split(',')
@@ -432,20 +525,34 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
         w.destroy()
    
     glb.GUI.motifs['var'] = IntVar()
+    glb.GUI.motifs['varPset'] = IntVar()
+    if glb.USE_JESS:
+        glb.GUI.motifs['varJset'] = IntVar()
+    #glb.GUI.motifs['varNset'] = IntVar()
+    glb.GUI.motifs['varUset'] = IntVar()
+    glb.GUI.motifs['varAset'] = IntVar()
+    glb.GUI.motifs['varMset'] = IntVar()
+    glb.GUI.motifs['varRset'] = IntVar()
+    glb.GUI.motifs['varFset'] = IntVar()
+
 
     #added 2/19
     glb.GUI.motifs['varrmsd'] = IntVar()
     ###
     
-    rb1 = Radiobutton(glb.GUI.motifs['root'], text="P set", variable = glb.GUI.motifs['var'], value = 1,  height = 2)
+    glb.GUI.motifs['controls'] = {}
+    
+    glb.GUI.motifs['controls']['rb1'] = Checkbutton(glb.GUI.motifs['root'], text="P set", variable = glb.GUI.motifs['varPset'], height = 2, command = commandrb1)
     if glb.USE_JESS:
-        rb2 = Radiobutton(glb.GUI.motifs['root'], text="J set", variable = glb.GUI.motifs['var'], value = 2, height = 2)
-    #rb3 = Radiobutton(glb.GUI.motifs['root'], text="N set (NMR)", variable = glb.GUI.motifs['var'], value = 3, height = 2)
-    rb4 = Radiobutton(glb.GUI.motifs['root'], text="All Motifs", variable = glb.GUI.motifs['var'], value = 4, height = 2)
-    rb5 = Radiobutton(glb.GUI.motifs['root'], text="User Motifs", variable = glb.GUI.motifs['var'], value = 5, height = 2)
-    rbA = Radiobutton(glb.GUI.motifs['root'], text="A set", variable = glb.GUI.motifs['var'], value = 6, height = 2)
-    rbB = Radiobutton(glb.GUI.motifs['root'], text="Metal Amino", variable = glb.GUI.motifs['var'], value = 7, height = 2)
-    rbC = Radiobutton(glb.GUI.motifs['root'], text="Metal Other", variable = glb.GUI.motifs['var'], value = 8, height = 2)
+        glb.GUI.motifs['controls']['rb2'] = Checkbutton(glb.GUI.motifs['root'], text="J set", variable = glb.GUI.motifs['varJset'], height = 2, command = commandrb2)
+    #rb3 = Checkbutton(glb.GUI.motifs['root'], text="N set (NMR)", variable = glb.GUI.motifs['varNset'], height = 2, command = commandrb3)
+    glb.GUI.motifs['controls']['rb4'] = Checkbutton(glb.GUI.motifs['root'], text="All Motifs", variable = glb.GUI.motifs['var'], onvalue = 0xF7, height = 2, command = commandrb4)
+    glb.GUI.motifs['controls']['rb5'] = Checkbutton(glb.GUI.motifs['root'], text="User Motifs", variable = glb.GUI.motifs['varUset'], height = 2, command = commandrb5)
+    glb.GUI.motifs['controls']['rbA'] = Checkbutton(glb.GUI.motifs['root'], text="A set", variable = glb.GUI.motifs['varAset'], height = 2, command = commandrbA)
+    glb.GUI.motifs['controls']['rbB'] = Checkbutton(glb.GUI.motifs['root'], text="Metal Amino", variable = glb.GUI.motifs['varMset'], height = 2, command = commandrbB)
+    glb.GUI.motifs['controls']['rbC'] = Checkbutton(glb.GUI.motifs['root'], text="Metal Other", variable = glb.GUI.motifs['varRset'], height = 2, command = commandrbC)
+    glb.GUI.motifs['controls']['rbD'] = Checkbutton(glb.GUI.motifs['root'], text="Pfam Motifs", variable = glb.GUI.motifs['varFset'], height = 2, command = commandrbD)
+
 
     #added 2/19
     rb6 = Radiobutton(glb.GUI.motifs['root'], text="Yes (will take longer)", variable = glb.GUI.motifs['varrmsd'], value = 1,  height = 2)
@@ -458,16 +565,19 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
 
 
 
-    rb4.pack(anchor = W)
-    rb4.select()#added 2/19 (default button)
-    rb5.pack(anchor = W)
-    rb1.pack(anchor = W)
-    rbA.pack(anchor = W)
-    rbB.pack(anchor = W)
-    rbC.pack(anchor = W)
+    glb.GUI.motifs['controls']['rb4'].pack(anchor = W)
+    glb.GUI.motifs['controls']['rb5'].pack(anchor = W)
+    glb.GUI.motifs['controls']['rb1'].pack(anchor = W)
+    glb.GUI.motifs['controls']['rbA'].pack(anchor = W)
+    glb.GUI.motifs['controls']['rbB'].pack(anchor = W)
+    glb.GUI.motifs['controls']['rbC'].pack(anchor = W)
+    glb.GUI.motifs['controls']['rbD'].pack(anchor = W)
     if glb.USE_JESS:
-        rb2.pack(anchor = W)
-    #rb3.pack(anchor = W)
+        glb.GUI.motifs['controls']['rb2'].pack(anchor = W)
+    #glb.GUI.motifs['controls']['rb3'].pack(anchor = W)
+    glb.GUI.motifs['controls']['rb4'].select()#added 2/19 (default button)
+    commandrb4();
+
 
     #added 2/19
     spacelabel.pack(anchor = W)
@@ -490,7 +600,19 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
     EC3 = Entry(glb.GUI.motifs['root'], state=DISABLED, textvariable = glb.GUI.motifs['ec3'], width=2)
     ECLabel4 = Label(glb.GUI.motifs['root'], text=".")
     EC4 = Entry(glb.GUI.motifs['root'], state=DISABLED, textvariable = glb.GUI.motifs['ec4'], width=2)
-    
+
+    glb.GUI.motifs['ec1button'] = EC1
+    glb.GUI.motifs['ec2button'] = EC2
+    glb.GUI.motifs['ec3button'] = EC3
+    glb.GUI.motifs['ec4button'] = EC4
+
+    if glb.GUI.motifs['ec2'].get != '':
+        EC2.config(state = NORMAL)
+    if glb.GUI.motifs['ec3'].get != '':
+        EC3.config(state = NORMAL)
+    if glb.GUI.motifs['ec4'].get != '':
+        EC4.config(state = NORMAL)
+
     EClabel.pack(anchor = W)
     ECLabel1.pack(side=LEFT)
     EC1.pack(side=LEFT)
@@ -505,8 +627,17 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
     EC1.bind('<KeyRelease>', lambda event: checkEC(event, 6, [EC2, EC3, EC4]))
     EC2.bind('<KeyRelease>', lambda event: checkEC(event, 99, [EC3, EC4]))
     EC3.bind('<KeyRelease>', lambda event: checkEC(event, 99, [EC4]))
+
+    #Pfam name search
+    PfamLabel = Label(glb.GUI.motifs['root'], text="\nLimit results by Pfam family")
+    PfamLabel1 = Label(glb.GUI.motifs['root'], text="Pfam Name: ")
+    PfamName = Entry(glb.GUI.motifs['root'], state=NORMAL, textvariable = glb.GUI.motifs['pfam'], width=12)
+
+    PfamLabel.pack(anchor = W)
+    PfamLabel1.pack(anchor = W)
+    PfamName.pack(anchor = W)
     
-    frame = Frame(glb.GUI.motifs['root'], width=200, height=250, bd=1)
+    frame = Frame(glb.GUI.motifs['root'], width=150, height=350, bd=1)
     frame.pack()
     
     selectButton = Button(frame, text='Select', command = storeSetChoice).pack()
@@ -739,14 +870,15 @@ def count(motif,pdb):
         editdist.append(proutils.levenshteinDistance(sub,ordered))
     mini = min(editdist)
     maxi = max(editdist)
-    if maxi > 1 and (motif[0]=='M' or motif[0]=='R') :
+    #print "motif ",motif," mini ",mini," maxi ",maxi
+    if (residuesl < 6 and mini > 0) or (residuesl < 12 and mini > 1) or (residuesl < 18 and mini > 2) or mini > 3:
         return None
     #glb.GUI.motifs['csvprep'][pdb][motif]['levdistrange'] = '{0}-{1}'.format(mini,maxi) if mini<maxi else mini
     glb.GUI.motifs['csvprep'][pdb][motif]['levdistrange'] = '%s-%s'%(mini,maxi) if mini<maxi else mini
     # Removed storage of precision factor as it is the same for the entire search
     return glb.GUI.motifs['csvprep'][pdb][motif]['levdistrange']
 
-def motifchecker(setChoice, rmsdchoice, ecchoices):
+def motifchecker(setChoice, rmsdchoice, ecchoices, pfamchoice):
     global CSVMergeInfo
     glb.GUI.motifs['cancel'] = False
     #glb.GUI.motifs['motifbox'].delete(0,tk.END)
@@ -786,22 +918,33 @@ def motifchecker(setChoice, rmsdchoice, ecchoices):
     #glb.GUI.motifs['rmsdstatus'].SetProgressPercent(0.0)#added 2/20
     glb.GUI.motifs['single'].update()
     
-    # Only define the search set once now, instead of
-    # doing it inside the loop
-    # This code will be replaced with something better soon anyway
-    # But for now, I have rewritten it to be a little more concise
-    sets = {1: ('P_Set', lambda key: key[0] == 'P'),
-    2: ('J_Set', lambda key: key[0] == 'J'),
-    3: ('N_Set', lambda key: key[0] == 'N'),
-    4: ('All', lambda key: glb.USE_JESS or key[0] != 'J'),
-    5: ('U_Set', lambda key: key[0] == 'U'),
-    6: ('A_Set', lambda key: key[0] == 'A'),
-    7: ('M_Set', lambda key: key[0] == 'M'),
-    8: ('R_Set', lambda key: key[0] == 'R')}
-    setName = sets[setChoice][0]
+    setName = "";
+    if setChoice & 0x1 != 0:
+        setName+='P'
+    if glb.USE_JESS:
+        if setChoice & 0x2 != 0:
+            setName+='J'
+    #if setChoice & 0x4 != 0:
+    #    setName+='N'
+    if setChoice & 0x10 != 0:
+        setName+='U'
+    if setChoice & 0x20 != 0:
+        setName+='A'
+    if setChoice & 0x40 != 0:
+        setName+='M'
+    if setChoice & 0x80 != 0:
+        setName+='R'
+    if setChoice & 0x100 != 0:
+        setName+='F'
+
+    setlist = list(setName)
+    
+    setselection = lambda key: key[0] in setlist
+
+    setName += "_Set"
 
     # This is a Python list comprehension
-    keys = set([motifName for motifName in glb.MOTIFS.keys() if sets[setChoice][1](motifName)])
+    keys = set([motifName for motifName in glb.MOTIFS.keys() if setselection(motifName)])
 
     #4/29 added
     glb.GUI.motifs['tt'].destroy()#removes current tree displaying past results
@@ -839,20 +982,27 @@ def motifchecker(setChoice, rmsdchoice, ecchoices):
                 #glb.GUI.motifs['overall']['text'] = 'Search cancelled at {0}%'.format(int(baro))
                 glb.GUI.motifs['overall']['text'] = 'Search cancelled at %s%%'%(int(baro))
                 break
-                  
-            # Search by EC numbers, if provided.
-            ECnums = motif.split('_')
-            motifEC1 = ECnums[2]
-            if len(ECnums)>3: # If not classified by EC class
-                motifEC2 = ECnums[3]
-                motifEC3 = ECnums[4]
-                motifEC4 = ECnums[5]
-            if ((not str.isdigit(motifEC1)) or                                  \
-                ((ecchoices[0] == '' or int(motifEC1) == int(ecchoices[0])) and \
-                (ecchoices[1] == '' or int(motifEC2) == int(ecchoices[1])) and  \
-                (ecchoices[2] == '' or int(motifEC3) == int(ecchoices[2])) and  \
-                (ecchoices[3] == '' or int(motifEC4) == int(ecchoices[3])))):
                 
+            # Search by EC numbers, if provided.
+            motifaccept = True;
+            if glb.MOTIFS[motif]['ec']!='N/A':
+                ECnums = glb.MOTIFS[motif]['ec'].split('.')
+                motifEC1 = ECnums[0]
+                motifEC2 = ECnums[1]
+                motifEC3 = ECnums[2]
+                motifEC4 = ECnums[3]
+                if motifEC1 != '-' and motifEC1 != '' and ecchoices[0] != '' and int(motifEC1) != int(ecchoices[0]):
+                    motifaccept = False;  
+                if motifEC2 != '-' and motifEC2 != '' and ecchoices[1] != '' and int(motifEC2) != int(ecchoices[1]):
+                    motifaccept = False;  
+                if motifEC3 != '-' and motifEC3 != '' and ecchoices[2] != '' and int(motifEC3) != int(ecchoices[2]):
+                    motifaccept = False;  
+                if motifEC4 != '-' and motifEC4 != '' and ecchoices[3] != '' and int(motifEC4) != int(ecchoices[3]):
+                    motifaccept = False;
+            if glb.MOTIFS[motif]['pfam']!='N/A':
+                if pfamchoice!= '' and not pfamchoice in glb.MOTIFS[motif]['pfam'].split(','):
+                    motifaccept = False;
+            if motifaccept:
                 # List of motif loading errors is no longer stored inside motif dictionary
     
                 # Determine whether or not we have a match
@@ -956,20 +1106,20 @@ def motifchecker(setChoice, rmsdchoice, ecchoices):
             struct['children'][i]['children'].append({'type':'Subsection','name':'EC #4','children':[]})
             struct['children'][i]['children'].append({'type':'Subsection','name':'EC #5','children':[]})
             struct['children'][i]['children'].append({'type':'Subsection','name':'EC #6','children':[]})
-            struct['children'][i]['children'].append({'type':'Subsection','name':'Pfam','children':[]})
+            struct['children'][i]['children'].append({'type':'Subsection','name':'No EC Class','children':[]})
             
         oldpdb = query
         tag = motif.split(': ')
          
         if len(tag) > 1:
-            tokens = tag[1].split('_')
+            tokens = glb.MOTIFS[tag[1]]['ec'].split('.')
 ##            try:
 ##                subsection = int(tokens[2])
 ##            except:
 ##                #Pfam designation
 ##                subsection = 7
-            if str.isdigit(tokens[2]):
-                subsection = int(tokens[2])
+            if str.isdigit(tokens[0]):
+                subsection = int(tokens[0])
             else:
                 subsection = 7
             motifName = tag[1]
@@ -1044,6 +1194,7 @@ class MotifMaker:
         self.pf = glb.GUI.motif_maker['pf'].get()
         self.pdb = glb.GUI.motif_maker['pdb'].get().lower()
         self.ecen = glb.GUI.motif_maker['ec'].get()
+        self.pfam = glb.GUI.motif_maker['pfam'].get().replace(', ',',').replace(' ','-').lower()
         self.resn = {}
         self.resi = {}
         self.backbone = {}
@@ -1064,6 +1215,7 @@ class MotifMaker:
         glb.GUI.motif_maker['pf'].insert(0,'2.00')
         glb.GUI.motif_maker['pdb'].delete(0,tk.END)
         glb.GUI.motif_maker['ec'].delete(0,tk.END)
+        glb.GUI.motif_maker['pfam'].delete(0,tk.END)
 
         
     def resetRows(self):
@@ -1085,9 +1237,10 @@ class MotifMaker:
         
     # Replaces write(open=True) with mode = 1
     def openMotifForSaving(self):
-        if os.path.exists(glb.pathmaker((self.name,'.py'),root=glb.USRMOTIFSFOLDER)) or os.path.exists(glb.pathmaker((self.name,'.py'),root=glb.MOTIFSFOLDER)):
+        if os.path.exists(glb.pathmaker((self.name,'.py'),root=glb.USRMOTIFSFOLDER)) or    \
+           os.path.exists(glb.pathmaker((self.name,'.py'),root=glb.MOTIFSFOLDER)):
             answer = askyesno('Motif Exists', 
-            'A motif has already been made for EC/Pfam:%s on PDB:%s.\n'%(self.ec,self.pdb)+
+            'A motif has already been made for PDB:%s.\n'%(self.pdb)+
             'Are you sure you want to replace it?')
             if answer == False:
                  return False
@@ -1231,26 +1384,33 @@ class MotifMaker:
             #self.exceptions += 'Could not fetch {0}'.format(self.pdb)
             self.exceptions += 'Could not fetch %s'%(self.pdb)
         glb.update()
-        preecs = self.ecen.split(',')
-        for preec in preecs:
-            try:
-                eclist = preec.split('.')
-                ec1,ec2,ec3,ec4 = eclist
-            except ValueError:
-                if len(eclist) != 1:
+        if self.ecen=='' and self.pfam=='':
+            self.exceptions += 'Please give an EC code and/or a Pfam accession number'
+        elif self.ecen!='':
+            preecs = self.ecen.split(',')
+            for preec in preecs:
+                try:
+                    eclist = preec.split('.')
+                    ec1,ec2,ec3,ec4 = eclist
+                except ValueError:
                     self.exceptions += 'Please enter a correct EC code with 4 numbers with periods.\n'
-                #else, assume they entered a pfam name
-                continue
-            else:
-                if len(ec1) != 1 or int(ec1) < 1 or int(ec1) > 7:
-                    self.exceptions += 'The first number in an EC code has to be >= 1 and <= 7.\n'
-                if len(ec2) > 2 or len(ec2) < 1:
-                    self.exceptions += 'The second number in an EC code has to be at most two digits.\n'
-                if len(ec3) > 2 or len(ec3) < 1:
-                    self.exceptions += 'The third number in an EC code has to be at most two digits.\n'
-                if len(ec4) > 3 or len(ec4) < 1:
-                    self.exceptions += 'The fourth number in an EC code has to be at most three digits.\n'
-        self.ec = self.ecen.replace('.','_').replace(',','_').replace(' ','')
+                    continue
+                else:
+                    if len(ec1) != 1 or int(ec1) < 1 or int(ec1) > 7:
+                        self.exceptions += 'The first number in an EC code has to be >= 1 and <= 7.\n'
+                    if len(ec2) > 2 or len(ec2) < 1:
+                        self.exceptions += 'The second number in an EC code has to be at most two digits.\n'
+                    if len(ec3) > 2 or len(ec3) < 1:
+                        self.exceptions += 'The third number in an EC code has to be at most two digits.\n'
+                    if len(ec4) > 3 or len(ec4) < 1:
+                        self.exceptions += 'The fourth number in an EC code has to be at most three digits.\n'
+            self.ec = self.ecen.replace('.','_').replace(',','_').replace(' ','')
+        else: #pfam given, but no ec
+            self.ec = 'N/A'
+        if self.pfam=='': #ec given but no pfam given (technically will do this if neither ec or pfam given, but doesn't matter because the motif won't save)
+            self.pfam = 'N/A'
+        elif re.match('^PF\d{5}$',self.pfam)==None:
+            self.exceptions += 'Please give a Pfam accession number in the format PF#####'
         self.skip = {}
         self.skip[0] = 0
         for i in range(1,11):
@@ -1378,11 +1538,12 @@ class MotifMaker:
     def makeMotifCore(self, openFunction, closeFunction):
         self.doCommonSetup()
         if self.validateInput():
-            self.name = 'U_%s_%s'%(self.pdb,self.ec)
+            self.name = 'U_%s'%(self.pdb)
             self.buildMotif("'''\n")
             self.buildMotif("FUNC:%s\n"%(self.name))
             self.buildMotif("PDB:%s\n"%(self.pdb))
             self.buildMotif("EC:%s\n"%(self.ec.replace('_','.')))
+            self.buildMotif("PFAM:%s\n"%(self.pfam))
             self.buildMotif("RESI:%s\n"%(self.getresnstr()))
             self.buildMotif("LOCI:%s\n"%(self.getlocistr()))
             self.buildMotif("'''\n")

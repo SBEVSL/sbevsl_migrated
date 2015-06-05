@@ -236,7 +236,8 @@ def loadMotifs(*folders):
     # This contains the error list.  It used to be inside the motif dictionary.
     global motifErrors
     # The list of header fields we want to find
-    find = ('FUNC', 'PDB', 'EC', 'RESI', 'LOCI')
+    # When all motif files have been modified and the changes finalized, will want to add 'PFAM' to this list
+    find = ('FUNC', 'PDB', 'EC', 'PFAM', 'RESI', 'LOCI')
     motifErrors = []
     for motdir in folders:
         # Get the file list in each specified folder
@@ -321,25 +322,37 @@ def loadMotifs(*folders):
                                 continue
                             found.append('EC')
                             # This checks the format of the EC number as specified in the FILENAME (not the header)...
+                            # Not really good when trying to remove EC from the header, so this is almost all commented out
                             preec = func.split('_')
-                            if not str.isdigit(preec[2]): # To allow for Pfam designations
-                                ec = '.'.join(preec[2:])
-                            elif len(preec) < 6:
-                                #motifErrors.append('Error: Motif {0} did not have enough components in its EC number.'.format(MOTIFS[func]['path']))
-                                motifErrors.append('Error: Motif %s did not have enough components in its EC number.'%(MOTIFS[func]['path']))
-                                del MOTIFS[func]
-                                # No need to close
-                                break
-                            else:
-                                ec = '.'.join((preec[2], preec[3], preec[4], preec[5]))
+##                            if not str.isdigit(preec[2]): # To allow for Pfam designations
+##                                ec = '.'.join(preec[2:])
+##                            elif len(preec) < 6:
+##                                #motifErrors.append('Error: Motif {0} did not have enough components in its EC number.'.format(MOTIFS[func]['path']))
+##                                motifErrors.append('Error: Motif %s did not have enough components in its EC number.'%(MOTIFS[func]['path']))
+##                                del MOTIFS[func]
+##                                # No need to close
+##                                break
+##                            else: the next line, unindented for python to work
+                            #ec = '.'.join((preec[2], preec[3], preec[4], preec[5]))
                             # ...and this checks that the EC number in the filename matches what's in the header.
                             eccheck = line.split(':')[1][0:-1]
-                            if ec != eccheck:
-                                motifErrors.append('Error: Motif `%s` could not be loaded due to an incorrect `EC` attribute.'%(MOTIFS[func]['path']))
-                                del MOTIFS[func]
-                                # No need to close
-                                break
+##                            if ec != eccheck:
+##                                motifErrors.append('Error: Motif `%s` could not be loaded due to an incorrect `EC` attribute.'%(MOTIFS[func]['path']))
+##                                del MOTIFS[func]
+##                                # No need to close
+##                                break
                             MOTIFS[func]['ec'] = eccheck
+                            continue
+                        if line[0:4] == 'PFAM':
+                            if 'PFAM' in found:
+                                motifErrors.append('Warning: Motif `%s` included an extra `PFAM` attribute, which was ignored.'%(MOTIFS[func]['path']))
+                                continue
+                            found.append('PFAM') #uncomment when all motif files have been changed to have this parameter, also will need to modify find
+                            pfamid = line.split(':')[1][0:-1]
+                            if pfamid=='N/A':
+                                MOTIFS[func]['pfam'] = ''
+                            else:
+                                MOTIFS[func]['pfam'] = pfamid
                             continue
                         if line[0:4] == 'RESI':
                             if 'RESI' in found:
