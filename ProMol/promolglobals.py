@@ -8,9 +8,9 @@ import time
 import linecache
 import random
 import platform
+import re
 from Tkinter import *
 from pmg_tk.startup.ProMol.version import VERSION, ALG_VERSION, USE_JESS
-
 # The algorithm version number constant was still at 1.0, so
 # I believe it would be more meaningful to report the version of ProMOL
 # in the CSV file, rather than a separately tracked and difficult-to-
@@ -114,16 +114,16 @@ AminoLongList = ('alanine', 'arginine', 'asparagine', 'aspartate', 'cysteine',
     'tryptophan', 'tyrosine', 'valine', 'calcium', 'molybdenum',
     'molybdenum4', 'magnesium', 'zinc', 'manganese', 'sodium',
     'hemes','b12','cub','fes','hea','mos','cua','fco','sf4','f3s','fe2','cfm',
-    'clf','hec','cob','c2o','pcd','4mo', 'f43', '3co', 'cobalt', 'nickle', 'iron', 'copper')
+    'clf','hec','cob','c2o','pcd','4mo', 'f43', '3co', 'cobalt', 'nickle', 'iron', 'copper','copper1','copper2')
 AminoList = ('ala', 'arg', 'asn', 'asp', 'cys', 'gln', 'glu', 'gly', 'his',
     'ile', 'leu', 'lys', 'met', 'phe', 'pro', 'ser', 'thr', 'trp', 'tyr', 'val', 
     'ca', 'mo', '4mo', 'mg', 'zn', 'mn', 'na', 'hem','b12','cub','fes','mos',
     'hea','cua','fco','sf4','f3s','fe2','cfm','clf','hec','cob','c2o','pcd','4mo','f43','3co',
-    'co', 'ni', 'fe', 'cu')
+    'co', 'ni', 'fe', 'cu','cu1','cu2')
 AminoShortList = ('a', 'r', 'n', 'd', 'c', 'q', 'e', 'g', 'h', 'i', 'l', 'k',
     'm', 'f', 'p', 's', 't', 'w', 'y', 'v', 'ca', 'mo', '4mo', 
     'mg', 'zn', 'mn', 'na', 'hem','b12','cub','fes','mos','hea','cua','fco',
-    'sf4','f3s','fe2','cfm','clf','hec','cob','c2o','pcd','4mo','f43','3co', 'co', 'ni', 'fe', 'cu')
+    'sf4','f3s','fe2','cfm','clf','hec','cob','c2o','pcd','4mo','f43','3co', 'co', 'ni', 'fe', 'cu','cu1','cu2')
 AminoSubsList = {
         3:'glu',
         6:'asp',
@@ -134,10 +134,10 @@ AminoSubsList = {
     }
 AminoNumberList = (5, 11, 8, 8, 6, 9, 9, 4, 10, 8, 8, 9, 8, 11, 7, 6, 7, 14, 12,
     7, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 
-    39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49)
+    39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51)
 
 AminoHashTable = {}
-for i in range(0, 51):
+for i in range(0, 53):
     AminoHashTable[AminoLongList[i]] = {}
     AminoHashTable[AminoList[i]] = {}
     AminoHashTable[AminoShortList[i]] = {}
@@ -223,16 +223,112 @@ CPKNewDict = {
 # Deleted persistent database class
 # MOTIFSFOLDER is the location of the built-in motifs
 # USRMOTIFSFOLDER is the location of user-generated motifs
+# MOTIFSAFOLDER is the location of MRB's 37K motifs
+# OLDMOTIFDIR is the location of the old style motifs after they have been created
+# ALLMOTIFFOLDERS is the list of all the motif folders, add to here any more folders created
 
 MOTIFSFOLDER = os.path.join(PROMOL_DIR_PATH, 'Motifs')
 USRMOTIFSFOLDER = os.path.join(OFFSITE, 'UserMotifs')
+MOTIFSAFOLDER = os.path.join(PROMOL_DIR_PATH, 'Motifs_A')
+OLDMOTIFDIR = os.path.join(PROMOL_DIR_PATH,'Old_Motifs')
+ALLMOTIFFOLDERS = []
+for fldr in [MOTIFSFOLDER,USRMOTIFSFOLDER,MOTIFSAFOLDER]:
+    if os.path.exists(fldr):
+        ALLMOTIFFOLDERS.append(fldr)
+
+# This function checks the existing motif files to make sure they are
+# of the new format and will put any of the old version into the old
+# motifs folder after making an updated version
+
+def modifyMotifs(folders):
+    if not os.path.exists(OLDMOTIFDIR):
+        os.makedirs(OLDMOTIFDIR)
+
+    for fldr in folders:
+        os.chdir(fldr)
+        for fl in os.listdir(fldr):
+            if fl.endswith('.txt') or fl=='motif_maker.err' or fl=='indexmaker.py' or fl=='modify.py':
+                continue
+            if len(fl.split('-'))>1 and fl.split('-')[1]=='.py':
+                os.remove(fl)
+                continue
+            if re.match('^[A-Z][ab]?[af]?_[1-9][1-9a-z]{3}.py$',fl)!=None:
+                os.remove(fl)
+                continue
+            if len(fl.split('-'))<2 and len(fl.split('_'))>2 or len(fl.split('.'))==3:
+                print 'modifying motif file ' + fl
+                opfl = open(fl,'r+')
+                if len(fl.split('.'))>2: #to take care of MRB's 37K motifs
+                    newname = fl.split('.',1)[0]
+                else:
+                    newname = fl.split('_',1)[0] + '_' + fl.split('_',2)[1]
+                tripleQuotes = opfl.readline()
+                funcline = opfl.readline().split('_')
+                pdbline = opfl.readline()
+                ecline = opfl.readline()
+                urlfl = urllib2.urlopen('http://www.rcsb.org/pdb/rest/hmmer?structureId=' + fl.split('.')[0].split('_')[1])
+                xmldt = urlfl.read()
+                urlfl.close()
+                pfamAccs = set()
+                for e in xmldt.split():
+                    if re.match("pfamAcc=",e)!=None:
+                        pfamAccs.add(e.split('"',1)[1].split('.',1)[0])
+                lstPfams = list(pfamAccs)
+                resiline = opfl.readline()
+                lociline = opfl.readline()
+                resis = resiline.split(':')[1].strip().split(',')
+                locis = lociline.split(':')[1].strip().split(';')[:-1]
+                i = 0
+                locistr = ''
+                for chain in locis:
+                    chnid = chain.split('-')[0]
+                    posis = chain.split('-')[1].split(',')
+                    for posi in posis:
+                        locistr = locistr + AminoHashTable[resis[i]][1] + posi + chnid + '-'
+                        #recycle the resis list
+                        if i==len(resis)-1:
+                            i = 0
+                        else:
+                            i += 1
+                newname += '-' + locistr[:-1].upper()
+                outfl = open(newname + '.py','w+')
+                outfl.write(tripleQuotes)
+                outfl.write("FUNC:" + newname + '\n')
+                outfl.write(pdbline.split('.')[0] + '\n')
+                if str.isdigit(ecline.strip().split(".")[-1]):
+                    outfl.write(ecline)
+                else:
+                    outfl.write(ecline.split(':')[0] + ":N/A\n")
+                outfl.write("PFAM:")
+                if lstPfams==[]:
+                    outfl.write("N/A\n")
+                else:
+                    #for el in lstPfams[:-1]:
+                    #    outfl.write(el + ',')
+                    #outfl.write(lstPfams[-1] + '\n')
+                    outfl.write(','.join(lstPfams) + '\n')
+                outfl.write(resiline)
+                outfl.write(lociline)
+                nxtln = opfl.readline()
+                while re.search('[A-Z][af]?[ab]?_[1-9]',nxtln)==None:
+                    outfl.write(nxtln)
+                    nxtln = opfl.readline()
+                outfl.write("cmd.select('" + newname + "'," + nxtln.split(',',1)[1])
+                outfl.writelines(opfl.readlines())
+                opfl.close()
+                outfl.close()
+                if os.path.exists(os.path.join(OLDMOTIFDIR,fl)):
+                    os.remove(os.path.join(OLDMOTIFDIR,fl))
+                os.rename(os.path.join(fldr,fl),os.path.join(OLDMOTIFDIR,fl))
+        os.chdir(PROMOL_DIR_PATH)
+
 
 # This function reads motif files from the specified folder(s),
 # performs some rudimentary validation (mostly on their headers),
 # and adds information about them (including
 # header fields and file system location) to the MOTIFS dictionary.
 
-def loadMotifs(*folders):
+def loadMotifs(folders):
     # This contains the error list.  It used to be inside the motif dictionary.
     global motifErrors
     # The list of header fields we want to find
@@ -243,6 +339,9 @@ def loadMotifs(*folders):
         # Get the file list in each specified folder
         motfiles = os.listdir(motdir)
         for motfile in motfiles:
+            # So it doesn't report an error based on the indexing files
+            if motfile=='ecindexing.txt' or motfile=='pfamindexing.txt':
+                continue
             # If a file has an unexpected extension, reject it
             # Currently, the motifs are Python scripts (but that may
             # change)
@@ -309,7 +408,7 @@ def loadMotifs(*folders):
                             found.append('PDB')
                             # Check that the PDB code specified in the header matches that specified in the filename
                             pdbcheck = line.split(':')[1][0:-1].lower()
-                            if func.split('_')[1].lower() != pdbcheck:
+                            if func.split('_')[1].split('-')[0].lower() != pdbcheck:
                                 motifErrors.append('Error: Motif `%s` could not be loaded due to an incorrect `PDB` attribute.'%(MOTIFS[func]['path']))
                                 del MOTIFS[func]
                                 # Not necessary to close file using with
@@ -423,8 +522,10 @@ def loadMotifs(*folders):
                                 break
                             MOTIFS[func]['loci'] = selection
                             continue
+                    if i==2: #takes longer to load without this with the 37K motifs
+                        break
                     # This is kind of pointless.  It would need to be replaced with something much more advanced to really be effective.
-                    if line[0:4] != 'cmd.' and line != '' and motfile[0:4] != 'Jab_' and motfile[0:4] != 'Jfa_':
+                    if line[0:4] != 'cmd.' and line != '' and motfile[0:4] != 'Jab_' and motfile[0:4] != 'Jfa_' and line[0:6]!='IDSpec':
                         motifErrors.append('Error: Motif `%s` could not be loaded due to potential malicious code.'%(MOTIFS[func]['path']))
                         del MOTIFS[func]
                         # Unnecessary to close
@@ -445,7 +546,87 @@ def loadMotifs(*folders):
     # MOTIFS is no longer a shelf-based database class but a simple dictionary.
 
 # This will run immediately when promolglobals gets imported.
-loadMotifs(MOTIFSFOLDER, USRMOTIFSFOLDER) #add all folders here
+modifyMotifs(ALLMOTIFFOLDERS)
+loadMotifs(ALLMOTIFFOLDERS) #add all folders here
+
+# Check if the indexing files are the most recently modified files in the
+# respective motif folders, and if not, make new indexing files
+def makeIndexFiles(folders):
+    for folder in folders:
+        if not os.path.exists(os.path.join(folder,'ecindexing.txt'))                                 \
+           or not os.path.exists(os.path.join(folder,'pfamindexing.txt'))                            \
+           or os.path.getmtime(folder)>os.path.getmtime(os.path.join(folder,'ecindexing.txt'))    \
+           or os.path.getmtime(folder)>os.path.getmtime(os.path.join(folder,'pfamindexing.txt')):
+            print 'Making indexing files (may take a while)...'
+            #create file dictionary
+            ecdict = dict()
+            pfamdict = dict()
+
+            for fl in os.listdir(folder):
+                if len(fl.split('_'))>1:
+                    pdbid = fl.split('_')[1].split('-')[0]
+                    opfl = open(os.path.join(folder,fl),'r')
+                    currline = opfl.readline()
+                    while re.search("^EC:",currline)== None:
+                        currline = opfl.readline()
+                    ecs = currline.strip().split(':')[1].split(',')
+                    currline = opfl.readline()
+                    pfams = currline.strip().split(':')[1].split(',')
+                    for ec in ecs:
+                        if ec not in ecdict.keys():
+                            ecdict[ec] = set()
+                        ecdict[ec].add(fl.split('.')[0])
+                    for pfam in pfams:
+                        if pfam not in pfamdict.keys():
+                            pfamdict[pfam] = set()
+                        pfamdict[pfam].add(fl.split('.')[0])
+                    opfl.close()
+
+            #make index files
+            print 'writing files'
+            ecindfl = open(os.path.join(folder,'ecindexing.txt'),'w+')
+            for ec in ecdict:
+                ecnums = ec.split('.')
+                for num in ecnums:
+                    ecindfl.write(num + '\t')
+                ecindfl.write(','.join(ecdict[ec]) + '\n')
+            ecindfl.close()
+
+            pfamindfl = open(os.path.join(folder,'pfamindexing.txt'),'w+')
+            for pfam in pfamdict:
+                pfamindfl.write(pfam + '\t' + ','.join(pfamdict[pfam]) + '\n')
+            pfamindfl.close()
+            print 'done'
+
+# Makes ec and pfam dictionaries based on the index file in motif folders
+def makeIndexDicts(folders):
+    global ECDICT
+    ECDICT = dict()
+    global PFAMDICT
+    PFAMDICT = dict()
+    for folder in folders:
+        ecindex = open(os.path.join(folder,'ecindexing.txt'),'r')
+        pfamindex = open(os.path.join(folder,'pfamindexing.txt'),'r')
+        for ln in ecindex.readlines():
+            spltln = ln.strip().split('\t')
+            if spltln[0]=='N/A':
+                ECDICT[spltln[0]] = set(spltln[1].split(','))
+                continue
+            if spltln[0] not in ECDICT.keys():
+                ECDICT[spltln[0]] = dict()
+            if spltln[1] not in ECDICT[spltln[0]].keys():
+                ECDICT[spltln[0]][spltln[1]] = dict()
+            if spltln[2] not in ECDICT[spltln[0]][spltln[1]].keys():
+                ECDICT[spltln[0]][spltln[1]][spltln[2]] = dict()
+            if spltln[3] not in ECDICT[spltln[0]][spltln[1]][spltln[2]].keys():
+                ECDICT[spltln[0]][spltln[1]][spltln[2]][spltln[3]] = set(spltln[4].split(','))
+            #ECDICT[spltln[0]][spltln[1]][spltln[2]][spltln[3]].add(spltln[4].split(','))
+        for ln in pfamindex.readlines():
+            spltln = ln.strip().split('\t')
+            PFAMDICT[spltln[0]] = set(spltln[1].split(','))
+
+makeIndexFiles(ALLMOTIFFOLDERS)
+makeIndexDicts(ALLMOTIFFOLDERS)
 
 # This clears out loaded motif information and reloads built-in and user motifs.
 # This function is not called from within ProMOL currently, but can be called

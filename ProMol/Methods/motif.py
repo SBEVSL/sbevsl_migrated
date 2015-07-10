@@ -629,8 +629,8 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
     EC3.bind('<KeyRelease>', lambda event: checkEC(event, 99, [EC4]))
 
     #Pfam name search
-    PfamLabel = Label(glb.GUI.motifs['root'], text="\nLimit results by Pfam family")
-    PfamLabel1 = Label(glb.GUI.motifs['root'], text="Pfam Name: ")
+    PfamLabel = Label(glb.GUI.motifs['root'], text="\nLimit results by Pfam Family")
+    PfamLabel1 = Label(glb.GUI.motifs['root'], text="Pfam Accession Number: ")
     PfamName = Entry(glb.GUI.motifs['root'], state=NORMAL, textvariable = glb.GUI.motifs['pfam'], width=12)
 
     PfamLabel.pack(anchor = W)
@@ -942,9 +942,41 @@ def motifchecker(setChoice, rmsdchoice, ecchoices, pfamchoice):
     setselection = lambda key: key[0] in setlist
 
     setName += "_Set"
-
+    
+    keys = set()
+    if ecchoices[0] != '':
+        if ecchoices[1] != '':
+            if ecchoices[2] != '':
+                if ecchoices[3] != '':
+                    keys |= glb.ECDICT[ecchoices[0]][ecchoices[1]][ecchoices[2]][ecchoices[3]]
+                else:
+                    for fourthec in glb.ECDICT[ecchoices[0]][ecchoices[1]][ecchoices[2]].keys():
+                        keys |= glb.ECDICT[ecchoices[0]][ecchoices[1]][ecchoices[2]][fourthec]
+            else:
+                for thirdec in glb.ECDICT[ecchoices[0]][ecchoices[1]].keys():
+                    for fourthec in glb.ECDICT[ecchoices[0]][echoices[1]][thirdec].keys:
+                        keys |= glb.ECDICT[ecchoices[0]][ecchoices[1]][thirdec][fourthec]
+        else:
+            for secondec in glb.ECDICT[ecchoices[0]].keys():
+                for thirdec in glb.ECDICT[ecchoices[0]][secondec].keys():
+                    for fourthec in glb.ECDICT[ecchoices[0]][secondec][thirdec].keys():
+                        keys |= glb.ECDICT[ecchoices[0]][secondec][thirdec][fourthec]
+    else:
+        for firstec in glb.ECDICT.keys():
+            if firstec=='N/A':
+                keys |= glb.ECDICT[firstec]
+                continue
+            for secondec in glb.ECDICT[firstec].keys():
+                for thirdec in glb.ECDICT[firstec][secondec].keys():
+                    for fourthec in glb.ECDICT[firstec][secondec][thirdec].keys():
+                        keys |= glb.ECDICT[firstec][secondec][thirdec][fourthec]
+    
+    if pfamchoice!='':
+        keys &= glb.PFAMDICT[pfamchoice]
+        print glb.PFAMDICT[pfamchoice]
+    print keys
     # This is a Python list comprehension
-    keys = set([motifName for motifName in glb.MOTIFS.keys() if setselection(motifName)])
+    #keys = set([motifName for motifName in glb.MOTIFS.keys() if setselection(motifName)])
 
     #4/29 added
     glb.GUI.motifs['tt'].destroy()#removes current tree displaying past results
@@ -974,7 +1006,7 @@ def motifchecker(setChoice, rmsdchoice, ecchoices, pfamchoice):
             continue
         cmd.hide('everything', 'all')
         cmd.remove("all and hydro")
-         
+        
         for motif in keys:
             # Check for cancellation and break out of inner loop
             if glb.GUI.motifs['cancel']:
@@ -985,23 +1017,24 @@ def motifchecker(setChoice, rmsdchoice, ecchoices, pfamchoice):
                 
             # Search by EC numbers, if provided.
             motifaccept = True;
-            if glb.MOTIFS[motif]['ec']!='N/A':
-                ECnums = glb.MOTIFS[motif]['ec'].split('.')
-                motifEC1 = ECnums[0]
-                motifEC2 = ECnums[1]
-                motifEC3 = ECnums[2]
-                motifEC4 = ECnums[3]
-                if motifEC1 != '-' and motifEC1 != '' and ecchoices[0] != '' and int(motifEC1) != int(ecchoices[0]):
-                    motifaccept = False;  
-                if motifEC2 != '-' and motifEC2 != '' and ecchoices[1] != '' and int(motifEC2) != int(ecchoices[1]):
-                    motifaccept = False;  
-                if motifEC3 != '-' and motifEC3 != '' and ecchoices[2] != '' and int(motifEC3) != int(ecchoices[2]):
-                    motifaccept = False;  
-                if motifEC4 != '-' and motifEC4 != '' and ecchoices[3] != '' and int(motifEC4) != int(ecchoices[3]):
-                    motifaccept = False;
-            if glb.MOTIFS[motif]['pfam']!='N/A':
-                if pfamchoice!= '' and not pfamchoice in glb.MOTIFS[motif]['pfam'].split(','):
-                    motifaccept = False;
+##            if glb.MOTIFS[motif]['ec']!='N/A':
+##                for singleEC in glb.MOTIFS[motif]['ec'].split(','):
+##                    ECnums = singleEC.split('.')
+##                    motifEC1 = ECnums[0]
+##                    motifEC2 = ECnums[1]
+##                    motifEC3 = ECnums[2]
+##                    motifEC4 = ECnums[3]
+##                    if motifEC1 != '-' and motifEC1 != '' and ecchoices[0] != '' and int(motifEC1) != int(ecchoices[0]):
+##                        motifaccept = False;  
+##                    if motifEC2 != '-' and motifEC2 != '' and ecchoices[1] != '' and int(motifEC2) != int(ecchoices[1]):
+##                        motifaccept = False;  
+##                    if motifEC3 != '-' and motifEC3 != '' and ecchoices[2] != '' and int(motifEC3) != int(ecchoices[2]):
+##                        motifaccept = False;  
+##                    if motifEC4 != '-' and motifEC4 != '' and ecchoices[3] != '' and int(motifEC4) != int(ecchoices[3]):
+##                        motifaccept = False;
+##            if glb.MOTIFS[motif]['pfam']!='N/A':
+##                if pfamchoice!= '' and not pfamchoice in glb.MOTIFS[motif]['pfam'].split(','):
+##                    motifaccept = False;
             if motifaccept:
                 # List of motif loading errors is no longer stored inside motif dictionary
     
@@ -1125,7 +1158,9 @@ def motifchecker(setChoice, rmsdchoice, ecchoices, pfamchoice):
             motifName = tag[1]
             struct['children'][i]['children'][subsection-1]['children'].append({'type':'Subsection','name':motif,'children':[]})
             j=len(struct['children'][i]['children'][subsection-1]['children'])-1
-            
+
+            struct['children'][i]['children'][subsection-1]['children'][j]['children'].append({'type':'Subsection','name':'EC #:  '+ glb.MOTIFS[tag[1]]['ec']})
+            struct['children'][i]['children'][subsection-1]['children'][j]['children'].append({'type':'Subsection','name':'PFAM #:  '+ glb.MOTIFS[tag[1]]['pfam']})
             
             if rmsdchoice is 1:
                 try:
@@ -1194,7 +1229,21 @@ class MotifMaker:
         self.pf = glb.GUI.motif_maker['pf'].get()
         self.pdb = glb.GUI.motif_maker['pdb'].get().lower()
         self.ecen = glb.GUI.motif_maker['ec'].get()
-        self.pfam = glb.GUI.motif_maker['pfam'].get().replace(', ',',').replace(' ','-').lower()
+        #self.pfam = glb.GUI.motif_maker['pfam'].get().replace(', ',',').upper()
+        urlfl = urllib2.urlopen('http://www.rcsb.org/pdb/rest/hmmer?structureId=' + fl.split('_')[1])
+        xmldt = urlfl.read()
+        urlfl.close()
+        pfamAccs = set()
+        for e in xmldt.split():
+            if re.match("pfamAcc=",e)!=None:
+                pfamAccs.add(e.split('"',1)[1].split('.',1)[0])
+        if lstPfams==[]:
+            self.pfam = ("N/A\n")
+        else:
+            for el in lstPfams[:-1]:
+                self.pfam += (el + ',')
+            self.pfam += lstPfams[-1]
+        lstPfams = list(pfamAccs)
         self.resn = {}
         self.resi = {}
         self.backbone = {}
@@ -1404,13 +1453,16 @@ class MotifMaker:
                         self.exceptions += 'The third number in an EC code has to be at most two digits.\n'
                     if len(ec4) > 3 or len(ec4) < 1:
                         self.exceptions += 'The fourth number in an EC code has to be at most three digits.\n'
-            self.ec = self.ecen.replace('.','_').replace(',','_').replace(' ','')
+            self.ec = self.ecen.replace(' ','')
         else: #pfam given, but no ec
             self.ec = 'N/A'
         if self.pfam=='': #ec given but no pfam given (technically will do this if neither ec or pfam given, but doesn't matter because the motif won't save)
             self.pfam = 'N/A'
-        elif re.match('^PF\d{5}$',self.pfam)==None:
-            self.exceptions += 'Please give a Pfam accession number in the format PF#####'
+        else:
+            for el in self.pfam.split(','):
+                if re.search('^PF\d{5}$',el)==None:
+                    self.exceptions += 'Please give a Pfam accession number in the format PF#####'
+                    break
         self.skip = {}
         self.skip[0] = 0
         for i in range(1,11):
@@ -1542,7 +1594,7 @@ class MotifMaker:
             self.buildMotif("'''\n")
             self.buildMotif("FUNC:%s\n"%(self.name))
             self.buildMotif("PDB:%s\n"%(self.pdb))
-            self.buildMotif("EC:%s\n"%(self.ec.replace('_','.')))
+            self.buildMotif("EC:%s\n"%(self.ec))
             self.buildMotif("PFAM:%s\n"%(self.pfam))
             self.buildMotif("RESI:%s\n"%(self.getresnstr()))
             self.buildMotif("LOCI:%s\n"%(self.getlocistr()))
