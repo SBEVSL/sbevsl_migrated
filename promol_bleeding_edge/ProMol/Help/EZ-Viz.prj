@@ -1,0 +1,21 @@
+[IMAGE MAP]
+MapCount=0
+[Settings]
+preview=1
+last_path=C:\Program Files\DeLano Scientific\PyMOL\modules\pmg_tk\startup
+prefix list=IDH_,
+web_dhtml=1
+web_indxpg=EZ-VizWebIndex.html
+web_tocpg=EZ-VizWebTOC.html
+web_mainpg=EZ-VizWebMain.html
+web_left=30
+web_pix=0
+web_maintitle=EZ-Viz
+web_toctitle=Contents
+web_idxtitle=Index
+nomapgen=0
+html=
+images=
+css=C:\Documents and Settings\pac8612\My Documents\Projects\EZ-Viz\Help\htmlhelp.css
+t=EZ-Viz.hhc
+i=EZ-Viz.hhk

@@ -1,0 +1,140 @@
+TreeWidgets 1.0a2
+=================
+
+A general-purpose tree widget library for Tkinter.
+
+* Introduction
+* Modules in the Package
+* What's New
+* Installation
+* Usage
+* License
+
+
+Introduction
+------------
+
+TreeWidgets is a Python-Tkinter library that provides general-purpose
+tree widgets. I decided to write it because I found that, though there
+are several Tkinter tree widgets available, the ones I have tried were
+all designed to work with one particular type of data structure, and
+were hard to adapt to other data structure.
+
+My goals in creating the TreeWidgets library are:
+
+  1. The widget must be able to display any hierarchical data structure,
+     and should have built-in support for common structures such as XML
+     DOMs and directory trees.
+
+  2. You should be able either to pass the widget a data structure and
+     have it automatically build and display the graphical tree, or to
+     exercise more precise control through a low-level API.
+
+  3. It should be possible to display a tree with built-in icons, icons 
+     provided by the application, or no icons at all. Similarly, it 
+     should be possible to specify different fonts according to the needs 
+     of your application.
+
+  4. The widget should provide a reasonable set of default mouse and
+     key bindings, but it should also be easy to override the defaults.
+
+  5. The widget should support all relevant Tkinter configuration options.
+
+This being the first Alpha release, there are numerous bugs and
+unimplemented features, but at least the first goal is substantially
+realized, and the package should be usable with a little work.
+
+
+Modules in the Package
+----------------------
+
+widget
+
+    Provides TreeWidget, the base class for TextTree and CanvasTree. In
+    general, applications should use one of the subclasses rather than
+    instantiating TreeWidget directly.
+
+texttree
+
+    Provides TextTree, a TreeWidget based on the Tkinter Text class.
+    Although this class lacks the ability to display graphical tree
+    branches, it should give slightly better performance than CanvasTree,
+    since TextTree positions nodes on the basis of text lines and indents,
+    rather than X and Y offsets.
+
+canvastree
+
+    NOT YET IMPLEMENTED. Will provide CanvasTree, a TreeWidget based on
+    the Tkinter Canvas class.
+
+node
+
+    Provides TreeNode, the basic unit of TreeWidgets data structures, and
+    its subclasses DOMTreeNode (for XML DOM objects), FSTreeNode (for 
+    directory trees), TWTreeNode (for a Python data structure known as
+    TWStruct--see twstruct.html for more information), and CustomTreeNode
+    (for all other data structures).
+
+constants
+
+    Various integer constants used throughout TreeWidgets. Studying this
+    module will help you understand how to use TreeWidgets effectively.
+
+util
+
+    Miscellaneous functions. Currently provides only a warn() function.
+
+icons
+
+    Built-in bitmap and photo icons.
+
+
+What's New
+----------
+
+* Added showContent(), showAtts(), glimpse(), and unGlimpse() to 
+  TreeWidget. It is important to note that these methods do nothing
+  by themselves; in order for them to do something useful, you must
+  supply the TreeWidget constructor a dictionary of callbacks:
+
+      {'showContent': <callable>, 'showAtts': <callable>,
+       'glimpse': <callable>, 'unGlimpse': <callable>}
+
+  Each callback must take a single argument, which will be a node in 
+  the tree data structure.
+
+* Added default key bindings for <Return> (AKA the Enter key) and 
+  <Escape>. <Return> invokes TreeWidget.showContent(), and <Escape>
+  invokes TreeWidget.deselectNode().
+
+* Added behavior to the default mouse bindings for <Enter>, <Leave>,
+  and <Double-Button>: <Enter> invokes TreeWidget.glimpse(), <Leave>
+  invokes TreeWidget.unGlimpse(), and <Double-Button> invokes
+  TreeWidget.showContent().
+
+See ChangeLog for detailed changes, and API docs for usage.
+
+
+Installation
+------------
+
+See INSTALL for details.
+
+
+Usage
+-----
+
+Please see the API documentation in apidocs/ and the examples in the
+demos/ subdirectory.
+
+
+License
+-------
+
+TreeWidgets is free software, released under the BSD License. See LICENSE
+for details.
+
+
+
+-- Matt Gushee <mgushee@havenrock.com>
+   August 28, 2002

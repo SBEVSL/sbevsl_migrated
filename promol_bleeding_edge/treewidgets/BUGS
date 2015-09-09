@@ -1,0 +1,30 @@
+Known Bugs and Limitations as of 8/26/2002
+==========================================
+
+Bugs:
+-----
+
+* When a tree is first displayed, Nodes with children appear with a 'minus'
+  icon instead of a 'plus', even if they are collapsed. The icon does not 
+  change to a 'plus' unless the node's parent is collapsed and re-expanded.
+
+* When you double-click a node, text may be selected across multiple lines.
+
+* Long node names wrap across lines, with no indentation on the second and
+  subsequent lines.
+
+* When a TextTree is displayed with no icons, selecting a node causes the
+  background and foreground to change starting with the *second* character
+  in the label instead of the first.
+
+
+
+Limitations:
+------------
+
+* Most Tkinter configuration options are currently ignored.
+
+* Functions for showing the content and attributes of a node are 
+  unimplemented.
+
+* Font selection is unimplemented.
