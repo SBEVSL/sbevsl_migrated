@@ -1,4 +1,6 @@
 import random
+from tkFileDialog import askopenfile
+import os
 
 id_chain = {}
 id_ecnum = {}
@@ -6,7 +8,11 @@ id_motif = {}
 
 def read_pdb_list():
     # the file path must be changed to work on mac and linux: 
-    infile = open("C:\Program Files\PyMOL\PyMOL\modules\pmg_tk\startup\ProMol\pdb_list.txt", "r")
+    #infile = open("C:\Program Files\PyMOL\PyMOL\modules\pmg_tk\startup\ProMol\pdb_list.txt", "r")
+    try:
+        infile = open(os.path.join(os.path.dirname(__file__).replace('\n',''),"pdb_list.txt"), "r")
+    except:
+        infile = askopenfile(mode='r',title="pdb_list.txt, list of PDB ids")
     pdb_list = set()
     for line in infile:
         line = line.strip("\n")
@@ -20,7 +26,12 @@ def read_pdb_list():
 		
 def read_motif_definitions(pdb_list):
     # read file lit_lib that contains information on EC number, motif, and homologues
-    lib_file = open("C:\Program Files\PyMOL\PyMOL\modules\pmg_tk\startup\ProMol\lit_lib_23.txt", "r")
+    #lib_file = open("C:\Program Files\PyMOL\PyMOL\modules\pmg_tk\startup\ProMol\lit_lib_23.txt", "r")
+    try:
+        lib_file = open(os.path.join(os.path.dirname(__file__).replace('\n',''),"lit_lib_23.txt"), "r")
+    except:
+        lib_file = askopenfile(mode='r',title="lit_lib_23.txt, EC number, motif, and homologues")
+
     content = lib_file.readlines()
     lib_file.close()
 
