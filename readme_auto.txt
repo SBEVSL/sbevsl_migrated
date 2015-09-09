@@ -47,6 +47,8 @@ used as flags for turning the backbone on as follows:
                 SNO : sidechain, backbone amide, and backbone carbonyl
 
 
+To use these files, press the Auto button on the Motif Maker page.
+
   -- HJB, 9 Sep 15
 
 
