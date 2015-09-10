@@ -53,7 +53,8 @@ else:
     OFFSITE = os.path.join(HOME, '.sbevsl', 'ProMol')
 PDBFOLDER = 'PDBDownloads'
 CSVFOLDER = 'CSV'
-DIRS = ('UserMotifs', PDBFOLDER, CSVFOLDER)#changed folder name to UserMotifs for clarity
+# AutoMotifs folder for automatically created motifs
+DIRS = ('UserMotifs', 'AutoMotifs', PDBFOLDER, CSVFOLDER)#changed folder name to UserMotifs for clarity
 if not os.path.isdir(OFFSITE):
     os.makedirs(OFFSITE)
 for DIR in DIRS:
@@ -223,9 +224,12 @@ CPKNewDict = {
 # Deleted persistent database class
 # MOTIFSFOLDER is the location of the built-in motifs
 # USRMOTIFSFOLDER is the location of user-generated motifs
+# AUTOMOTIFSFOLDER is the location of automatically generated motifs /mik
 
 MOTIFSFOLDER = os.path.join(PROMOL_DIR_PATH, 'Motifs')
 USRMOTIFSFOLDER = os.path.join(OFFSITE, 'UserMotifs')
+AUTOMOTIFSFOLDER = os.path.join(OFFSITE, 'AutoMotifs')
+tempfolder = os.path.join(OFFSITE, 'temp')
 
 # This function reads motif files from the specified folder(s),
 # performs some rudimentary validation (mostly on their headers),
@@ -429,7 +433,7 @@ def loadMotifs(*folders):
     # MOTIFS is no longer a shelf-based database class but a simple dictionary.
 
 # This will run immediately when promolglobals gets imported.
-loadMotifs(MOTIFSFOLDER, USRMOTIFSFOLDER) #add all folders here
+loadMotifs(MOTIFSFOLDER, USRMOTIFSFOLDER, AUTOMOTIFSFOLDER) #add all folders here
 
 # This clears out loaded motif information and reloads built-in and user motifs.
 # This function is not called from within ProMOL currently, but can be called
@@ -439,8 +443,18 @@ def reset_motif_database():
     MOTIFS.clear() # This should still work because dictionaries have such a method
     del MOTIFS
     MOTIFS = {}
-    loadMotifs(MOTIFSFOLDER, USRMOTIFSFOLDER)
+    loadMotifs(MOTIFSFOLDER, USRMOTIFSFOLDER, AUTOMOTIFSFOLDER)
 cmd.extend('reset_motif_database', reset_motif_database)
+
+
+def reset_user_motif_database():
+    print 'user motifs reloaded'
+    global MOTIFS
+    MOTIFS.clear() # This should still work because dictionaries have such a method
+    del MOTIFS
+    MOTIFS = {}
+    loadMotifs(USRMOTIFSFOLDER)
+
 
 # This is a convoluted way of making a pathname.  It is only called from the
 # motif maker (albeit 4 times) and should be replaced with simple concatenation

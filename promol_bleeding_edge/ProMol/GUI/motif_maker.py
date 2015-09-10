@@ -3,6 +3,7 @@ import Tkinter as tk
 import Pmw
 from pmg_tk.startup.ProMol import promolglobals as glb
 from pmg_tk.startup.ProMol.Methods.motif import *
+from pmg_tk.startup.ProMol.Methods.automotif import * #contains methods to automatically create motifs /mik
 Pmw.initialise()
 
 def initialise():
@@ -69,8 +70,12 @@ def initialise():
         
         tk.Label(bodyFrame, text='Backbone:').grid(row=i, column=6, sticky=tk.E)
         
+		# state='readonly' taken out of the Spinbox definition, default is NORMAL
+        # with the readonly state, calls to .delete and .insert are ignored
+		# when the info is filled from the library, the according spinboxes
+        # are changed to 'On' /Mik
         glb.GUI.motif_maker['backbone'][i] = tk.Spinbox(bodyFrame,values=('Off','On'),
-            wrap=True,state='readonly',readonlybackground='#ffffff', width=3)
+            wrap=True,readonlybackground='#ffffff', width=3)
         glb.GUI.motif_maker['backbone'][i].grid(row=i, column=7, sticky=tk.W)
         
         # Deleted canvas
@@ -106,6 +111,13 @@ def initialise():
     glb.GUI.motif_maker['clear'] = tk.Button(buttonFrame, text='Clear', command=lambda:MotifMaker().clear())
     glb.GUI.motif_maker['clear'].pack(side=tk.RIGHT)
     
+	# search and auto buttons go here /mik
+    #glb.GUI.motif_maker['libSearch'] = tk.Button(buttonFrame, text='Search CSA', command=lambda:AutoMotifMaker().getLibraryMotif())
+    #glb.GUI.motif_maker['libSearch'].pack(side=tk.RIGHT)
+	
+    glb.GUI.motif_maker['auto'] = tk.Button(buttonFrame, text='Auto', command=lambda:AutoMotifMaker().automate())
+    glb.GUI.motif_maker['auto'].pack(side=tk.RIGHT)
+	
     group = tk.LabelFrame(glb.GUI.motif_maker['tab'], text='Testing')
     group.grid(row=1, column=0, sticky=tk.E+tk.S+tk.W)
     glb.GUI.motif_maker['radio'] = tk.IntVar()
@@ -118,15 +130,16 @@ def initialise():
     
     tk.Label(group, text='Test against:').grid(row=0, column=0, sticky=tk.W)
     
-    selfTest = tk.Radiobutton(group, text='Self',
+    glb.GUI.motif_maker['selfTest'] = tk.Radiobutton(group, text='Self',
         variable=glb.GUI.motif_maker['radio'], value=0,
         command=lambda:glb.GUI.motif_maker['testpdb'].config(state=tk.DISABLED))
-    selfTest.grid(row=0, column=1)
+    glb.GUI.motif_maker['selfTest'].grid(row=0, column=1)
         
-    hlog = tk.Radiobutton(group, text="Homolog:",
+	### changed declaration here from hlog to glb.GUI.motif_maker['hlog'] /mik 
+    glb.GUI.motif_maker['hlog'] = tk.Radiobutton(group, text="Homolog:",
         variable=glb.GUI.motif_maker['radio'], value=1,
         command=lambda:glb.GUI.motif_maker['testpdb'].config(state=tk.NORMAL))
-    hlog.grid(row=0, column=2, sticky=tk.E)
+    glb.GUI.motif_maker['hlog'].grid(row=0, column=2, sticky=tk.E)
     
     glb.GUI.motif_maker['testpdb'] = tk.Entry(group, width=4, state=tk.DISABLED)
     glb.GUI.motif_maker['testpdb'].grid(row=0, column=3, sticky=tk.E+tk.W)
@@ -136,7 +149,7 @@ def initialise():
         command=lambda:glb.GUI.motif_maker['testpdb'].config(state=tk.DISABLED))
     rand.grid(row=0, column=4)
     
-    selfTest.select()
+    glb.GUI.motif_maker['selfTest'].select()
         
     glb.GUI.motif_maker['extest'] = tk.Button(group, text='Test',command=lambda:MotifMaker().testMotif())
     glb.GUI.motif_maker['extest'].grid(row=1, column=4, sticky=tk.E)

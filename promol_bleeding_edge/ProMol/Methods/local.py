@@ -17,6 +17,7 @@ from pmg_tk.startup.treewidgets import widget, node, texttree
 from pmg_tk.startup.treewidgets.constants import *
 import Tkinter as tk
 import pmg_tk.startup.ProMol.promolglobals as glb
+import pmg_tk.startup.ProMol.load_csa_lit as lib
 import pmg_tk.startup.ProMol.Methods.proutils as proutils
 import pmg_tk.startup.ProMol.Methods.motifset as motifset
 INDIVIDUAL_CSV_HEADER_LENGTH = 7
