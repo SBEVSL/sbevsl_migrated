@@ -6,6 +6,8 @@ import os
 import re
 import time
 import math
+import string
+import gzip
 from tkFileDialog import asksaveasfile, askdirectory, askopenfile
 from tkSimpleDialog import askstring
 from tkColorChooser import askcolor
@@ -23,6 +25,32 @@ CSVMergeInfo = {}
 numResultsOfEachQuery = []
 pdbsl = 0
 Pmw.initialise()
+
+def FetchPDB(id):
+    pdbCode = string.upper(id)
+    try:
+        filename = urllib.urlretrieve('http://www.rcsb.org/pdb/files/'
+                                      + pdbCode + '.pdb.gz')[0]
+    except:
+        print 'Connection Error', 'Can not access to the PDB database.\n'+'Please check your Internet access.'
+    else:
+        if (os.path.getsize(filename) > 0): # If 0, then pdb code was invalid
+            # Uncompress the file while reading
+            fpin = gzip.open(filename)
+            
+            # Form the pdb output name
+            outputname = os.path.dirname(filename) + os.sep + pdbCode + '.pdb'
+            fpout = open(outputname, 'w')
+            fpout.write(fpin.read()) # Write pdb file
+            
+            fpin.close()
+            fpout.close()
+            
+            cmd.load(outputname,quiet=0) # Load the fresh pdb
+        else:
+            print "Invalid PDB id ",id
+        os.remove(filename) # Remove tmp file (leave the pdb)
+
 
 #motif options
 def motifoption(tag):
@@ -248,7 +276,8 @@ def showContent(node):
     motifColor = glb.GUI.motifs['motifcolor']['bg']
     queryColor = glb.GUI.motifs['querycolor']['bg']
     if glb.GUI.motifs['align'].get() == 0 or motifPDBCode == queryPDBCode:
-        cmd.fetch(queryPDBCode, async=0, path=glb.FETCH_PATH)#accessing pdb file
+        #cmd.fetch(queryPDBCode, async=0, path=glb.FETCH_PATH)#accessing pdb file
+        FetchPDB(queryPDBCode)
         if motifName in glb.MOTIFS:
             
             MotifCaller(motifName)
@@ -267,7 +296,8 @@ def showContent(node):
             glb.update()
     else:      
         if motifName in glb.MOTIFS:
-            cmd.fetch(queryPDBCode, async=0, path=glb.FETCH_PATH)
+            #cmd.fetch(queryPDBCode, async=0, path=glb.FETCH_PATH)
+            FetchPDB(queryPDBCode)
             cmd.hide('everything', 'all')
             
             # Run the motif
@@ -280,7 +310,8 @@ def showContent(node):
             # of atoms on the query protein given to us by the motif
             cmd.select(querySubsetName, motifName)
             cmd.hide('everything', 'all')
-            cmd.fetch(motifPDBCode, async=0, path=glb.FETCH_PATH)
+            #cmd.fetch(motifPDBCode, async=0, path=glb.FETCH_PATH)
+            FetchPDB(motifPDBCode)
             # Removed cartoon show command
             # Create named subset of matching result protein atoms
             #motifSubsetName = 'match_in_{0}'.format(motifPDBCode)
@@ -943,7 +974,8 @@ def motifchecker(setChoice, rmsdchoice, ecchoices):
         keysLo = keysL*len(pdbs)
         glb.GUI.motifs['csvprep'][pdb] = {}
         cmd.reinitialize()
-        cmd.fetch(pdb, async=0, path=glb.FETCH_PATH)
+        #cmd.fetch(pdb, async=0, path=glb.FETCH_PATH)
+        FetchPDB(pdb)
         if (pdb not in cmd.get_names('all')) or (cmd.count_atoms(pdb) == 0):
             lasto += keysL
             glb.GUI.motifs['singlestatus'].SetProgressPercent(100)
@@ -1027,7 +1059,8 @@ def motifchecker(setChoice, rmsdchoice, ecchoices):
                         return
                     motifPDBCode = secondsplit[1] # tpdb (pdb of result)
                     cmd.reinitialize()
-                    cmd.fetch(queryCode, async=0, path=glb.FETCH_PATH)
+                    #cmd.fetch(queryCode, async=0, path=glb.FETCH_PATH)
+                    FetchPDB(queryCode)
                     cmd.hide('everything', 'all')
                     MotifCaller(tag[1])
                     try:
@@ -1222,7 +1255,8 @@ class MotifMaker:
     def closeMotifForTesting(self):
         if glb.GUI.motif_maker['radio'].get() == 1:
             cmd.reinitialize()
-            cmd.fetch(glb.GUI.motif_maker['testpdb'].get(), async=0, path=glb.FETCH_PATH)
+            #cmd.fetch(glb.GUI.motif_maker['testpdb'].get(), async=0, path=glb.FETCH_PATH)
+            FetchPDB(glb.GUI.motif_maker['testpdb'].get())
             glb.update()
         elif glb.GUI.motif_maker['radio'].get() == 2:
             glb.randompdb()
@@ -1334,7 +1368,8 @@ class MotifMaker:
     # Depends on doCommonSetup() already being called
     # Returns false if input was bad
     def validateInput(self):
-        cmd.fetch(self.pdb, async=0, path=glb.FETCH_PATH)
+        #cmd.fetch(self.pdb, async=0, path=glb.FETCH_PATH)
+        FetchPDB(self.pdb)
         if (self.pdb not in cmd.get_names('all')) or (cmd.count_atoms(self.pdb) == 0):
             #self.exceptions += 'Could not fetch {0}'.format(self.pdb)
             self.exceptions += 'Could not fetch %s'%(self.pdb)
