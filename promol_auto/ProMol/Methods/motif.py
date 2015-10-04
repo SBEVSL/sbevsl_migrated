@@ -6,6 +6,7 @@ import os
 import re
 import time
 import math
+import urllib
 import string
 import gzip
 from tkFileDialog import asksaveasfile, askdirectory, askopenfile
@@ -26,13 +27,49 @@ numResultsOfEachQuery = []
 pdbsl = 0
 Pmw.initialise()
 
+# The following function is derived from Charles Moad's plugin
+# remote_pdb_load.py which is subject to the following notice
+#
+# Copyright Notice
+# ================
+#
+# The PyMOL Plugin source code in this file is copyrighted, but you can
+# freely use and copy it as long as you don't change or remove any of
+# the copyright notices.
+#
+# ----------------------------------------------------------------------
+# This PyMOL Plugin is Copyright (C) 2004 by Charles Moad <cmoad@indiana.edu>
+#
+#                        All Rights Reserved
+#
+# Permission to use, copy, modify, distribute, and distribute modified
+# versions of this software and its documentation for any purpose and
+# without fee is hereby granted, provided that the above copyright
+# notice appear in all copies and that both the copyright notice and
+# this permission notice appear in supporting documentation, and that
+# the name(s) of the author(s) not be used in advertising or publicity
+# pertaining to distribution of the software without specific, written
+# prior permission.
+#
+# THE AUTHOR(S) DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+# INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS.  IN
+# NO EVENT SHALL THE AUTHOR(S) BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+# CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+# USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+# OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+# PERFORMANCE OF THIS SOFTWARE.
+# ----------------------------------------------------------------------
+
+
+
 def FetchPDB(id):
     pdbCode = string.upper(id)
     try:
         filename = urllib.urlretrieve('http://www.rcsb.org/pdb/files/'
                                       + pdbCode + '.pdb.gz')[0]
     except:
-        print 'Connection Error', 'Can not access to the PDB database.\n'+'Please check your Internet access.'
+        print 'Connection Error', 'Can not access to the PDB database for ',\
+               pdbCode,'\nPlease check your Internet access.'
     else:
         if (os.path.getsize(filename) > 0): # If 0, then pdb code was invalid
             # Uncompress the file while reading
@@ -50,6 +87,10 @@ def FetchPDB(id):
         else:
             print "Invalid PDB id ",id
         os.remove(filename) # Remove tmp file (leave the pdb)
+
+# End of extract from remote_pdb_load.py
+#
+# ----------------------------------------------------------------------
 
 
 #motif options
@@ -472,63 +513,78 @@ def checkEC(event, maxNum, nextBoxes):
         if len(input) == 2: # if not first box, shift focus to next box when there are two digits
             nextBoxes[0].focus()
 
-def commandrb1():
+def commandrbManualP():
     if glb.GUI.motifs['varPset'].get() == 1:
       glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()|0x1)
     else:
       glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()&~0x1)
-def commandrb2():
+        glb.GUI.motifs['controls']['rbAll'].deselect()
+def commandrbAutoP():
+    if glb.GUI.motifs['varAPset'].get() == 1:
+        glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()|0x100)
+    else:
+        glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()&~0x100)
+        glb.GUI.motifs['controls']['rbAll'].deselect()
+def commandrbJESS():
     if glb.GUI.motifs['varJset'].get() == 1:
         glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()|0x2)
     else:
         glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()&~0x2)
-def commandrb3():
+        glb.GUI.motifs['controls']['rbAll'].deselect()
+def commandrbNMR():
     if glb.GUI.motifs['varNset'].get() == 1:
         glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()|0x4)
     else:
         glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()&~0x4)
-def commandrb4():
+        glb.GUI.motifs['controls']['rbAll'].deselect()
+def commandrbAll():
     if glb.GUI.motifs['var'].get() != 0:
         # all implies all the sets
-        glb.GUI.motifs['controls']['rb1'].select()
+        glb.GUI.motifs['controls']['rbManualP'].select()
+        glb.GUI.motifs['controls']['rbAutoP'].select()
         if glb.USE_JESS:
-            glb.GUI.motifs['controls']['rb2'].select()
-        #glb.GUI.motifs['controls']['rb3'].select()
-        glb.GUI.motifs['controls']['rb5'].select()
-        glb.GUI.motifs['controls']['rbA'].select()
-        glb.GUI.motifs['controls']['rbB'].select()
-        glb.GUI.motifs['controls']['rbC'].select()
+            glb.GUI.motifs['controls']['rbJESS'].select()
+        #glb.GUI.motifs['controls']['rbNMR'].select()
+        glb.GUI.motifs['controls']['rbUser'].select()
+        glb.GUI.motifs['controls']['rbAuto'].select()
+        glb.GUI.motifs['controls']['rbMetalAmino'].select()
+        glb.GUI.motifs['controls']['rbMetalOther'].select()
     else:
         # all implies all the sets
-        glb.GUI.motifs['controls']['rb1'].deselect()
+        glb.GUI.motifs['controls']['rbManualP'].deselect()
+        glb.GUI.motifs['controls']['rbAutoP'].deselect()
         if glb.USE_JESS:
-            glb.GUI.motifs['controls']['rb2'].deselect()
-        #glb.GUI.motifs['controls']['rb3'].deselect()
-        glb.GUI.motifs['controls']['rb5'].deselect()
-        glb.GUI.motifs['controls']['rbA'].deselect()
-        glb.GUI.motifs['controls']['rbB'].deselect()
-        glb.GUI.motifs['controls']['rbC'].deselect()
-def commandrb5():
+            glb.GUI.motifs['controls']['rbJESS'].deselect()
+        #glb.GUI.motifs['controls']['rbNMR'].deselect()
+        glb.GUI.motifs['controls']['rbUser'].deselect()
+        glb.GUI.motifs['controls']['rbAuto'].deselect()
+        glb.GUI.motifs['controls']['rbMetalAmino'].deselect()
+        glb.GUI.motifs['controls']['rbMetalOther'].deselect()
+        glb.GUI.motifs['controls']['rbAll'].deselect()
+def commandrbUser():
     if glb.GUI.motifs['varUset'].get() == 1:
         glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()|0x10)
     else:
         glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()&~0x10)
-def commandrbA():
+        glb.GUI.motifs['controls']['rbAll'].deselect()
+def commandrbAuto():
     if glb.GUI.motifs['varAset'].get() == 1:
         glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()|0x20)
     else:
         glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()&~0x20)
-def commandrbB():
+        glb.GUI.motifs['controls']['rbAll'].deselect()
+def commandrbMetalAmino():
     if glb.GUI.motifs['varMset'].get() == 1:
         glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()|0x40)
     else:
         glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()&~0x40)
-def commandrbC():
+        glb.GUI.motifs['controls']['rbAll'].deselect()
+def commandrbMetalOther():
     if glb.GUI.motifs['varRset'].get() == 1:
         glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()|0x80)
     else:
         glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()&~0x80)
-
+        glb.GUI.motifs['controls']['rbAll'].deselect()
 
 def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when the user selects the start button in motif finder
     pdbs = glb.GUI.motifs['multipdb'].get(1.0,'1.end').split(',')
@@ -549,6 +605,7 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
    
     glb.GUI.motifs['var'] = IntVar()
     glb.GUI.motifs['varPset'] = IntVar()
+    glb.GUI.motifs['varAPset'] = IntVar()
     if glb.USE_JESS:
         glb.GUI.motifs['varJset'] = IntVar()
     #glb.GUI.motifs['varNset'] = IntVar()
@@ -564,15 +621,16 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
     
     glb.GUI.motifs['controls'] = {}
     
-    glb.GUI.motifs['controls']['rb1'] = Checkbutton(glb.GUI.motifs['root'], text="P set", variable = glb.GUI.motifs['varPset'], height = 2, command = commandrb1)
+    glb.GUI.motifs['controls']['rbManualP'] = Checkbutton(glb.GUI.motifs['root'], text="Manual P set", variable = glb.GUI.motifs['varPset'], height = 2, command = commandrbManualP)
+    glb.GUI.motifs['controls']['rbAutoP'] = Checkbutton(glb.GUI.motifs['root'], text="Auto P set", variable = glb.GUI.motifs['varAPset'], height = 2, command = commandrbAutoP)
     if glb.USE_JESS:
-        glb.GUI.motifs['controls']['rb2'] = Checkbutton(glb.GUI.motifs['root'], text="J set", variable = glb.GUI.motifs['varJset'], height = 2, command = commandrb2)
-    #rb3 = Checkbutton(glb.GUI.motifs['root'], text="N set (NMR)", variable = glb.GUI.motifs['varNset'], height = 2, command = commandrb3)
-    glb.GUI.motifs['controls']['rb4'] = Checkbutton(glb.GUI.motifs['root'], text="All Motifs", variable = glb.GUI.motifs['var'], onvalue = 0xF7, height = 2, command = commandrb4)
-    glb.GUI.motifs['controls']['rb5'] = Checkbutton(glb.GUI.motifs['root'], text="User Motifs", variable = glb.GUI.motifs['varUset'], height = 2, command = commandrb5)
-    glb.GUI.motifs['controls']['rbA'] = Checkbutton(glb.GUI.motifs['root'], text="A set", variable = glb.GUI.motifs['varAset'], height = 2, command = commandrbA)
-    glb.GUI.motifs['controls']['rbB'] = Checkbutton(glb.GUI.motifs['root'], text="Metal Amino", variable = glb.GUI.motifs['varMset'], height = 2, command = commandrbB)
-    glb.GUI.motifs['controls']['rbC'] = Checkbutton(glb.GUI.motifs['root'], text="Metal Other", variable = glb.GUI.motifs['varRset'], height = 2, command = commandrbC)
+        glb.GUI.motifs['controls']['rbJESS'] = Checkbutton(glb.GUI.motifs['root'], text="JESS set", variable = glb.GUI.motifs['varJset'], height = 2, command = commandrbJESS)
+    #rbNMR = Checkbutton(glb.GUI.motifs['root'], text="N set (NMR)", variable = glb.GUI.motifs['varNset'], height = 2, command = commandrbNMR)
+    glb.GUI.motifs['controls']['rbAll'] = Checkbutton(glb.GUI.motifs['root'], text="All Motifs", variable = glb.GUI.motifs['var'], onvalue = 0x1F7, height = 2, command = commandrbAll)
+    glb.GUI.motifs['controls']['rbUser'] = Checkbutton(glb.GUI.motifs['root'], text="User Motifs", variable = glb.GUI.motifs['varUset'], height = 2, command = commandrbUser)
+    glb.GUI.motifs['controls']['rbAuto'] = Checkbutton(glb.GUI.motifs['root'], text="Auto set", variable = glb.GUI.motifs['varAset'], height = 2, command = commandrbAuto)
+    glb.GUI.motifs['controls']['rbMetalAmino'] = Checkbutton(glb.GUI.motifs['root'], text="Metal Amino", variable = glb.GUI.motifs['varMset'], height = 2, command = commandrbMetalAmino)
+    glb.GUI.motifs['controls']['rbMetalOther'] = Checkbutton(glb.GUI.motifs['root'], text="Metal Other", variable = glb.GUI.motifs['varRset'], height = 2, command = commandrbMetalOther)
 
     #added 2/19
     rb6 = Radiobutton(glb.GUI.motifs['root'], text="Yes (will take longer)", variable = glb.GUI.motifs['varrmsd'], value = 1,  height = 2)
@@ -585,17 +643,18 @@ def setChoiceDialogBox(): #creates buttons on the dialog box that pops up when t
 
 
 
-    glb.GUI.motifs['controls']['rb4'].pack(anchor = W)
-    glb.GUI.motifs['controls']['rb5'].pack(anchor = W)
-    glb.GUI.motifs['controls']['rb1'].pack(anchor = W)
-    glb.GUI.motifs['controls']['rbA'].pack(anchor = W)
-    glb.GUI.motifs['controls']['rbB'].pack(anchor = W)
-    glb.GUI.motifs['controls']['rbC'].pack(anchor = W)
+    glb.GUI.motifs['controls']['rbAll'].pack(anchor = W)
+    glb.GUI.motifs['controls']['rbUser'].pack(anchor = W)
+    glb.GUI.motifs['controls']['rbManualP'].pack(anchor = W)
+    glb.GUI.motifs['controls']['rbAutoP'].pack(anchor = W)
+    glb.GUI.motifs['controls']['rbAuto'].pack(anchor = W)
+    glb.GUI.motifs['controls']['rbMetalAmino'].pack(anchor = W)
+    glb.GUI.motifs['controls']['rbMetalOther'].pack(anchor = W)
     if glb.USE_JESS:
-        glb.GUI.motifs['controls']['rb2'].pack(anchor = W)
-    #glb.GUI.motifs['controls']['rb3'].pack(anchor = W)
-    glb.GUI.motifs['controls']['rb4'].select()#added 2/19 (default button)
-    commandrb4();
+        glb.GUI.motifs['controls']['rbJESS'].pack(anchor = W)
+    #glb.GUI.motifs['controls']['rbNMR'].pack(anchor = W)
+    glb.GUI.motifs['controls']['rbAll'].select()#added 2/19 (default button)
+    commandrbAll();
 
 
     #added 2/19
@@ -928,31 +987,45 @@ def motifchecker(setChoice, rmsdchoice, ecchoices):
     #glb.GUI.motifs['rmsdstatus'].SetProgressPercent(0.0)#added 2/20
     glb.GUI.motifs['single'].update()
     
-    setName = "";
+    setName = ""
+    setList = []
     if setChoice & 0x1 != 0:
-        setName+='P'
+        setName+='P_'
+        setName+='Pf'
+        setName+='Pa'
+        setList.append('P_')
+    if setChoice & 0x100 != 0:
+        setName+='AP'
+        setList.append('AP')
     if glb.USE_JESS:
         if setChoice & 0x2 != 0:
-            setName+='J'
+            setName+='J_'
+            setList.append('Jf')
+            setList.append('Ja')
     #if setChoice & 0x4 != 0:
-    #    setName+='N'
+    #    setName+='N_'
+    #    setList.append('N_')
     if setChoice & 0x10 != 0:
-        setName+='U'
+        setName+='U_'
+        setList.append('U_')
     if setChoice & 0x20 != 0:
-        setName+='A'
+        setName+='A_'
+        setList.append('A_')
     if setChoice & 0x40 != 0:
-        setName+='M'
+        setName+='M_'
+        setList.append('M_')
     if setChoice & 0x80 != 0:
-        setName+='R'
+        setName+='R_'
+        setList.append('R_')
 
-    setlist = list(setName)
+    setselection = lambda key: key[0:2] in setList
     
-    setselection = lambda key: key[0] in setlist
-
     setName += "_Set"
 
     # This is a Python list comprehension
     keys = set([motifName for motifName in glb.MOTIFS.keys() if setselection(motifName)])
+
+    print 'keys: ',keys
 
     #4/29 added
     glb.GUI.motifs['tt'].destroy()#removes current tree displaying past results
@@ -976,7 +1049,10 @@ def motifchecker(setChoice, rmsdchoice, ecchoices):
         cmd.reinitialize()
         #cmd.fetch(pdb, async=0, path=glb.FETCH_PATH)
         FetchPDB(pdb)
-        if (pdb not in cmd.get_names('all')) or (cmd.count_atoms(pdb) == 0):
+        if pdb not in cmd.get_names('all') or cmd.count_atoms(pdb) == 0:
+            if string.upper(pdb) not in cmd.get_names('all') or \
+                cmd.count_atoms(string.upper(pdb)) == 0:
+                print string.upper(pdb), " ***not in*** ", cmd.get_names('all')
             lasto += keysL
             glb.GUI.motifs['singlestatus'].SetProgressPercent(100)
             glb.GUI.motifs['overallstatus'].SetProgressPercent((lasto/keysLo)*100)
@@ -1370,9 +1446,11 @@ class MotifMaker:
     def validateInput(self):
         #cmd.fetch(self.pdb, async=0, path=glb.FETCH_PATH)
         FetchPDB(self.pdb)
-        if (self.pdb not in cmd.get_names('all')) or (cmd.count_atoms(self.pdb) == 0):
-            #self.exceptions += 'Could not fetch {0}'.format(self.pdb)
-            self.exceptions += 'Could not fetch %s'%(self.pdb)
+        if self.pdb not in cmd.get_names('all') or cmd.count_atoms(self.pdb) == 0:
+            if string.upper(self.pdb) not in cmd.get_names('all') \
+                or cmd.count_atoms(string.upper(self.pdb)) == 0:
+                #self.exceptions += 'Could not fetch {0}'.format(self.pdb)
+                self.exceptions += 'Could not fetch %s'%(self.pdb)
         glb.update()
         preecs = self.ecen.split(',')
         for preec in preecs:

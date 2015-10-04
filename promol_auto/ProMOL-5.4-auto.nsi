@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "ProMOL"
-!define PRODUCT_VERSION "5.4-r452"
+!define PRODUCT_VERSION "5.4-r457"
 !define PRODUCT_PUBLISHER "SBEVSL Project"
 !define PRODUCT_WEB_SITE "sf.net/projects/sbevsl"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
@@ -38,7 +38,7 @@
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "ProMOL-5.4-r452.exe"
+OutFile "ProMOL-5.4-r457.exe"
 InstallDir "C:\Python27\Lib\site-packages\pmg_tk\startup"
 ShowInstDetails show
 ShowUnInstDetails show
