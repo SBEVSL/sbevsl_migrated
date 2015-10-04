@@ -515,9 +515,9 @@ def checkEC(event, maxNum, nextBoxes):
 
 def commandrbManualP():
     if glb.GUI.motifs['varPset'].get() == 1:
-      glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()|0x1)
+        glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()|0x1)
     else:
-      glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()&~0x1)
+        glb.GUI.motifs['var'].set(glb.GUI.motifs['var'].get()&~0x1)
         glb.GUI.motifs['controls']['rbAll'].deselect()
 def commandrbAutoP():
     if glb.GUI.motifs['varAPset'].get() == 1:
@@ -1053,10 +1053,10 @@ def motifchecker(setChoice, rmsdchoice, ecchoices):
             if string.upper(pdb) not in cmd.get_names('all') or \
                 cmd.count_atoms(string.upper(pdb)) == 0:
                 print string.upper(pdb), " ***not in*** ", cmd.get_names('all')
-            lasto += keysL
-            glb.GUI.motifs['singlestatus'].SetProgressPercent(100)
-            glb.GUI.motifs['overallstatus'].SetProgressPercent((lasto/keysLo)*100)
-            continue
+                lasto += keysL
+                glb.GUI.motifs['singlestatus'].SetProgressPercent(100)
+                glb.GUI.motifs['overallstatus'].SetProgressPercent((lasto/keysLo)*100)
+                continue
         cmd.hide('everything', 'all')
         cmd.remove("all and hydro")
          
