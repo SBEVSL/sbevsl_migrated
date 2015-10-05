@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "ProMOL"
-!define PRODUCT_VERSION "5.4-r460"
+!define PRODUCT_VERSION "5.4-r461"
 !define PRODUCT_PUBLISHER "SBEVSL Project"
 !define PRODUCT_WEB_SITE "sf.net/projects/sbevsl"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
@@ -38,7 +38,7 @@
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "ProMOL-5.4-r460.exe"
+OutFile "ProMOL-5.4-r461.exe"
 InstallDir "C:\Python27\Lib\site-packages\pmg_tk\startup"
 ShowInstDetails show
 ShowUnInstDetails show
@@ -728,6 +728,7 @@ Section "ProMOL Plugin" SEC01
   File "ProMol\Motifs\AP_1pno_1_6_1_2.py"
   File "ProMol\Motifs\AP_1pow_1_2_3_3.py"
   File "ProMol\Motifs\AP_1pzp_3_5_2_6.py"
+  File "ProMol\Motifs\AP_1p7t_2_3_3_9.py"
   File "ProMol\Motifs\AP_1q2o_1_14_13_39.py"
   File "ProMol\Motifs\AP_1qfe_4_2_1_10.py"
   File "ProMol\Motifs\AP_1qgy_1_18_1_2.py"
@@ -1572,6 +1573,7 @@ Section Uninstall
   Delete "$INSTDIR\ProMol\AP_1pno_1_6_1_2.py"
   Delete "$INSTDIR\ProMol\AP_1pow_1_2_3_3.py"
   Delete "$INSTDIR\ProMol\AP_1pzp_3_5_2_6.py"
+  Delete "$INSTDIR\ProMol\AP_1p7t_2_3_3_9.py"
   Delete "$INSTDIR\ProMol\AP_1q2o_1_14_13_39.py"
   Delete "$INSTDIR\ProMol\AP_1qfe_4_2_1_10.py"
   Delete "$INSTDIR\ProMol\AP_1qgy_1_18_1_2.py"
