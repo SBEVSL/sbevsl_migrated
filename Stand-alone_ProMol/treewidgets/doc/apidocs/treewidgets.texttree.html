@@ -1,0 +1,561 @@
+
+<!doctype html public "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module treewidgets.texttree</title>
+<style type="text/css"><!--
+TT { font-family: lucidatypewriter, lucida console, courier }
+--></style></head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#7799ee">
+<td valign=bottom><small>&nbsp;<br></small
+><font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="treewidgets.html"><font color="#ffffff">treewidgets</font></a>.texttree</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/usr/local/lib/python2.1/site-packages/treewidgets/texttree.py">/usr/local/lib/python2.1/site-packages/treewidgets/texttree.py</a></font></td></tr></table>
+    <p><small><tt><br>
+texttree.py<br>
+-----------<br>
+&nbsp;<br>
+Provides&nbsp;the&nbsp;<a href="#TextTree">TextTree</a>&nbsp;class,&nbsp;a&nbsp;<a href="treewidgets.widget.html#TreeWidget">TreeWidget</a>&nbsp;subclass&nbsp;based&nbsp;on&nbsp;Tkinter.<a href="Tkinter.html#Text">Text</a>.<br>
+&nbsp;<br>
+Copyright&nbsp;(c)&nbsp;2002&nbsp;&nbsp;Matthew&nbsp;C.&nbsp;Gushee&nbsp;&lt;mgushee@havenrock.com&gt;<br>
+&nbsp;<br>
+This&nbsp;is&nbsp;free&nbsp;software,&nbsp;released&nbsp;under&nbsp;the&nbsp;terms&nbsp;of&nbsp;the&nbsp;BSD&nbsp;License.&nbsp;See<br>
+the&nbsp;file&nbsp;LICENSE&nbsp;for&nbsp;details.</tt></small></p>
+
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#fffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;&nbsp;</td>
+<td width="100%"><table width="100%"><tr><td width="25%" valign=top><a href="string.html">string</a><br>
+</td><td width="25%" valign=top><a href="sys.html">sys</a><br>
+</td><td width="25%" valign=top><a href="_tkinter.html">_tkinter</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table>
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#ee77aa">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;&nbsp;</td>
+<td width="100%"><dl>
+<dt><font face="helvetica, arial"><small><a href="Tkinter.html#Text">Tkinter.Text</a>(<a href="Tkinter.html#Widget">Tkinter.Widget</a>)
+</small></font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><small><a href="treewidgets.texttree.html#TextTree">TextTree</a>(<a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a>, <a href="Tkinter.html#Text">Tkinter.Text</a>)
+</small></font></dt></dl>
+</dd>
+<dt><font face="helvetica, arial"><small><a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a>
+</small></font></dt><dd>
+<dl>
+<dt><font face="helvetica, arial"><small><a href="treewidgets.texttree.html#TextTree">TextTree</a>(<a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a>, <a href="Tkinter.html#Text">Tkinter.Text</a>)
+</small></font></dt></dl>
+</dd>
+</dl>
+ 
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#ffc8d8">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#000000" face="helvetica, arial"><a name="TextTree">class <strong>TextTree</strong></a>(<a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a>, <a href="Tkinter.html#Text">Tkinter.Text</a>)</font></td></tr>
+    
+<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td>
+<td colspan=2><small><tt>A&nbsp;<a href="treewidgets.widget.html#TreeWidget">TreeWidget</a>&nbsp;based&nbsp;on&nbsp;the&nbsp;Tkinter&nbsp;<a href="Tkinter.html#Text">Text</a>&nbsp;class.<br>&nbsp;</tt></small></td></tr>
+<tr><td>&nbsp;&nbsp;</td>
+<td width="100%"><dl><dt><a name="TextTree-_Misc__winfo_getint"><strong>_Misc__winfo_getint</strong></a> = __winfo_getint(self, x)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_Misc__winfo_parseitem"><strong>_Misc__winfo_parseitem</strong></a> = __winfo_parseitem(self, t)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-__getitem__"><strong>__getitem__</strong></a> = cget(self, key)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-__init__"><strong>__init__</strong></a>(self, master, app<small><font color="#909090">=None</font></small>, icons<small><font color="#909090">={}</font></small>, fonts<small><font color="#909090">={}</font></small>, **tkconfig)<dd><small><tt>Create&nbsp;a&nbsp;<a href="#TextTree">TextTree</a>&nbsp;instance.<br>
+&nbsp;<br>
+Arguments:<br>
+&nbsp;&nbsp;master&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;the&nbsp;widget&nbsp;containing&nbsp;this&nbsp;one<br>
+&nbsp;&nbsp;app&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;the&nbsp;application&nbsp;that&nbsp;uses&nbsp;this&nbsp;widget&nbsp;(default:&nbsp;None)<br>
+&nbsp;&nbsp;icons&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;icon&nbsp;names&nbsp;or&nbsp;files&nbsp;(details&nbsp;below)<br>
+&nbsp;&nbsp;fonts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;font&nbsp;characteristics&nbsp;(details&nbsp;below)<br>
+&nbsp;<br>
+Standard&nbsp;Tkinter&nbsp;configuration&nbsp;options&nbsp;are&nbsp;also&nbsp;accepted&nbsp;(but&nbsp;not&nbsp;all<br>
+implemented&nbsp;yet).<br>
+&nbsp;<br>
+Setting&nbsp;icons:<br>
+&nbsp;<br>
+&nbsp;&nbsp;By&nbsp;default,&nbsp;all&nbsp;nodes&nbsp;in&nbsp;the&nbsp;<a href="treewidgets.widget.html#TreeWidget">TreeWidget</a>&nbsp;are&nbsp;displayed&nbsp;with&nbsp;the&nbsp;'node'<br>
+&nbsp;&nbsp;icon,&nbsp;which&nbsp;works&nbsp;but&nbsp;is&nbsp;rather&nbsp;boring.&nbsp;You&nbsp;may&nbsp;wish&nbsp;to&nbsp;use&nbsp;a<br>
+&nbsp;&nbsp;different&nbsp;icon,&nbsp;or&nbsp;a&nbsp;set&nbsp;of&nbsp;icons&nbsp;varying&nbsp;according&nbsp;to&nbsp;the&nbsp;node&nbsp;type,<br>
+&nbsp;&nbsp;or&nbsp;perhaps&nbsp;no&nbsp;icons&nbsp;at&nbsp;all.&nbsp;You&nbsp;can&nbsp;configure&nbsp;the&nbsp;icons&nbsp;according&nbsp;to<br>
+&nbsp;&nbsp;your&nbsp;needs&nbsp;by&nbsp;creating&nbsp;the&nbsp;<a href="treewidgets.widget.html#TreeWidget">TreeWidget</a>&nbsp;with&nbsp;an&nbsp;'icons'&nbsp;argument.&nbsp;The<br>
+&nbsp;&nbsp;value&nbsp;of&nbsp;this&nbsp;is&nbsp;either&nbsp;a&nbsp;dictionary,&nbsp;which&nbsp;we&nbsp;will&nbsp;call&nbsp;an&nbsp;icon&nbsp;map,<br>
+&nbsp;&nbsp;or&nbsp;None&nbsp;to&nbsp;disable&nbsp;all&nbsp;icons.<br>
+&nbsp;<br>
+&nbsp;&nbsp;An&nbsp;icon&nbsp;map&nbsp;has&nbsp;the&nbsp;following&nbsp;predefined&nbsp;keys:<br>
+&nbsp;<br>
+&nbsp;&nbsp;'type'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;the&nbsp;type&nbsp;of&nbsp;icon&nbsp;to&nbsp;use:&nbsp;either&nbsp;'photo',&nbsp;for&nbsp;a&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tkinter&nbsp;PhotoImage,&nbsp;or&nbsp;'bitmap',&nbsp;for&nbsp;a&nbsp;BitmapImage.<br>
+&nbsp;&nbsp;'path'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;*if*&nbsp;the&nbsp;icons&nbsp;are&nbsp;to&nbsp;be&nbsp;created&nbsp;from&nbsp;image&nbsp;files,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;this&nbsp;argument&nbsp;specifies&nbsp;the&nbsp;directory&nbsp;where&nbsp;those<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;files&nbsp;are&nbsp;to&nbsp;be&nbsp;found.&nbsp;If&nbsp;'path'&nbsp;is&nbsp;omitted,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;built-in&nbsp;icons&nbsp;will&nbsp;be&nbsp;used.<br>
+&nbsp;&nbsp;'all'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;icon&nbsp;set&nbsp;for&nbsp;all&nbsp;nodes<br>
+&nbsp;&nbsp;'default'&nbsp;&nbsp;&nbsp;--&nbsp;default&nbsp;icon&nbsp;set<br>
+&nbsp;<br>
+&nbsp;&nbsp;To&nbsp;associate&nbsp;a&nbsp;set&nbsp;of&nbsp;icons&nbsp;with&nbsp;a&nbsp;node&nbsp;type,&nbsp;add&nbsp;an&nbsp;item&nbsp;to&nbsp;the&nbsp;<br>
+&nbsp;&nbsp;icon&nbsp;map&nbsp;using&nbsp;the&nbsp;node&nbsp;type&nbsp;as&nbsp;a&nbsp;key:<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;icon_map[&lt;node_type&gt;]&nbsp;=&nbsp;&lt;icon_set&gt;<br>
+&nbsp;<br>
+&nbsp;&nbsp;[What&nbsp;if&nbsp;there&nbsp;is&nbsp;a&nbsp;node&nbsp;type&nbsp;with&nbsp;the&nbsp;same&nbsp;name&nbsp;as&nbsp;one&nbsp;of&nbsp;the<br>
+&nbsp;&nbsp;&nbsp;predefined&nbsp;keys?&nbsp;Obviously&nbsp;this&nbsp;concept&nbsp;needs&nbsp;a&nbsp;little&nbsp;work]<br>
+&nbsp;<br>
+&nbsp;&nbsp;An&nbsp;icon&nbsp;set&nbsp;is&nbsp;a&nbsp;tuple&nbsp;of&nbsp;three&nbsp;(3)&nbsp;icon&nbsp;names:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&lt;plain_icon_name&gt;,&lt;collapsed_icon_name&gt;,&lt;expanded_icon_name&gt;)<br>
+&nbsp;<br>
+&nbsp;&nbsp;Each&nbsp;icon&nbsp;name&nbsp;must&nbsp;be&nbsp;either&nbsp;a&nbsp;built-in&nbsp;icon&nbsp;name&nbsp;or&nbsp;a&nbsp;file&nbsp;name<br>
+&nbsp;&nbsp;(with&nbsp;the&nbsp;extension&nbsp;but&nbsp;without&nbsp;the&nbsp;path).&nbsp;The&nbsp;plain&nbsp;icon&nbsp;will&nbsp;be<br>
+&nbsp;&nbsp;used&nbsp;for&nbsp;nodes&nbsp;with&nbsp;no&nbsp;children,&nbsp;the&nbsp;collapse&nbsp;and&nbsp;expanded&nbsp;icons<br>
+&nbsp;&nbsp;for&nbsp;nodes&nbsp;with&nbsp;children,&nbsp;alternating&nbsp;according&nbsp;to&nbsp;the&nbsp;node&nbsp;state.<br>
+&nbsp;&nbsp;The&nbsp;built-in&nbsp;icons&nbsp;follow&nbsp;the&nbsp;common&nbsp;convention&nbsp;of&nbsp;displaying&nbsp;<br>
+&nbsp;&nbsp;collapsed&nbsp;nodes&nbsp;with&nbsp;plus&nbsp;signs&nbsp;and&nbsp;expanded&nbsp;nodes&nbsp;with&nbsp;minus&nbsp;signs.<br>
+&nbsp;&nbsp;<br>
+Setting&nbsp;fonts&nbsp;[not&nbsp;implemented&nbsp;in&nbsp;8/28/2002&nbsp;release]:<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;When&nbsp;this&nbsp;feature&nbsp;is&nbsp;implemented,&nbsp;you&nbsp;will&nbsp;be&nbsp;able&nbsp;to&nbsp;configure<br>
+&nbsp;&nbsp;fonts&nbsp;on&nbsp;a&nbsp;per-node-type&nbsp;basis&nbsp;by&nbsp;giving&nbsp;the&nbsp;widget&nbsp;a&nbsp;font&nbsp;map<br>
+&nbsp;&nbsp;similar&nbsp;to&nbsp;the&nbsp;icon&nbsp;map&nbsp;described&nbsp;above.</tt></small></dl>
+<dl><dt><a name="TextTree-__setitem__"><strong>__setitem__</strong></a>(self, key, value)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-__str__"><strong>__str__</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_bind"><strong>_bind</strong></a>(self, what, sequence, func, add, needcleanup<small><font color="#909090">=1</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_displayof"><strong>_displayof</strong></a>(self, displayof)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_do"><strong>_do</strong></a>(self, name, args<small><font color="#909090">=()</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#BaseWidget">Tkinter.BaseWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_getboolean"><strong>_getboolean</strong></a>(self, string)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_getdoubles"><strong>_getdoubles</strong></a>(self, string)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_getints"><strong>_getints</strong></a>(self, string)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_grid"><strong>_grid</strong></a> = grid_configure(self, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Grid">Tkinter.Grid</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_grid_configure"><strong>_grid_configure</strong></a>(self, command, index, cnf, kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_grid_forget"><strong>_grid_forget</strong></a> = grid_forget(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Grid">Tkinter.Grid</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_gui_setup"><strong>_gui_setup</strong></a>(self, iconmap, fontmap, **tkconfig)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_hide_node"><strong>_hide_node</strong></a>(self, node)</dl>
+<dl><dt><a name="TextTree-_mkfonts"><strong>_mkfonts</strong></a>(self, fontmap<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_mkicons"><strong>_mkicons</strong></a>(self, iconmap<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_move_node"><strong>_move_node</strong></a>(self, node, distance)</dl>
+<dl><dt><a name="TextTree-_nametowidget"><strong>_nametowidget</strong></a> = nametowidget(self, name)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_onDown"><strong>_onDown</strong></a>(self, event<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_onSpace"><strong>_onSpace</strong></a>(self, event<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_onUp"><strong>_onUp</strong></a>(self, event<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_options"><strong>_options</strong></a>(self, cnf, kw<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_pack"><strong>_pack</strong></a> = pack_configure(self, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Pack">Tkinter.Pack</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_pack_forget"><strong>_pack_forget</strong></a> = pack_forget(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Pack">Tkinter.Pack</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_place"><strong>_place</strong></a> = place_configure(self, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Place">Tkinter.Place</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_place_forget"><strong>_place_forget</strong></a> = place_forget(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Place">Tkinter.Place</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_register"><strong>_register</strong></a>(self, func, subst<small><font color="#909090">=None</font></small>, needcleanup<small><font color="#909090">=1</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_report_exception"><strong>_report_exception</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_root"><strong>_root</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_setFocus"><strong>_setFocus</strong></a>(self, event<small><font color="#909090">=None</font></small>)</dl>
+<dl><dt><a name="TextTree-_setup"><strong>_setup</strong></a>(self, master, cnf)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#BaseWidget">Tkinter.BaseWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-_show_node"><strong>_show_node</strong></a>(self, node, row)</dl>
+<dl><dt><a name="TextTree-_substitute"><strong>_substitute</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-activateNode"><strong>activateNode</strong></a>(self, node_id)<dd><small><tt>Change&nbsp;a&nbsp;node's&nbsp;colors&nbsp;to&nbsp;the&nbsp;"active"&nbsp;scheme.<br>
+&nbsp;<br>
+Arguments:<br>
+node_id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;The&nbsp;id&nbsp;of&nbsp;the&nbsp;node&nbsp;to&nbsp;be&nbsp;activated.</tt></small></dl>
+<dl><dt><a name="TextTree-addNode"><strong>addNode</strong></a>(self, node)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-after"><strong>after</strong></a>(self, ms, func<small><font color="#909090">=None</font></small>, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-after_cancel"><strong>after_cancel</strong></a>(self, id)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-after_idle"><strong>after_idle</strong></a>(self, func, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-bbox"><strong>bbox</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-bell"><strong>bell</strong></a>(self, displayof<small><font color="#909090">=0</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-bind"><strong>bind</strong></a>(self, sequence<small><font color="#909090">=None</font></small>, func<small><font color="#909090">=None</font></small>, add<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-bind_all"><strong>bind_all</strong></a>(self, sequence<small><font color="#909090">=None</font></small>, func<small><font color="#909090">=None</font></small>, add<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-bind_class"><strong>bind_class</strong></a>(self, className, sequence<small><font color="#909090">=None</font></small>, func<small><font color="#909090">=None</font></small>, add<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-bindtags"><strong>bindtags</strong></a>(self, tagList<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-cget"><strong>cget</strong></a>(self, key)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-clipboard_append"><strong>clipboard_append</strong></a>(self, string, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-clipboard_clear"><strong>clipboard_clear</strong></a>(self, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-colormodel"><strong>colormodel</strong></a>(self, value<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-columnconfigure"><strong>columnconfigure</strong></a> = grid_columnconfigure(self, index, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-compare"><strong>compare</strong></a>(self, index1, op, index2)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-config"><strong>config</strong></a> = configure(self, cnf<small><font color="#909090">=None</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-configure"><strong>configure</strong></a>(self, cnf<small><font color="#909090">=None</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-deactivateNode"><strong>deactivateNode</strong></a>(self, node_id)<dd><small><tt>Change&nbsp;a&nbsp;node's&nbsp;colors&nbsp;to&nbsp;the&nbsp;normal&nbsp;scheme.<br>
+&nbsp;<br>
+Arguments:<br>
+node_id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;The&nbsp;id&nbsp;of&nbsp;the&nbsp;node&nbsp;to&nbsp;be&nbsp;deactivated.</tt></small></dl>
+<dl><dt><a name="TextTree-debug"><strong>debug</strong></a>(self, boolean<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-delete"><strong>delete</strong></a>(self, index1, index2<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-deletecommand"><strong>deletecommand</strong></a>(self, name)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-deselectNode"><strong>deselectNode</strong></a>(self, node_id)<dd><small><tt>Display&nbsp;a&nbsp;node&nbsp;using&nbsp;the&nbsp;normal&nbsp;colors.<br>
+&nbsp;<br>
+Arguments:<br>
+node_id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;The&nbsp;id&nbsp;of&nbsp;the&nbsp;node&nbsp;you&nbsp;wish&nbsp;to&nbsp;deselect.</tt></small></dl>
+<dl><dt><a name="TextTree-destroy"><strong>destroy</strong></a>(self)<dd><small><tt>Eliminate&nbsp;the&nbsp;GUI&nbsp;manifestation&nbsp;of&nbsp;this&nbsp;object.</tt></small></dl>
+<dl><dt><a name="TextTree-dlineinfo"><strong>dlineinfo</strong></a>(self, index)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-event_add"><strong>event_add</strong></a>(self, virtual, *sequences)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-event_delete"><strong>event_delete</strong></a>(self, virtual, *sequences)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-event_generate"><strong>event_generate</strong></a>(self, sequence, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-event_info"><strong>event_info</strong></a>(self, virtual<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-focus"><strong>focus</strong></a> = focus_set(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-focus_displayof"><strong>focus_displayof</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-focus_force"><strong>focus_force</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-focus_get"><strong>focus_get</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-focus_lastfor"><strong>focus_lastfor</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-focus_set"><strong>focus_set</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-forget"><strong>forget</strong></a> = pack_forget(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Pack">Tkinter.Pack</a></font></font></small></dl>
+<dl><dt><a name="TextTree-generateNodeID"><strong>generateNodeID</strong></a>(self, datanode)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-get"><strong>get</strong></a>(self, index1, index2<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-getNodeByID"><strong>getNodeByID</strong></a>(self, node_id)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-getboolean"><strong>getboolean</strong></a>(self, s)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-getvar"><strong>getvar</strong></a>(self, name<small><font color="#909090">='PY_VAR'</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-goNext"><strong>goNext</strong></a>(self, node)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-goPrevious"><strong>goPrevious</strong></a>(self, node)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-grab_current"><strong>grab_current</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-grab_release"><strong>grab_release</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-grab_set"><strong>grab_set</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-grab_set_global"><strong>grab_set_global</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-grab_status"><strong>grab_status</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-grid"><strong>grid</strong></a>(self, *args, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-grid_bbox"><strong>grid_bbox</strong></a>(self, column<small><font color="#909090">=None</font></small>, row<small><font color="#909090">=None</font></small>, col2<small><font color="#909090">=None</font></small>, row2<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-grid_columnconfigure"><strong>grid_columnconfigure</strong></a>(self, index, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-grid_configure"><strong>grid_configure</strong></a>(self, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Grid">Tkinter.Grid</a></font></font></small></dl>
+<dl><dt><a name="TextTree-grid_forget"><strong>grid_forget</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-grid_info"><strong>grid_info</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Grid">Tkinter.Grid</a></font></font></small></dl>
+<dl><dt><a name="TextTree-grid_location"><strong>grid_location</strong></a>(self, x, y)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Grid">Tkinter.Grid</a></font></font></small></dl>
+<dl><dt><a name="TextTree-grid_propagate"><strong>grid_propagate</strong></a>(self, flag<small><font color="#909090">=['_noarg_']</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-grid_remove"><strong>grid_remove</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Grid">Tkinter.Grid</a></font></font></small></dl>
+<dl><dt><a name="TextTree-grid_rowconfigure"><strong>grid_rowconfigure</strong></a>(self, index, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-grid_size"><strong>grid_size</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-grid_slaves"><strong>grid_slaves</strong></a>(self, row<small><font color="#909090">=None</font></small>, column<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-hideNode"><strong>hideNode</strong></a>(self, node)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-hideNodes"><strong>hideNodes</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-hideNodes4Shift"><strong>hideNodes4Shift</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-image_cget"><strong>image_cget</strong></a>(self, index, option)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-image_configure"><strong>image_configure</strong></a>(self, index, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-image_create"><strong>image_create</strong></a>(self, index, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-image_names"><strong>image_names</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-image_types"><strong>image_types</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-index"><strong>index</strong></a>(self, index)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-info"><strong>info</strong></a> = pack_info(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Pack">Tkinter.Pack</a></font></font></small></dl>
+<dl><dt><a name="TextTree-insert"><strong>insert</strong></a>(self, index, chars, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-insertAfter"><strong>insertAfter</strong></a>(self, refnode, newnode)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-insertBefore"><strong>insertBefore</strong></a>(self, refnode, newnode)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-keys"><strong>keys</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-lift"><strong>lift</strong></a> = tkraise(self, aboveThis<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-location"><strong>location</strong></a> = grid_location(self, x, y)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Grid">Tkinter.Grid</a></font></font></small></dl>
+<dl><dt><a name="TextTree-logNodeStates"><strong>logNodeStates</strong></a>(self, tag)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-lower"><strong>lower</strong></a>(self, belowThis<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-mainloop"><strong>mainloop</strong></a>(self, n<small><font color="#909090">=0</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-mark_gravity"><strong>mark_gravity</strong></a>(self, markName, direction<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-mark_names"><strong>mark_names</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-mark_next"><strong>mark_next</strong></a>(self, index)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-mark_previous"><strong>mark_previous</strong></a>(self, index)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-mark_set"><strong>mark_set</strong></a>(self, markName, index)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-mark_unset"><strong>mark_unset</strong></a>(self, *markNames)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-nametowidget"><strong>nametowidget</strong></a>(self, name)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-nodesFollowing"><strong>nodesFollowing</strong></a>(self, node)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-nodesPreceding"><strong>nodesPreceding</strong></a>(self, node)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-option_add"><strong>option_add</strong></a>(self, pattern, value, priority<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-option_clear"><strong>option_clear</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-option_get"><strong>option_get</strong></a>(self, name, className)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-option_readfile"><strong>option_readfile</strong></a>(self, fileName, priority<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-pack"><strong>pack</strong></a>(self, *args, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-pack_configure"><strong>pack_configure</strong></a>(self, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Pack">Tkinter.Pack</a></font></font></small></dl>
+<dl><dt><a name="TextTree-pack_forget"><strong>pack_forget</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-pack_info"><strong>pack_info</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Pack">Tkinter.Pack</a></font></font></small></dl>
+<dl><dt><a name="TextTree-pack_propagate"><strong>pack_propagate</strong></a>(self, flag<small><font color="#909090">=['_noarg_']</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-pack_slaves"><strong>pack_slaves</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-place"><strong>place</strong></a>(self, *args, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-place_configure"><strong>place_configure</strong></a>(self, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Place">Tkinter.Place</a></font></font></small></dl>
+<dl><dt><a name="TextTree-place_forget"><strong>place_forget</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-place_info"><strong>place_info</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Place">Tkinter.Place</a></font></font></small></dl>
+<dl><dt><a name="TextTree-place_slaves"><strong>place_slaves</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-propagate"><strong>propagate</strong></a> = pack_propagate(self, flag<small><font color="#909090">=['_noarg_']</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-quit"><strong>quit</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-redisplay"><strong>redisplay</strong></a>(self)<dd><small><tt>Refresh&nbsp;the&nbsp;tree&nbsp;display&nbsp;after&nbsp;showing,&nbsp;hiding,&nbsp;or&nbsp;moving&nbsp;nodes.</tt></small></dl>
+<dl><dt><a name="TextTree-register"><strong>register</strong></a> = _register(self, func, subst<small><font color="#909090">=None</font></small>, needcleanup<small><font color="#909090">=1</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-removeNode"><strong>removeNode</strong></a>(self, node)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-rowconfigure"><strong>rowconfigure</strong></a> = grid_rowconfigure(self, index, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-scan_dragto"><strong>scan_dragto</strong></a>(self, x, y)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-scan_mark"><strong>scan_mark</strong></a>(self, x, y)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-scheduleShiftFollowing"><strong>scheduleShiftFollowing</strong></a>(self, node)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-search"><strong>search</strong></a>(self, pattern, index, stopindex<small><font color="#909090">=None</font></small>, forwards<small><font color="#909090">=None</font></small>, backwards<small><font color="#909090">=None</font></small>, exact<small><font color="#909090">=None</font></small>, regexp<small><font color="#909090">=None</font></small>, nocase<small><font color="#909090">=None</font></small>, count<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-see"><strong>see</strong></a>(self, index)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-selectNode"><strong>selectNode</strong></a>(self, node_id)<dd><small><tt>Display&nbsp;a&nbsp;node&nbsp;using&nbsp;the&nbsp;'selected'&nbsp;colors&nbsp;and&nbsp;set&nbsp;self.<strong>selected</strong>&nbsp;to&nbsp;this&nbsp;node's&nbsp;ID.<br>
+&nbsp;<br>
+Arguments:<br>
+node_id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--&nbsp;The&nbsp;id&nbsp;of&nbsp;the&nbsp;node&nbsp;you&nbsp;wish&nbsp;to&nbsp;select.</tt></small></dl>
+<dl><dt><a name="TextTree-selection_clear"><strong>selection_clear</strong></a>(self, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-selection_get"><strong>selection_get</strong></a>(self, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-selection_handle"><strong>selection_handle</strong></a>(self, command, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-selection_own"><strong>selection_own</strong></a>(self, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-selection_own_get"><strong>selection_own_get</strong></a>(self, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-send"><strong>send</strong></a>(self, interp, cmd, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-setvar"><strong>setvar</strong></a>(self, name<small><font color="#909090">='PY_VAR'</font></small>, value<small><font color="#909090">='1'</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-showNode"><strong>showNode</strong></a>(self, node, row)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-showNodes"><strong>showNodes</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-showTree"><strong>showTree</strong></a>(self, data, datatype, expand_limit<small><font color="#909090">=None</font></small>, node_funcs<small><font color="#909090">={}</font></small>, props<small><font color="#909090">=0</font></small>, state<small><font color="#909090">=0</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-size"><strong>size</strong></a> = grid_size(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-slaves"><strong>slaves</strong></a> = pack_slaves(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tag_add"><strong>tag_add</strong></a>(self, tagName, index1, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tag_bind"><strong>tag_bind</strong></a>(self, tagName, sequence, func, add<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tag_cget"><strong>tag_cget</strong></a>(self, tagName, option)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tag_config"><strong>tag_config</strong></a> = tag_configure(self, tagName, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tag_configure"><strong>tag_configure</strong></a>(self, tagName, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tag_delete"><strong>tag_delete</strong></a>(self, *tagNames)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tag_lower"><strong>tag_lower</strong></a>(self, tagName, belowThis<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tag_names"><strong>tag_names</strong></a>(self, index<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tag_nextrange"><strong>tag_nextrange</strong></a>(self, tagName, index1, index2<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tag_prevrange"><strong>tag_prevrange</strong></a>(self, tagName, index1, index2<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tag_raise"><strong>tag_raise</strong></a>(self, tagName, aboveThis<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tag_ranges"><strong>tag_ranges</strong></a>(self, tagName)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tag_remove"><strong>tag_remove</strong></a>(self, tagName, index1, index2<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tag_unbind"><strong>tag_unbind</strong></a>(self, tagName, sequence, funcid<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tk_bisque"><strong>tk_bisque</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tk_focusFollowsMouse"><strong>tk_focusFollowsMouse</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tk_focusNext"><strong>tk_focusNext</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tk_focusPrev"><strong>tk_focusPrev</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tk_menuBar"><strong>tk_menuBar</strong></a>(self, *args)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tk_setPalette"><strong>tk_setPalette</strong></a>(self, *args, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tk_strictMotif"><strong>tk_strictMotif</strong></a>(self, boolean<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tk_textBackspace"><strong>tk_textBackspace</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tk_textIndexCloser"><strong>tk_textIndexCloser</strong></a>(self, a, b, c)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tk_textResetAnchor"><strong>tk_textResetAnchor</strong></a>(self, index)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tk_textSelectTo"><strong>tk_textSelectTo</strong></a>(self, index)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-tkraise"><strong>tkraise</strong></a>(self, aboveThis<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-toggleNode"><strong>toggleNode</strong></a>(self, node)<small><font color="#909090"><font face="helvetica, arial"> from <a href="treewidgets.widget.html#TreeWidget">treewidgets.widget.TreeWidget</a></font></font></small></dl>
+<dl><dt><a name="TextTree-unbind"><strong>unbind</strong></a>(self, sequence, funcid<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-unbind_all"><strong>unbind_all</strong></a>(self, sequence)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-unbind_class"><strong>unbind_class</strong></a>(self, className, sequence)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-update"><strong>update</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-update_idletasks"><strong>update_idletasks</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-wait_variable"><strong>wait_variable</strong></a>(self, name<small><font color="#909090">='PY_VAR'</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-wait_visibility"><strong>wait_visibility</strong></a>(self, window<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-wait_window"><strong>wait_window</strong></a>(self, window<small><font color="#909090">=None</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-waitvar"><strong>waitvar</strong></a> = wait_variable(self, name<small><font color="#909090">='PY_VAR'</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-window_cget"><strong>window_cget</strong></a>(self, index, option)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-window_config"><strong>window_config</strong></a> = window_configure(self, index, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-window_configure"><strong>window_configure</strong></a>(self, index, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-window_create"><strong>window_create</strong></a>(self, index, cnf<small><font color="#909090">={}</font></small>, **kw)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-window_names"><strong>window_names</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_atom"><strong>winfo_atom</strong></a>(self, name, displayof<small><font color="#909090">=0</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_atomname"><strong>winfo_atomname</strong></a>(self, id, displayof<small><font color="#909090">=0</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_cells"><strong>winfo_cells</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_children"><strong>winfo_children</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_class"><strong>winfo_class</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_colormapfull"><strong>winfo_colormapfull</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_containing"><strong>winfo_containing</strong></a>(self, rootX, rootY, displayof<small><font color="#909090">=0</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_depth"><strong>winfo_depth</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_exists"><strong>winfo_exists</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_fpixels"><strong>winfo_fpixels</strong></a>(self, number)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_geometry"><strong>winfo_geometry</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_height"><strong>winfo_height</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_id"><strong>winfo_id</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_interps"><strong>winfo_interps</strong></a>(self, displayof<small><font color="#909090">=0</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_ismapped"><strong>winfo_ismapped</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_manager"><strong>winfo_manager</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_name"><strong>winfo_name</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_parent"><strong>winfo_parent</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_pathname"><strong>winfo_pathname</strong></a>(self, id, displayof<small><font color="#909090">=0</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_pixels"><strong>winfo_pixels</strong></a>(self, number)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_pointerx"><strong>winfo_pointerx</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_pointerxy"><strong>winfo_pointerxy</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_pointery"><strong>winfo_pointery</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_reqheight"><strong>winfo_reqheight</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_reqwidth"><strong>winfo_reqwidth</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_rgb"><strong>winfo_rgb</strong></a>(self, color)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_rootx"><strong>winfo_rootx</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_rooty"><strong>winfo_rooty</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_screen"><strong>winfo_screen</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_screencells"><strong>winfo_screencells</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_screendepth"><strong>winfo_screendepth</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_screenheight"><strong>winfo_screenheight</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_screenmmheight"><strong>winfo_screenmmheight</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_screenmmwidth"><strong>winfo_screenmmwidth</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_screenvisual"><strong>winfo_screenvisual</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_screenwidth"><strong>winfo_screenwidth</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_server"><strong>winfo_server</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_toplevel"><strong>winfo_toplevel</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_viewable"><strong>winfo_viewable</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_visual"><strong>winfo_visual</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_visualid"><strong>winfo_visualid</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_visualsavailable"><strong>winfo_visualsavailable</strong></a>(self, includeids<small><font color="#909090">=0</font></small>)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_vrootheight"><strong>winfo_vrootheight</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_vrootwidth"><strong>winfo_vrootwidth</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_vrootx"><strong>winfo_vrootx</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_vrooty"><strong>winfo_vrooty</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_width"><strong>winfo_width</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_x"><strong>winfo_x</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-winfo_y"><strong>winfo_y</strong></a>(self)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Misc">Tkinter.Misc</a></font></font></small></dl>
+<dl><dt><a name="TextTree-xview"><strong>xview</strong></a>(self, *what)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-xview_moveto"><strong>xview_moveto</strong></a>(self, fraction)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-xview_scroll"><strong>xview_scroll</strong></a>(self, number, what)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-yview"><strong>yview</strong></a>(self, *what)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-yview_moveto"><strong>yview_moveto</strong></a>(self, fraction)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-yview_pickplace"><strong>yview_pickplace</strong></a>(self, *what)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+<dl><dt><a name="TextTree-yview_scroll"><strong>yview_scroll</strong></a>(self, number, what)<small><font color="#909090"><font face="helvetica, arial"> from <a href="Tkinter.html#Text">Tkinter.Text</a></font></font></small></dl>
+</td></tr></table></td></tr></table>
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;&nbsp;</td>
+<td width="100%"><dl><dt><a name="-getdouble"><strong>getdouble</strong></a> = float(...)<dd><small><tt>float(x)&nbsp;-&gt;&nbsp;floating&nbsp;point&nbsp;number<br>
+&nbsp;<br>
+Convert&nbsp;a&nbsp;string&nbsp;or&nbsp;number&nbsp;to&nbsp;a&nbsp;floating&nbsp;point&nbsp;number,&nbsp;if&nbsp;possible.</tt></small></dl>
+ <dl><dt><a name="-getint"><strong>getint</strong></a> = int(...)<dd><small><tt>int(x[,&nbsp;base])&nbsp;-&gt;&nbsp;integer<br>
+&nbsp;<br>
+Convert&nbsp;a&nbsp;string&nbsp;or&nbsp;number&nbsp;to&nbsp;an&nbsp;integer,&nbsp;if&nbsp;possible.&nbsp;&nbsp;A&nbsp;floating&nbsp;point<br>
+argument&nbsp;will&nbsp;be&nbsp;truncated&nbsp;towards&nbsp;zero&nbsp;(this&nbsp;does&nbsp;not&nbsp;include&nbsp;a&nbsp;string<br>
+representation&nbsp;of&nbsp;a&nbsp;floating&nbsp;point&nbsp;number!)&nbsp;&nbsp;When&nbsp;converting&nbsp;a&nbsp;string,&nbsp;use<br>
+the&nbsp;optional&nbsp;base.&nbsp;&nbsp;It&nbsp;is&nbsp;an&nbsp;error&nbsp;to&nbsp;supply&nbsp;a&nbsp;base&nbsp;when&nbsp;converting&nbsp;a<br>
+non-string.</tt></small></dl>
+</td></tr></table>
+<p><table width="100%" cellspacing=0 cellpadding=2 border=0>
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom><small><small>&nbsp;<br></small></small
+><font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;&nbsp;</td>
+<td width="100%"><strong>ACTIVE</strong> = 'active'<br>
+<strong>ALL</strong> = 'all'<br>
+<strong>ANCHOR</strong> = 'anchor'<br>
+<strong>ARC</strong> = 'arc'<br>
+<strong>BASELINE</strong> = 'baseline'<br>
+<strong>BEVEL</strong> = 'bevel'<br>
+<strong>BOTH</strong> = 'both'<br>
+<strong>BOTTOM</strong> = 'bottom'<br>
+<strong>BROWSE</strong> = 'browse'<br>
+<strong>BUTT</strong> = 'butt'<br>
+<strong>BufferType</strong> = &lt;type 'buffer'&gt;<br>
+<strong>BuiltinFunctionType</strong> = &lt;type 'builtin_function_or_method'&gt;<br>
+<strong>BuiltinMethodType</strong> = &lt;type 'builtin_function_or_method'&gt;<br>
+<strong>CASCADE</strong> = 'cascade'<br>
+<strong>CENTER</strong> = 'center'<br>
+<strong>CHAR</strong> = 'char'<br>
+<strong>CHECKBUTTON</strong> = 'checkbutton'<br>
+<strong>CHORD</strong> = 'chord'<br>
+<strong>COMMAND</strong> = 'command'<br>
+<strong>CURRENT</strong> = 'current'<br>
+<strong>ClassType</strong> = &lt;type 'class'&gt;<br>
+<strong>CodeType</strong> = &lt;type 'code'&gt;<br>
+<strong>ComplexType</strong> = &lt;type 'complex'&gt;<br>
+<strong>DE_LOG_NODE_STATES</strong> = 1<br>
+<strong>DISABLED</strong> = 'disabled'<br>
+<strong>DOWN</strong> = 2<br>
+<strong>DT_ALL</strong> = 15<br>
+<strong>DT_CUSTOM</strong> = 8<br>
+<strong>DT_FILESYSTEM</strong> = 4<br>
+<strong>DT_NONE</strong> = 0<br>
+<strong>DT_TWSTRUCT</strong> = 1<br>
+<strong>DT_XMLDOM</strong> = 2<br>
+<strong>DictType</strong> = &lt;type 'dictionary'&gt;<br>
+<strong>DictionaryType</strong> = &lt;type 'dictionary'&gt;<br>
+<strong>E</strong> = 'e'<br>
+<strong>END</strong> = 'end'<br>
+<strong>ERR_FAIL</strong> = 4<br>
+<strong>ERR_IGNORE</strong> = 1<br>
+<strong>ERR_WARN</strong> = 2<br>
+<strong>EW</strong> = 'ew'<br>
+<strong>EXCEPTION</strong> = 8<br>
+<strong>EXTENDED</strong> = 'extended'<br>
+<strong>EllipsisType</strong> = &lt;type 'ellipsis'&gt;<br>
+<strong>FALSE</strong> = 2<br>
+<strong>FIRST</strong> = 'first'<br>
+<strong>FLAT</strong> = 'flat'<br>
+<strong>FileType</strong> = &lt;type 'file'&gt;<br>
+<strong>FloatType</strong> = &lt;type 'float'&gt;<br>
+<strong>FrameType</strong> = &lt;type 'frame'&gt;<br>
+<strong>FunctionType</strong> = &lt;type 'function'&gt;<br>
+<strong>GROOVE</strong> = 'groove'<br>
+<strong>HORIZONTAL</strong> = 'horizontal'<br>
+<strong>ICON_HSPACE</strong> = 6<br>
+<strong>INDENT_WIDTH</strong> = 16<br>
+<strong>INSERT</strong> = 'insert'<br>
+<strong>INSIDE</strong> = 'inside'<br>
+<strong>InstanceType</strong> = &lt;type 'instance'&gt;<br>
+<strong>IntType</strong> = &lt;type 'int'&gt;<br>
+<strong>LAST</strong> = 'last'<br>
+<strong>LEFT</strong> = 'left'<br>
+<strong>LEFT_MARGIN</strong> = 2<br>
+<strong>LambdaType</strong> = &lt;type 'function'&gt;<br>
+<strong>ListType</strong> = &lt;type 'list'&gt;<br>
+<strong>LongType</strong> = &lt;type 'long int'&gt;<br>
+<strong>MITER</strong> = 'miter'<br>
+<strong>MOVETO</strong> = 'moveto'<br>
+<strong>MULTIPLE</strong> = 'multiple'<br>
+<strong>MethodType</strong> = &lt;type 'instance method'&gt;<br>
+<strong>ModuleType</strong> = &lt;type 'module'&gt;<br>
+<strong>N</strong> = 'n'<br>
+<strong>NE</strong> = 'ne'<br>
+<strong>NO</strong> = 0<br>
+<strong>NONE</strong> = 'none'<br>
+<strong>NORMAL</strong> = 'normal'<br>
+<strong>NP_ABSTRACT</strong> = 16<br>
+<strong>NP_ALL</strong> = 31<br>
+<strong>NP_ALLOW_CHILDREN</strong> = 4<br>
+<strong>NP_AUTOBUILD</strong> = 8<br>
+<strong>NP_NONE</strong> = 1<br>
+<strong>NP_ROOT</strong> = 2<br>
+<strong>NS</strong> = 'ns'<br>
+<strong>NSEW</strong> = 'nsew'<br>
+<strong>NS_ALL</strong> = 255<br>
+<strong>NS_EXPANDED</strong> = 32<br>
+<strong>NS_HAS_CHILDREN</strong> = 64<br>
+<strong>NS_LOCKED</strong> = 128<br>
+<strong>NS_NONE</strong> = 1<br>
+<strong>NS_PENDING_HIDE</strong> = 8<br>
+<strong>NS_PENDING_SHIFT</strong> = 16<br>
+<strong>NS_PENDING_SHOW</strong> = 4<br>
+<strong>NS_VISIBLE</strong> = 2<br>
+<strong>NUMERIC</strong> = 'numeric'<br>
+<strong>NW</strong> = 'nw'<br>
+<strong>NoneType</strong> = &lt;type 'None'&gt;<br>
+<strong>OFF</strong> = 0<br>
+<strong>ON</strong> = 1<br>
+<strong>OUTSIDE</strong> = 'outside'<br>
+<strong>PAGES</strong> = 'pages'<br>
+<strong>PIESLICE</strong> = 'pieslice'<br>
+<strong>PROJECTING</strong> = 'projecting'<br>
+<strong>RADIOBUTTON</strong> = 'radiobutton'<br>
+<strong>RAISED</strong> = 'raised'<br>
+<strong>READABLE</strong> = 2<br>
+<strong>RIDGE</strong> = 'ridge'<br>
+<strong>RIGHT</strong> = 'right'<br>
+<strong>ROUND</strong> = 'round'<br>
+<strong>S</strong> = 's'<br>
+<strong>SCROLL</strong> = 'scroll'<br>
+<strong>SE</strong> = 'se'<br>
+<strong>SEL</strong> = 'sel'<br>
+<strong>SEL_FIRST</strong> = 'sel.first'<br>
+<strong>SEL_LAST</strong> = 'sel.last'<br>
+<strong>SEPARATOR</strong> = 'separator'<br>
+<strong>SINGLE</strong> = 'single'<br>
+<strong>SOLID</strong> = 'solid'<br>
+<strong>SPACE_AFTER</strong> = 2<br>
+<strong>SPACE_BEFORE</strong> = 2<br>
+<strong>SUNKEN</strong> = 'sunken'<br>
+<strong>SW</strong> = 'sw'<br>
+<strong>SliceType</strong> = &lt;type 'slice'&gt;<br>
+<strong>StringType</strong> = &lt;type 'string'&gt;<br>
+<strong>TOP</strong> = 'top'<br>
+<strong>TREE_BG</strong> = 'white'<br>
+<strong>TREE_WIDTH</strong> = 24<br>
+<strong>TRUE</strong> = 1<br>
+<strong>TclError</strong> = 'TclError'<br>
+<strong>TclVersion</strong> = 8.3000000000000007<br>
+<strong>TkVersion</strong> = 8.3000000000000007<br>
+<strong>TracebackType</strong> = &lt;type 'traceback'&gt;<br>
+<strong>TupleType</strong> = &lt;type 'tuple'&gt;<br>
+<strong>TypeType</strong> = &lt;type 'type'&gt;<br>
+<strong>UNITS</strong> = 'units'<br>
+<strong>UP</strong> = 1<br>
+<strong>UnboundMethodType</strong> = &lt;type 'instance method'&gt;<br>
+<strong>UnicodeType</strong> = &lt;type 'unicode'&gt;<br>
+<strong>VERTICAL</strong> = 'vertical'<br>
+<strong>W</strong> = 'w'<br>
+<strong>WORD</strong> = 'word'<br>
+<strong>WRITABLE</strong> = 4<br>
+<strong>X</strong> = 'x'<br>
+<strong>XRangeType</strong> = &lt;type 'xrange'&gt;<br>
+<strong>Y</strong> = 'y'<br>
+<strong>YES</strong> = 1<br>
+<strong>__file__</strong> = '/usr/local/lib/python2.1/site-packages/treewidgets/texttree.pyc'<br>
+<strong>__name__</strong> = 'treewidgets.texttree'</td></tr></table>
+</body></html>

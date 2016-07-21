@@ -1,0 +1,492 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+          "http://www.w3.org/TR/html40/loose.dtd">
+
+<html>
+         
+  <head>
+    <title>Class: TextTree</title>
+  </head>
+
+  <body bgcolor="#ffffff">
+
+        <p><i><a href="index.html">Table of Contents</a></i></p>
+        
+        <table border="0" cellpadding="5" cellspacing="0" width="100%">
+        <tr bgcolor="#88bbee">
+            <th rowspan="2"
+                valign="top"
+                align="left"
+                width="10%"><font color="#000000">Class: TextTree</font>
+            </th>
+            <th width="90%" align="right"><font color="#000000">texttree.py</font></th>
+        </tr>
+        <tr>
+        <td>
+        
+<p>A TreeWidget based on the Tkinter Text class.</p>
+<table border="0" cellpadding="5" cellspacing="0" width="100%">
+
+        <tr>
+            <th bgcolor="#99ccff"
+                rowspan="2"
+                valign="top"
+                align="left"
+                width="20%"
+                >
+                <font color="#000000">
+                  <a name="Base Classes">Base Classes</a>&nbsp;
+                </font>
+            </th>
+            <th bgcolor="#99ccff"
+                valign="top"
+                align="left"
+                width="80%"
+                >
+                <font color="#000000">&nbsp;</font>
+            </th>
+        </tr>
+        <tr>
+        <td>
+        
+TreeWidget<br>
+Text<br>
+
+</td></tr>
+</table>
+<table border="0" cellpadding="5" cellspacing="0" width="100%">
+
+        <tr>
+            <th bgcolor="#99ccff"
+                rowspan="2"
+                valign="top"
+                align="left"
+                width="20%"
+                >
+                <font color="#000000">
+                  <a name="Methods">Methods</a>&nbsp;
+                </font>
+            </th>
+            <th bgcolor="#99ccff"
+                valign="top"
+                align="left"
+                width="80%"
+                >
+                <font color="#000000">&nbsp;</font>
+            </th>
+        </tr>
+        <tr>
+        <td>
+        
+
+            <table border="0" cellspacing="2" cellpadding="2" width="100%">
+              <tr>
+            <td align="LEFT" valign="TOP">
+<a href="#__init__">__init__</a><br>
+<a href="#_hide_node">_hide_node</a><br>
+<a href="#_move_node">_move_node</a><br>
+<a href="#_setFocus">_setFocus</a><br>
+<a href="#_show_node">_show_node</a><br>
+<a href="#activateNode">activateNode</a><br>
+</td>
+<td align="LEFT" valign="TOP">
+<a href="#deactivateNode">deactivateNode</a><br>
+<a href="#deselectNode">deselectNode</a><br>
+<a href="#destroy">destroy</a><br>
+<a href="#redisplay">redisplay</a><br>
+<a href="#selectNode">selectNode</a><br>
+</td>
+</tr>
+            </table>
+            
+
+        <tr>
+            <th bgcolor="#99ccff"
+                rowspan="2"
+                valign="top"
+                align="left"
+                width="20%"
+                >
+                <font color="#000000">
+                  <a name="__init__"></a>&nbsp;
+                </font>
+            </th>
+            <th bgcolor="#99ccff"
+                valign="top"
+                align="left"
+                width="80%"
+                >
+                <font color="#000000">__init__&nbsp;</font>
+            </th>
+        </tr>
+        <tr>
+        <td>
+        <font color="#000088"><pre>
+__init__ (
+        self,
+        master,
+        app=None,
+        icons={},
+        fonts={},
+        funcs={},
+        **tkconfig,
+        )
+
+</pre></font>
+
+<h3>Create a TextTree instance.</h3>
+<p>        Arguments:
+          master      -- the widget containing this one
+          app         -- the application that uses this widget (default: None)
+          icons       -- a dictionary of icon names or files (details below)
+          fonts       -- a dictionary of font characteristics (details below)</p>
+<p>        Standard Tkinter configuration options are also accepted (but not all
+        implemented yet).</p>
+<h4>        Setting icons:</h4>
+<p>          By default, all nodes in the TreeWidget are displayed with the <code>node</code>
+          icon, which works but is rather boring. You may wish to use a
+          different icon, or a set of icons varying according to the node type,
+          or perhaps no icons at all. You can configure the icons according to
+          your needs by creating the TreeWidget with an <code>icons</code> argument. The
+          value of this is either a dictionary, which we will call an icon map,
+          or None to disable all icons.</p>
+<p>          An icon map has the following predefined keys:</p>
+<dl>
+<dt>          <code>type</code></dt>
+<dd>the type of icon to use: either <code>photo</code>, for a 
+                         Tkinter PhotoImage, or <code>bitmap</code>, for a BitmapImage.
+          <code>path</code>      -- <em>if</em> the icons are to be created from image files,
+                         this argument specifies the directory where those
+                         files are to be found. If <code>path</code> is omitted, 
+                         built-in icons will be used.
+          <code>all</code>       -- icon set for all nodes
+          <code>default</code>   -- default icon set</dd>
+</dl>
+<p>          To associate a set of icons with a node type, add an item to the 
+          icon map using the node type as a key:<p>              icon_map[&lt;node_type&gt;] = &lt;icon_set&gt;</p>
+</p>
+<p>          [What if there is a node type with the same name as one of the
+           predefined keys? Obviously this concept needs a little work]</p>
+<h5>          An icon set is a tuple of three (3) icon names:</h5>
+<p>              (&lt;plain_icon_name&gt;,&lt;collapsed_icon_name&gt;,&lt;expanded_icon_name&gt;)</p>
+<p>          Each icon name must be either a built-in icon name or a file name
+          (with the extension but without the path). The plain icon will be
+          used for nodes with no children, the collapse and expanded icons
+          for nodes with children, alternating according to the node state.
+          The built-in icons follow the common convention of displaying 
+          collapsed nodes with plus signs and expanded nodes with minus signs.</p>
+<h4>        Setting fonts [not implemented in 8/28/2002 release]:</h4>
+<p>          When this feature is implemented, you will be able to configure
+          fonts on a per-node-type basis by giving the widget a font map
+          similar to the icon map described above.</p>
+
+        <tr>
+            <th bgcolor="#99ccff"
+                rowspan="2"
+                valign="top"
+                align="left"
+                width="20%"
+                >
+                <font color="#000000">
+                  <a name="_hide_node"></a>&nbsp;
+                </font>
+            </th>
+            <th bgcolor="#99ccff"
+                valign="top"
+                align="left"
+                width="80%"
+                >
+                <font color="#000000">_hide_node&nbsp;</font>
+            </th>
+        </tr>
+        <tr>
+        <td>
+        <font color="#000088"><pre>
+_hide_node ( self,  node )
+
+</pre></font>
+
+
+        <tr>
+            <th bgcolor="#99ccff"
+                rowspan="2"
+                valign="top"
+                align="left"
+                width="20%"
+                >
+                <font color="#000000">
+                  <a name="_move_node"></a>&nbsp;
+                </font>
+            </th>
+            <th bgcolor="#99ccff"
+                valign="top"
+                align="left"
+                width="80%"
+                >
+                <font color="#000000">_move_node&nbsp;</font>
+            </th>
+        </tr>
+        <tr>
+        <td>
+        <font color="#000088"><pre>
+_move_node (
+        self,
+        node,
+        distance,
+        )
+
+</pre></font>
+
+
+        <tr>
+            <th bgcolor="#99ccff"
+                rowspan="2"
+                valign="top"
+                align="left"
+                width="20%"
+                >
+                <font color="#000000">
+                  <a name="_setFocus"></a>&nbsp;
+                </font>
+            </th>
+            <th bgcolor="#99ccff"
+                valign="top"
+                align="left"
+                width="80%"
+                >
+                <font color="#000000">_setFocus&nbsp;</font>
+            </th>
+        </tr>
+        <tr>
+        <td>
+        <font color="#000088"><pre>
+_setFocus ( self,  event=None )
+
+</pre></font>
+
+
+        <tr>
+            <th bgcolor="#99ccff"
+                rowspan="2"
+                valign="top"
+                align="left"
+                width="20%"
+                >
+                <font color="#000000">
+                  <a name="_show_node"></a>&nbsp;
+                </font>
+            </th>
+            <th bgcolor="#99ccff"
+                valign="top"
+                align="left"
+                width="80%"
+                >
+                <font color="#000000">_show_node&nbsp;</font>
+            </th>
+        </tr>
+        <tr>
+        <td>
+        <font color="#000088"><pre>
+_show_node (
+        self,
+        node,
+        row,
+        )
+
+</pre></font>
+
+
+        <tr>
+            <th bgcolor="#99ccff"
+                rowspan="2"
+                valign="top"
+                align="left"
+                width="20%"
+                >
+                <font color="#000000">
+                  <a name="activateNode"></a>&nbsp;
+                </font>
+            </th>
+            <th bgcolor="#99ccff"
+                valign="top"
+                align="left"
+                width="80%"
+                >
+                <font color="#000000">activateNode&nbsp;</font>
+            </th>
+        </tr>
+        <tr>
+        <td>
+        <font color="#000088"><pre>
+activateNode ( self,  node_id )
+
+</pre></font>
+
+<h3>Change a node's colors to the &quot;active&quot; scheme.</h3>
+<p>        Arguments:
+        node_id         -- The id of the node to be activated.</p>
+
+        <tr>
+            <th bgcolor="#99ccff"
+                rowspan="2"
+                valign="top"
+                align="left"
+                width="20%"
+                >
+                <font color="#000000">
+                  <a name="deactivateNode"></a>&nbsp;
+                </font>
+            </th>
+            <th bgcolor="#99ccff"
+                valign="top"
+                align="left"
+                width="80%"
+                >
+                <font color="#000000">deactivateNode&nbsp;</font>
+            </th>
+        </tr>
+        <tr>
+        <td>
+        <font color="#000088"><pre>
+deactivateNode ( self,  node_id )
+
+</pre></font>
+
+<h3>Change a node's colors to the normal scheme.</h3>
+<p>        Arguments:
+        node_id         -- The id of the node to be deactivated.</p>
+
+        <tr>
+            <th bgcolor="#99ccff"
+                rowspan="2"
+                valign="top"
+                align="left"
+                width="20%"
+                >
+                <font color="#000000">
+                  <a name="deselectNode"></a>&nbsp;
+                </font>
+            </th>
+            <th bgcolor="#99ccff"
+                valign="top"
+                align="left"
+                width="80%"
+                >
+                <font color="#000000">deselectNode&nbsp;</font>
+            </th>
+        </tr>
+        <tr>
+        <td>
+        <font color="#000088"><pre>
+deselectNode ( self,  node_id )
+
+</pre></font>
+
+<h3>Display a node using the normal colors.</h3>
+<p>        Arguments:
+        node_id         -- The id of the node you wish to deselect.</p>
+
+        <tr>
+            <th bgcolor="#99ccff"
+                rowspan="2"
+                valign="top"
+                align="left"
+                width="20%"
+                >
+                <font color="#000000">
+                  <a name="destroy"></a>&nbsp;
+                </font>
+            </th>
+            <th bgcolor="#99ccff"
+                valign="top"
+                align="left"
+                width="80%"
+                >
+                <font color="#000000">destroy&nbsp;</font>
+            </th>
+        </tr>
+        <tr>
+        <td>
+        <font color="#000088"><pre>
+destroy ( self )
+
+</pre></font>
+
+<p>Eliminate the GUI manifestation of this object.</p>
+
+        <tr>
+            <th bgcolor="#99ccff"
+                rowspan="2"
+                valign="top"
+                align="left"
+                width="20%"
+                >
+                <font color="#000000">
+                  <a name="redisplay"></a>&nbsp;
+                </font>
+            </th>
+            <th bgcolor="#99ccff"
+                valign="top"
+                align="left"
+                width="80%"
+                >
+                <font color="#000000">redisplay&nbsp;</font>
+            </th>
+        </tr>
+        <tr>
+        <td>
+        <font color="#000088"><pre>
+redisplay ( self )
+
+</pre></font>
+
+<p>Refresh the tree display after showing, hiding, or moving nodes.</p>
+
+        <tr>
+            <th bgcolor="#99ccff"
+                rowspan="2"
+                valign="top"
+                align="left"
+                width="20%"
+                >
+                <font color="#000000">
+                  <a name="selectNode"></a>&nbsp;
+                </font>
+            </th>
+            <th bgcolor="#99ccff"
+                valign="top"
+                align="left"
+                width="80%"
+                >
+                <font color="#000000">selectNode&nbsp;</font>
+            </th>
+        </tr>
+        <tr>
+        <td>
+        <font color="#000088"><pre>
+selectNode ( self,  node_id )
+
+</pre></font>
+
+<h3>Display a node using the <code>selected</code> colors and set self.selected to this node's ID.</h3>
+<p>        Arguments:
+        node_id         -- The id of the node you wish to select.</p>
+</td></tr>
+</td></tr>
+</table>
+
+        </td>
+        </tr>
+        </table>
+
+        <hr>
+
+        <p><i><a href="index.html">Table of Contents</a></i></p>
+
+        <font size="-2"><i>This document was automatically generated
+        on Wed Sep 18 11:25:07 2002 by
+        <a href="http://happydoc.sourceforge.net">HappyDoc</a> version
+        2.0.1</i></font>
+        
+        </body>
+        </html>
+        

@@ -1,0 +1,8 @@
+1.3.4
+NOT APPLICABLE	- fix increment value/chunk to former version using // for division (PmwCounter.py) (if applies to Python 2 version)
+	- fix fmt back to "separator" - PmwEntryField.py,  421c424  (if applies to Python 2 version)
+	- move configure outside if statement - PmwGroup.py, 110c123,126 (if applies to Python 2 version)
+	- fix public interface of PmwHistoryText.py - __next__ back to next() (if applies to Python 2 version)
+	- fix public interface of date functions to use 'format' kw (if works correctly) so as to respect the public interface (if applies to Python 2 version)
+	- fix bug in PmwTimeCounter (increment/decrement buttons do not work correctly) (if applies to Python 2 version)
+	- fix bug in PmwBase.py (_traceTkFile does not seem to exist) (if applies to Python 2 version)

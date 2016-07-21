@@ -1,0 +1,260 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML>
+<HEAD>
+<!-- Sitemap 1.0 -->
+</HEAD><BODY>
+<UL>
+     <LI><OBJECT type="text/sitemap">
+         <param name="Name" value="Welcome">
+         <param name="Local" value="FirstTopic.htm">
+          </OBJECT>
+     <LI><OBJECT type="text/sitemap">
+         <param name="Name" value="Getting Started">
+         <param name="Local" value="Getting_Started.htm">
+          </OBJECT>
+     <LI><OBJECT type="text/sitemap">
+         <param name="Name" value="Overview of the Interface">
+         <param name="Local" value="Overview_of_the_Interface.htm">
+          </OBJECT>
+     <LI><OBJECT type="text/sitemap">
+         <param name="Name" value="The Button Box">
+         <param name="Local" value="The_Button_Box.htm">
+          </OBJECT>
+     <UL>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Open">
+              <param name="Local" value="Open.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Fetch PDB">
+              <param name="Local" value="Fetch_PDB.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Clear">
+              <param name="Local" value="Clear.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Help">
+              <param name="Local" value="Help.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Quit">
+              <param name="Local" value="Quit.htm">
+               </OBJECT>
+     </UL>
+     <LI><OBJECT type="text/sitemap">
+         <param name="Name" value="EZ-Viz Tab">
+         <param name="Local" value="The_Presets_Tab.htm">
+          </OBJECT>
+     <UL>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Predefined Views">
+              <param name="Local" value="Predefined_Views.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Manual Commands">
+              <param name="Local" value="Manual_Commands.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Roving Views">
+              <param name="Local" value="Roving_Views.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Select menu">
+              <param name="Local" value="Select_options.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Show/Hide Menu">
+              <param name="Local" value="Show_options.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Color menu">
+              <param name="Local" value="Color_options.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Display Options">
+              <param name="Local" value="Color_Space.htm">
+               </OBJECT>
+     </UL>
+     <LI><OBJECT type="text/sitemap">
+         <param name="Name" value="Preset Movies">
+         <param name="Local" value="The_Movie_Tab.htm">
+          </OBJECT>
+     <UL>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Ligand Zoom">
+              <param name="Local" value="Ligand_Zoom.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Build Protein">
+              <param name="Local" value="Build_Protein.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Highlight Chains">
+              <param name="Local" value="Highlight_Chains.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Rotate">
+              <param name="Local" value="Rotate.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Surface to Cartoon">
+              <param name="Local" value="Surface_to_Cartoon.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Surface to Sticks">
+              <param name="Local" value="Surface_to_Sticks.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Pull out Ligands">
+              <param name="Local" value="Pull_out_Ligands.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Pull out Chains">
+              <param name="Local" value="Pull_out_Chains.htm">
+               </OBJECT>
+     </UL>
+     <LI><OBJECT type="text/sitemap">
+         <param name="Name" value="Motifs">
+         <param name="Local" value="Motifs.htm">
+          </OBJECT>
+     <UL>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Using Motifs">
+              <param name="Local" value="Using_Motifs.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Customizable Motifs">
+              <param name="Local" value="Customizable_Motifs.htm">
+               </OBJECT>
+     </UL>
+     <LI><OBJECT type="text/sitemap">
+         <param name="Name" value="View Options Tab">
+         <param name="Local" value="The_Advanced_Tab.htm">
+          </OBJECT>
+     <UL>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Cartoon Settings">
+              <param name="Local" value="Cartoon_Settings.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Sphere Settings">
+              <param name="Local" value="Sphere_Settings.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Stick Settings">
+              <param name="Local" value="Stick_Settings.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Surface Settings">
+              <param name="Local" value="Surface_Settings.htm">
+               </OBJECT>
+     </UL>
+     <LI><OBJECT type="text/sitemap">
+         <param name="Name" value="The Toolbox Tab">
+         <param name="Local" value="The_Toolbox_Tab.htm">
+          </OBJECT>
+     <UL>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Ray Trace Options">
+              <param name="Local" value="Ray_Trace_Options.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Perspective">
+              <param name="Local" value="Prespective.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Amino Acid Reference">
+              <param name="Local" value="Amino_Acid_Reference.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Electrostatics">
+              <param name="Local" value="Electrostatics.htm">
+               </OBJECT>
+     </UL>
+     <LI><OBJECT type="text/sitemap">
+         <param name="Name" value="Advanced Toolbox Tab">
+         <param name="Local" value="Advanced_Toolbox_Tab.htm">
+          </OBJECT>
+     <UL>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Electron Density Mapping ">
+              <param name="Local" value="Electron_Density_Tools.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Ramachandran Plot">
+              <param name="Local" value="Ramachandran_Plot.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Mode Group">
+              <param name="Local" value="Mode_Group.htm">
+               </OBJECT>
+     </UL>
+     <LI><OBJECT type="text/sitemap">
+         <param name="Name" value="Molecular Visualization Resources">
+         <param name="Local" value="Molecular_Visualization_Resources.htm">
+          </OBJECT>
+     <UL>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Kinemage Resources">
+              <param name="Local" value="Kinemage_Resources.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="JMol Resources">
+              <param name="Local" value="JMol_Resources.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Chime and Rasmol Resources">
+              <param name="Local" value="Chime_and_Rasmol_Resources.htm">
+               </OBJECT>
+     </UL>
+     <LI><OBJECT type="text/sitemap">
+         <param name="Name" value="PyMOL Resources">
+         <param name="Local" value="PyMOL_Resources.htm">
+          </OBJECT>
+     <UL>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Scripting in PyMOL">
+              <param name="Local" value="Scripting_in_PyMOL.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="PyMOL Movies">
+              <param name="Local" value="PyMOL_Movies.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="PyMOL Online Community">
+              <param name="Local" value="PyMOL_Online_Community.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="PyMOL Tutorials">
+              <param name="Local" value="PyMOL_Tutorials.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Python Resources">
+              <param name="Local" value="Python_Resources.htm">
+               </OBJECT>
+     </UL>
+     <LI><OBJECT type="text/sitemap">
+         <param name="Name" value="The Movie Maker Tab">
+         <param name="Local" value="The_Movie_Maker_Tab.htm">
+          </OBJECT>
+     <UL>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Load and Save">
+              <param name="Local" value="Load_and_Save.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Scripted Animation">
+              <param name="Local" value="Scripted_Animation.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Selection Controls">
+              <param name="Local" value="Selection_Controls.htm">
+               </OBJECT>
+          <LI><OBJECT type="text/sitemap">
+              <param name="Name" value="Mouse Modes">
+              <param name="Local" value="Mouse_Modes.htm">
+               </OBJECT>
+     </UL>
+</UL>
+</BODY></HTML>

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#This script takes the output csv in structure of 2 sections, metadata and results, seperated by one blank row, and seperates them into 2 seperate csv files. 
+#It is called in import.pl
+
+#check arguments
+if [ $# -eq 0 ] 
+    then 
+        echo "No arguments supplied"
+fi 
+
+#the following line will split the resultant CSV by empty lines and generate the CSVs corresponding to the blan
+awk -v RS="" '{print $0 > $1".csv"}' $1
+
+#the following section creates table specfic csv files
+
+#parsing the meta data file
+fname=$1_meta.csv
+echo "$fname"
+sed '1d' $fname > tmpfile; mv tmpfile $fname
+
+#parsing the results file
+fname=$1_results.csv
+echo "$fname"
+sed '1d' $fname > tmpfile; mv tmpfile $fname
+
+
